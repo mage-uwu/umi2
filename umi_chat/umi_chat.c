@@ -182,14 +182,15 @@ static void ngram_build(Ex*e,int ne){
     for(size_t k=0;k<nu;k++)ng.w[k]/=(float)sqrt(norm[ng.ans[k]]+1e-9);
     free(pr);free(norm);ng.n=n_answers;
 }
-/* top-k answers by cosine similarity; returns count, fills answer indices and scores */
-static int ngram_top(const char*msg,int k,int*out,float*sc){
+/* top-k answers by cosine similarity; returns count, fills answer indices and scores.
+ * If all is non-NULL it receives the cosine of every answer (caller frees). */
+static int ngram_top(const char*msg,int k,int*out,float*sc,float**all){
     uint32_t g[1600];int m=grams(msg,g);float*s=calloc(ng.n,sizeof(float));double qn=0;
     for(int j=0;j<m;j++){int b=g[j];if(ng.off[b+1]-ng.off[b]>ng.n/8)continue; /* stop-grams */
         float q=ng.idf[b];qn+=q*q;for(int p=ng.off[b];p<ng.off[b+1];p++)s[ng.ans[p]]+=q*ng.w[p];}
     qn=sqrt(qn+1e-9);int c=0;
-    for(int a=0;a<ng.n;a++){float v=s[a]/qn;if(c<k||v>sc[c-1]){int j=c<k?c++:k-1;while(j>0&&sc[j-1]<v){sc[j]=sc[j-1];out[j]=out[j-1];j--;}sc[j]=v;out[j]=a;}}
-    free(s);return c;
+    for(int a=0;a<ng.n;a++){float v=s[a]/=qn;if(c<k||v>sc[c-1]){int j=c<k?c++:k-1;while(j>0&&sc[j-1]<v){sc[j]=sc[j-1];out[j]=out[j-1];j--;}sc[j]=v;out[j]=a;}}
+    if(all)*all=s;else free(s);return c;
 }
 /* MLM log-probability of each candidate ID: p(a) p(b|a) p(t|a,b), each slot renormalised over IDs that exist */
 static void mlm_score(Net*n,int th,const char*msg,int c1,int c2,const int*ids,int nc,double*lp){
@@ -218,15 +219,21 @@ static double hy_beta=8,hy_gamma=4; /* gamma: prior for a turn that directly fol
 /* Hybrid retrieval: candidates = n-gram top-K plus every turn of the conversations in context;
  * decision = MLM log-prob + beta * cosine. beta<0 means n-gram only. Returns packed ID. */
 static int decide(Net*n,int th,const char*msg,int c1,int c2,double beta,double gamma,double*conf){
-    int ids[NGK+2*NT],na[NGK];float sc[NGK];int k=ngram_top(msg,NGK,na,sc),nc=0;double cs[NGK+2*NT];
+    int ids[NGK+2*NT],na[NGK];float sc[NGK],*cos_all;int k=ngram_top(msg,NGK,na,sc,&cos_all),nc=0;double cs[NGK+2*NT];
     for(int i=0;i<k;i++){ids[nc]=answers[na[i]].id;cs[nc++]=sc[i];}
     for(int h=0;h<2;h++){int c=h?c2:c1;if(c<0)continue;int a=ID_A(c),b=ID_B(c);if(a<64)continue;
-        for(int t=0;t<NT;t++){int id=PACK(a,b,t);if(ans_at[id]<0)continue;int dup=0;for(int i=0;i<nc;i++)dup|=ids[i]==id;if(!dup){ids[nc]=id;cs[nc++]=0;}}}
+        for(int t=0;t<NT;t++){int id=PACK(a,b,t);if(ans_at[id]<0||answers[ans_at[id]].parent!=c)continue;int dup=0; /* only turns that follow it */for(int i=0;i<nc;i++)dup|=ids[i]==id;if(!dup){ids[nc]=id;cs[nc++]=cos_all[ans_at[id]];}}}
+    free(cos_all);
     if(!nc){*conf=0;return -1;}
     if(beta<0){*conf=cs[0];return ids[0];}
-    double lp[NGK+2*NT];mlm_score(n,th,msg,c1,c2,ids,nc,lp);
+    /* Two hypotheses. A turn that follows one of umi's last replies is scored by the MLM with that
+     * context; any other candidate is a topic switch, so it is scored as a fresh message, without it. */
+    double lp[NGK+2*NT],lp0[NGK+2*NT];mlm_score(n,th,msg,c1,c2,ids,nc,lp);
+    if(c1>=0)mlm_score(n,th,msg,-1,-1,ids,nc,lp0);
     int best=0;double mx=-1e300,z=0;
-    for(int i=0;i<nc;i++){lp[i]+=beta*cs[i]+(c1>=0&&answers[ans_at[ids[i]]].parent==c1?gamma:0);if(lp[i]>mx){mx=lp[i];best=i;}}
+    for(int i=0;i<nc;i++){int p=answers[ans_at[ids[i]]].parent,fol=c1>=0&&(p==c1||(c2>=0&&p==c2));
+        if(c1>=0&&!fol)lp[i]=lp0[i];
+        lp[i]+=beta*cs[i]+(c1>=0&&p==c1?gamma:0);if(lp[i]>mx){mx=lp[i];best=i;}}
     for(int i=0;i<nc;i++)z+=exp(lp[i]-mx);*conf=1/z;return ids[best];
 }
 static void evaluate_hybrid(Net*n,Ex*e,int ne,double beta,double gamma,double*acc0,double*acc1,int*n0,int*n1){
@@ -413,14 +420,22 @@ int main(int argc,char**argv){
         int nte,n0,n1;Ex*all=load_ex(dir,"test.tsv",&nte);Ex*tune=malloc(nte*sizeof(Ex)),*te=malloc(nte*sizeof(Ex));int nu=0,nr=0;
         for(int i=0;i<nte;i++){if(i%2)te[nr++]=all[i];else tune[nu++]=all[i];}
         if(eval_n>0){int st=nu/eval_n>1?nu/eval_n:1,k=0;for(int i=0;i<nu;i+=st)tune[k++]=tune[i];nu=k;st=nr/eval_n>1?nr/eval_n:1;k=0;for(int i=0;i<nr;i+=st)te[k++]=te[i];nr=k;}
-        double a0,a1,best=-1,bb=hy_beta,bg=hy_gamma;
-        const double gb[]={4,8,16,32},gg[]={0,4,8,16};
-        for(int i=0;i<4;i++)for(int j=0;j<4;j++){evaluate_hybrid(&n,tune,nu,gb[i],gg[j],&a0,&a1,&n0,&n1);double m=(a0*n0+a1*n1)/(n0+n1);
-            printf("tune beta %4.1f gamma %3.1f: single-turn %.4f follow-up %.4f\n",gb[i],gg[j],a0,a1);if(m>best){best=m;bb=gb[i];bg=gg[j];}}
+        /* topic switch: the single-turn questions again, asked right after a random cached conversation turn */
+        int nconv=0,*conv=malloc(n_answers*sizeof(int));for(int i=0;i<n_answers;i++)if(ID_A(answers[i].id)>=64)conv[nconv++]=i;
+        Ex*swu=malloc(nu*sizeof(Ex)),*swr=malloc(nr*sizeof(Ex));int nsu=0,nsr=0;uint64_t rs=12345;
+        for(int h=0;h<2&&nconv;h++){Ex*src=h?te:tune,*dst=h?swr:swu;int ns=h?nr:nu,*cnt=h?&nsr:&nsu;
+            for(int i=0;i<ns;i++)if(src[i].c1<0){Ans*a=answers+conv[(int)(urand(&rs)*nconv)%nconv];dst[(*cnt)++]=(Ex){src[i].id,a->id,a->parent,src[i].msg};}}
+        double a0,a1,as,dummy,best=-1,bb=hy_beta,bg=hy_gamma;int ns0,ns1;
+        const double gb[]={8,16,32,64},gg[]={-4,0,2,4,8};
+        for(int i=0;i<4;i++)for(int j=0;j<5;j++){
+            evaluate_hybrid(&n,tune,nu,gb[i],gg[j],&a0,&a1,&n0,&n1);evaluate_hybrid(&n,swu,nsu,gb[i],gg[j],&dummy,&as,&ns0,&ns1);
+            double m=(a0+a1+as)/3; /* each situation counts equally */
+            printf("tune beta %4.1f gamma %4.1f: single-turn %.4f follow-up %.4f topic-switch %.4f\n",gb[i],gg[j],a0,a1,as);if(m>best){best=m;bb=gb[i];bg=gg[j];}}
         printf("held-out half (n=%d):\n",nr);
         evaluate(&n,te,nr,0,&a0,&a1,&n0,&n1);printf("  MLM beam only        single-turn %.4f (n=%d)  follow-up %.4f (n=%d)\n",a0,n0,a1,n1);
         evaluate_hybrid(&n,te,nr,-1,0,&a0,&a1,&n0,&n1);printf("  n-gram cache only            single-turn %.4f  follow-up %.4f\n",a0,a1);
-        evaluate_hybrid(&n,te,nr,bb,bg,&a0,&a1,&n0,&n1);printf("  hybrid (beta %.0f, gamma %.0f)  single-turn %.4f  follow-up %.4f\n",bb,bg,a0,a1);
+        evaluate_hybrid(&n,te,nr,bb,bg,&a0,&a1,&n0,&n1);evaluate_hybrid(&n,swr,nsr,bb,bg,&dummy,&as,&ns0,&ns1);
+        printf("  hybrid (beta %.0f, gamma %.0f)  single-turn %.4f  follow-up %.4f  topic-switch %.4f (n=%d)\n",bb,bg,a0,a1,as,ns1);
         printf("use: chat --beta %.0f --gamma %.0f\n",bb,bg);
         return 0;
     }
