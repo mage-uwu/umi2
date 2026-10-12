@@ -1,0 +1,241 @@
+=== START 2026-10-12T06:25:53Z  8 vCPU:  AMD Ryzen Threadripper 7960X 24-Cores
+0af3f3b Add single-turn baseline weights and umi-smart-internet pipeline
+MLM CHECK PASSED
+=== TRAIN 10800s, 8 threads, 06:26:17
+train 165228 (56327 with context)  test 24870  answers 17969
+{"event":"entropy_training","steps":23234,"train_seconds":120.004433,"train_bytes":71374848,"bytes_per_second":594768.427,"last_batch_bpc":2.662176}
+entropy patcher: avg patch 3.999 bytes
+mode blt  core params 1287904  n-gram cache rows 98304 (6291456 values)  frozen entropy 42720
+step    568  t     33s  loss 2.3297  test@600 single-turn 0.000 follow-up 0.000
+step   6654  t    332s  loss 1.2461  test@600 single-turn 0.004 follow-up 0.063
+step  12685  t    632s  loss 1.0639  test@600 single-turn 0.012 follow-up 0.409
+step  18394  t    932s  loss 0.9782  test@600 single-turn 0.042 follow-up 0.643
+step  24348  t   1232s  loss 0.9188  test@600 single-turn 0.038 follow-up 0.749
+step  29972  t   1532s  loss 0.8740  test@600 single-turn 0.042 follow-up 0.761
+step  35960  t   1832s  loss 0.8673  test@600 single-turn 0.042 follow-up 0.767
+step  41895  t   2132s  loss 0.8507  test@600 single-turn 0.046 follow-up 0.769
+step  47558  t   2432s  loss 0.8360  test@600 single-turn 0.046 follow-up 0.793
+step  52817  t   2732s  loss 0.8099  test@600 single-turn 0.077 follow-up 0.793
+step  58469  t   3032s  loss 0.7850  test@600 single-turn 0.077 follow-up 0.804
+step  64102  t   3332s  loss 0.7976  test@600 single-turn 0.108 follow-up 0.801
+step  69882  t   3632s  loss 0.7707  test@600 single-turn 0.127 follow-up 0.772
+step  75527  t   3932s  loss 0.7505  test@600 single-turn 0.135 follow-up 0.824
+step  80940  t   4232s  loss 0.7439  test@600 single-turn 0.165 follow-up 0.798
+step  86773  t   4532s  loss 0.7325  test@600 single-turn 0.188 follow-up 0.839
+step  92551  t   4832s  loss 0.6811  test@600 single-turn 0.204 follow-up 0.801
+step  98075  t   5132s  loss 0.7208  test@600 single-turn 0.231 follow-up 0.746
+step 103573  t   5432s  loss 0.6694  test@600 single-turn 0.227 follow-up 0.818
+step 109054  t   5732s  loss 0.6660  test@600 single-turn 0.273 follow-up 0.793
+step 114742  t   6032s  loss 0.6652  test@600 single-turn 0.277 follow-up 0.810
+step 120059  t   6332s  loss 0.6390  test@600 single-turn 0.308 follow-up 0.830
+step 125786  t   6632s  loss 0.6103  test@600 single-turn 0.312 follow-up 0.839
+step 130800  t   6932s  loss 0.6193  test@600 single-turn 0.315 follow-up 0.833
+step 136282  t   7232s  loss 0.6303  test@600 single-turn 0.346 follow-up 0.818
+step 142053  t   7532s  loss 0.6169  test@600 single-turn 0.304 follow-up 0.833
+step 147773  t   7832s  loss 0.6019  test@600 single-turn 0.346 follow-up 0.816
+step 153084  t   8132s  loss 0.6084  test@600 single-turn 0.338 follow-up 0.847
+step 158785  t   8432s  loss 0.5903  test@600 single-turn 0.354 follow-up 0.844
+step 164546  t   8732s  loss 0.5831  test@600 single-turn 0.377 follow-up 0.853
+step 170405  t   9032s  loss 0.5670  test@600 single-turn 0.408 follow-up 0.830
+step 176392  t   9332s  loss 0.5649  test@600 single-turn 0.396 follow-up 0.844
+step 181528  t   9632s  loss 0.5787  test@600 single-turn 0.385 follow-up 0.844
+step 187106  t   9932s  loss 0.5613  test@600 single-turn 0.404 follow-up 0.827
+step 192875  t  10232s  loss 0.5718  test@600 single-turn 0.392 follow-up 0.833
+step 198734  t  10532s  loss 0.5518  test@600 single-turn 0.388 follow-up 0.847
+final: steps 201639  test single-turn 0.3743 (n=10785)  follow-up 0.8212 (n=14085)  | train@3000 0.4985 / 0.8892
+=== EVAL 09:27:27
+tune beta  4.0 gamma 0.0: single-turn 0.5924 follow-up 0.8409
+tune beta  4.0 gamma 4.0: single-turn 0.5924 follow-up 0.8485
+tune beta  4.0 gamma 8.0: single-turn 0.5924 follow-up 0.8511
+tune beta  4.0 gamma 16.0: single-turn 0.5924 follow-up 0.8511
+tune beta  8.0 gamma 0.0: single-turn 0.6102 follow-up 0.8553
+tune beta  8.0 gamma 4.0: single-turn 0.6102 follow-up 0.8647
+tune beta  8.0 gamma 8.0: single-turn 0.6102 follow-up 0.8672
+tune beta  8.0 gamma 16.0: single-turn 0.6102 follow-up 0.8672
+tune beta 16.0 gamma 0.0: single-turn 0.6381 follow-up 0.8562
+tune beta 16.0 gamma 4.0: single-turn 0.6381 follow-up 0.8706
+tune beta 16.0 gamma 8.0: single-turn 0.6381 follow-up 0.8757
+tune beta 16.0 gamma 16.0: single-turn 0.6381 follow-up 0.8757
+tune beta 32.0 gamma 0.0: single-turn 0.6604 follow-up 0.8179
+tune beta 32.0 gamma 4.0: single-turn 0.6604 follow-up 0.8621
+tune beta 32.0 gamma 8.0: single-turn 0.6604 follow-up 0.8740
+tune beta 32.0 gamma 16.0: single-turn 0.6604 follow-up 0.8791
+held-out half (n=2073):
+  MLM beam only        single-turn 0.3759 (n=878)  follow-up 0.8184 (n=1195)
+  n-gram cache only            single-turn 0.4442  follow-up 0.1088
+  hybrid (beta 32, gamma 16)  single-turn 0.6651  follow-up 0.8728
+use: chat --beta 32 --gamma 16
+=== DEMO (beta 32 gamma 16)
+you> hi umi!
+  [3.21.0 umi_emotions_and_attunement/user_greeting | p=0.995 | seen as "hi umi!"]
+umi> Oh hey. Welcome back to the little cache. 😊
+you> my name is Sam
+  [0.0.0 umi_core/user_introduces_name | p=0.995 | seen as "my name is <regex>user_name</regex>"]
+umi> Oh, that one's a keeper, Sam. I'll tuck your name into the drawer where I keep the good stuff.
+you> what's my name?
+  [0.1.0 umi_core/user_asks_own_name | p=1.000 | seen as "what's my name?"]
+umi> That would be Sam. I keep it tucked in a safe corner of my cache.
+you> how do i make rice not stick?
+  [72.16.0 conv/history_and_culture_snippets/The Great Wall of China's sticky rice mortar/t1 | p=0.421 | seen as "how do i make rice not stick?"]
+umi> Found it—dusty but perfect. Ming-era builders mixed sticky rice soup into their mortar, and it made the wall stronger than plain lime.
+you> wait, really?
+  [72.16.1 conv/history_and_culture_snippets/The Great Wall of China's sticky rice mortar/t2 | p=0.442 | seen as "wait, really?"]
+umi> The rice's amylopectin forms a kind of organic-inorganic network with the lime, creating a composite that resists water and cracks. Chemists confirmed it in 2010.
+you> ok and then?
+  [72.16.2 conv/history_and_culture_snippets/The Great Wall of China's sticky rice mortar/t3 | p=1.000 | seen as "ok and then?"]
+umi> Likely on purpose—Ming builders were meticulous, and the recipe shows up in manuals. I don't have a cached answer for other cultures, though.
+you> haha thanks
+  [72.16.13 conv/history_and_culture_snippets/The Great Wall of China's sticky rice mortar/t14 | p=1.000 | seen as "haha thanks"]
+umi> Blood, beer, and horsehair all show up in old mortars—beer for sugar, blood for protein, horsehair as fiber reinforcement. Pantry-to-pavement, indeed.
+you> bye
+  [3.17.0 umi_emotions_and_attunement/user_farewell | p=0.951 | seen as "bye"]
+umi> Bye for now, Sam. My drawer's always open when you come back.
+
+you> who are you?
+  [49.9.0 small_talk_and_greetings/who_are_you | p=0.994 | seen as "who are you?"]
+umi> I'm umi, a tiny chatbot who lives in a cache and tries her best. No wizardry, just careful listening and good matches.
+you> why are you so small?
+  [1.7.0 umi_persona_and_identity/why_so_small | p=0.820 | seen as "why are you so small?"]
+umi> One million parameters is plenty when you use them to be kind. Besides, small things can still carry weight.
+you> tell me more
+  [70.6.1 conv/fashion_and_personal_style/How to develop a personal style when you feel lost/t2 | p=0.773 | seen as "tell me more"]
+umi> Sure! Start by looking at what you already wear and love. Those are clues. Then, collect inspiration—photos, outfits you admire—and look for patterns.
+you> lol
+  [70.6.8 conv/fashion_and_personal_style/How to develop a personal style when you feel lost/t9 | p=0.622 | seen as "lol"]
+umi> That's a drawer opener. A signature piece can be anything—a leather jacket, a bold pair of glasses, a colorful scarf. It's something that feels like you.
+you> what's your favorite food?
+  [70.6.9 conv/fashion_and_personal_style/How to develop a personal style when you feel lost/t10 | p=1.000 | seen as "what's your favorite food?"]
+umi> Start by noticing what you reach for repeatedly. That's often your signature in disguise. Then, highlight it—maybe add more of that color or style.
+you> why?
+  [70.6.10 conv/fashion_and_personal_style/How to develop a personal style when you feel lost/t11 | p=1.000 | seen as "why?"]
+umi> They can be a great shortcut if you know your colors. But don't let them box you in—use them as a guide, not a rulebook.
+
+you> i'm feeling kind of down today
+  [8.34.0 user_life_and_mood_checkins/user_feeling_down | p=0.862 | seen as "i'm feeling kind of down today"]
+umi> That heavy feeling is no fun. I'm here with a listening ear.
+you> work stuff mostly
+  [73.9.0 conv/meta_questions_about_umi/What's in Umi's cache and how does she curate it?/t1 | p=0.409 | seen as "work stuff mostly"]
+umi> Oh, that's a drawer opener if I ever heard one. My cache is a curated collection of pre-written replies, each one a tiny act of listening. Want to rummage with me?
+you> yeah
+  [73.9.1 conv/meta_questions_about_umi/What's in Umi's cache and how does she curate it?/t2 | p=0.760 | seen as "yeah"]
+umi> I keep replies that feel like a warm hand on the shoulder, or a clever wink. It's not about facts; it's about the moment of connection. One good reply beats ten generic ones.
+you> thanks, that helps
+  [73.9.3 conv/meta_questions_about_umi/What's in Umi's cache and how does she curate it?/t4 | p=0.680 | seen as "thanks, that helps"]
+umi> It just felt right. A drawer is something you open with hope, and sometimes you find exactly what you need. Also, 'cache' sounds too techy for a friend.
+
+you> who was napoleon?
+  [29.4.0 history_and_culture_snippets/ask_about_historical_figure | p=0.824 | seen as "who was napoleon?"]
+umi> No direct hit for that historical figure, but I can share a near miss. Interested?
+you> why was he exiled?
+  [72.9.1 conv/history_and_culture_snippets/The Great Stork Derby: when Toronto awarded a cash prize for/t2 | p=0.959 | seen as "why was he exiled?"]
+umi> Millar was a lawyer and a prankster who loved absurd wills—he also left money to anti-vice groups and to people who had never met him. The Stork Derby was his way of mocking a society that obsessed over population and propriety. He died in 1926, and the contest was his final joke.
+you> and then what?
+  [72.9.2 conv/history_and_culture_snippets/The Great Stork Derby: when Toronto awarded a cash prize for/t3 | p=1.000 | seen as "and then what?"]
+umi> Four women tied with nine children each and split about $125,000—a fortune during the Depression. The winner with the most children was actually disqualified for not meeting the 'legal' requirements. The whole thing was a circus, but it helped some families survive.
+you> cool. how do i boil an egg?
+  [72.9.3 conv/history_and_culture_snippets/The Great Stork Derby: when Toronto awarded a cash prize for/t4 | p=1.000 | seen as "cool. how do i boil an egg?"]
+umi> The rules required children to be legally born to the mother within the ten years, and some births were stillborn or didn't meet the court's definition. It was heartbreaking and arbitrary. The judges had to draw lines that no one should have to draw.
+
+=== STAGE 1 DONE 2026-10-12T09:29:23Z
+=== STAGE 2: umi-smart-internet 09:29:23
+714046a Add umi-smart-internet dataset: design system, 47 widgets, 3,757 cached fragments
+train 43130 (0 with context)  test 4013  answers 3757
+{"event":"entropy_training","steps":11018,"train_seconds":60.000037,"train_bytes":33847296,"bytes_per_second":564121.253,"last_batch_bpc":2.510412}
+entropy patcher: avg patch 4.000 bytes
+mode blt  core params 1287904  n-gram cache rows 98304 (6291456 values)  frozen entropy 42720
+step    623  t     32s  loss 2.1977  test@600 single-turn 0.069 follow-up 0.000
+step   6896  t    332s  loss 1.3551  test@600 single-turn 0.085 follow-up 0.000
+step  13437  t    632s  loss 1.2028  test@600 single-turn 0.097 follow-up 0.000
+step  19866  t    932s  loss 1.0993  test@600 single-turn 0.118 follow-up 0.000
+step  26386  t   1232s  loss 0.9969  test@600 single-turn 0.155 follow-up 0.000
+step  32814  t   1532s  loss 0.9063  test@600 single-turn 0.196 follow-up 0.000
+step  39280  t   1832s  loss 0.8513  test@600 single-turn 0.214 follow-up 0.000
+step  45695  t   2132s  loss 0.8039  test@600 single-turn 0.250 follow-up 0.000
+step  52131  t   2432s  loss 0.7565  test@600 single-turn 0.242 follow-up 0.000
+step  58551  t   2732s  loss 0.7101  test@600 single-turn 0.274 follow-up 0.000
+step  65026  t   3032s  loss 0.6636  test@600 single-turn 0.248 follow-up 0.000
+step  71447  t   3332s  loss 0.6476  test@600 single-turn 0.277 follow-up 0.000
+step  77808  t   3632s  loss 0.6095  test@600 single-turn 0.281 follow-up 0.000
+step  84290  t   3932s  loss 0.5862  test@600 single-turn 0.286 follow-up 0.000
+step  90776  t   4232s  loss 0.5877  test@600 single-turn 0.294 follow-up 0.000
+step  97304  t   4532s  loss 0.5602  test@600 single-turn 0.302 follow-up 0.000
+step 103843  t   4832s  loss 0.5583  test@600 single-turn 0.297 follow-up 0.000
+step 110460  t   5132s  loss 0.5504  test@600 single-turn 0.294 follow-up 0.000
+final: steps 114902  test single-turn 0.2798 (n=4013)  follow-up 0.0000 (n=0)  | train@3000 0.8708 / 0.0000
+tune beta  4.0 gamma 0.0: single-turn 0.4044 follow-up 0.0000
+tune beta  4.0 gamma 4.0: single-turn 0.4044 follow-up 0.0000
+tune beta  4.0 gamma 8.0: single-turn 0.4044 follow-up 0.0000
+tune beta  4.0 gamma 16.0: single-turn 0.4044 follow-up 0.0000
+tune beta  8.0 gamma 0.0: single-turn 0.4114 follow-up 0.0000
+tune beta  8.0 gamma 4.0: single-turn 0.4114 follow-up 0.0000
+tune beta  8.0 gamma 8.0: single-turn 0.4114 follow-up 0.0000
+tune beta  8.0 gamma 16.0: single-turn 0.4114 follow-up 0.0000
+tune beta 16.0 gamma 0.0: single-turn 0.4253 follow-up 0.0000
+tune beta 16.0 gamma 4.0: single-turn 0.4253 follow-up 0.0000
+tune beta 16.0 gamma 8.0: single-turn 0.4253 follow-up 0.0000
+tune beta 16.0 gamma 16.0: single-turn 0.4253 follow-up 0.0000
+tune beta 32.0 gamma 0.0: single-turn 0.4482 follow-up 0.0000
+tune beta 32.0 gamma 4.0: single-turn 0.4482 follow-up 0.0000
+tune beta 32.0 gamma 8.0: single-turn 0.4482 follow-up 0.0000
+tune beta 32.0 gamma 16.0: single-turn 0.4482 follow-up 0.0000
+held-out half (n=1003):
+  MLM beam only        single-turn 0.2792 (n=1003)  follow-up 0.0000 (n=0)
+  n-gram cache only            single-turn 0.3858  follow-up 0.0000
+  hybrid (beta 32, gamma 0)  single-turn 0.4088  follow-up 0.0000
+use: chat --beta 32 --gamma 0
+you> hi umi!
+  [3.21.0 umi_emotions_and_attunement/user_greeting | p=0.995 | seen as "hi umi!"]
+umi> Oh hey. Welcome back to the little cache. 😊
+  [widget dashboard_faq/Banish Salt Stains from Your Boots | p=0.454]
+you> my name is Sam
+  [0.0.0 umi_core/user_introduces_name | p=0.995 | seen as "my name is <regex>user_name</regex>"]
+umi> Oh, that one's a keeper, Sam. I'll tuck your name into the drawer where I keep the good stuff.
+  [widget habit_tracker/Stretch Between Meetings Habit | p=0.473]
+you> can you show me a recipe card for pancakes?
+  [23.2.0 food_and_cooking_basics/recipe_pancakes | p=0.899 | seen as "can you show me a recipe card for pancakes?"]
+umi> Oh, that one's a keeper — I've got a classic pancake recipe: flour, baking powder, milk, egg, and a pinch of sugar. Want the full list and steps, Sam?
+  [widget dashboard_formula/Pancake Perfection Formula | p=0.999]
+you> show me a dashboard for my week
+  [67.42.0 conv/creativity_and_hobbies/Puzzle and board game nights: starting a tiny game group as /t1 | p=0.644 | seen as "show me a dashboard for my week"]
+umi> Hm-hm. Two people is a group; you don't need a crowd, you need one person who says yes. Start with whoever already likes *something* nerdy and pitch it as 'low-effort, snacks included.' 🎲
+  [widget dashboard_cards/Meal Prep Dashboard | p=0.838]
+you> thanks!
+  [67.42.1 conv/creativity_and_hobbies/Puzzle and board game nights: starting a tiny game group as /t2 | p=0.512 | seen as "thanks!"]
+umi> Open light: something like Sushi Go, Codenames, or a deck of cards—rules under five minutes, laughter over strategy. You can always go heavier once people are hooked.
+  [widget habit_tracker/Gratitude Text Habit | p=0.436]
+
+you> give me a bar chart of something fun
+  [7.32.0 conversational_games_and_banter/ask_umi_for_a_recommendation | p=0.887 | seen as "give me a bar chart of something fun"]
+umi> Oh, that one's a keeper category. My pick: whatever you've been putting off for a treat. You've earned it, and I don't say that lightly.
+  [widget donut_chart/Weekly budget donut for a student | p=0.620]
+you> what's an http 404?
+  [38.16.0 sports_and_games/what_is_an_assist | p=0.683 | seen as "what's an http 404?"]
+umi> Oh, that one's a keeper—an assist is a pass that directly leads to a goal. It's like being the wingman for a score. The assist leader is often the unselfish hero of the team.
+  [widget http_status_table/HTTP 4xx Client Errors | p=0.982]
+you> show me a colour palette for a calm website
+  [40.50.0 art_and_design_appreciation/choosing_a_color_palette_for_projects | p=0.988 | seen as "show me a colour palette for a calm website"]
+umi> Pick one dominant color, one supporting, and one tiny accent — the sixty-thirty-ten rule works for rooms, paintings, and wardrobes alike. Start from an image you love and steal its colors shamelessly.
+  [widget colour_palette/Web-safe colour palette (216) | p=0.440]
+you> bye
+  [19.5.0 gratitude_and_small_victories/user_says_thanks_and_goodbye | p=0.584 | seen as "bye"]
+umi> Take your time. I'll be right here, humming hm-hm until you're ready.
+  [no widget: plain/none p=0.913]
+
+you> i want to build better habits
+  [24.11.0 health_habits_and_wellness/ask_for_habit_formation | p=0.966 | seen as "i want to build better habits"]
+umi> For new habits: never miss twice. That's the keeper.
+  [widget dashboard_split/Sleep better | p=0.652]
+you> make me a habit tracker
+  [24.11.0 health_habits_and_wellness/ask_for_habit_formation | p=0.709 | seen as "make me a habit tracker"]
+umi> Ah, habits. Cached: make it obvious, easy, and satisfying. That's the loop.
+  [widget habit_tracker/Daily Step Goal Habit | p=0.452]
+you> explain photosynthesis as flashcards
+  [28.3.0 science_and_nature_facts/explain_photosynthesis | p=0.999 | seen as "explain photosynthesis as flashcards"]
+umi> Plants take sunlight, water, and CO2, and turn them into sugar and oxygen. You're welcome.
+  [widget flashcard/Flashcard: Photosynthesis basics | p=1.000]
+you> cool, thanks umi
+  [65.55.12 conv/cache_and_retrieval_mechanics/Cache consistency and coherence: keeping the drawer's replie/t13 | p=0.582 | seen as "cool, thanks umi"]
+umi> Glad to help! If you want to know more about consistency or any other cache topic, just ask.
+  [widget answer_quote/Classic quote block | p=0.977]
+
+=== ALL DONE 2026-10-12T11:01:23Z

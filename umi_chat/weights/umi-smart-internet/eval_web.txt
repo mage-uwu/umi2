@@ -1,0 +1,21 @@
+tune beta  4.0 gamma 0.0: single-turn 0.4044 follow-up 0.0000
+tune beta  4.0 gamma 4.0: single-turn 0.4044 follow-up 0.0000
+tune beta  4.0 gamma 8.0: single-turn 0.4044 follow-up 0.0000
+tune beta  4.0 gamma 16.0: single-turn 0.4044 follow-up 0.0000
+tune beta  8.0 gamma 0.0: single-turn 0.4114 follow-up 0.0000
+tune beta  8.0 gamma 4.0: single-turn 0.4114 follow-up 0.0000
+tune beta  8.0 gamma 8.0: single-turn 0.4114 follow-up 0.0000
+tune beta  8.0 gamma 16.0: single-turn 0.4114 follow-up 0.0000
+tune beta 16.0 gamma 0.0: single-turn 0.4253 follow-up 0.0000
+tune beta 16.0 gamma 4.0: single-turn 0.4253 follow-up 0.0000
+tune beta 16.0 gamma 8.0: single-turn 0.4253 follow-up 0.0000
+tune beta 16.0 gamma 16.0: single-turn 0.4253 follow-up 0.0000
+tune beta 32.0 gamma 0.0: single-turn 0.4482 follow-up 0.0000
+tune beta 32.0 gamma 4.0: single-turn 0.4482 follow-up 0.0000
+tune beta 32.0 gamma 8.0: single-turn 0.4482 follow-up 0.0000
+tune beta 32.0 gamma 16.0: single-turn 0.4482 follow-up 0.0000
+held-out half (n=1003):
+  MLM beam only        single-turn 0.2792 (n=1003)  follow-up 0.0000 (n=0)
+  n-gram cache only            single-turn 0.3858  follow-up 0.0000
+  hybrid (beta 32, gamma 0)  single-turn 0.4088  follow-up 0.0000
+use: chat --beta 32 --gamma 0
