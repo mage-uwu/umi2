@@ -1,0 +1,680 @@
+--- orig.c	2026-10-11 23:04:58.250128918 -0400
++++ nanotss_blt_mlm.c	2026-10-11 23:16:05.207030789 -0400
+@@ -10,14 +10,28 @@
+  *   ./nanotss_blt --check
+  * Train on TinyShakespeare (save the corpus as input.txt; BLT is default):
+  *   ./nanotss_blt --data input.txt --seconds 300 --save model.bin
+- * Sample:
++ * Sample (MLM: iterative mask-predict; AR: left-to-right):
+  *   ./nanotss_blt --load model.bin --sample 600 --prompt "ROMEO:"
+  * Stream a context file without resetting recurrent memory:
+  *   ./nanotss_blt --load model.bin --context-file context.txt --sample 200
++ * Autoregressive (causal next-byte) instead of MLM: add --objective ar
+  * Direct byte core, bypassing BLT and its optional mixer:
+  *   ./nanotss_blt --mode byte --conv-mix 0 --data input.txt --save core.bin
+  * Define NANOTSS_NO_MAIN to include this file in your own C translation unit.
+  *
++ * OBJECTIVE (default --objective mlm): bidirectional BERT-style masked-byte LM.
++ *   Training windows are corrupted (--mask-rate 0.15; 80% [MASK]=id 256, 10% random byte, 10% kept)
++ *   and only the selected positions are scored (cross-entropy on the original byte). Every
++ *   sequence-mixing layer runs a forward scan and a time-reversed scan with TIED weights and averages
++ *   the two residual streams (Vim/Caduceus-style BiMamba). In BLT the local encoder/decoder and the
++ *   global patch stack are all bidirectional, every byte cross-attends to ALL patches, the ternary
++ *   mixer taps (t, t-1, t+1), and the tail patch is closed so no byte is left unpooled. The frozen
++ *   entropy patcher stays a causal AR model and sees [MASK] as a space. Reported bpc is masked-byte
++ *   cross-entropy (not comparable to next-byte bpc). --sample uses mask-predict decoding;
++ *   --context-file (recurrent streaming) needs --objective ar. --objective ar keeps the original
++ *   causal next-byte path and checkpoint formats; MLM checkpoints use TFM1 (core) / TPM1 (BLT).
++ *   Self-test: ./nanotss_blt --check-mlm
++ *
+  * GLOBAL STACK (default fw_mask=1):
+  *   protected plastic tree -> stateless gated FFF -> original SSM tree -> FFF
+  * Each block retains its local causal convolution/residual machinery.
+@@ -78,6 +92,7 @@
+ #endif
+ #include <math.h>
+ #include <stdint.h>
++#include <stddef.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <stdio.h>
+@@ -93,9 +108,16 @@
+     int vocab,d,n_layer,T,D,n,p,K,group,walks;
+     real temp;
+     int fw_mask,fff_gate; /* bit l selects fast-weight tree at even layer l */
++    int bidir;            /* 1: bidirectional scan (fwd + reversed, tied weights) for masked-LM objective.
++                           * Model vocab is then 257 with id vocab-1 = [MASK]; the tied head scores 256 bytes only.
++                           * MUST stay the last field: AR checkpoints store the prefix before it. */
+ } Cfg;
++#define CFG_PREFIX ((int)offsetof(Cfg,bidir)) /* size of the pre-MLM on-disk Cfg */
++#define MASK_ID(c) ((c)->vocab-1)
++static inline int head_vocab(const Cfg*c){return c->bidir?c->vocab-1:c->vocab;}
+ typedef struct {int vocab,d,n_layer,T,D,n,p,K,group,walks;real temp;} LegacyCfg;
+-static int read_cfg(FILE*fp,Cfg*c,int legacy){memset(c,0,sizeof(*c));if(!legacy)return fread(c,sizeof(*c),1,fp)==1;LegacyCfg old;if(fread(&old,sizeof(old),1,fp)!=1)return 0;memcpy(c,&old,sizeof(old));return 1;}
++/* kind 0: pre-MLM prefix layout, 1: legacy (no fw_mask/fff_gate), 2: full Cfg (MLM checkpoints) */
++static int read_cfg(FILE*fp,Cfg*c,int kind){memset(c,0,sizeof(*c));if(kind==2)return fread(c,sizeof(*c),1,fp)==1;if(kind==0)return fread(c,CFG_PREFIX,1,fp)==1;LegacyCfg old;if(fread(&old,sizeof(old),1,fp)!=1)return 0;memcpy(c,&old,sizeof(old));return 1;}
+ typedef struct {
+     real *embed,*norm_f,*norm,*conv,*w_in,*bias,*w_out,*A_log,*proj,*dt_bias,*U;
+ } Params;
+@@ -473,8 +495,9 @@
+     ibuf+=V;
+     tp->anode=ibuf;
+ }
+-typedef struct {
++typedef struct Work {
+     int Lmax;
++    struct Work *rev; /* reverse-scan companion (own tapes/state/scratch) when Cfg.bidir */
+     real *tapes,*x,*h,*g,*xn,*dxn,*lg,*lam;
+     real *ds,*dR,*dp,*dx,*du,*gUr,*on,*Racc,*mx,*y;
+     int *itapes;
+@@ -1462,6 +1485,7 @@
+     }return w;
+ }
+ void tss_work_free(Work *w) {
++    if(w->rev)tss_work_free(w->rev);
+     free(w->tapes);
+     free(w->itapes);
+     free(w->tp);
+@@ -1494,10 +1518,52 @@
+ void tss_work_bf16(Work *w,int on) {
+     w->tape_bf16=on;
+ }
++/* ---- Bidirectional scan (masked-LM mode) -------------------------------------
++ * Every sequence-mixing (even) layer is run twice with the SAME weights: once
++ * left-to-right on the sequence, once left-to-right on the time-reversed
++ * sequence (i.e. a right-to-left scan of the original), and the two residual
++ * streams are averaged:   x' = 1/2 ( F(x) + flip(F(flip(x))) )   with F(x)=x+f(x).
++ * This is the Vim / Caduceus-style BiMamba block with tied weights. The local
++ * causal convolution becomes an anti-causal one in the reversed pass and the
++ * plastic/SSM tree state is read from both sides. Odd (FFF) layers are
++ * per-token, so they are run once. Because both directions use the averaged
++ * residual, the adjoint is exact:  g_x = G_f + flip(G_r)  where each direction is
++ * back-propagated with upstream gradient g/2 (the identity path is counted once).
++ * With bidir=0 these helpers reduce to the original per-layer loops. */
++static void stack_fwd(const Cfg*c,const Params*P,const Params*Q,int L,real*x,Work*w){
++    const int d=c->d;const size_t S=(size_t)c->T*NODES(c)*c->n*c->p;
++    Work*r=c->bidir?w->rev:NULL;
++    if(c->bidir&&!r){fprintf(stderr,"bidirectional model without reverse workspace\n");abort();}
++    for(int l=0;l<c->n_layer;l++){
++        if(!(l&1)){memset(w->h,0,S*sizeof(real));if(r)memset(r->h,0,S*sizeof(real));}
++        if(!r||(l&1)){layer_fwd(c,P,Q,l,L,x,w->h,w->tp+l,w);continue;}
++        r->k=w->k;r->no_alt=w->no_alt;r->rng=(w->rng^0x9E3779B97F4A7C15ULL)*0xD1B54A32D192ED03ULL|1;
++        for(int t=0;t<L;t++)memcpy(r->x+(size_t)t*d,x+(size_t)(L-1-t)*d,sizeof(real)*d);
++        layer_fwd(c,P,Q,l,L,x,w->h,w->tp+l,w);
++        layer_fwd(c,P,Q,l,L,r->x,r->h,r->tp+l,r);
++        for(int t=0;t<L;t++){real*xt=x+(size_t)t*d;const real*rt=r->x+(size_t)(L-1-t)*d;for(int i=0;i<d;i++)xt[i]=(real).5*(xt[i]+rt[i]);}
++    }
++}
++/* g: gradient w.r.t. the stack output on entry, w.r.t. its input on exit. hit0 = hit mask for node row 0. */
++static void stack_bwd(const Cfg*c,const Params*P,const Params*Q,Params*G,int L,real*g,unsigned char*hit0,Work*w){
++    const int d=c->d;const size_t S=(size_t)c->T*NODES(c)*c->n*c->p;
++    Work*r=c->bidir?w->rev:NULL;
++    for(int l=c->n_layer-1;l>=0;l--){
++        unsigned char*hit=hit0+node_off(c,l);
++        if(!(l&1)){memset(w->lam,0,S*sizeof(real));if(r)memset(r->lam,0,S*sizeof(real));}
++        if(!r||(l&1)){layer_bwd(c,P,Q,G,l,L,g,w->lam,hit,w->tp+l,w);continue;}
++        r->k=w->k;
++        for(int t=0;t<L;t++){real*rt=r->g+(size_t)t*d;const real*src=g+(size_t)(L-1-t)*d;for(int i=0;i<d;i++)rt[i]=(real).5*src[i];}
++        for(size_t i=0;i<(size_t)L*d;i++)g[i]*=(real).5;
++        layer_bwd(c,P,Q,G,l,L,g,w->lam,hit,w->tp+l,w);
++        layer_bwd(c,P,Q,G,l,L,r->g,r->lam,hit,r->tp+l,r);
++        for(int t=0;t<L;t++){real*gt=g+(size_t)t*d;const real*rt=r->g+(size_t)(L-1-t)*d;for(int i=0;i<d;i++)gt[i]+=rt[i];}
++    }
++}
+ // Tiled tied head, eight tokens at a time. No nested OpenMP and no BLAS dependency.
+ // dX = dlogits E; dE += dlogits^T X. Reuse each embedding row across the tile.
+ static real head_train(const Cfg *c,const Params *P,Params *G,const real *x, const int *labels,int L,real *g,int *ns,Work *w) {
+-    const int d=c->d,V=c->vocab,BT=8;
++    const int d=c->d,V=head_vocab(c),BT=8;
+     real *X=w->head,*dX=X+BT*d,*pr=dX+BT*d,*rn=pr+BT*V;
+     real loss=0;
+     for(int t0=0;t0<L;t0+=BT) {
+@@ -1578,25 +1644,17 @@
+     return loss;
+ }
+ real tss_train_seq(const Cfg *c,const Params *P,const Params *Q,Params *G,const int *tokens,const int *labels,int L,unsigned char *hit,int *n_scored,Work *w,const Codes *k) {
+-    const int d=c->d,N=NODES(c),T=c->T,nl=c->n_layer;
++    const int d=c->d;
+     if(L>w->Lmax)return NAN;
+     w->k=k;
+-    Tape *tp=w->tp;
+-    real *x=w->x,*h=w->h;
++    real *x=w->x;
+     for(int t=0;t<L;t++)memcpy(x+(size_t)t*d,P->embed+(size_t)tokens[t]*d,sizeof(real)*d);
+-    for(int l=0;l<nl;l++) {
+-        if(!(l&1))memset(h,0,sizeof(real)*(size_t)T*N*c->n*c->p);
+-        layer_fwd(c,P,Q,l,L,x,h,tp+l,w);
+-    }
++    stack_fwd(c,P,Q,L,x,w);
+     real *g=w->g;
+     int ns=0;
+     memset(g,0,sizeof(real)*(size_t)L*d);
+     real loss=head_train(c,P,G,x,labels,L,g,&ns,w);
+-    real *lam=w->lam;
+-    for(int l=nl-1;l>=0;l--) {
+-        if(!(l&1))memset(lam,0,sizeof(real)*(size_t)T*N*c->n*c->p);
+-        layer_bwd(c,P,Q,G,l,L,g,lam,hit+node_off(c,l),tp+l,w);
+-    }
++    stack_bwd(c,P,Q,G,L,g,hit,w);
+     for(int t=0;t<L;t++)for(int i=0;i<d;i++)G->embed[(size_t)tokens[t]*d+i]+=g[(size_t)t*d+i];
+     *n_scored=ns;
+     return loss;
+@@ -1835,6 +1893,7 @@
+     for(int t=0;t<threads;t++) {
+         m->ws[t]=tss_work_new(c,Lmax);
+         tss_work_bf16(m->ws[t],1);
++        if(c->bidir){m->ws[t]->rev=tss_work_new(c,Lmax);tss_work_bf16(m->ws[t]->rev,1);}
+     }m->k=tss_codes_new(c);
+     return m;
+ }
+@@ -1844,15 +1903,12 @@
+ }
+ static double eval_seq(Model *m,const int *tok,const int *lab,int L,Work *w,int *ns,real *logits) {
+     const Cfg *c=&m->c;
+-    const int d=c->d,N=NODES(c),T=c->T;
++    const int d=c->d,hv=head_vocab(c);
+     w->k=m->k;
+     w->no_alt=1;
+-    real *x=w->x,*h=w->h,*xn=w->xn,*lg=w->lg;
++    real *x=w->x,*xn=w->xn,*lg=w->lg;
+     for(int t=0;t<L;t++)memcpy(x+(size_t)t*d,m->P.embed+(size_t)tok[t]*d,sizeof(real)*d);
+-    for(int l=0;l<c->n_layer;l++) {
+-        if(!(l&1))memset(h,0,sizeof(real)*(size_t)T*N*c->n*c->p);
+-        layer_fwd(c,&m->P,&m->Q,l,L,x,h,w->tp+l,w);
+-    }
++    stack_fwd(c,&m->P,&m->Q,L,x,w);
+     double loss=0;
+     *ns=0;
+     for(int t=0;t<L;t++) {
+@@ -1860,10 +1916,11 @@
+         real r;
+         rmsnorm_fwd(x+(size_t)t*d,m->P.norm_f,xn,d,&r);
+         real mx=-INFINITY,z=0;
+-        for(int v=0;v<c->vocab;v++)lg[v]=dotr(m->P.embed+(size_t)v*d,xn,d),mx=lg[v]>mx?lg[v]:mx;
++        for(int v=0;v<hv;v++)lg[v]=dotr(m->P.embed+(size_t)v*d,xn,d),mx=lg[v]>mx?lg[v]:mx;
++        for(int v=hv;v<c->vocab;v++)lg[v]=-INFINITY; /* [MASK] is never a prediction target */
+         if(logits)memcpy(logits+(size_t)t*c->vocab,lg,sizeof(real)*c->vocab);
+         if(lab[t]<0)continue;
+-        for(int v=0;v<c->vocab;v++)z+=exp(lg[v]-mx);
++        for(int v=0;v<hv;v++)z+=exp(lg[v]-mx);
+         loss+=log(z)+mx-lg[lab[t]];
+         (*ns)++;
+     }w->no_alt=0;
+@@ -1914,9 +1971,9 @@
+     real *pf[N_FIELDS];
+     fields(&m->P,pf);
+     const int rs=sizeof(real);
+-    fwrite(PROTECTED_FW&&m->c.fw_mask?"TFP1":"TFW1",1,4,f);
++    fwrite(m->c.bidir?"TFM1":(PROTECTED_FW&&m->c.fw_mask?"TFP1":"TFW1"),1,4,f);
+     fwrite(&rs,sizeof(int),1,f);
+-    fwrite(&m->c,sizeof(Cfg),1,f);
++    fwrite(&m->c,m->c.bidir?sizeof(Cfg):(size_t)CFG_PREFIX,1,f);
+     for(int i=0;i<N_FIELDS;i++)fwrite(pf[i],sizeof(real),z[i],f);
+     return fclose(f);
+ }
+@@ -1926,10 +1983,11 @@
+     char magic[4];
+     int rs;
+     Cfg c;
+-    if(fread(magic,1,4,f)!=4||(memcmp(magic,"TSFM",4)&&memcmp(magic,"TSFK",4)&&memcmp(magic,"TFW1",4)&&memcmp(magic,"TFP1",4))||fread(&rs,sizeof(int),1,f)!=1||rs!=(int)sizeof(real)||!read_cfg(f,&c,!memcmp(magic,"TSFM",4))) {
++    if(fread(magic,1,4,f)!=4||(memcmp(magic,"TSFM",4)&&memcmp(magic,"TSFK",4)&&memcmp(magic,"TFW1",4)&&memcmp(magic,"TFP1",4)&&memcmp(magic,"TFM1",4))||fread(&rs,sizeof(int),1,f)!=1||rs!=(int)sizeof(real)||!read_cfg(f,&c,!memcmp(magic,"TSFM",4)?1:!memcmp(magic,"TFM1",4)?2:0)) {
+         fclose(f);
+         return NULL;
+-    } if((c.fw_mask && (PROTECTED_FW ? memcmp(magic,"TFP1",4) : !memcmp(magic,"TFP1",4))) || (memcmp(magic,"TFW1",4)&&memcmp(magic,"TFP1",4)&&c.fw_mask)||(c.fw_mask&~0x5555)||c.n_layer<1||c.n_layer>16||(c.fw_mask>>c.n_layer)||c.fff_gate<0||c.fff_gate>1){fclose(f);return NULL;}
++    } const int prot=!memcmp(magic,"TFP1",4)||!memcmp(magic,"TFM1",4);
++    if((c.fw_mask && (PROTECTED_FW ? !prot : prot)) || (memcmp(magic,"TFW1",4)&&!prot&&c.fw_mask)||(c.fw_mask&~0x5555)||c.n_layer<1||c.n_layer>16||(c.fw_mask>>c.n_layer)||c.fff_gate<0||c.fff_gate>1||c.bidir<0||c.bidir>1||(c.bidir&&c.vocab<2)||(c.bidir!=!memcmp(magic,"TFM1",4))){fclose(f);return NULL;}
+     Model *m=model_new(&c,threads,Lmax);
+     size_t z[N_FIELDS];
+     sizes(&c,z);
+@@ -1975,12 +2033,12 @@
+     double h=log(z)-weighted/z;return (real)(h>0?h:0);
+ }
+ static int write_aux_model(FILE*fp,Model*m){
+-    int ok=fwrite(&m->c,sizeof(Cfg),1,fp)==1;size_t z[N_FIELDS];real*p[N_FIELDS];sizes(&m->c,z);fields(&m->P,p);
++    int ok=fwrite(&m->c,(size_t)CFG_PREFIX,1,fp)==1;size_t z[N_FIELDS];real*p[N_FIELDS];sizes(&m->c,z);fields(&m->P,p);
+     for(int i=0;i<N_FIELDS;i++)ok&=fwrite(p[i],sizeof(real),z[i],fp)==z[i];return ok;
+ }
+ static Model*read_aux_model(FILE*fp,int threads,int L){
+-    Cfg c;if(fread(&c,sizeof(Cfg),1,fp)!=1)return NULL;
+-    if((c.fw_mask&~0x5555)||c.fff_gate<0||c.fff_gate>1||c.vocab!=256||c.d<1||c.d>512||c.n_layer<1||c.n_layer>16||c.D<1||c.D>10||c.T<1||c.T>16||c.n<1||c.n>64||c.p<1||c.p>64||c.K<1||c.K>16||c.group<1||c.d%c.group)return NULL;
++    Cfg c;if(!read_cfg(fp,&c,0))return NULL;
++    if(c.bidir||(c.fw_mask&~0x5555)||c.fff_gate<0||c.fff_gate>1||c.vocab!=256||c.d<1||c.d>512||c.n_layer<1||c.n_layer>16||c.D<1||c.D>10||c.T<1||c.T>16||c.n<1||c.n>64||c.p<1||c.p>64||c.K<1||c.K>16||c.group<1||c.d%c.group)return NULL;
+     Model*m=model_new(&c,threads,L);size_t z[N_FIELDS];real*p[N_FIELDS];sizes(&c,z);fields(&m->P,p);
+     for(int i=0;i<N_FIELDS;i++)if(fread(p[i],sizeof(real),z[i],fp)!=z[i])return NULL;
+     model_requantize(m);return m;
+@@ -2170,7 +2228,7 @@
+ typedef struct {
+     TCWork *mix; CA *enc,*dec;real *mean,*init,*kv,*dinit,*dmean,*dkv,*eg;
+     int *lo,*hi,*dlo,*dhi,*starts,*lens,*map,*hash;
+-    real *entropy_logits,*entropy;int *ignored;
++    real *entropy_logits,*entropy;int *ignored,*etok,*nb; /* etok: entropy-model input with [MASK] replaced; nb: bidirectional mixer taps */
+     int M;
+ } FWork;
+ typedef struct {
+@@ -2199,25 +2257,21 @@
+ static void core_fwd(Model*m,int th,int L,int training){
+     Work*w=m->ws[th];w->k=m->k;w->no_alt=!training;
+     if(!L)return;
+-    for(int l=0;l<m->c.n_layer;l++){
+-        if(!(l&1))memset(w->h,0,(size_t)m->c.T*NODES(&m->c)*m->c.n*m->c.p*sizeof(real));
+-        layer_fwd(&m->c,&m->P,&m->Q,l,L,w->x,w->h,w->tp+l,w);
+-    }
++    stack_fwd(&m->c,&m->P,&m->Q,L,w->x,w);
+ }
+ static void core_bwd(Model*m,int th,int L){
+     Work*w=m->ws[th];if(!L)return;
+-    for(int l=m->c.n_layer-1;l>=0;l--){
+-        if(!(l&1))memset(w->lam,0,(size_t)m->c.T*NODES(&m->c)*m->c.n*m->c.p*sizeof(real));
+-        layer_bwd(&m->c,&m->P,&m->Q,m->Gt+th,l,L,w->g,w->lam,m->hits+node_rows(&m->c)*th+node_off(&m->c,l),w->tp+l,w);
+-    }
++    stack_bwd(&m->c,&m->P,&m->Q,m->Gt+th,L,w->g,m->hits+node_rows(&m->c)*th,w);
+ }
+-static FWork*fw_new(int L,int d,int heads,int maxpatch){
+-    FWork*w=calloc(1,sizeof(*w));w->mix=tc_work_new(L,2*d);w->enc=ca_new(2*L,L,d,heads,maxpatch);w->dec=ca_new(L,2*L,d,heads,2);
++/* Bidirectional models let every byte attend to ALL patches (up to L of them), so the
++ * decoder cross-attention span is 2L instead of the 2 slots of the previous patch. */
++static FWork*fw_new(int L,int d,int heads,int maxpatch,int bidir){
++    FWork*w=calloc(1,sizeof(*w));w->mix=tc_work_new(L,2*d);w->enc=ca_new(2*L,L,d,heads,maxpatch);w->dec=ca_new(L,2*L,d,heads,bidir?2*L:2);
+ #define R(name,n) w->name=calloc((size_t)(n),sizeof(real))
+ #define I(name,n) w->name=calloc((size_t)(n),sizeof(int))
+     R(mean,L*d);R(init,2*L*d);R(kv,2*L*d);R(dinit,2*L*d);R(dmean,L*d);R(dkv,2*L*d);R(eg,L*d);
+     R(entropy_logits,L*256);R(entropy,L);I(ignored,L);for(int i=0;i<L;i++)w->ignored[i]=-1;
+-    I(lo,2*L);I(hi,2*L);I(dlo,L);I(dhi,L);I(starts,L);I(lens,L);I(map,L);I(hash,NG*L);
++    I(lo,2*L);I(hi,2*L);I(dlo,L);I(dhi,L);I(starts,L);I(lens,L);I(map,L);I(hash,NG*L);I(etok,L);I(nb,TC_TAPS*L);
+ #undef R
+ #undef I
+     return w;
+@@ -2231,7 +2285,7 @@
+     f->hashrows=(size_t)NG*cfg.bins;f->hashsize=f->hashrows*d;size_t n=f->dense+f->hashsize;
+     f->p=calloc(n,sizeof(real));f->g=calloc(n,sizeof(real));f->m=calloc(n,sizeof(real));f->v=calloc(n,sizeof(real));f->hit=calloc(f->hashrows,1);
+     f->tg=calloc(threads,sizeof(real*));f->thit=calloc(threads,sizeof(unsigned char*));f->ws=calloc(threads,sizeof(FWork*));
+-    for(int t=0;t<threads;t++){f->tg[t]=calloc(n,sizeof(real));f->thit[t]=calloc(f->hashrows,1);f->ws[t]=fw_new(L,d,cfg.heads,cfg.maxpatch);}
++    for(int t=0;t<threads;t++){f->tg[t]=calloc(n,sizeof(real));f->thit[t]=calloc(f->hashrows,1);f->ws[t]=fw_new(L,d,cfg.heads,cfg.maxpatch,global.bidir);}
+     if(initialize){
+         params_init(&global,&f->global->P);params_init(&f->encoder->c,&f->encoder->P);params_init(&f->decoder->c,&f->decoder->P);
+         for(size_t i=0;i<f->mixoff;i++)f->p[i]=(2*rand01()-1)/sqrt((real)d);
+@@ -2243,13 +2297,23 @@
+         if(cfg.mixer){tc_init(f->p+f->mixoff,g,TC_TAPS);tc_pack(f->p+f->mixoff,f->mixcode);}
+     }return f;
+ }
++/* Non-causal 3-tap window over patches: center, left, right (zero outside the sequence). */
++static void tc_bidir_neighbors(int*map,int M){
++    for(int t=0;t<M;t++){map[TC_TAPS*t]=t;map[TC_TAPS*t+1]=t-1;map[TC_TAPS*t+2]=t+1;}
++}
+ static void faithful_forward(Faithful*f,int th,const int*t,int L,int training){
+     int d=f->c.width,g=2*d;FWork*b=f->ws[th];Work*e=f->encoder->ws[th],*z=f->global->ws[th],*dec=f->decoder->ws[th];
+-    if(f->c.neural){int ns;eval_seq(f->entropy,t,b->ignored,L,f->entropy->ws[th],&ns,b->entropy_logits);for(int i=0;i<L;i++)b->entropy[i]=predictive_entropy(b->entropy_logits+(size_t)i*256);}
++    const int bi=f->global->c.bidir;
++    if(f->c.neural){
++        /* The frozen causal entropy model only knows real bytes: a [MASK] input is shown to it as a space,
++         * so patch boundaries are a function of the visible input only (never of a masked label). */
++        const int*et=t;if(bi){const int mk=MASK_ID(&f->global->c);for(int i=0;i<L;i++)b->etok[i]=t[i]==mk?' ':t[i];et=b->etok;}
++        int ns;eval_seq(f->entropy,et,b->ignored,L,f->entropy->ws[th],&ns,b->entropy_logits);for(int i=0;i<L;i++)b->entropy[i]=predictive_entropy(b->entropy_logits+(size_t)i*256);
++    }
+     hash_input(f,e,b,t,L);core_fwd(f->encoder,th,L,training);
+     int M=0,start=0,last=-1;
+     for(int i=0;i<L;i++){
+-        if(i-start+1>=f->c.maxpatch||b->entropy[i]>f->c.threshold){
++        if(i-start+1>=f->c.maxpatch||b->entropy[i]>f->c.threshold||(bi&&i==L-1)){ /* bidir: close the tail so no byte is left unpooled */
+             b->starts[M]=start;b->lens[M]=i-start+1;
+             real*mean=b->mean+(size_t)M*d;memset(mean,0,d*sizeof(real));
+             for(int j=start;j<=i;j++)axpy(mean,(real)1/b->lens[M],e->x+(size_t)j*d,d);
+@@ -2258,18 +2322,20 @@
+         }
+         b->map[i]=last;b->dlo[i]=last<0?0:2*last;b->dhi[i]=last<0?0:2*last+2;
+     }b->M=M;
++    if(bi){for(int i=0;i<L;i++){b->dlo[i]=0;b->dhi[i]=2*M;}tc_bidir_neighbors(b->nb,M);} /* decoder sees every patch; mixer sees both neighbours */
++    const int*nbr=bi?b->nb:NULL;
+     lin_fwd(f->p+f->er,b->mean,b->init,M,d,g);
+     ca_fwd(f->p+f->ce,b->init,2*M,e->x,L,b->lo,b->hi,b->enc);
+-    if(f->c.mixer==2)tc_forward(f->p+f->mixoff,f->mixcode,b->enc->out,M,NULL,b->mix);
++    if(f->c.mixer==2)tc_forward(f->p+f->mixoff,f->mixcode,b->enc->out,M,nbr,b->mix);
+     memcpy(z->x,f->c.mixer==2?b->mix->out:b->enc->out,(size_t)M*g*sizeof(real));core_fwd(f->global,th,M,training);
+-    if(f->c.mixer==1)tc_forward(f->p+f->mixoff,f->mixcode,z->x,M,NULL,b->mix);
++    if(f->c.mixer==1)tc_forward(f->p+f->mixoff,f->mixcode,z->x,M,nbr,b->mix);
+     lin_fwd(f->p+f->dp,f->c.mixer==1?b->mix->out:z->x,b->kv,M,g,g);
+     ca_fwd(f->p+f->cd,e->x,L,b->kv,2*M,b->dlo,b->dhi,b->dec);
+     memcpy(dec->x,b->dec->out,(size_t)L*d*sizeof(real));core_fwd(f->decoder,th,L,training);
+ }
+ static real faithful_train_seq(Faithful*f,int th,const int*t,const int*y,int L,int*ns){
+     int d=f->c.width,g=2*d;FWork*b=f->ws[th];Work*e=f->encoder->ws[th],*z=f->global->ws[th],*dec=f->decoder->ws[th];
+-    faithful_forward(f,th,t,L,1);int M=b->M;
++    faithful_forward(f,th,t,L,1);int M=b->M;const int*nbr=f->global->c.bidir?b->nb:NULL;
+     Params hp=f->decoder->P,hg=f->decoder->Gt[th];hp.embed=f->encoder->P.embed;hg.embed=f->encoder->Gt[th].embed;
+     memset(dec->g,0,(size_t)L*d*sizeof(real));*ns=0;real loss=head_train(&f->decoder->c,&hp,&hg,dec->x,y,L,dec->g,ns,dec);
+     core_bwd(f->decoder,th,L);
+@@ -2277,11 +2343,11 @@
+     ca_bwd(f->p+f->cd,f->tg[th]+f->cd,e->x,L,b->kv,2*M,b->dlo,b->dhi,dec->g,b->eg,b->dkv,b->dec);
+     memset(z->g,0,(size_t)M*g*sizeof(real));memset(b->mix->grad,0,(size_t)M*g*sizeof(real));
+     lin_bwd(f->p+f->dp,f->tg[th]+f->dp,f->c.mixer==1?b->mix->out:z->x,b->dkv,f->c.mixer==1?b->mix->grad:z->g,M,g,g);
+-    if(f->c.mixer==1)tc_backward(f->p+f->mixoff,f->tg[th]+f->mixoff,f->mixcode,z->x,b->mix->grad,z->g,M,NULL,b->mix);
++    if(f->c.mixer==1)tc_backward(f->p+f->mixoff,f->tg[th]+f->mixoff,f->mixcode,z->x,b->mix->grad,z->g,M,nbr,b->mix);
+     core_bwd(f->global,th,M);
+     if(f->c.mixer==2){
+         memcpy(b->mix->grad,z->g,(size_t)M*g*sizeof(real));
+-        tc_backward(f->p+f->mixoff,f->tg[th]+f->mixoff,f->mixcode,b->enc->out,b->mix->grad,z->g,M,NULL,b->mix);
++        tc_backward(f->p+f->mixoff,f->tg[th]+f->mixoff,f->mixcode,b->enc->out,b->mix->grad,z->g,M,nbr,b->mix);
+     }
+     memset(b->dinit,0,(size_t)M*g*sizeof(real));
+     ca_bwd(f->p+f->ce,f->tg[th]+f->ce,b->init,2*M,e->x,L,b->lo,b->hi,z->g,b->dinit,b->eg,b->enc);
+@@ -2509,7 +2575,8 @@
+     FILE*fp=fopen(path,"rb");if(!fp){perror(path);return 1;}
+     Faithful*f=faithful_load(checkpoint,1,8);
+     Model*m=f?NULL:load(checkpoint,1,8);
+-    if(!f&&(!m||m->c.vocab!=256)){fprintf(stderr,"context-file requires a byte-vocabulary checkpoint\n");fclose(fp);return 2;}
++    if(!f&&(!m||m->c.vocab!=256)&&!(m&&m->c.bidir)){fprintf(stderr,"context-file requires a byte-vocabulary checkpoint\n");fclose(fp);return 2;}
++    if((f&&f->global->c.bidir)||(m&&m->c.bidir)){fprintf(stderr,"--context-file streams causal recurrent state and needs an autoregressive checkpoint; this one is a bidirectional MLM (use --sample with --prompt)\n");fclose(fp);return 2;}
+     FStream*fs=f?fstream_new(f):NULL;Gen*gs=m?gen_new(&m->c):NULL;
+     unsigned char buf[4096];real logits[256];uint64_t bytes=0;size_t n;double start=wall();
+     while((n=fread(buf,1,sizeof(buf),fp))){for(size_t i=0;i<n;i++){
+@@ -2529,7 +2596,8 @@
+     putchar('\n');return 0;
+ }
+ static int faithful_save(Faithful*f,const char*path){
+-    FILE*fp=fopen(path,"wb");if(!fp)return -1;int rs=sizeof(real);int ok=fwrite(PROTECTED_FW&&f->global->c.fw_mask?"TPC1":"TCM1",1,4,fp)==4&&fwrite(&rs,sizeof(int),1,fp)==1&&fwrite(&f->global->c,sizeof(Cfg),1,fp)==1&&fwrite(&f->c,sizeof(FConfig),1,fp)==1;
++    FILE*fp=fopen(path,"wb");if(!fp)return -1;int rs=sizeof(real);const int bi=f->global->c.bidir;
++    int ok=fwrite(bi?"TPM1":(PROTECTED_FW&&f->global->c.fw_mask?"TPC1":"TCM1"),1,4,fp)==4&&fwrite(&rs,sizeof(int),1,fp)==1&&fwrite(&f->global->c,bi?sizeof(Cfg):(size_t)CFG_PREFIX,1,fp)==1&&fwrite(&f->c,sizeof(FConfig),1,fp)==1;
+     Model*mods[3]={f->global,f->encoder,f->decoder};
+     for(int j=0;j<3;j++){size_t z[N_FIELDS];real*p[N_FIELDS];sizes(&mods[j]->c,z);fields(&mods[j]->P,p);for(int k=0;k<N_FIELDS;k++)ok&=fwrite(p[k],sizeof(real),z[k],fp)==z[k];}
+     size_t total=f->dense+f->hashsize;ok&=fwrite(f->p,sizeof(real),total,fp)==total;if(f->c.neural)ok&=write_aux_model(fp,f->entropy);
+@@ -2537,8 +2605,9 @@
+ }
+ static Faithful*faithful_load(const char*path,int threads,int L){
+     FILE*fp=fopen(path,"rb");if(!fp)return NULL;char magic[4];int rs;Cfg gc;FConfig c;
+-    if(fread(magic,1,4,fp)!=4||(memcmp(magic,"TFB1",4)&&memcmp(magic,"TCM1",4)&&memcmp(magic,"TPC1",4))||fread(&rs,sizeof(int),1,fp)!=1||rs!=sizeof(real)||fread(&gc,sizeof(Cfg),1,fp)!=1){fclose(fp);return NULL;}
+-    if(gc.fw_mask && (PROTECTED_FW ? memcmp(magic,"TPC1",4) : !memcmp(magic,"TPC1",4))){fclose(fp);return NULL;}
++    if(fread(magic,1,4,fp)!=4||(memcmp(magic,"TFB1",4)&&memcmp(magic,"TCM1",4)&&memcmp(magic,"TPC1",4)&&memcmp(magic,"TPM1",4))||fread(&rs,sizeof(int),1,fp)!=1||rs!=sizeof(real)||!read_cfg(fp,&gc,!memcmp(magic,"TPM1",4)?2:0)){fclose(fp);return NULL;}
++    const int prot=!memcmp(magic,"TPC1",4)||!memcmp(magic,"TPM1",4);
++    if((gc.fw_mask && (PROTECTED_FW ? !prot : prot))||gc.bidir<0||gc.bidir>1||(gc.bidir!=!memcmp(magic,"TPM1",4))){fclose(fp);return NULL;}
+     memset(&c,0,sizeof(c));
+     if(!memcmp(magic,"TFB1",4)){OldFConfig old;if(fread(&old,sizeof(old),1,fp)!=1){fclose(fp);return NULL;}memcpy(&c,&old,sizeof(old));}
+     else if(fread(&c,sizeof(c),1,fp)!=1){fclose(fp);return NULL;}
+@@ -2549,9 +2618,76 @@
+     size_t total=f->dense+f->hashsize;ok&=fread(f->p,sizeof(real),total,fp)==total;if(c.neural){f->entropy=read_aux_model(fp,threads,L);ok&=f->entropy!=NULL;}fclose(fp);if(ok&&c.mixer)tc_pack(f->p+f->mixoff,f->mixcode);return ok?f:NULL;
+ }
+ static size_t core_parameters(const Cfg*c){size_t z[N_FIELDS],n=0;sizes(c,z);for(int i=0;i<N_FIELDS;i++)n+=z[i];n-=(size_t)(c->n_layer/2)*(c->K*c->d+c->T*fff_nodes(c)+PDIM(c)*c->d+c->T+c->T*c->p*c->d);if(c->fff_gate)n+=(size_t)(c->n_layer/2)*2*c->n*c->d;return n-(size_t)c->vocab*c->d-c->d;}
++static size_t embed_rows(const Cfg*c){return (size_t)c->vocab;}
++
++/* ---- Masked-LM objective (BERT style) ------------------------------------------
++ * A window of L consecutive bytes is corrupted: each position is selected with
++ * probability `mask_rate`; a selected position becomes [MASK] (80%), a random
++ * byte (10%) or stays unchanged (10%), and the ORIGINAL byte is its label. All
++ * other labels are -1 (unscored). Because the tied head already ignores label<0,
++ * this is the whole objective: cross-entropy over the selected positions only,
++ * normalised per selected position by the existing `scored` count. */
++static double mlm_mask_rate=.15;
++static void mlm_corrupt(const unsigned char*src,int*tok,int*lab,int L,int mask_id,uint64_t*rng,double rate){
++    int sel=0;
++    for(int i=0;i<L;i++){
++        tok[i]=src[i];lab[i]=-1;
++        if(urand(rng)<rate){
++            lab[i]=src[i];sel++;const real u=urand(rng);
++            if(u<(real).8)tok[i]=mask_id;else if(u<(real).9)tok[i]=(int)(urand(rng)*256)&255;
++        }
++    }
++    if(!sel){int j=(int)(urand(rng)*L)%L;lab[j]=src[j];tok[j]=mask_id;} /* never an empty batch row */
++}
++/* Per-position byte logits (stride 256) of a bidirectional model on a fully specified input. */
++static void mlm_logits(Faithful*f,Model*m,const int*tok,int Lw,real*lg256){
++    int ns,*y=malloc((size_t)Lw*sizeof(int));for(int i=0;i<Lw;i++)y[i]=-1;
++    if(f)faithful_eval(f,0,tok,y,Lw,&ns,lg256);
++    else{
++        const int V=m->c.vocab;real*tmp=malloc((size_t)Lw*V*sizeof(real));eval_seq(m,tok,y,Lw,m->ws[0],&ns,tmp);
++        for(int i=0;i<Lw;i++)memcpy(lg256+(size_t)i*256,tmp+(size_t)i*V,256*sizeof(real));free(tmp);
++    }
++    free(y);
++}
++/* Mask-predict style sampling: append `n` [MASK]s after the prompt, then repeatedly predict
++ * every masked slot, commit the most confident ones, and re-run with them visible. */
++static void mlm_generate(Faithful*f,Model*m,const char*prompt,int n,double temp,int W,int steps){
++    const int mask=(f?f->global->c.vocab:m->c.vocab)-1;
++    const char*pr=prompt&&*prompt?prompt:"\n";size_t len=strlen(pr);
++    unsigned char*out=malloc(len+(size_t)n+1);memcpy(out,pr,len);fwrite(pr,1,len,stdout);
++    int*tok=malloc((size_t)W*sizeof(int));real*lg=malloc((size_t)W*256*sizeof(real));
++    int*cand=malloc((size_t)W*sizeof(int));double*conf=malloc((size_t)W*sizeof(double));
++    int remaining=n;if(steps<1)steps=1;
++    while(remaining>0){
++        int ctx=(int)(len<(size_t)W/2?len:(size_t)W/2);if(ctx>W-1)ctx=W-1;
++        int chunk=remaining<W-ctx?remaining:W-ctx,Lw=ctx+chunk,left=chunk;
++        for(int i=0;i<ctx;i++)tok[i]=out[len-ctx+i];
++        for(int i=ctx;i<Lw;i++)tok[i]=mask;
++        for(int it=0;left>0;it++){
++            const int sl=steps-it>1?steps-it:1,k=(left+sl-1)/sl;
++            mlm_logits(f,m,tok,Lw,lg);
++            for(int i=ctx;i<Lw;i++){
++                cand[i]=-1;if(tok[i]!=mask)continue;
++                const real*l=lg+(size_t)i*256;double mx=-1e300,z=0;
++                for(int v=0;v<256;v++)mx=l[v]>mx?l[v]:mx;
++                for(int v=0;v<256;v++)z+=exp((l[v]-mx)/temp);
++                double r=rand01()*z;int pick=255;for(int v=0;v<256;v++)if((r-=exp((l[v]-mx)/temp))<=0){pick=v;break;}
++                cand[i]=pick;conf[i]=exp((l[pick]-mx)/temp)/z;
++            }
++            for(int c=0;c<k;c++){
++                int best=-1;for(int i=ctx;i<Lw;i++)if(cand[i]>=0&&(best<0||conf[i]>conf[best]))best=i;
++                if(best<0)break;tok[best]=cand[best];cand[best]=-1;left--;
++            }
++        }
++        for(int i=ctx;i<Lw;i++)out[len++]=(unsigned char)tok[i];
++        fwrite(out+len-chunk,1,chunk,stdout);remaining-=chunk;
++    }
++    fputc('\n',stdout);free(out);free(tok);free(lg);free(cand);free(conf);
++}
+ 
+ static double score_data(Faithful*f,Model*m,const unsigned char*raw,long start,long end,int L,int burn,long*count){
+     int threads=f?f->threads:m->threads;long nw=(end-start-1)/L,total=0;double loss=0;
++    const Cfg*cf=f?&f->global->c:&m->c;const int bidir=cf->bidir,mask_id=MASK_ID(cf); /* bidir: masked-byte cross-entropy, `burn` unused */
+ #pragma omp parallel for num_threads(threads) reduction(+:loss,total) schedule(static)
+     for(long w=0;w<nw;w++){
+ #ifdef _OPENMP
+@@ -2559,7 +2695,9 @@
+ #else
+         int th=0;
+ #endif
+-        int*t=malloc(L*sizeof(int)),*y=malloc(L*sizeof(int));for(int i=0;i<L;i++){t[i]=raw[start+w*L+i];y[i]=i<burn?-1:raw[start+w*L+i+1];}
++        int*t=malloc(L*sizeof(int)),*y=malloc(L*sizeof(int));
++        if(bidir){uint64_t r=((uint64_t)w+1)*0x9E3779B97F4A7C15ULL|1;mlm_corrupt(raw+start+w*L,t,y,L,mask_id,&r,mlm_mask_rate);} /* fixed masks per window: comparable across runs */
++        else for(int i=0;i<L;i++){t[i]=raw[start+w*L+i];y[i]=i<burn?-1:raw[start+w*L+i+1];}
+         int ns;loss+=f?faithful_eval(f,th,t,y,L,&ns,NULL):eval_seq(m,t,y,L,m->ws[th],&ns,NULL);total+=ns;free(t);free(y);
+     }*count=total;return loss/total/log(2.);
+ }
+@@ -2730,6 +2868,113 @@
+     bad+=!(last<first*.6&&e<1e-4&&future==0&&saved&&rt==0&&frozen_ok);puts(bad?"TREE FW CHECK FAILED":"TREE FW CHECK PASSED");return !!bad;
+ }
+ 
++
++/* ---- Masked-LM / bidirectional-scan self-checks (--check-mlm) -------------------- */
++static double stack_objective(const Cfg*c,Params*P,const real*x,const real*gy,int L,Work*w){
++    real*xb=w->x;memcpy(xb,x,sizeof(real)*(size_t)L*c->d);w->k=NULL;w->no_alt=0;tss_work_seed(w,7);
++    stack_fwd(c,P,P,L,xb,w);double s=0;for(int i=0;i<L*c->d;i++)s+=(double)gy[i]*xb[i];return s;
++}
++/* Finite differences through the whole fwd+reverse averaged stack (tied weights, several layers). */
++static int check_bidir_stack(int fwm){
++    Cfg c={.vocab=16,.d=8,.n_layer=4,.T=2,.D=2,.n=3,.p=4,.K=3,.group=4,.walks=0,.temp=1,.fw_mask=fwm,.fff_gate=1,.bidir=1};
++    int L=5;size_t z[N_FIELDS];sizes(&c,z);Params P,G;params_alloc(&c,&P);params_alloc(&c,&G);params_init(&c,&P);
++    real *pf[N_FIELDS],*gf[N_FIELDS];fields(&P,pf);fields(&G,gf);
++    for(size_t i=0;i<z[8];i++)P.proj[i]=.09*sin((double)i+.3);
++    for(size_t i=0;i<z[10];i++)P.U[i]=.07*cos((double)i+.4);
++    for(size_t i=0;i<z[5];i++)P.bias[i]=.6+.1*sin((double)i);
++    for(size_t i=0;i<z[9];i++)P.dt_bias[i]=-.7;
++    real x[L*c.d],gy[L*c.d];for(int i=0;i<L*c.d;i++){x[i]=.3+.2*sin(i*.41);gy[i]=.1*cos(i*.7);}
++    Work*w=tss_work_new(&c,L);w->rev=tss_work_new(&c,L);continuous_check=1;
++    stack_objective(&c,&P,x,gy,L,w);
++    size_t V=(size_t)L*c.T*(c.D+2);for(int l=0;l<c.n_layer;l++){memset(w->tp[l].bw,0,V*sizeof(real));memset(w->rev->tp[l].bw,0,V*sizeof(real));}
++    memcpy(w->g,gy,sizeof(gy));unsigned char*hit=calloc(node_rows(&c),1);stack_bwd(&c,&P,&P,&G,L,w->g,hit,w);
++    real ax[L*c.d];memcpy(ax,w->g,sizeof(ax));
++    double worst=0;int tested=0,bad=0;real eps=sizeof(real)==8?1e-5:1e-3;const double tol=sizeof(real)==8?1e-6:2e-3;
++    for(int f=2;f<N_FIELDS;f++)for(size_t i=0;i<z[f];i++){
++        if(gf[f][i]==0)continue;real old=pf[f][i];pf[f][i]=old+eps;double a=stack_objective(&c,&P,x,gy,L,w);pf[f][i]=old-eps;double b=stack_objective(&c,&P,x,gy,L,w);pf[f][i]=old;
++        double num=(a-b)/(2*eps),err=fabs(num-gf[f][i])/(1+fabs(num)+fabs(gf[f][i]));worst=fmax(worst,err);tested++;bad+=err>tol;
++    }
++    for(int i=0;i<L*c.d;i++){
++        real old=x[i];x[i]=old+eps;double a=stack_objective(&c,&P,x,gy,L,w);x[i]=old-eps;double b=stack_objective(&c,&P,x,gy,L,w);x[i]=old;
++        double num=(a-b)/(2*eps),err=fabs(num-ax[i])/(1+fabs(num)+fabs(ax[i]));worst=fmax(worst,err);tested++;bad+=err>tol;
++    }
++    continuous_check=0;printf("bidirectional stack (fw_mask %d) fixed-path gradient: %d coordinates; worst scaled %.9g; bad %d\n",fwm,tested,worst,bad);return bad!=0;
++}
++/* The non-causal 3-tap patch mixer used by bidirectional BLT. */
++static int check_tc_bidir(void){
++    const int d=8,K=TC_TAPS,M=5;TCCode*c=tc_code_new(d,K);size_t n=tc_size(d,K);real P[n],G[n],x[M*d],gy[M*d],dx[M*d];int nb[TC_TAPS*M];
++    tc_init(P,d,K);for(int i=0;i<d;i++)P[(K+TC_GROUP)*d+i]=.4+.1*i;for(int i=0;i<M*d;i++){x[i]=.5*sin(i*.37);gy[i]=.3*cos(i*.53);}
++    tc_bidir_neighbors(nb,M);TCWork*w=tc_work_new(M,d);tc_continuous=1;memset(G,0,sizeof(G));
++    tc_forward(P,c,x,M,nb,w);tc_backward(P,G,c,x,gy,dx,M,nb,w);
++    double worst=0;int tested=0,bad=0;real eps=sizeof(real)==8?1e-5:1e-3;const double tol=sizeof(real)==8?1e-6:2e-3;
++#define TCOBJ(out) ({tc_forward(P,c,x,M,nb,w);double _s=0;for(int _i=0;_i<M*d;_i++)_s+=(double)gy[_i]*w->out[_i];_s;})
++    for(size_t i=0;i<n;i++){real old=P[i];P[i]=old+eps;double a=TCOBJ(out);P[i]=old-eps;double b=TCOBJ(out);P[i]=old;double num=(a-b)/(2*eps),err=fabs(num-G[i])/(1+fabs(num)+fabs(G[i]));worst=fmax(worst,err);tested++;bad+=err>tol;}
++    for(int i=0;i<M*d;i++){real old=x[i];x[i]=old+eps;double a=TCOBJ(out);x[i]=old-eps;double b=TCOBJ(out);x[i]=old;double num=(a-b)/(2*eps),err=fabs(num-dx[i])/(1+fabs(num)+fabs(dx[i]));worst=fmax(worst,err);tested++;bad+=err>tol;}
++#undef TCOBJ
++    tc_continuous=0;printf("bidirectional patch mixer gradient: %d coordinates; worst scaled %.9g; bad %d\n",tested,worst,bad);return bad!=0;
++}
++static int check_mlm(void){
++    int bad=check_bidir_stack(0)|check_bidir_stack(1)|check_bidir_stack(5)|check_tc_bidir();
++    const char*phrase="the tree state space learns. ";const int PL=29,L=48,MASK=256;int tok[48],lab[48],rtok[48],ns;unsigned char win[64];
++    Hyper hp={.lr=.003,.beta1=.9,.beta2=.98,.eps=1e-8,.weight_decay=.01,.clip=1};uint64_t rng=88172645463325252ULL;
++    /* --- byte-mode bidirectional core --- */
++    Cfg gc={.vocab=257,.d=128,.n_layer=4,.T=2,.D=3,.n=4,.p=16,.K=3,.group=128,.walks=2,.temp=1,.fw_mask=1,.fff_gate=1,.bidir=1};
++    Model*m=model_new(&gc,1,L);params_init(&gc,&m->P);model_requantize(m);
++    int B=4;int*bt=malloc(B*L*sizeof(int)),*by=malloc(B*L*sizeof(int));double first=0,last=0,tail=0;
++    for(int j=1;j<=120;j++){
++        for(int b=0;b<B;b++){int at=(int)(urand(&rng)*PL);for(int i=0;i<L;i++)win[i]=(unsigned char)phrase[(at+i)%PL];mlm_corrupt(win,bt+b*L,by+b*L,L,MASK,&rng,.15);}
++        hp.step=j;last=tss_train_step(&m->c,&m->P,&m->Q,&m->G,m->hit,&m->M,&m->V,m->Gt,m->hits,m->ws,1,bt,by,B,L,&hp,m->k);if(j==1)first=last;if(j>110)tail+=last/10;
++    }
++    for(int i=0;i<L;i++){win[i]=(unsigned char)phrase[i%PL];tok[i]=win[i];lab[i]=-1;}tok[7]=MASK;tok[20]=MASK;lab[7]=win[7];lab[20]=win[20];
++    for(int i=0;i<L;i++)rtok[i]=tok[L-1-i];
++    real*a=calloc(L*257,sizeof(real)),*b2=calloc(L*257,sizeof(real)),*c2=calloc(L*257,sizeof(real));
++    eval_seq(m,tok,lab,L,m->ws[0],&ns,a);int ly[48];for(int i=0;i<L;i++)ly[i]=-1;eval_seq(m,rtok,ly,L,m->ws[0],&ns,b2);
++    double flip=0;for(int t=0;t<L;t++)for(int v=0;v<256;v++)flip=fmax(flip,fabs(a[(size_t)t*257+v]-b2[(size_t)(L-1-t)*257+v]));
++    int t2[48];memcpy(t2,tok,sizeof(t2));t2[L-1]^=63;t2[L-2]^=21;eval_seq(m,t2,ly,L,m->ws[0],&ns,c2);
++    double right=0;for(int v=0;v<256;v++)right=fmax(right,fabs(a[v]-c2[v])); /* logits at position 0 vs a change at the far right end */
++    int sv=save(m,"/tmp/nanotss_mlm_check.bin")==0;Model*r=load("/tmp/nanotss_mlm_check.bin",1,L);double rt=INFINITY;
++    if(r&&r->c.bidir){eval_seq(r,tok,lab,L,r->ws[0],&ns,b2);rt=0;for(int i=0;i<L*257;i++)rt=fmax(rt,fabs(a[i]-b2[i]));}remove("/tmp/nanotss_mlm_check.bin");
++    printf("byte MLM repeated phrase masked loss %.6f -> %.6f; reversal equivariance %.9g; right-context sensitivity %.9g; checkpoint %.9g\n",first,tail,flip,right,rt);
++    bad|=!(tail<first*.5&&flip<1e-4&&right>1e-6&&sv&&rt==0);
++    /* Functional test of bidirectionality: every byte is doubled ("aabbcc..", random letters). A masked
++     * first-of-pair byte is unknowable from the left (log 16 = 2.77 nats) but trivial from its right
++     * neighbour. A causal stack fed the same masked inputs cannot beat chance on those positions. */
++    {double nll[2];for(int bd=0;bd<2;bd++){
++        Cfg pc=gc;pc.bidir=bd;Model*pm=model_new(&pc,1,L);params_init(&pc,&pm->P);model_requantize(pm);uint64_t pr=12345;
++        for(int j=1;j<=500;j++){
++            for(int b=0;b<4;b++){unsigned char w2[48];for(int i=0;i<L;i+=2)w2[i]=w2[i+1]=(unsigned char)('a'+(int)(urand(&pr)*16));mlm_corrupt(w2,bt+b*L,by+b*L,L,MASK,&pr,.15);}
++            hp.step=j;tss_train_step(&pm->c,&pm->P,&pm->Q,&pm->G,pm->hit,&pm->M,&pm->V,pm->Gt,pm->hits,pm->ws,1,bt,by,4,L,&hp,pm->k);
++        }
++        double tot=0;int cnt=0;
++        for(int q=0;q<64;q++){unsigned char w2[48];for(int i=0;i<L;i+=2)w2[i]=w2[i+1]=(unsigned char)('a'+(int)(urand(&pr)*16));
++            int tk[48],lb[48];for(int i=0;i<L;i++){tk[i]=w2[i];lb[i]=-1;}int at=2*(2+(q%20));tk[at]=MASK;lb[at]=w2[at];
++            int n1;tot+=eval_seq(pm,tk,lb,L,pm->ws[0],&n1,NULL);cnt+=n1;}
++        nll[bd]=tot/cnt;}
++     printf("pair-copy task, masked first-of-pair byte (chance 2.77 nats): causal stack %.4f vs bidirectional %.4f\n",nll[0],nll[1]);
++     bad|=!(nll[1]<1.5&&nll[0]>nll[1]+1.0);}
++    /* --- BLT bidirectional --- */
++    Cfg bc={.vocab=257,.d=128,.n_layer=4,.T=2,.D=3,.n=4,.p=16,.K=3,.group=128,.walks=2,.temp=1,.fw_mask=1,.fff_gate=1,.bidir=1};
++    FConfig cfg={.width=64,.heads=4,.bins=64,.maxpatch=5,.enc_layers=2,.dec_layers=2,.local_depth=3,.local_trees=2,.local_state=4,.neural=1,.mixer=2,.threshold=5.54,.target=4};
++    Faithful*f=faithful_new(bc,cfg,1,L,1);uint64_t frozen=param_fingerprint(f->entropy);
++    {unsigned char ph[64];int tt[48],yy[48];real*lg=calloc(L*256,sizeof(real)),*lg2=calloc(L*256,sizeof(real));
++    /* give the frozen patcher a non-trivial threshold on this text */
++    for(int i=0;i<L;i++)tt[i]=(unsigned char)phrase[i%PL];faithful_eval(f,0,tt,ly,L,&ns,lg);double mean=0;for(int i=0;i<L;i++)mean+=f->ws[0]->entropy[i]/L;f->c.threshold=mean;
++    double bf=0,bl=0,btail=0;int *ft=malloc(2*L*sizeof(int)),*fy=malloc(2*L*sizeof(int));
++    for(int j=1;j<=120;j++){
++        for(int q=0;q<2;q++){int at=(int)(urand(&rng)*PL);for(int i=0;i<L;i++)ph[i]=(unsigned char)phrase[(at+i)%PL];mlm_corrupt(ph,ft+q*L,fy+q*L,L,MASK,&rng,.15);}
++        hp.step=j;bl=faithful_step(f,ft,fy,2,L,&hp,NULL);if(j==1)bf=bl;if(j>110)btail+=bl/10;
++    }
++    for(int i=0;i<L;i++){tt[i]=(unsigned char)phrase[i%PL];yy[i]=-1;}tt[11]=MASK;tt[30]=MASK;yy[11]=(unsigned char)phrase[11];yy[30]=(unsigned char)phrase[30%PL];
++    faithful_eval(f,0,tt,yy,L,&ns,lg);int Mp=f->ws[0]->M;int cover=f->ws[0]->starts[Mp-1]+f->ws[0]->lens[Mp-1];
++    int t3[48];memcpy(t3,tt,sizeof(t3));t3[L-1]^=63;t3[L-2]^=21;faithful_eval(f,0,t3,yy,L,&ns,lg2);double bright=0;for(int v=0;v<256;v++)bright=fmax(bright,fabs(lg[v]-lg2[v]));
++    int sv2=faithful_save(f,"/tmp/nanotss_mlm_blt_check.bin")==0;Faithful*r2=faithful_load("/tmp/nanotss_mlm_blt_check.bin",1,L);double rt2=INFINITY;
++    if(r2&&r2->global->c.bidir){faithful_eval(r2,0,tt,yy,L,&ns,lg2);rt2=0;for(int i=0;i<L*256;i++)rt2=fmax(rt2,fabs(lg[i]-lg2[i]));}remove("/tmp/nanotss_mlm_blt_check.bin");
++    int frozen_ok=param_fingerprint(f->entropy)==frozen&&!f->entropy->c.bidir;
++    printf("BLT MLM repeated phrase masked loss %.6f -> %.6f; patches %d cover %d/%d bytes; right-context sensitivity %.9g; checkpoint %.9g; entropy frozen %d\n",bf,btail,Mp,cover,L,bright,rt2,frozen_ok);
++    bad|=!(btail<bf*.6&&cover==L&&bright>1e-6&&sv2&&rt2==0&&frozen_ok);}
++    puts(bad?"MLM CHECK FAILED":"MLM CHECK PASSED");return !!bad;
++}
++
+ static void usage(void){
+     puts("nanotss-plastic: protected plastic -> FFF -> SSM -> FFF\n"
+          "  --data FILE [--save FILE] [--seconds 300] [--entropy-seconds 60]\n"
+@@ -2745,8 +2990,11 @@
+          "  --conv-mix 2 (before global stack; 1 legacy after-stack; 0 off)\n"
+          "  --fw-scalar (reference kernel; default is optimized)\n"
+          "  --fw-mask 1 (default: plastic first; 0=SSM only, 4=plastic third, 5=both)\n"
++         "  --objective mlm|ar (default mlm: bidirectional BERT-style masked-byte scan; ar = causal next-byte)\n"
++         "  --mask-rate 0.15 (fraction of bytes selected; 80% [MASK] / 10% random / 10% kept)\n"
++         "  --unmask-steps 32 (mask-predict refinement passes per generated chunk with --sample)\n"
+          "  --fff-gate 1 --ngram-bins 256 --patch-size 4 --max-patch 8\n"
+-         "  --mode blt|byte --check --check-tree-fw --check-neural --help\n"
++         "  --mode blt|byte --check --check-tree-fw --check-neural --check-mlm --help\n"
+          "New runs enable FFF gates; loaded checkpoints retain their saved setting.");
+ }
+ 
+@@ -2754,7 +3002,7 @@
+ #ifndef NANOTSS_NO_MAIN
+ int main(int argc,char**argv){
+     int optimizer_explicit=0;
+-    const char*data=NULL,*out=NULL,*in=NULL,*mode="blt",*prompt="ROMEO:",*entropy_in=NULL,*entropy_out=NULL,*context_file=NULL;int threads=4,B=16,L=256,burn=64,sample=0,seed=0,steps=100000000,scoreonly=0,fixedsteps=0;
++    const char*data=NULL,*out=NULL,*in=NULL,*mode="blt",*objective="mlm",*prompt="ROMEO:",*entropy_in=NULL,*entropy_out=NULL,*context_file=NULL;int threads=4,B=16,L=256,burn=64,sample=0,seed=0,steps=100000000,scoreonly=0,fixedsteps=0,unmask_steps=32;
+     double seconds=300,entropy_seconds=60,entropy_charge=0,lr=.003,target=4,temp=.8;
+     Cfg gc={.vocab=256,.d=128,.n_layer=4,.T=4,.D=7,.n=16,.p=16,.K=3,.group=128,.walks=2,.temp=1,.fff_gate=1,.fw_mask=1};
+     FConfig cfg={.width=64,.heads=4,.bins=256,.maxpatch=8,.enc_layers=2,.dec_layers=4,.local_depth=4,.local_trees=2,.local_state=8,.neural=1,.mixer=2,.target=4};
+@@ -2765,7 +3013,8 @@
+         if(!strcmp(argv[i],"--check-neural"))return check_neural();
+         if(!strcmp(argv[i],"--check-tree-fw"))return check_tree_fw();
+         if(!strcmp(argv[i],"--runtime-reference")){runtime_fast=0;continue;}
+-        if(!strcmp(argv[i],"--check"))return check_gated_fff()||check_tree_fw();
++        if(!strcmp(argv[i],"--check-mlm"))return check_mlm();
++        if(!strcmp(argv[i],"--check"))return check_gated_fff()||check_tree_fw()||check_mlm();
+         if(!strcmp(argv[i],"--score-only")){scoreonly=1;continue;}
+         const char*a=argv[i],*v=i+1<argc?argv[++i]:NULL;if(!v)return 2;
+         if(!strcmp(a,"--optimizer")){optimizer_explicit=1;if(!strcmp(v,"muon"))use_muon=1;else if(!strcmp(v,"adamw"))use_muon=0;else return 2;continue;}
+@@ -2776,6 +3025,7 @@
+         OPT("--entropy-charge",entropy_charge,atof) OPT("--entropy-load",entropy_in,(const char*)) OPT("--entropy-save",entropy_out,(const char*)) OPT("--entropy-seconds",entropy_seconds,atof)
+         OPT("--fixed-steps",fixedsteps,atoi) OPT("--threads",threads,atoi) OPT("--batch",B,atoi) OPT("--seq",L,atoi) OPT("--burn",burn,atoi) OPT("--sample",sample,atoi) OPT("--seed",seed,atoi) OPT("--steps",steps,atoi)
+         OPT("--conv-mix",cfg.mixer,atoi) OPT("--fw-mask",gc.fw_mask,atoi) OPT("--fff-gate",gc.fff_gate,atoi) OPT("--seconds",seconds,atof) OPT("--lr",lr,atof) OPT("--patch-size",target,atof) OPT("--temperature",temp,atof)
++        OPT("--objective",objective,(const char*)) OPT("--mask-rate",mlm_mask_rate,atof) OPT("--unmask-steps",unmask_steps,atoi)
+         OPT("--ngram-bins",cfg.bins,atoi) OPT("--max-patch",cfg.maxpatch,atoi) OPT("--encoder-layers",cfg.enc_layers,atoi) OPT("--decoder-layers",cfg.dec_layers,atoi) OPT("--local-depth",cfg.local_depth,atoi) OPT("--local-trees",cfg.local_trees,atoi)
+ #undef OPT
+         fprintf(stderr,"unknown argument %s\n",a);return 2;
+@@ -2787,12 +3037,16 @@
+     if((gc.fw_mask&~0x5)||gc.fff_gate<0||gc.fff_gate>1)return 2;
+     if(threads<1||threads>64||B<1||L<8||burn<0||burn>=L||seconds<=0||temp<=0||cfg.bins<0||cfg.bins>1048576||cfg.maxpatch<1||cfg.maxpatch>1024||target<1||target>cfg.maxpatch||cfg.enc_layers<0||cfg.dec_layers<0||cfg.local_depth<1||cfg.local_depth>12||cfg.local_trees<1)return 2;
+     if(strcmp(mode,"byte")&&strcmp(mode,"blt"))return 2;
++    if(strcmp(objective,"mlm")&&strcmp(objective,"ar")){fprintf(stderr,"--objective must be mlm or ar\n");return 2;}
++    if(!(mlm_mask_rate>0&&mlm_mask_rate<1)||unmask_steps<1){fprintf(stderr,"--mask-rate must be in (0,1); --unmask-steps >= 1\n");return 2;}
++    if(!strcmp(objective,"mlm")){gc.vocab=257;gc.bidir=1;} /* byte vocabulary + [MASK]; ids 0..255 are bytes, 256 is [MASK] */
+     if(use_muon&&strcmp(mode,"blt")){if(optimizer_explicit){fprintf(stderr,"CPU Muon is integrated in full BLT training; byte mode uses AdamW.\n");return 2;}use_muon=0;}
+     if(!strcmp(mode,"byte")&&cfg.mixer){fprintf(stderr,"Standalone byte mode requires --conv-mix 0; the integrated mixer acts on global BLT states.\n");return 2;}
+     g_rng^=((uint64_t)seed+1)*0x9E3779B97F4A7C15ULL;
+     if(context_file){if(!in||data||scoreonly||sample<0){fprintf(stderr,"--context-file requires --load and generation mode\n");return 2;}return context_generate(in,context_file,prompt,sample,temp);}
+     if(in&&!data){
+-        Faithful*f=faithful_load(in,1,L);if(!f){Model*m=load(in,1,L);if(!m){fprintf(stderr,"cannot load checkpoint\n");return 1;}generate(m,prompt,sample,temp);return 0;}
++        Faithful*f=faithful_load(in,1,L);if(!f){Model*m=load(in,1,L);if(!m){fprintf(stderr,"cannot load checkpoint\n");return 1;}if(m->c.bidir)mlm_generate(NULL,m,prompt,sample,temp,L,unmask_steps);else generate(m,prompt,sample,temp);return 0;}
++        if(f->global->c.bidir){mlm_generate(f,NULL,prompt,sample,temp,L,unmask_steps);return 0;}
+         FStream*s=fstream_new(f);real lg[256];const char*p=*prompt?prompt:"\n";for(const char*q=p;*q;q++){fstream_step(f,s,(unsigned char)*q,lg);putchar(*q);}for(int i=0;i<sample;i++){int v=sample_logits(lg,256,temp);putchar(v);fstream_step(f,s,v,lg);}putchar('\n');return 0;
+     }
+     if(!data){usage();return 2;}
+@@ -2801,6 +3055,7 @@
+     if(in){f=faithful_load(in,threads,L);if(!f)m=load(in,threads,L);if(!f&&!m)return 1;blt=f!=NULL;}
+     else if(blt){cfg.target=target;f=faithful_new(gc,cfg,threads,L,1);}
+     else {m=model_new(&gc,threads,L);params_init(&gc,&m->P);model_requantize(m);}
++    const Cfg*mc=blt?&f->global->c:&m->c;const int mlm=mc->bidir,mask_id=MASK_ID(mc); /* a loaded checkpoint decides the objective */
+     if(scoreonly){if(!in)return 2;long scored;double bpc=score_data(f,m,raw,split,n,L,burn,&scored);printf("{\"event\":\"score\",\"val_bpc\":%.6f,\"scored_bytes\":%ld,\"burn\":%d}\n",bpc,scored,burn);return 0;}
+     if(blt&&!in){
+         if(f->c.neural){
+@@ -2813,7 +3068,8 @@
+     printf("{\"event\":\"architecture\",\"fw_mask\":%d,\"fff_gate\":%d}\n",blt?f->global->c.fw_mask:m->c.fw_mask,blt?f->global->c.fff_gate:m->c.fff_gate);
+     printf("{\"event\":\"ternary_mixer\",\"enabled\":%d,\"taps\":%d,\"group_size\":%d,\"parameters\":%zu}\n",blt?f->c.mixer:0,TC_TAPS,TC_GROUP,blt&&f->c.mixer?tc_size(2*f->c.width,TC_TAPS):0);
+     size_t core=blt?core_parameters(&f->global->c):core_parameters(&m->c),enc=blt?core_parameters(&f->encoder->c):0,dec=blt?core_parameters(&f->decoder->c):0;
+-    size_t base=blt?core+enc+dec+f->dense+(size_t)257*f->c.width:core+257*m->c.d,ng=blt?f->hashsize:0,ep=blt&&f->c.neural?core_parameters(&f->entropy->c)+(size_t)257*f->entropy->c.d:0;
++    size_t base=blt?core+enc+dec+f->dense+(embed_rows(&f->encoder->c)+1)*f->c.width:core+(embed_rows(&m->c)+1)*m->c.d,ng=blt?f->hashsize:0,ep=blt&&f->c.neural?core_parameters(&f->entropy->c)+(size_t)257*f->entropy->c.d:0;
++    printf("{\"event\":\"objective\",\"name\":\"%s\",\"bidirectional\":%d,\"mask_rate\":%.4f,\"note\":\"%s\"}\n",mlm?"mlm":"ar",mlm,mlm?mlm_mask_rate:0.,mlm?"bpc fields are masked-byte cross-entropy in bits (not comparable to next-byte bpc)":"next-byte bpc");
+     printf("{\"event\":\"config\",\"mode\":\"%s\",\"patcher\":\"%s\",\"main_budgeted_parameters\":%zu,\"frozen_entropy_parameters\":%zu,\"budgeted_parameters\":%zu,\"free_ngram_parameters\":%zu,\"trainable_main_parameters\":%zu,\"total_inference_parameters\":%zu,\"threads\":%d,\"seq_bytes\":%d,\"batch\":%d,\"seed\":%d,\"avg_patch_calibration\":%.6f,\"threshold_nats\":%.7f,\"entropy_training_seconds\":%.6f,\"calibration_seconds\":%.6f,\"setup_wall_seconds\":%.6f}\n",blt?"blt":"byte",blt?"neural":"none",base,ep,base+ep,ng,base+ng,base+ng+ep,threads,L,B,seed,avg,blt?f->c.threshold:0,aux_seconds,calibration_seconds,wall()-setup0);fflush(stdout);
+     printf("{\"event\":\"optimizer\",\"name\":\"%s\",\"block_rows\":%d,\"ns_steps\":%d,\"muon_scale\":%.6f}\n",use_muon?"cpu_block_muon":"adamw",muon_block,muon_steps,muon_scale);fflush(stdout);
+     double overhead=aux_seconds+calibration_seconds,budget=seconds-overhead;if(budget<=0)return 2;
+@@ -2825,7 +3081,9 @@
+         trainsec=wall()-loop_start;
+         step++;hp.step=step;hp.lr=lr*fmin(1,(trainsec+.1)/fmin(10,budget*.1))*(.1+.9*.5*(1+cos(3.141592653589793*fmin(1,trainsec/budget))));
+         if(fixedsteps){double progress=steps>1?(double)(step-1)/(steps-1):1;hp.lr=lr*fmin(1,(double)step/100)*(.1+.9*.5*(1+cos(3.141592653589793*progress)));}
+-        for(int b=0;b<B;b++){long at=(long)(urand(&data_rng)*(split-L-1));for(int i=0;i<L;i++){bt[b*L+i]=raw[at+i];by[b*L+i]=raw[at+i+1];}}
++        for(int b=0;b<B;b++){long at=(long)(urand(&data_rng)*(split-L-1));
++            if(mlm)mlm_corrupt(raw+at,bt+b*L,by+b*L,L,mask_id,&data_rng,mlm_mask_rate);
++            else for(int i=0;i<L;i++){bt[b*L+i]=raw[at+i];by[b*L+i]=raw[at+i+1];}}
+         double st=wall();if(blt)loss=faithful_step(f,bt,by,B,L,&hp,&patches);else{loss=tss_train_step(&m->c,&m->P,&m->Q,&m->G,m->hit,&m->M,&m->V,m->Gt,m->hits,m->ws,threads,bt,by,B,L,&hp,m->k);patches+=(long long)B*L;}
+         double step_seconds=wall()-st;if(step_seconds>max_step_seconds)max_step_seconds=step_seconds;
+         trainsec=wall()-loop_start;seen+=(long long)B*L;
