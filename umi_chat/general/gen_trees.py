@@ -82,17 +82,16 @@ def main():
     dfp = open(donep, "a"); outp = os.path.join(a.out, f"trees_{int(time.time())}.jsonl"); fp = open(outp, "a")
     stats = {"calls": 0, "trees": 0, "turns": 0, "bad": 0}; offsets = {}
 
-    def fresh():  # unread prompts, as (uid, prompt); uid = file:line
+    def fresh():  # unread prompts, as (uid, prompt); uid = file:line. Byte offsets, so a half-written line is retried.
         new = []
         for f in sorted(glob.glob(os.path.join(a.prompts, "*.jsonl"))):
-            with open(f) as h:
-                h.seek(offsets.get(f, (0, 0))[0]); ln = offsets.get(f, (0, 0))[1]
-                while True:
-                    line = h.readline()
-                    if not line.endswith("\n"): break  # partial line still being written
-                    uid = f"{os.path.basename(f)}:{ln}"; ln += 1
-                    if uid not in done: new.append((uid, json.loads(line)))
-                offsets[f] = (h.tell() - len(line.encode()) if line else h.tell(), ln)
+            pos, ln = offsets.get(f, (0, 0))
+            with open(f, "rb") as h: h.seek(pos); data = h.read()
+            *lines, _partial = data.split(b"\n")
+            for line in lines:
+                uid = f"{os.path.basename(f)}:{ln}"; ln += 1; pos += len(line) + 1
+                if uid not in done: new.append((uid, json.loads(line)))
+            offsets[f] = (pos, ln)
         return new
 
     def alive(): return a.wait_for and os.path.exists(f"/proc/{a.wait_for}")
