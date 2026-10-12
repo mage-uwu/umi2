@@ -97,7 +97,7 @@ form{display:flex;gap:8px;padding-bottom:env(safe-area-inset-bottom,0px)}
       <div class="facts">
         <div class="fact"><b>17,984</b><span>cached replies</span></div>
         <div class="fact"><b>68% · 82% · 64%</b><span>held-out: single turn · follow-up · topic switch</span></div>
-        <div class="fact"><b id="sizeFact">58 MB</b><span>model + cache to download</span></div>
+        <div class="fact"><b id="sizeFact">27 MB</b><span>model + cache to download (fp16, gzip)</span></div>
       </div>
       <div class="meter" aria-hidden="true"><i id="meter"></i></div>
       <div class="loadline" id="loadline">Starting the WebAssembly runtime</div>
@@ -119,7 +119,7 @@ form{display:flex;gap:8px;padding-bottom:env(safe-area-inset-bottom,0px)}
 </div>
 
 <script>
-const TOTAL_BYTES = 41169632 + 8511989 + 8721955; // model (base64) + cached replies + phrasings
+let TOTAL_BYTES = 27424020; // replaced by manifest.json's download_bytes
 const $ = (id) => document.getElementById(id);
 const log = $('log'), msg = $('msg'), send = $('send');
 let busy = false, ready = false, seq = 0, pending = null;
@@ -147,7 +147,8 @@ function addTurn(who, text) {
 const worker = new Worker('umi-worker.js');
 worker.onmessage = (e) => {
   const m = e.data;
-  if (m.type === 'progress') {
+  if (m.type === 'size') { TOTAL_BYTES = m.bytes; $('sizeFact').textContent = (m.bytes / 1e6).toFixed(0) + ' MB'; }
+  else if (m.type === 'progress') {
     const pct = Math.min(100, (100 * m.bytes) / TOTAL_BYTES);
     $('meter').style.width = pct.toFixed(1) + '%';
     $('loadline').textContent = `Downloading the model and cache: ${(m.bytes / 1048576).toFixed(1)} MB`;
