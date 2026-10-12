@@ -47,11 +47,19 @@
 #include <ctype.h>
 
 static const char ALPHA[]="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/";
-enum{NA=128,NB=64,NT=64,SEQ=96,CTX=6,MAXMSG=SEQ-CTX-6,GS=0x1D,SEP=0x1F,END=0x1E,PAD=0,NONE='-',NV=4,KA=4,KB=3};
+enum{NA=240,NB=128,NT=64,SEQ=96,CTX=6,MAXMSG=SEQ-CTX-6,GS=0x1D,SEP=0x1F,END=0x1E,PAD=0,NONE='-',NV=4,KA=4,KB=3};
 static const char TAG[]="<regex>user_name</regex>";
-/* byte for each ID part: a uses 64 printable symbols then 0x80..0xBF; b and t use the printable 64 */
-static int abyte(int a){return a<64?ALPHA[a]:0x80+(a-64);}
-static int bbyte(int b){return ALPHA[b];}
+/* Byte for each ID part, from one table: the 64 printable symbols, then 0x80..0xFF, then the remaining
+ * low bytes that are not layout markers (251 in all). Earlier, smaller ID spaces (a < 192, b and t < 64)
+ * map to the same bytes, so older checkpoints keep working. */
+static unsigned char IDB[256];
+static int idbyte(int x){
+    if(!IDB[0]){int k=0;for(int i=0;i<64;i++)IDB[k++]=ALPHA[i];for(int c=0x80;c<0x100;c++)IDB[k++]=c;
+        for(int c=1;c<0x80;c++)if(!strchr(ALPHA,c)&&c!=GS&&c!=SEP&&c!=END&&c!=NONE)IDB[k++]=c;}
+    return IDB[x];
+}
+static int abyte(int a){return idbyte(a);}
+static int bbyte(int b){return idbyte(b);}
 
 typedef struct{int id,c1,c2;char*msg;}Ex;               /* ids packed as a*4096+b*64+t, -1 = none */
 typedef struct{int id,parent,nv,last;char*name,*ans[NV],*ano[NV];}Ans;
@@ -327,7 +335,7 @@ static int cmd_train(const char*dir,const char*mode,double seconds,double entrop
     printf("mode %s  core params %zu  n-gram cache rows %zu (%zu values)  frozen entropy %zu\n",mode,params,blt?n.f->hashrows:0,blt?n.f->hashsize:0,blt?core_parameters(&n.f->entropy->c)+(size_t)257*n.f->entropy->c.d:0);fflush(stdout);
     int mask=net_mask(&n),*bt=malloc((size_t)B*SEQ*sizeof(int)),*by=malloc((size_t)B*SEQ*sizeof(int));
     uint64_t rng=((uint64_t)seed+11)*0xD1B54A32D192ED03ULL;
-    Hyper hp={.beta1=.9,.beta2=.98,.eps=1e-8,.weight_decay=.01,.clip=1};double budget=seconds-overhead,t0=wall(),nextlog=30,loss=0,ema=0;int step=0;
+    Hyper hp={.beta1=.9,.beta2=.98,.eps=1e-8,.weight_decay=.01,.clip=1};double budget=seconds-overhead,t0=wall(),nextlog=30,nextsave=1800,loss=0,ema=0;int step=0;
     while(wall()-t0<budget){
         double el=wall()-t0;hp.step=++step;hp.lr=lr*fmin(1,(el+.1)/fmin(10,budget*.05))*(.05+.95*.5*(1+cos(3.141592653589793*fmin(1,el/budget))));
         for(int k=0;k<B;k++){
@@ -339,8 +347,9 @@ static int cmd_train(const char*dir,const char*mode,double seconds,double entrop
         loss=blt?faithful_step(n.f,bt,by,B,SEQ,&hp,NULL):tss_train_step(&n.m->c,&n.m->P,&n.m->Q,&n.m->G,n.m->hit,&n.m->M,&n.m->V,n.m->Gt,n.m->hits,n.m->ws,threads,bt,by,B,SEQ,&hp,n.m->k);
         ema=step==1?loss:.98*ema+.02*loss;
         if(wall()-t0>=nextlog){double a0,a1;evaluate(&n,te,nte,600,&a0,&a1,NULL,NULL);printf("step %6d  t %6.0fs  loss %.4f  test@600 single-turn %.3f follow-up %.3f\n",step,wall()-t0,ema,a0,a1);fflush(stdout);nextlog+=(budget<900?60:300);}
+        if(out&&wall()-t0>=nextsave){if(blt?faithful_save(n.f,out):save(n.m,out))fprintf(stderr,"checkpoint save failed\n");else printf("checkpoint saved at %.0fs\n",wall()-t0);nextsave+=1800;}
     }
-    double a0,a1,t0a,t1a;int n0,n1;evaluate(&n,te,nte,0,&a0,&a1,&n0,&n1);evaluate(&n,tr,ntr,3000,&t0a,&t1a,NULL,NULL);
+    double a0,a1,t0a,t1a;int n0,n1;evaluate(&n,te,nte,nte>20000?20000:0,&a0,&a1,&n0,&n1);evaluate(&n,tr,ntr,3000,&t0a,&t1a,NULL,NULL);
     printf("final: steps %d  test single-turn %.4f (n=%d)  follow-up %.4f (n=%d)  | train@3000 %.4f / %.4f\n",step,a0,n0,a1,n1,t0a,t1a);
     if(out&&(blt?faithful_save(n.f,out):save(n.m,out))){fprintf(stderr,"save failed\n");return 1;}
     return 0;
