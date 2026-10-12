@@ -1,0 +1,186 @@
+# Context as test-time compute for nanotss (AR)
+
+Branch `icl-ttt`, built on the autoregressive `nanotss_blt.c`. Everything runs on CPU: a 4-thread
+container for local work, plus an 8-vCPU RunPod pod (cpu5c, $0.28/hr) for longer training.
+
+## Bottom line
+
+1. **The recurrent state does not turn long context into better predictions on real text.** A model
+   trained on 256-byte windows drifts when streamed, and its BPC blows up after a few KB (the
+   global SSM tree is the cause). With the drift fixed, streaming is stable but no better than a
+   64-byte window.
+2. **Test-time training (TTT) on the context does.** Each chunk of the context is scored, then
+   the weights take a few optimizer steps on the newest window plus replay of earlier context.
+   The scratchpad ends up stored in the weights, and context length becomes a compute knob: about
+   −0.2 BPC for each 4× more context, still improving at 100 KB. One TTT epoch costs about 3 s per
+   100 KB on 4 threads, so a 1 MB scratchpad is about 30 s per epoch.
+3. **The 1.4M model with TTT beats a 3× larger 4.2M model without TTT** on every text tested,
+   and on TinyShakespeare validation it even edges out the 4.2M model with TTT.
+4. **Iterative refinement works when drafts decide what to study, not what to imitate.**
+   Self-training on the model's own drafts made text worse. Using each draft to *retrieve* the
+   most similar context passages and training on those (real text) gives the best context-faithful
+   generations, at no loss of fluency versus plain best-of-K.
+
+## Models and data
+
+| Model | Params (budgeted) | Training | TinyShakespeare val BPC |
+|---|---|---|---|
+| `base300` | 1.29M (1.43M total at inference) | 300 s, 4 threads | 2.546 |
+| `base2h` | same | 7200 s, 8 vCPU | 2.514 |
+| `big600` (width 192) | 4.19M (4.53M total) | 600 s, 8 vCPU (best of a 300/600/1200/7200 s sweep) | 2.413 |
+| `big2h` (width 192) | same | 7200 s, 8 vCPU | 3.132 (badly overfit: train 1.28) |
+
+All models train on TinyShakespeare: the first 90% for training, the last 10% (111 KB) for
+validation. Unseen test texts are three public-domain plays in `data/`: Marlowe's *Doctor
+Faustus* and *Tamburlaine Part 2*, and Kyd's *The Spanish Tragedie* (307 KB in all,
+normalized to the `NAME:` format). BPC is bits per byte, windowed with 64 bytes of left context,
+unless stated otherwise.
+
+## 1. Baseline ICL: the recurrent state
+
+`--ttt-eval FILE --ttt-stream 1` streams the whole document through the recurrent state with
+no resets.
+
+| base300, TinyShakespeare val | BPC |
+|---|---|
+| windowed (64-byte context) | 2.548 |
+| streamed, whole 111 KB | **5.920** (2.5 up to 2 KB, 3.7 at 4 KB, 5.8 at 16 KB, 6.7 at 64 KB) |
+| streamed, reset entropy / encoder / decoder state every 1 KB | 5.91 / 5.94 / 5.90 |
+| streamed, reset **global stack** state every 1 KB | 2.561 |
+| streamed, reset global plastic-memory layer only | 4.97 |
+| streamed, reset global SSM layer only | 2.60 |
+| streamed with `--ssm-horizon 64` (inference cap on SSM retention) | 2.623 |
+
+The global SSM tree's slow modes keep accumulating past the 64-patch horizon they were trained on.
+The plastic memory is comparatively stable. `base2h` streams stably (2.532 vs 2.515 windowed),
+so longer training fixes the drift, but streaming still adds nothing over the window.
+
+## 2. Online TTT on the context
+
+The context is scored chunk by chunk (192 bytes), and after each chunk TTT takes `--ttt-steps`
+AdamW steps on 4 windows: the newest plus uniform replay of everything already read. No byte is
+trained on before it has been scored.
+
+| TinyShakespeare val | base300 | base2h | big600 |
+|---|---|---|---|
+| no TTT | 2.548 | 2.515 | 2.420 |
+| **online TTT** (lr 2e-4, 2 steps per chunk) | 2.375 | **2.221** (−11.7%) | 2.231 |
+| control: the same steps on random *training-set* windows | 2.562 | 2.518 | |
+
+The control rules out "just more training": all of the gain comes from reading the context.
+Sweep on base300 (lr 3e-4 unless noted): BPC stays between 2.375 and 2.40 for lr 1e-4 to 5e-4
+(lr 3e-3 diverges to 2.60), batch 1 to 8 and chunk 64 or 192. Freezing the ternary matrices
+gives 2.395, essentially the same. Muon is worse (2.475 vs 2.447 for AdamW at lr 1e-3).
+Anchoring toward the loaded weights (decay 0.01) gives 2.380. Retrieval-chosen replay barely
+moves online BPC (2.684 → 2.677 on *The Spanish Tragedie*).
+
+## 3. Context → held-out query (`--ttt-fit`)
+
+TTT runs for E epochs on the first part of each unseen play, then the rest is scored with the
+weights frozen. Means over the three plays:
+
+| | no TTT | 8 epochs |
+|---|---|---|
+| base2h, first half → second half | 3.352 | **2.498** (−25%) |
+| big600, first half → second half | 3.167 | 2.479 |
+
+### Test-time compute scaling: context length (base2h, query = last 20% of each play)
+
+| context TTT reads | 0 | 2 KB | 8 KB | 32 KB | full (57–103 KB) |
+|---|---|---|---|---|---|
+| query BPC | 3.365 | 3.040 | 2.803 | 2.520 | **2.355** (−30%) |
+
+For comparison, big600 scores 3.170 here without TTT and 2.331 with it on the full context.
+
+### Where TTT stores the context (base300, mean gain on the plays, 8 epochs)
+
+| TTT may change | all | byte embedding + hashed n-grams | decoder | hashed n-grams | encoder | dense attention/mixer | global stack |
+|---|---|---|---|---|---|---|---|
+| BPC gain | 0.552 | **0.427** | 0.367 | 0.310 | 0.300 | 0.277 | 0.122 |
+
+The free hashed n-gram table (98K parameters) and the byte embedding carry 77% of the gain. They
+act as a learned, context-adaptive n-gram cache. A 16× larger table (4096 bins) did not help:
+it was worse before TTT and equal after (2.602 vs 2.598). Tripling the lexical step size was
+slightly worse too.
+
+## 4. Generation: iterative refinement
+
+`--refine` reads the context with TTT, then runs rounds of K drafts. Scoring uses the adapted
+model's mean NLL plus a repetition penalty. Two loop variants were tested:
+
+* **Self-training** (`--refine-retr 0`): TTT steps on windows ending in the kept drafts, mixed
+  with context replay. **This made text worse** (word validity 0.44 vs 0.60 on base300): the
+  model reinforces its own errors.
+* **Retrieval-guided** (`--refine-retr 1`): each kept draft queries a BM25-style word index of
+  the context. TTT then trains only on the retrieved real passages, plus uniform replay, before
+  the next round. The final round is best-of-K. Optional local edits (`--refine-edits`)
+  resample high-surprisal spans and keep an edit only if the whole-draft score improves.
+
+Evaluation uses 400-byte responses after `"\n\n<LEAD>:\n"`, with the first half of each play as
+context: 3 plays × 4 seeds = 12 samples per method. The metrics never use the generator's own
+likelihood. **wvr** is the share of words found in TinyShakespeare-train plus the context;
+**bigram** is the share of word pairs seen there; **ctxbigram** is the share of word pairs that
+occur in the context; **ctxnames** is the share of speaker headings that are speakers in the
+context.
+
+| base2h | wvr | bigram | ctxbigram | ctxnames | distinct-2 |
+|---|---|---|---|---|---|
+| plain, T=1 | 0.741 | 0.344 | 0.108 | 0 | 0.999 |
+| plain, T=0.7 | **0.897** | **0.575** | 0.214 | 0 | 0.985 |
+| TTT (8 epochs), T=0.7 | 0.834 | 0.462 | 0.262 | 0.47 | 0.987 |
+| TTT + best-of-8, T=0.7 | 0.848 | 0.469 | 0.279 | **0.66** | 0.991 |
+| **TTT + 3 retrieval rounds + best-of-8**, T=0.7 | 0.849 | 0.536 | **0.345** | 0.63 | 0.990 |
+| same, 5 rounds, 4 epochs | 0.843 | 0.514 | 0.305 | 0.64 | 0.988 |
+| same, 3 rounds, 4 epochs / 2 epochs / lr 1e-4 | 0.846 / 0.837 / 0.844 | 0.499 / 0.466 / 0.480 | 0.281 / 0.240 / 0.236 | 0.60 / 0.30 / 0.39 | |
+
+Plain sampling never writes in the context's world (0% context names): it falls back to
+TinyShakespeare characters. TTT + retrieval refinement uses 61% more context word pairs than
+plain sampling. It does lose some general fluency (word validity 0.85 vs 0.90), and weaker TTT
+does not win that back. On base300 the same comparison favored retrieval refinement on every
+metric (0.784 / 0.427 / 0.247 / 0.57 vs plain T=0.7 at 0.786 / 0.416 / 0.154 / 0).
+
+JUDGE_TABLE_PLACEHOLDER
+
+Samples (base2h, *Faustus* context, seed 1, prompt `FAUSTUS:`):
+
+> **plain T=0.7:** *ESCALUS: Go to the busir to yet approve, but yet seisiat it will come in a
+> corseen not tountenance shall know the corruption of the hamp...*
+>
+> **TTT + retrieval refine:** *MEPHIST: Tut, tell me of a neck, and there is not. ... MAPDIA:
+> What art thou, man? FAUSTUS: Why, this is tell--fits, and do not so arch the prince for: This
+> is well. ... MEPHIST: I pray thee hell. ... FAUSTUS: Well, I warrant.*
+
+## What did not work
+
+* Recurrent streaming as long-context memory (section 1).
+* Self-training on drafts, including with likelihood-guided edits.
+* A larger hashed n-gram table, a lexical step multiplier, and Muon for TTT.
+* Training 4.2M parameters for 2 hours on 1 MB of text (val 3.13): budget matters more than size here.
+
+## Commands
+
+```
+cc -O3 -march=native -fopenmp nanotss_blt.c -lm -o nanotss
+# online TTT over a document (scores before training on it)
+./nanotss --load model.bin --ttt-eval doc.txt --ttt-offset 0 --ttt-lr 2e-4 --ttt-steps 2
+# read the first half for 8 epochs, score the rest
+./nanotss --load model.bin --ttt-fit a.txt,b.txt --ttt-frac 0.5 --ttt-epochs 8 --ttt-lr 3e-4
+# generate with the scratchpad: TTT, then 3 retrieval-guided rounds, best-of-8
+./nanotss --load model.bin --refine 1 --refine-context ctx.txt --prompt $'\n\nFAUSTUS:\n' \
+  --refine-epochs 8 --ttt-lr 3e-4 --refine-rounds 3 --refine-cands 8 --refine-keep 2 \
+  --refine-retr 1 --refine-steps 8 --refine-temp 0.7 --refine-final-temp 0.7
+# stable recurrent streaming
+./nanotss --load model.bin --context-file ctx.txt --ssm-horizon 64 --sample 300
+```
+
+Harnesses: `experiments/compare_gen.sh` (generation methods), `experiments/genmetrics.py`,
+`experiments/judge.sh`, `experiments/pod_run.sh` (batch pod runner). Checkpoints are in
+`checkpoints/`.
+
+## Next steps
+
+* Train for TTT: short inner-loop TTT during pretraining so that the slow weights learn to be
+  quick to adapt (meta-learning). This is the most likely route to larger gains.
+* Train with carried recurrent state or longer windows, so the global SSM itself can use context.
+* An LLM judge (DeepSeek via OpenRouter, blocked this session because no key is attached) and
+  DeepSeek-written synthetic plays, for 1 MB scratchpad tests with controlled facts and names.

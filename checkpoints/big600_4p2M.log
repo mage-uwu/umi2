@@ -1,0 +1,15 @@
+{"event":"entropy_training","steps":11338,"train_seconds":60.000131,"train_bytes":46440448,"bytes_per_second":774005.772,"last_batch_bpc":2.604501}
+{"event":"architecture","fw_mask":1,"fff_gate":1}
+{"event":"ternary_mixer","enabled":2,"taps":3,"group_size":4,"parameters":3072}
+{"event":"config","mode":"blt","patcher":"neural","main_budgeted_parameters":4193696,"frozen_entropy_parameters":42720,"budgeted_parameters":4236416,"free_ngram_parameters":294912,"trainable_main_parameters":4488608,"total_inference_parameters":4531328,"threads":8,"seq_bytes":256,"batch":16,"seed":0,"avg_patch_calibration":3.999512,"threshold_nats":2.4411559,"entropy_training_seconds":60.000131,"calibration_seconds":0.017546,"setup_wall_seconds":60.160291}
+{"event":"optimizer","name":"cpu_block_muon","block_rows":16,"ns_steps":5,"muon_scale":3.000000}
+{"event":"progress","step":687,"main_train_seconds":60.014970,"train_bytes":2813952,"train_bpc":2.426174}
+{"event":"progress","step":1378,"main_train_seconds":120.070926,"train_bytes":5644288,"train_bpc":2.184486}
+{"event":"progress","step":2064,"main_train_seconds":180.022049,"train_bytes":8454144,"train_bpc":2.122645}
+{"event":"progress","step":2750,"main_train_seconds":240.070197,"train_bytes":11264000,"train_bpc":2.067337}
+{"event":"progress","step":3434,"main_train_seconds":300.064620,"train_bytes":14065664,"train_bpc":2.039532}
+{"event":"progress","step":4118,"main_train_seconds":360.030301,"train_bytes":16867328,"train_bpc":2.073219}
+{"event":"progress","step":4802,"main_train_seconds":420.003315,"train_bytes":19668992,"train_bpc":1.910541}
+{"event":"progress","step":5487,"main_train_seconds":480.078358,"train_bytes":22474752,"train_bpc":1.937512}
+{"event":"eval","step":6168,"main_train_seconds":539.801414,"charged_seconds":599.819092,"train_bytes":25264128,"global_steps":6291072,"online_bytes_per_second":46802.634,"train_bpc":1.939871,"val_bpc":2.413170,"val_scored_bytes":83520,"eval_seconds":0.770770}
+{"event":"all_position_score","val_bpc":2.435506,"scored_bytes":111360,"entropy_frozen_verified":1}
