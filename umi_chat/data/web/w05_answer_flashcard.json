@@ -1,0 +1,245 @@
+{
+ "widget": "answer_flashcard",
+ "instances": [
+  {
+   "title": "Classic Flip Card",
+   "user_requests": [
+    "Show me that as a flashcard",
+    "flash card this pls",
+    "Can u put the answer on a flashcard?",
+    "make it a flip card",
+    "quick recall plz \u2014 flashcard style",
+    "wrap it up like a study card",
+    "i wanna see it as a flashcard, flip style",
+    "flip card this one for me",
+    "turn that into a card i can flip",
+    "gimme a two sided card",
+    "make a card where i tap to see the answer",
+    "card flip view plz",
+    "i want it behind a flip"
+   ],
+   "html": "<div class=\"flip\"><div class=\"front\"><span class=\"badge accent\"><i class=\"dot\"></i>quick recall</span><p class=\"muted t-small\">Hey <regex>user_name</regex> \u2014 try before you flip.</p></div><div class=\"back\"><p>{{answer}}</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Definition Card",
+   "user_requests": [
+    "define it like a flashcard",
+    "i need the definition \u2014 card form pls",
+    "flashcard it: what's the answer",
+    "put the def on a card",
+    "defn flashcard please",
+    "give me a definition card",
+    "card me the definition, thanks",
+    "show the def as a card",
+    "whats the definition, put it on a card",
+    "definition card for this term",
+    "define this and hide it on a card",
+    "card with the meaning on the back",
+    "give me the def card style"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M4 5h11a2 2 0 0 1 2 2v12H6a2 2 0 0 1-2-2z\"/><path d=\"M17 7h3v12H7\"/></svg> Definition</div><div class=\"flip\"><div class=\"front\"><p>Term first, <regex>user_name</regex>. Flip for the meaning.</p></div><div class=\"back\"><p>{{answer}}</p></div></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Accordion Reveal Card",
+   "user_requests": [
+    "hide the answer behind a tap",
+    "make me tap to see it",
+    "flashcard w/ accordion pleease",
+    "collapse the answer, let me flip",
+    "tap-to-reveal card pls",
+    "accordion it so i can guess first",
+    "give me a card i have to open",
+    "tuck the answer away til i click",
+    "reveal on tap pls",
+    "collapse the answer then let me expand",
+    "make the answer expandable",
+    "hide it, then show on press",
+    "accordion style answer hiding"
+   ],
+   "html": "<details class=\"acc\"><summary>Guess first, <regex>user_name</regex> \u2014 then open.</summary><div class=\"body\"><div class=\"flip\"><div class=\"front\">Quick recall</div><div class=\"back\"><p>{{answer}}</p></div></div></div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Quiz-Style Flashcard",
+   "user_requests": [
+    "make it a quiz card",
+    "quiz me on this",
+    "flashcard but as a quiz",
+    "turn it into a quiz flashcard",
+    "quiz-style card plz",
+    "give it quiz vibes w/ the answer hidden",
+    "quiz flashcard, answer on the back",
+    "test me w this as a card",
+    "make it feel like a flash quiz",
+    "card that quizzes me",
+    "quiz card format pls",
+    "turn this into a question card i answer",
+    "flashcard quiz mode"
+   ],
+   "html": "<div class=\"quiz\"><p class=\"q\">Quick one, <regex>user_name</regex>:</p><details class=\"acc\"><summary>Show answer</summary><div class=\"body\"><p class=\"answer\">{{answer}}</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Compact Mini Card",
+   "user_requests": [
+    "small flashcard pls",
+    "mini card version",
+    "keep it short \u2014 flashcard it",
+    "tiny flip card",
+    "compact flashcard please",
+    "just a lil flashcard",
+    "minimal card, answer on back",
+    "tiny card version",
+    "mini card pls, keep it small",
+    "smallest flashcard u got",
+    "compact card for this",
+    "smol flash card",
+    "keep it short n small as a card"
+   ],
+   "html": "<div class=\"flip\"><div class=\"front\"><span class=\"badge\"><i class=\"dot\"></i><regex>user_name</regex></span></div><div class=\"back\"><p>{{answer}}</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Cached Match Flashcard",
+   "user_requests": [
+    "flashcard it \u2014 cached match",
+    "show the cached answer as a card",
+    "flip card this cached bit",
+    "cached match pls, flashcard form",
+    "card the cached answer",
+    "flashcard that cached match",
+    "cache hit \u2014 flashcard please",
+    "flashcard w the cached match",
+    "use cached match for the card",
+    "cached flashcard pls",
+    "card it, cached version",
+    "show cached match as a flip card",
+    "flashcard, cache match style"
+   ],
+   "html": "<div class=\"card\"><div class=\"row between\"><div class=\"card-title\">Quick recall</div><span class=\"badge info\"><i class=\"dot\"></i>cached match</span></div><div class=\"flip\"><div class=\"front\"><p class=\"muted t-small\"><regex>user_name</regex>, flip when ready.</p></div><div class=\"back\"><p>{{answer}}</p></div></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "show me the answer like a flip card",
+    "can u flip it around? like a flashcard",
+    "give me a flash card for this one",
+    "I want to quiz myself\u2014flip card please",
+    "flash card mode pls",
+    "turn that into a flip card for me",
+    "make it a flashy card, flip style",
+    "pocket sized flip card",
+    "flip card thats small enough for phone",
+    "show answer like a pocket card",
+    "flip it pocket style",
+    "card flip, pocket version",
+    "i want the pocket flip look"
+   ],
+   "title": "Pocket Flip Card",
+   "html": "<div class=\"flip\">\n  <details>\n    <summary>\n      <svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" aria-hidden=\"true\"><rect x=\"2\" y=\"3\" width=\"12\" height=\"10\" rx=\"2\" stroke=\"currentColor\"/><path d=\"M5 7h6M5 9.5h4\" stroke=\"currentColor\" stroke-linecap=\"round\"/></svg>\n      Tap to reveal\n    </summary>\n    <div class=\"back\">{{answer}}</div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "can I get the answer as a definition card?",
+    "definition card format pls",
+    "show answer like a dictionary entry",
+    "make it look like a definition card",
+    "i want a definition style card",
+    "definition card, pls",
+    "gimme a def card for this",
+    "dictionary style card for this",
+    "show like a dict entry card",
+    "card it like a dictionary",
+    "definition entry on a card",
+    "dict def card pls",
+    "give me the dictionary card view"
+   ],
+   "title": "Dictionary Definition Card",
+   "html": "<div class=\"card flat\">\n  <div class=\"card-title\">Definition</div>\n  <p class=\"t-small muted\">The answer, as a dictionary might put it.</p>\n  <p><strong>{{answer}}</strong></p>\n  <div class=\"divider\"></div>\n  <p class=\"dim\">\u2014 <regex>user_name</regex></p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "accordion reveal pls",
+    "use an accordion for the answer",
+    "can u fold the answer into an accordion?",
+    "accordion style answer",
+    "I want an accordion reveal",
+    "accordion it",
+    "accordion reveal card please",
+    "fold card pls",
+    "accordion card that folds open",
+    "make it fold out",
+    "folding card reveal",
+    "card that folds to hide the answer",
+    "accordion fold style card"
+   ],
+   "title": "Accordion Fold Card",
+   "html": "<details class=\"acc\">\n  <summary>Reveal answer</summary>\n  <div class=\"body\">\n    <p>{{answer}}</p>\n    <p class=\"dim\">\u2014 <regex>user_name</regex></p>\n  </div>\n</details>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "quiz me on this",
+    "make it a quiz card",
+    "quiz style pls",
+    "i want to quiz myself with the answer",
+    "quiz card for this",
+    "give me a quiz flashcard",
+    "quiz-style answer card",
+    "quiz answer card pls",
+    "card me w a quiz answer",
+    "answer card quiz style",
+    "make this an answer card i can quiz",
+    "quiz card w the answer inside",
+    "answer card, quiz format"
+   ],
+   "title": "Quiz-Style Answer Card",
+   "html": "<div class=\"quiz\">\n  <p class=\"q\">What's the answer?</p>\n  <details>\n    <summary>Show answer</summary>\n    <div class=\"answer\">{{answer}}</div>\n  </details>\n  <p class=\"dim t-small\">\u2014 <regex>user_name</regex></p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "compact mini card pls",
+    "make a tiny card for the answer",
+    "compact version",
+    "mini card format",
+    "small card with the answer",
+    "compact answer card",
+    "mini flashcard pls",
+    "mini answer card",
+    "compact card w the answer",
+    "tiny answer card pls",
+    "small answer card version",
+    "answer card but mini",
+    "keep the answer card small n compact"
+   ],
+   "title": "Compact Mini Answer Card",
+   "html": "<div class=\"card flat\" style=\"padding: var(--s-3);\">\n  <div class=\"row between\" style=\"margin-bottom: var(--s-2);\">\n    <span class=\"badge\">Answer</span>\n    <span class=\"dim t-small\">\u2014 <regex>user_name</regex></span>\n  </div>\n  <p style=\"margin:0;\">{{answer}}</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "cached match card pls",
+    "show as cached match",
+    "cached match format",
+    "make it a cached match card",
+    "cached answer card",
+    "i want the cached match style",
+    "cached match flashcard",
+    "flashcard w the cached match",
+    "use cached match for the card",
+    "cached flashcard pls",
+    "card it, cached version",
+    "show cached match as a flip card",
+    "flashcard, cache match style"
+   ],
+   "title": "Cached Match Flashcard",
+   "html": "<div class=\"flip\">\n  <div class=\"front\">\n    <span class=\"badge accent\">Cached match</span>\n    <span class=\"dim\">\u2014 <regex>user_name</regex></span>\n  </div>\n  <div class=\"back\">{{answer}}</div>\n</div>",
+   "augmented": true
+  }
+ ]
+}

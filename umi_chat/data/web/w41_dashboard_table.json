@@ -1,0 +1,2237 @@
+{
+ "widget": "dashboard_table",
+ "instances": [
+  {
+   "title": "Weekly grocery price watch",
+   "user_requests": [
+    "grocery prices tracker table",
+    "show me what i spent on food this week",
+    "cheapest shop for basics??",
+    "table of grocery costs please",
+    "how much did eggs go up",
+    "weekly food budget breakdown",
+    "groceries got spendy huh \u2014 show me",
+    "how much did eggs cost this week compared to last",
+    "show me a table of grocery price changes",
+    "sup with the grocery prices lately",
+    "i wanna see the price of milk over the past month",
+    "grocery price list pls",
+    "Wut r the prices of basic stuff?"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Grocery price watch</h1><p class=\"muted t-small\">Five staples, three shops, prices per unit. Cheapest in each row wins.</p><div class=\"row between\"><span class=\"badge accent\"><i class=\"dot\"></i>cached 2 days ago</span><span class=\"badge good\">basket down 1.8%</span></div><div class=\"table-wrap\"><table><thead><tr><th>Item</th><th class=\"num\">Corner</th><th class=\"num\">Market</th><th class=\"num\">Co-op</th></tr></thead><tbody><tr><td>Eggs, dozen</td><td class=\"num\">3.40</td><td class=\"num\">2.95</td><td class=\"num\">3.10</td></tr><tr><td>Milk, 2L</td><td class=\"num\">2.20</td><td class=\"num\">2.05</td><td class=\"num\">1.99</td></tr><tr><td>Bread, loaf</td><td class=\"num\">2.60</td><td class=\"num\">2.40</td><td class=\"num\">2.75</td></tr><tr><td>Rice, 1kg</td><td class=\"num\">2.10</td><td class=\"num\">1.85</td><td class=\"num\">2.00</td></tr><tr><td>Apples, 1kg</td><td class=\"num\">3.20</td><td class=\"num\">2.80</td><td class=\"num\">3.05</td></tr><tr><td><strong>Basket</strong></td><td class=\"num\">13.50</td><td class=\"num\"><strong>12.05</strong></td><td class=\"num\">12.89</td></tr></tbody></table></div><div class=\"callout info\"><p>Split run: eggs + rice at Market, milk at Co-op. Saves 0.94 and one queue.</p></div><details class=\"acc\"><summary>What changed since last week</summary><div class=\"body\"><p>Eggs <span class=\"badge bad\">+0.30</span> everywhere. Milk <span class=\"badge good\">-0.05</span> at Co-op only. Everything else held steady, <regex>user_name</regex>.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Household chores rota",
+   "user_requests": [
+    "who's doing dishes this week",
+    "chore rota table",
+    "make me a cleaning schedule",
+    "chores split between me and my roommate",
+    "weekley cleaning roster pls",
+    "what's left to clean this week",
+    "divvy up the housework",
+    "chore wheel for the apartment",
+    "who tf is supposed to vacuum today",
+    "chores assignmnt",
+    "i need a cleaning schedule for my roommates",
+    "list of who does what around the house",
+    "next up for trash duty?"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Chore rota</h1><p class=\"muted t-small\">Two people, four rooms, one week. Swap any cell you dislike.</p><div class=\"table-wrap\"><table><thead><tr><th>Task</th><th>Mon</th><th>Wed</th><th>Sat</th></tr></thead><tbody><tr><td>Dishes</td><td>Alex</td><td>Sam</td><td>Alex</td></tr><tr><td>Bins</td><td>Sam</td><td>Sam</td><td>Alex</td></tr><tr><td>Vacuum</td><td>Alex</td><td>Alex</td><td>Sam</td></tr><tr><td>Bathroom</td><td>Sam</td><td>Alex</td><td>Sam</td></tr><tr><td>Plants</td><td>Alex</td><td>Alex</td><td>Alex</td></tr></tbody></table></div><div class=\"grid two\"><div class=\"stat\"><span class=\"label\">Alex</span><span class=\"value\">7 <span class=\"unit\">tasks</span></span></div><div class=\"stat\"><span class=\"label\">Sam</span><span class=\"value\">6 <span class=\"unit\">tasks</span></span></div></div><div class=\"meter\"><span style=\"width:54%\"></span></div><p class=\"dim t-small\">54% Alex / 46% Sam. Close enough to fair.</p><details class=\"acc\"><summary>House rules</summary><div class=\"body\"><ul class=\"list\"><li>Missed a day? It rolls, it doesn't vanish.</li><li>Swaps are fine, silence is not.</li><li>Bins on Wed only if it actually smells, <regex>user_name</regex>.</li></ul></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Cached answers audit",
+   "user_requests": [
+    "how many of my questions were cached",
+    "show cache hit stats",
+    "cache hit rate table for this week",
+    "did you actually know that or guess",
+    "list the near misses",
+    "cache performance dashboard",
+    "whens the cache gonna have my stuff",
+    "how many cached responses did i get today",
+    "breakdown of cache hits vs misses",
+    "cache stats pls",
+    "i wanna see a log of all cached queries",
+    "wut percent of my asks were reused?",
+    "cached ansers audit table"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Cache audit \u2014 last 7 days</h1><div class=\"grid two\"><div class=\"stat\"><span class=\"label\">Hit rate</span><span class=\"value\">78<span class=\"unit\">%</span></span><span class=\"delta\">up 6pts</span></div><div class=\"stat\"><span class=\"label\">Near misses</span><span class=\"value\">31</span></div></div><div class=\"table-wrap\"><table><thead><tr><th>Topic</th><th class=\"num\">Asks</th><th class=\"num\">Hits</th><th>Verdict</th></tr></thead><tbody><tr><td>Recipes</td><td class=\"num\">48</td><td class=\"num\">44</td><td><span class=\"badge good\">cached match</span></td></tr><tr><td>Budgeting</td><td class=\"num\">36</td><td class=\"num\">30</td><td><span class=\"badge good\">cached match</span></td></tr><tr><td>Local buses</td><td class=\"num\">22</td><td class=\"num\">11</td><td><span class=\"badge warn\">near miss</span></td></tr><tr><td>Plant care</td><td class=\"num\">19</td><td class=\"num\">16</td><td><span class=\"badge good\">cached match</span></td></tr><tr><td>Tax forms</td><td class=\"num\">7</td><td class=\"num\">0</td><td><span class=\"badge bad\">no cache</span></td></tr></tbody></table></div><div class=\"callout warn\"><p>Buses and tax forms are the gaps. I won't pretend otherwise, <regex>user_name</regex>.</p></div><details class=\"acc\"><summary>What counts as a near miss</summary><div class=\"body\"><p>Right subject, wrong specifics \u2014 like a timetable that changed last month. Good enough to start, not to trust blind.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sleep log for the week",
+   "user_requests": [
+    "my sleep times this week table",
+    "am i getting enough sleep",
+    "track when i went to bed",
+    "sleep log plz",
+    "hours slept each night",
+    "why am i so tired \u2014 show the data",
+    "bedtimes and wake times",
+    "hours slept each night this week",
+    "my sleep pattern table",
+    "zzz log",
+    "how long did i sleep on tuesday",
+    "show me my sleep data for last 7 days",
+    "sleep sched"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Sleep log</h1><p class=\"muted t-small\">Seven nights. Bedtime, wake, and the honest total.</p><div class=\"grid two\"><div class=\"stat\"><span class=\"label\">Average</span><span class=\"value\">6.8 <span class=\"unit\">h</span></span><span class=\"delta down\">down 0.5h</span></div><div class=\"stat\"><span class=\"label\">Best night</span><span class=\"value\">8.2 <span class=\"unit\">h</span></span></div></div><div class=\"table-wrap\"><table><thead><tr><th>Night</th><th>Bed</th><th>Wake</th><th class=\"num\">Hours</th></tr></thead><tbody><tr><td>Mon</td><td>23:10</td><td>06:30</td><td class=\"num\">7.3</td></tr><tr><td>Tue</td><td>00:05</td><td>06:30</td><td class=\"num\">6.4</td></tr><tr><td>Wed</td><td>22:40</td><td>06:50</td><td class=\"num\">8.2</td></tr><tr><td>Thu</td><td>00:35</td><td>06:30</td><td class=\"num\">5.9</td></tr><tr><td>Fri</td><td>01:10</td><td>08:00</td><td class=\"num\">6.8</td></tr><tr><td>Sat</td><td>23:50</td><td>08:10</td><td class=\"num\">8.3</td></tr><tr><td>Sun</td><td>23:30</td><td>06:40</td><td class=\"num\">7.2</td></tr></tbody></table></div><div class=\"callout bad\"><p>Three nights under seven hours, all midweek. That's your tired, <regex>user_name</regex>.</p></div><details class=\"acc\"><summary>One small pattern</summary><div class=\"body\"><p>Late nights follow late screen time, not late plans. Try a 23:15 alarm for lights out.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Houseplant watering board",
+   "user_requests": [
+    "when do i water my plants",
+    "plant watering schedule table",
+    "my monstera looks sad \u2014 watering?",
+    "which plants need water this week",
+    "plant care dashboard",
+    "last watered dates for my plants",
+    "did i water the fern",
+    "which plants need water today",
+    "watering schedule for my succulents",
+    "plant water tracker",
+    "wen should i water the fern",
+    "my houseplant care table",
+    "did i water the monstera this week?"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Plant watering board</h1><p class=\"muted t-small\">Six pots. Last drink, next due, and the light they actually get.</p><div class=\"table-wrap\"><table><thead><tr><th>Plant</th><th>Last</th><th>Next</th><th>Light</th></tr></thead><tbody><tr><td>Monstera</td><td>3 days</td><td>in 4 days</td><td>Bright indirect</td></tr><tr><td>Snake plant</td><td>12 days</td><td>in 9 days</td><td>Low</td></tr><tr><td>Fern</td><td>1 day</td><td>in 2 days</td><td>Shade, damp</td></tr><tr><td>Aloe</td><td>9 days</td><td>in 12 days</td><td>South sill</td></tr><tr><td>Basil</td><td>2 days</td><td class=\"num\">today</td><td>Six hours sun</td></tr><tr><td>Pothos</td><td>5 days</td><td>in 3 days</td><td>Anywhere</td></tr></tbody></table></div><div class=\"callout good\"><p>Only the basil is thirsty. Fern stays damp, aloe stays ignored, <regex>user_name</regex>.</p></div><details class=\"acc\"><summary>Signs you're overwatering</summary><div class=\"body\"><ul class=\"list\"><li>Yellow lower leaves that feel soft, not crisp.</li><li>Soil still wet after a week.</li><li>Fungus gnats circling the pot.</li></ul></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Bike commute log",
+   "user_requests": [
+    "bike commute times this week",
+    "how long does my cycle take",
+    "commute log table",
+    "faster route to work??",
+    "bike vs bus comparison",
+    "my cycling times each day",
+    "show me the ride data",
+    "how long did it take me to bike to work today",
+    "cycling times this week",
+    "bike to work log",
+    "table of my bike rides",
+    "hw long was my commute tuesday",
+    "bike commute stats"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Bike commute log</h1><p class=\"muted t-small\">Out and back, door to door. Weather noted because it matters.</p><div class=\"grid two\"><div class=\"stat\"><span class=\"label\">Weekly distance</span><span class=\"value\">63 <span class=\"unit\">km</span></span></div><div class=\"stat\"><span class=\"label\">Average speed</span><span class=\"value\">18.4 <span class=\"unit\">km/h</span></span><span class=\"delta\">up 0.6</span></div></div><div class=\"table-wrap\"><table><thead><tr><th>Day</th><th class=\"num\">Out</th><th class=\"num\">Back</th><th>Weather</th></tr></thead><tbody><tr><td>Mon</td><td class=\"num\">24 min</td><td class=\"num\">27 min</td><td>Dry, tailwind</td></tr><tr><td>Tue</td><td class=\"num\">26 min</td><td class=\"num\">31 min</td><td>Headwind back</td></tr><tr><td>Wed</td><td class=\"num\">23 min</td><td class=\"num\">25 min</td><td>Clear</td></tr><tr><td>Thu</td><td class=\"num\">29 min</td><td class=\"num\">28 min</td><td>Light rain</td></tr><tr><td>Fri</td><td class=\"num\">22 min</td><td class=\"num\">26 min</td><td>Clear</td></tr></tbody></table></div><div class=\"callout info\"><p>The bridge route saves 3 minutes uphill but costs 1 down. Bus was 41 minutes, for the record, <regex>user_name</regex>.</p></div><details class=\"acc\"><summary>Rain-day kit</summary><div class=\"body\"><p>Thursday's four extra minutes were all at traffic lights. Mudguards did the real work.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Month-by-month savings tracker",
+   "user_requests": [
+    "track my savings each month",
+    "how much have i saved this yr",
+    "savings tracker plz",
+    "show my monthly savings progress",
+    "i need a table of what i put aside each month",
+    "savings by month?",
+    "can u make me a lil savings dashboard",
+    "how much did i save in april",
+    "savings per month table",
+    "monthly savings breakdown",
+    "track my moolah each month",
+    "savings progress over time",
+    "show me my savings by month"
+   ],
+   "html": "<div class=\"umi-page stack\">\n  <h1>Savings, month by month</h1>\n  <p class=\"muted\">Nice work, <regex>user_name</regex>. That's a steady climb, barring the sofa incident.</p>\n  <div class=\"grid two\">\n    <div class=\"stat\"><span class=\"label\">Total saved</span><p class=\"value\">\u00a32,240</p></div>\n    <div class=\"stat\"><span class=\"label\">Best month</span><p class=\"value\">\u00a3450</p><span class=\"delta\">March</span></div>\n  </div>\n  <div class=\"table-wrap\">\n    <table>\n      <thead><tr><th>Month</th><th class=\"num\">Saved</th><th class=\"num\">Running total</th></tr></thead>\n      <tbody>\n        <tr><td>January</td><td class=\"num\">\u00a3180</td><td class=\"num\">\u00a3180</td></tr>\n        <tr><td>February</td><td class=\"num\">\u00a3250</td><td class=\"num\">\u00a3430</td></tr>\n        <tr><td>March</td><td class=\"num\">\u00a3450</td><td class=\"num\">\u00a3880</td></tr>\n        <tr><td>April</td><td class=\"num\">\u00a3300</td><td class=\"num\">\u00a31,180</td></tr>\n        <tr><td>May</td><td class=\"num\">\u00a3560</td><td class=\"num\">\u00a31,740</td></tr>\n        <tr><td>June</td><td class=\"num\">\u00a3500</td><td class=\"num\">\u00a32,240</td></tr>\n      </tbody>\n    </table>\n  </div>\n  <div class=\"meter\"><span style=\"width:75%\"></span></div>\n  <p class=\"t-small dim\">75% of your \u00a33,000 target \u2014 on pace to land it in early August.</p>\n  <details class=\"acc\"><summary>Where the June money came from</summary><div class=\"body\"><ul class=\"list\"><li>\u00a3300 automatic transfer</li><li>\u00a3120 sold the old bike</li><li>\u00a380 birthday cash</li></ul></div></details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Router reboot history",
+   "user_requests": [
+    "why does my wifi keep dying",
+    "log of router restarts",
+    "show me when the internet dropped",
+    "my wifi is flaky again help",
+    "history of modem reboots pls",
+    "is it the router or me",
+    "list every time net went down",
+    "when did i last restart the router",
+    "number of router reboots this week",
+    "wifi restart log",
+    "y does my router keep rebooting",
+    "list of router restarts",
+    "router reboot table plz"
+   ],
+   "html": "<div class=\"umi-page stack\">\n  <h1>Router reboot history</h1>\n  <p class=\"muted\">Six drops this month, <regex>user_name</regex>. The pattern is a little suspicious \u2014 always around 8pm.</p>\n  <div class=\"callout warn\">Peak-hour drops usually mean heat or a firmware quirk, not your devices.</div>\n  <div class=\"table-wrap\">\n    <table>\n      <thead><tr><th>When</th><th>Trigger</th><th>Offline</th></tr></thead>\n      <tbody>\n        <tr><td>Mon 8:12pm</td><td>Auto-reboot</td><td>2 min</td></tr>\n        <tr><td>Tue 10:04am</td><td>Manual</td><td>40 sec</td></tr>\n        <tr><td>Wed 8:21pm</td><td>Auto-reboot</td><td>3 min</td></tr>\n        <tr><td>Thu 7:58pm</td><td>Auto-reboot</td><td>2 min</td></tr>\n        <tr><td>Sat 9:15pm</td><td>Power blip</td><td>6 min</td></tr>\n        <tr><td>Sun 8:30pm</td><td>Auto-reboot</td><td>2 min</td></tr>\n      </tbody>\n    </table>\n  </div>\n  <div class=\"legend\"><i></i> auto <i class=\"alt\"></i> you did it</div>\n  <details class=\"acc\"><summary>Things worth trying</summary><div class=\"body\"><ol class=\"list\"><li>Give it air \u2014 lift it off the carpet.</li><li>Update firmware Friday night.</li><li>If it keeps up, log the temperature too.</li></ol></div></details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Library book return dates",
+   "user_requests": [
+    "when are my library books due",
+    "library due dates pls",
+    "make me a list of books i borrowed",
+    "am i late on any library stuff",
+    "books due back soon?",
+    "track my library loans",
+    "need the due dates b4 i get fined",
+    "due dates for my library books",
+    "which books do i need to return soon",
+    "library due date tracker",
+    "wen r my books due",
+    "book return schedule",
+    "list of library books and their due dates"
+   ],
+   "html": "<div class=\"umi-page stack\">\n  <h1>Library book return dates</h1>\n  <p class=\"muted\">Three due this week, <regex>user_name</regex>. The Hiker's Guide is cutting it fine.</p>\n  <div class=\"grid two\">\n    <div class=\"stat\"><span class=\"label\">On loan</span><p class=\"value\">5</p></div>\n    <div class=\"stat\"><span class=\"label\">Due in 7 days</span><p class=\"value\">3</p><span class=\"delta down\">tight</span></div>\n  </div>\n  <div class=\"table-wrap\">\n    <table>\n      <thead><tr><th>Title</th><th>Due</th><th>Status</th></tr></thead>\n      <tbody>\n        <tr><td>The Hiker's Guide</td><td>Fri 12 Jun</td><td><span class=\"badge warn\"><i class=\"dot\"></i>1 day</span></td></tr>\n        <tr><td>Salt, Fat, Acid, Heat</td><td>Sun 14 Jun</td><td><span class=\"badge\">3 days</span></td></tr>\n        <tr><td>Piranesi</td><td>Mon 15 Jun</td><td><span class=\"badge\">4 days</span></td></tr>\n        <tr><td>The Overstory</td><td>Sun 28 Jun</td><td><span class=\"badge good\">2 weeks</span></td></tr>\n        <tr><td>Wolf Hall</td><td>Thu 2 Jul</td><td><span class=\"badge good\">3 weeks</span></td></tr>\n      </tbody>\n    </table>\n  </div>\n  <details class=\"acc\"><summary>Renewal rules at your branch</summary><div class=\"body\"><p>Two renewals per item, as long as nobody's reserved it. Online renewal closes at 11:59pm on the due date.</p></div></details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Blood pressure readings",
+   "user_requests": [
+    "log my blood pressure",
+    "bp readings this week",
+    "make a table of my bp numbers",
+    "is my blood pressure ok",
+    "track systolic and diastolic for me",
+    "bp log plz doc wants it",
+    "show my morning and evening bp",
+    "my bp log",
+    "show me my blood pressure history",
+    "bp readings table",
+    "wuts my average blood pressure",
+    "track my bp over time",
+    "blood pressure chart"
+   ],
+   "html": "<div class=\"umi-page stack\">\n  <h1>Blood pressure readings</h1>\n  <p class=\"muted\">A calm week, <regex>user_name</regex>. Morning numbers sit lower than evening ones, which is normal.</p>\n  <div class=\"callout info\">Usual healthy range is under 120/80. Worth showing a GP if it stays above 140/90.</div>\n  <div class=\"table-wrap\">\n    <table>\n      <thead><tr><th>Date</th><th class=\"num\">Systolic</th><th class=\"num\">Diastolic</th><th class=\"num\">Pulse</th></tr></thead>\n      <tbody>\n        <tr><td>Mon am</td><td class=\"num\">118</td><td class=\"num\">76</td><td class=\"num\">64</td></tr>\n        <tr><td>Mon pm</td><td class=\"num\">124</td><td class=\"num\">80</td><td class=\"num\">70</td></tr>\n        <tr><td>Tue am</td><td class=\"num\">116</td><td class=\"num\">74</td><td class=\"num\">62</td></tr>\n        <tr><td>Wed am</td><td class=\"num\">121</td><td class=\"num\">78</td><td class=\"num\">66</td></tr>\n        <tr><td>Wed pm</td><td class=\"num\">127</td><td class=\"num\">82</td><td class=\"num\">72</td></tr>\n        <tr><td>Fri am</td><td class=\"num\">119</td><td class=\"num\">77</td><td class=\"num\">65</td></tr>\n      </tbody>\n    </table>\n  </div>\n  <p class=\"t-small dim\">Take readings sitting still for five minutes, arm at heart height. Same time each day beats lots of readings.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Board game night scores",
+   "user_requests": [
+    "who won board game night",
+    "keep score for game night",
+    "table of our board game results pls",
+    "tracking wins across our games",
+    "whos winning overall this yr",
+    "game night leaderboard",
+    "log saturdays games n scores",
+    "who won at monopoly last night",
+    "scoreboard for game night",
+    "board game winners log",
+    "tally of board game victories",
+    "how many times did i win catan",
+    "game night results table"
+   ],
+   "html": "<div class=\"umi-page stack\">\n  <h1>Board game night scores</h1>\n  <p class=\"muted\">You're one behind Priya, <regex>user_name</regex>. Nothing a good Catan roll can't fix.</p>\n  <div class=\"table-wrap\">\n    <table>\n      <thead><tr><th>Night</th><th>Game</th><th>Winner</th><th class=\"num\">Score</th></tr></thead>\n      <tbody>\n        <tr><td>3 May</td><td>Catan</td><td>Priya</td><td class=\"num\">10</td></tr>\n        <tr><td>10 May</td><td>Wingspan</td><td>You</td><td class=\"num\">84</td></tr>\n        <tr><td>17 May</td><td>Azul</td><td>Sam</td><td class=\"num\">71</td></tr>\n        <tr><td>24 May</td><td>Catan</td><td>You</td><td class=\"num\">10</td></tr>\n        <tr><td>31 May</td><td>Codenames</td><td>Priya</td><td class=\"num\">3</td></tr>\n        <tr><td>7 Jun</td><td>Wingspan</td><td>Priya</td><td class=\"num\">91</td></tr>\n      </tbody>\n    </table>\n  </div>\n  <details class=\"acc\"><summary>Season tally</summary><div class=\"body\"><ul class=\"list\"><li>Priya \u2014 3 wins</li><li>You \u2014 2 wins</li><li>Sam \u2014 1 win</li></ul></div></details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Bike service task list",
+   "user_requests": [
+    "what does my bike need",
+    "bike servicing checklist",
+    "list of jobs on my bicycle",
+    "when should i replace bike parts",
+    "bike maintenance table plz",
+    "my chain is rattling what else",
+    "bicycle upkeep tracker",
+    "what maintenance does my bike need",
+    "bike repair to-do list",
+    "things to fix on my bicycle",
+    "bike service checklist",
+    "wat needs doing on my bike",
+    "list of bike maintenance tasks"
+   ],
+   "html": "<div class=\"umi-page stack\">\n  <h1>Bike service task list</h1>\n  <p class=\"muted\">Six jobs, <regex>user_name</regex>. Three are quick; the bottom bracket is a proper Saturday one.</p>\n  <div class=\"grid two\">\n    <div class=\"stat\"><span class=\"label\">Done</span><p class=\"value\">2<span class=\"unit\">/6</span></p></div>\n    <div class=\"stat\"><span class=\"label\">Next up</span><p class=\"value\">Chain</p><span class=\"delta down\">overdue</span></div>\n  </div>\n  <div class=\"table-wrap\">\n    <table>\n      <thead><tr><th>Task</th><th>Every</th><th>Status</th></tr></thead>\n      <tbody>\n        <tr><td>Lube the chain</td><td>2 weeks</td><td><span class=\"badge good\"><i class=\"dot\"></i>done</span></td></tr>\n        <tr><td>Check tyre pressure</td><td>Weekly</td><td><span class=\"badge good\"><i class=\"dot\"></i>done</span></td></tr>\n        <tr><td>Inspect brake pads</td><td>Monthly</td><td><span class=\"badge warn\"><i class=\"dot\"></i>soon</span></td></tr>\n        <tr><td>Clean the drivetrain</td><td>Monthly</td><td><span class=\"badge\">due</span></td></tr>\n        <tr><td>Replace chain</td><td>~2,000 km</td><td><span class=\"badge bad\">overdue</span></td></tr>\n        <tr><td>Service bottom bracket</td><td>Yearly</td><td><span class=\"badge\">due</span></td></tr>\n      </tbody>\n    </table>\n  </div>\n  <details class=\"acc\"><summary>Ten-minute chain check</summary><div class=\"body\"><p>Hold a ruler against 12 links. Past 12 and 1/16 inches means a new chain \u2014 cheaper than a new cassette.</p></div></details>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "track my parking costs this month",
+    "show me a table of parking meter sessions",
+    "car park spend log",
+    "parking log pls",
+    "how much did I pay for parking this week?",
+    "make me a dashboard of my parking sessions",
+    "parking charges tracker",
+    "how much did i spend on parking this week",
+    "parking meter log",
+    "time i parked at meters",
+    "parking costs table",
+    "track my parking sessions",
+    "hw much for parking this month"
+   ],
+   "title": "Parking meter sessions",
+   "html": "<div class=\"umi-page\"><h1>Parking meter sessions</h1><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Location</th><th>Duration</th><th class=\"num\">Cost</th></tr></thead><tbody><tr><td>Mon 3 Jun</td><td>High Street</td><td>1h 20m</td><td class=\"num\">\u00a32.40</td></tr><tr><td>Tue 4 Jun</td><td>Station Road</td><td>45m</td><td class=\"num\">\u00a31.50</td></tr><tr><td>Wed 5 Jun</td><td>Market Square</td><td>2h 10m</td><td class=\"num\">\u00a34.20</td></tr><tr><td>Thu 6 Jun</td><td>High Street</td><td>30m</td><td class=\"num\">\u00a31.00</td></tr><tr><td>Fri 7 Jun</td><td>Riverside</td><td>1h</td><td class=\"num\">\u00a32.00</td></tr><tr><td>Sat 8 Jun</td><td>Station Road</td><td>3h</td><td class=\"num\">\u00a35.50</td></tr><tr><td>Sun 9 Jun</td><td>Free after 6pm</td><td>2h</td><td class=\"num\">\u00a30.00</td></tr></tbody></table></div><p class=\"muted t-small\">Total this week: \u00a316.60. Two sessions at the same spot \u2014 worth a season ticket?</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "what's in my fridge?",
+    "show me a table of food expiry dates",
+    "fridge inventory please",
+    "track use-by dates in my fridge",
+    "help me stop wasting food",
+    "make a dashboard of my fridge contents",
+    "fridge items and when they go off",
+    "what food is about to expire",
+    "expiration dates in my fridge",
+    "fridge contents and expiry",
+    "wat shuld i eat before it goes bad",
+    "list of fridge items by date",
+    "my fridge expiry tracker"
+   ],
+   "title": "Fridge expiry watch",
+   "html": "<div class=\"umi-page\"><h1>Fridge expiry watch</h1><div class=\"table-wrap\"><table><thead><tr><th>Item</th><th>Added</th><th>Use by</th><th>Status</th></tr></thead><tbody><tr><td>Whole milk</td><td>2 Jun</td><td>8 Jun</td><td><span class=\"badge warn\">2 days</span></td></tr><tr><td>Chicken thighs</td><td>4 Jun</td><td>7 Jun</td><td><span class=\"badge bad\">today</span></td></tr><tr><td>Spinach</td><td>5 Jun</td><td>9 Jun</td><td><span class=\"badge good\">fine</span></td></tr><tr><td>Greek yoghurt</td><td>1 Jun</td><td>10 Jun</td><td><span class=\"badge good\">fine</span></td></tr><tr><td>Hummus</td><td>30 May</td><td>6 Jun</td><td><span class=\"badge bad\">expired</span></td></tr><tr><td>Bell peppers</td><td>3 Jun</td><td>11 Jun</td><td><span class=\"badge good\">fine</span></td></tr><tr><td>Cheddar</td><td>28 May</td><td>20 Jun</td><td><span class=\"badge good\">fine</span></td></tr></tbody></table></div><p class=\"muted t-small\">Two things need eating today. Soup night, <regex>user_name</regex>?</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "track my screen time",
+    "show me how long I've been on my phone",
+    "daily app usage table",
+    "screen time log",
+    "make a dashboard of my phone habits",
+    "how much did I scroll today?",
+    "app usage this week",
+    "how much time did i spend on instagram today",
+    "app usage breakdown",
+    "screen time stats",
+    "wuts my screen time for each app",
+    "table of my app usage",
+    "hw long on my phone yesterday"
+   ],
+   "title": "Screen time by app",
+   "html": "<div class=\"umi-page\"><h1>Screen time by app</h1><div class=\"table-wrap\"><table><thead><tr><th>App</th><th class=\"num\">Mon</th><th class=\"num\">Tue</th><th class=\"num\">Wed</th><th class=\"num\">Total</th></tr></thead><tbody><tr><td>Messages</td><td class=\"num\">22m</td><td class=\"num\">18m</td><td class=\"num\">25m</td><td class=\"num\">1h 5m</td></tr><tr><td>Maps</td><td class=\"num\">10m</td><td class=\"num\">0m</td><td class=\"num\">12m</td><td class=\"num\">22m</td></tr><tr><td>News</td><td class=\"num\">35m</td><td class=\"num\">40m</td><td class=\"num\">30m</td><td class=\"num\">1h 45m</td></tr><tr><td>Photos</td><td class=\"num\">5m</td><td class=\"num\">8m</td><td class=\"num\">4m</td><td class=\"num\">17m</td></tr><tr><td>Podcasts</td><td class=\"num\">45m</td><td class=\"num\">50m</td><td class=\"num\">48m</td><td class=\"num\">2h 23m</td></tr><tr><td>Browsers</td><td class=\"num\">15m</td><td class=\"num\">12m</td><td class=\"num\">20m</td><td class=\"num\">47m</td></tr></tbody></table></div><p class=\"muted t-small\">News is creeping up. The phone knows, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "log my water intake",
+    "track how much water I drink",
+    "show me a table of my hydration",
+    "water drinking tracker",
+    "help me drink more water",
+    "daily water log",
+    "hydration dashboard",
+    "how many glasses of water did i drink today",
+    "hydration tracker",
+    "water consumption table",
+    "hw much h2o today",
+    "log of my water intake this week",
+    "my daily water log"
+   ],
+   "title": "Water intake log",
+   "html": "<div class=\"umi-page\"><h1>Water intake log</h1><div class=\"table-wrap\"><table><thead><tr><th>Day</th><th class=\"num\">Glasses</th><th>Goal</th><th>Note</th></tr></thead><tbody><tr><td>Mon</td><td class=\"num\">6</td><td><span class=\"badge good\">met</span></td><td>steady</td></tr><tr><td>Tue</td><td class=\"num\">4</td><td><span class=\"badge warn\">short</span></td><td>busy morning</td></tr><tr><td>Wed</td><td class=\"num\">8</td><td><span class=\"badge good\">met</span></td><td>gym day</td></tr><tr><td>Thu</td><td class=\"num\">5</td><td><span class=\"badge warn\">short</span></td><td>forgot refill</td></tr><tr><td>Fri</td><td class=\"num\">7</td><td><span class=\"badge good\">met</span></td><td>good</td></tr><tr><td>Sat</td><td class=\"num\">6</td><td><span class=\"badge good\">met</span></td><td>\u2014</td></tr><tr><td>Sun</td><td class=\"num\">3</td><td><span class=\"badge bad\">low</span></td><td>out all day</td></tr></tbody></table></div><p class=\"muted t-small\">Sunday let you down. A bottle in the bag fixes that.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "track my daily steps",
+    "step count log",
+    "show me my walking this week",
+    "how many steps did I do?",
+    "make a dashboard of my steps",
+    "step tracker please",
+    "steps each day this week",
+    "how many steps did i get today",
+    "step count plz",
+    "show my walking stats for the day",
+    "daily steps tracker",
+    "i need to see my steps",
+    "steps walked today?"
+   ],
+   "title": "Daily step count",
+   "html": "<div class=\"umi-page\"><h1>Daily step count</h1><div class=\"table-wrap\"><table><thead><tr><th>Day</th><th class=\"num\">Steps</th><th class=\"num\">Distance</th><th>Trend</th></tr></thead><tbody><tr><td>Mon</td><td class=\"num\">7,240</td><td class=\"num\">5.1 km</td><td><span class=\"badge good\">up</span></td></tr><tr><td>Tue</td><td class=\"num\">5,980</td><td class=\"num\">4.2 km</td><td><span class=\"badge warn\">down</span></td></tr><tr><td>Wed</td><td class=\"num\">9,410</td><td class=\"num\">6.7 km</td><td><span class=\"badge good\">up</span></td></tr><tr><td>Thu</td><td class=\"num\">6,150</td><td class=\"num\">4.4 km</td><td><span class=\"badge warn\">down</span></td></tr><tr><td>Fri</td><td class=\"num\">8,870</td><td class=\"num\">6.3 km</td><td><span class=\"badge good\">up</span></td></tr><tr><td>Sat</td><td class=\"num\">12,300</td><td class=\"num\">8.8 km</td><td><span class=\"badge good\">best</span></td></tr><tr><td>Sun</td><td class=\"num\">4,050</td><td class=\"num\">2.9 km</td><td><span class=\"badge bad\">rest</span></td></tr></tbody></table></div><p class=\"muted t-small\">Saturday carried the week. Sunday, you earned it.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "track my coffee spending",
+    "how much do I spend on coffee?",
+    "coffee shop visits log",
+    "show me a table of my coffee runs",
+    "coffee tracker",
+    "coffee budget dashboard",
+    "how many lattes this week?",
+    "how much have i spent on coffee runs",
+    "coffee spending so far",
+    "tally up my coffee buys",
+    "coffee run costs this week",
+    "whats my coffee budget looking like",
+    "how many coffees have i bought"
+   ],
+   "title": "Coffee run tally",
+   "html": "<div class=\"umi-page\"><h1>Coffee run tally</h1><div class=\"table-wrap\"><table><thead><tr><th>Day</th><th>Drink</th><th>Place</th><th class=\"num\">Price</th></tr></thead><tbody><tr><td>Mon</td><td>Flat white</td><td>Bean &amp; Brew</td><td class=\"num\">\u00a33.20</td></tr><tr><td>Tue</td><td>Filter</td><td>Office</td><td class=\"num\">\u00a30.00</td></tr><tr><td>Wed</td><td>Latte</td><td>Bean &amp; Brew</td><td class=\"num\">\u00a33.60</td></tr><tr><td>Thu</td><td>Espresso</td><td>Cafe Nero</td><td class=\"num\">\u00a32.80</td></tr><tr><td>Fri</td><td>Flat white</td><td>Bean &amp; Brew</td><td class=\"num\">\u00a33.20</td></tr><tr><td>Sat</td><td>Cappuccino</td><td>Market stall</td><td class=\"num\">\u00a33.00</td></tr><tr><td>Sun</td><td>Home brew</td><td>Kitchen</td><td class=\"num\">\u00a30.50</td></tr></tbody></table></div><p class=\"muted t-small\">\u00a316.30 this week. The kitchen wins on value, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "Can I get a table of my credit card charges this week?",
+    "show my weekly spending by card",
+    "need a dashboard for recent card transactions",
+    "What did I spend money on last week? make it a table",
+    "card spending log pls",
+    "Table of my latest card purchases",
+    "weekly card transactions overview",
+    "show me my cc charges for the week",
+    "what did i put on my credit card this week",
+    "weekly credit card transactions",
+    "list my credit card purchases this week",
+    "credit card spending this week",
+    "can i see my card activity for the week"
+   ],
+   "title": "Credit card charges this week",
+   "html": "<div class=\"umi-page\"><h1>Credit card charges this week</h1><p class=\"muted\">Charges on your card ending 4412, from Mon 7 to Sun 13 Oct.</p><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Merchant</th><th class=\"num\">Amount</th></tr></thead><tbody><tr><td>07 Oct</td><td>Metro Coffee</td><td class=\"num\">\u00a34.20</td></tr><tr><td>07 Oct</td><td>Grocerly</td><td class=\"num\">\u00a331.55</td></tr><tr><td>08 Oct</td><td>Gym membership</td><td class=\"num\">\u00a329.00</td></tr><tr><td>09 Oct</td><td>Metro Coffee</td><td class=\"num\">\u00a34.20</td></tr><tr><td>10 Oct</td><td>Bookends</td><td class=\"num\">\u00a312.99</td></tr><tr><td>11 Oct</td><td>Petrol Station</td><td class=\"num\">\u00a348.10</td></tr><tr><td>12 Oct</td><td>Pharmacy</td><td class=\"num\">\u00a36.75</td></tr></tbody></table></div><p class=\"t-small dim\">Total: \u00a3136.79. Two Metro Coffee runs, noted.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "What's in my pantry right now?",
+    "pantry inventory list",
+    "Show me what food I have at home",
+    "make a table of pantry items",
+    "I need to see my cupboard contents",
+    "pantry stocktake please",
+    "list pantry items with quantities",
+    "what do i have in the pantry",
+    "pantry inventory check",
+    "show me my pantry items",
+    "stocktake of the pantry",
+    "whats left in my pantry",
+    "pantry contents list"
+   ],
+   "title": "Pantry stocktake",
+   "html": "<div class=\"umi-page\"><h1>Pantry stocktake</h1><p class=\"muted\">Everything in the kitchen cupboards, checked Sunday evening.</p><div class=\"table-wrap\"><table><thead><tr><th>Item</th><th class=\"num\">Quantity</th></tr></thead><tbody><tr><td>Spaghetti</td><td class=\"num\">2 packs</td></tr><tr><td>Tinned tomatoes</td><td class=\"num\">6 tins</td></tr><tr><td>Red lentils</td><td class=\"num\">800 g</td></tr><tr><td>Rice</td><td class=\"num\">1.2 kg</td></tr><tr><td>Olive oil</td><td class=\"num\">500 ml</td></tr><tr><td>Stock cubes</td><td class=\"num\">9</td></tr><tr><td>Peanut butter</td><td class=\"num\">1 jar</td></tr></tbody></table></div><p class=\"t-small dim\">Looks like pasta night is sorted for a while.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "How many hours did I bill this week?",
+    "show billable hours by day",
+    "I need a timesheet summary",
+    "make a table of my work hours",
+    "weekly billable hours report",
+    "what did I work on this week? hours table",
+    "billable hours log please",
+    "how many billable hours did i log each day",
+    "daily billable hours breakdown",
+    "show my billable time per day",
+    "billable hours this week by day",
+    "whats my billable hours look like day by day",
+    "i need my daily billable hours"
+   ],
+   "title": "Billable hours by day",
+   "html": "<div class=\"umi-page\"><h1>Billable hours by day</h1><p class=\"muted\">Your logged hours for the week of 7 Oct, by client.</p><div class=\"table-wrap\"><table><thead><tr><th>Day</th><th>Client</th><th class=\"num\">Hours</th></tr></thead><tbody><tr><td>Mon</td><td>Acme Corp</td><td class=\"num\">3.5</td></tr><tr><td>Tue</td><td>Beta Ltd</td><td class=\"num\">2.0</td></tr><tr><td>Wed</td><td>Acme Corp</td><td class=\"num\">4.0</td></tr><tr><td>Thu</td><td>Gamma Inc</td><td class=\"num\">1.5</td></tr><tr><td>Fri</td><td>Beta Ltd</td><td class=\"num\">3.0</td></tr><tr><td>Sat</td><td>Acme Corp</td><td class=\"num\">2.0</td></tr><tr><td>Sun</td><td>\u2014</td><td class=\"num\">0</td></tr></tbody></table></div><p class=\"t-small dim\">Total: 16.0 hours. Sunday off, as it should be.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "What books have I read this year?",
+    "reading log 2025",
+    "show my finished books",
+    "make a table of books I've read",
+    "reading tracker please",
+    "list books with ratings",
+    "I need a record of my reading",
+    "what have i read so far this year",
+    "books finished in 2025",
+    "show my reading list for 2025",
+    "my 2025 reading log",
+    "what books did i get through this year",
+    "reading tracker 2025"
+   ],
+   "title": "Reading log 2025",
+   "html": "<div class=\"umi-page\"><h1>Reading log 2025</h1><p class=\"muted\">Books you finished this year, with your star ratings.</p><div class=\"table-wrap\"><table><thead><tr><th>Book</th><th>Author</th><th class=\"num\">Rating</th></tr></thead><tbody><tr><td>Piranesi</td><td>Susanna Clarke</td><td class=\"num\">5</td></tr><tr><td>Klara and the Sun</td><td>Kazuo Ishiguro</td><td class=\"num\">4</td></tr><tr><td>The Vanishing Half</td><td>Brit Bennett</td><td class=\"num\">4</td></tr><tr><td>Project Hail Mary</td><td>Andy Weir</td><td class=\"num\">5</td></tr><tr><td>Shuggie Bain</td><td>Douglas Stuart</td><td class=\"num\">4</td></tr><tr><td>Sea of Tranquility</td><td>Emily St. John Mandel</td><td class=\"num\">3</td></tr><tr><td>Tomorrow, and Tomorrow, and Tomorrow</td><td>Gabrielle Zevin</td><td class=\"num\">5</td></tr></tbody></table></div><p class=\"t-small dim\">Seven books so far. Piranesi still haunting you, I see.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "When did I last water the plants?",
+    "plant watering history",
+    "show my plant care log",
+    "make a table of plant watering days",
+    "plant watering tracker",
+    "what plants did I water this week?",
+    "houseplant watering schedule",
+    "when should i water my plants next",
+    "plant watering log",
+    "did i water the plants today",
+    "watering schedule for my plants",
+    "show me my plant care schedule",
+    "when was the last time i watered each plant"
+   ],
+   "title": "Plant watering schedule",
+   "html": "<div class=\"umi-page\"><h1>Plant watering schedule</h1><p class=\"muted\">Your indoor plants and the last time you watered them.</p><div class=\"table-wrap\"><table><thead><tr><th>Plant</th><th>Location</th><th>Last watered</th></tr></thead><tbody><tr><td>Monstera</td><td>Living room</td><td>2 days ago</td></tr><tr><td>Fiddle-leaf fig</td><td>Living room</td><td>5 days ago</td></tr><tr><td>Snake plant</td><td>Bedroom</td><td>10 days ago</td></tr><tr><td>Pothos</td><td>Kitchen</td><td>1 day ago</td></tr><tr><td>ZZ plant</td><td>Office</td><td>7 days ago</td></tr><tr><td>Spider plant</td><td>Bathroom</td><td>3 days ago</td></tr><tr><td>Aloe vera</td><td>Kitchen</td><td>14 days ago</td></tr></tbody></table></div><p class=\"t-small dim\">The snake plant and aloe are fine for a while yet.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "What did I spend on groceries this month?",
+    "grocery budget tracker",
+    "show my supermarket spending",
+    "make a table of grocery expenses",
+    "monthly grocery spend",
+    "how much on food shopping?",
+    "grocery costs by week",
+    "how much did i spend on groceries each week",
+    "weekly grocery spending",
+    "grocery costs per week",
+    "show my grocery expenses by week",
+    "whats my grocery bill look like weekly",
+    "grocery spend breakdown by week"
+   ],
+   "title": "Grocery spend by week",
+   "html": "<div class=\"umi-page\"><h1>Grocery spend by week</h1><p class=\"muted\">Your supermarket spending for October, week by week.</p><div class=\"table-wrap\"><table><thead><tr><th>Week starting</th><th>Supermarket</th><th class=\"num\">Spend</th></tr></thead><tbody><tr><td>30 Sep</td><td>Grocerly</td><td class=\"num\">\u00a342.10</td></tr><tr><td>07 Oct</td><td>Grocerly</td><td class=\"num\">\u00a331.55</td></tr><tr><td>07 Oct</td><td>Corner Shop</td><td class=\"num\">\u00a38.20</td></tr><tr><td>14 Oct</td><td>Grocerly</td><td class=\"num\">\u00a338.90</td></tr><tr><td>21 Oct</td><td>Grocerly</td><td class=\"num\">\u00a329.75</td></tr><tr><td>21 Oct</td><td>Corner Shop</td><td class=\"num\">\u00a35.60</td></tr><tr><td>28 Oct</td><td>Grocerly</td><td class=\"num\">\u00a345.30</td></tr></tbody></table></div><p class=\"t-small dim\">Total: \u00a3201.40. That last week was a big one.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "my coffee consumption this week",
+    "how many cups of coffee did I drink?",
+    "coffee intake log",
+    "track my espresso shots",
+    "caffeine diary",
+    "show me my coffee habit",
+    "coffee tally",
+    "how many coffees did i have this week",
+    "coffee count for the week",
+    "my coffee intake this week",
+    "show me how much coffee i drank this week",
+    "weekly coffee tally",
+    "coffees consumed this week"
+   ],
+   "title": "Coffee consumption this week",
+   "html": "<div class=\"umi-page\"><h1>Coffee consumption this week</h1><p class=\"muted\">A quick tally of your daily brews. <regex>user_name</regex>, you're averaging 2.4 cups a day.</p><div class=\"grid\"><div class=\"stat\"><span class=\"label\">Total cups</span><span class=\"value\">17</span></div><div class=\"stat\"><span class=\"label\">Daily average</span><span class=\"value\">2.4</span></div><div class=\"stat\"><span class=\"label\">Heaviest day</span><span class=\"value\">4</span><span class=\"delta\">Wed</span></div></div><div class=\"table-wrap\"><table><thead><tr><th>Day</th><th class=\"num\">Cups</th><th class=\"num\">Caffeine (mg)</th></tr></thead><tbody><tr><td>Mon</td><td class=\"num\">2</td><td class=\"num\">160</td></tr><tr><td>Tue</td><td class=\"num\">3</td><td class=\"num\">240</td></tr><tr><td>Wed</td><td class=\"num\">4</td><td class=\"num\">320</td></tr><tr><td>Thu</td><td class=\"num\">2</td><td class=\"num\">160</td></tr><tr><td>Fri</td><td class=\"num\">3</td><td class=\"num\">240</td></tr><tr><td>Sat</td><td class=\"num\">2</td><td class=\"num\">160</td></tr><tr><td>Sun</td><td class=\"num\">1</td><td class=\"num\">80</td></tr></tbody></table></div><div class=\"callout info\"><p>Consider swapping one afternoon cup for tea. Small change, big difference.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "track my daily water intake",
+    "how much water did I drink today?",
+    "hydration log",
+    "water tracker",
+    "show my water consumption",
+    "am I drinking enough water?",
+    "water diary",
+    "how much water did i drink today",
+    "water log",
+    "show my hydration for the day",
+    "daily water tracker",
+    "how many glasses of water did i have",
+    "my water intake today"
+   ],
+   "title": "Water intake log",
+   "html": "<div class=\"umi-page\"><h1>Water intake log</h1><p class=\"muted\">Staying hydrated, <regex>user_name</regex>. You hit 2.1 litres on average this week.</p><div class=\"grid\"><div class=\"stat\"><span class=\"label\">Weekly total</span><span class=\"value\">14.7 L</span></div><div class=\"stat\"><span class=\"label\">Daily average</span><span class=\"value\">2.1 L</span></div><div class=\"stat\"><span class=\"label\">Goal days</span><span class=\"value\">5/7</span></div></div><div class=\"table-wrap\"><table><thead><tr><th>Day</th><th class=\"num\">Litres</th><th>Goal met?</th></tr></thead><tbody><tr><td>Mon</td><td class=\"num\">2.3</td><td><span class=\"badge good\">Yes</span></td></tr><tr><td>Tue</td><td class=\"num\">1.8</td><td><span class=\"badge bad\">No</span></td></tr><tr><td>Wed</td><td class=\"num\">2.5</td><td><span class=\"badge good\">Yes</span></td></tr><tr><td>Thu</td><td class=\"num\">2.0</td><td><span class=\"badge good\">Yes</span></td></tr><tr><td>Fri</td><td class=\"num\">2.2</td><td><span class=\"badge good\">Yes</span></td></tr><tr><td>Sat</td><td class=\"num\">1.9</td><td><span class=\"badge bad\">No</span></td></tr><tr><td>Sun</td><td class=\"num\">2.0</td><td><span class=\"badge good\">Yes</span></td></tr></tbody></table></div><p class=\"t-small dim\">Tip: Keep a bottle on your desk. Out of sight, out of mind.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "my step count this week",
+    "how many steps did I walk?",
+    "daily steps log",
+    "step tracker",
+    "show my walking stats",
+    "am I hitting 10k steps?",
+    "pedometer readings",
+    "how many steps did i get today",
+    "step count plz",
+    "show my walking stats for the day",
+    "daily steps tracker",
+    "i need to see my steps",
+    "steps walked today?"
+   ],
+   "title": "Daily step count",
+   "html": "<div class=\"umi-page\"><h1>Daily step count</h1><p class=\"muted\">You walked 68,420 steps this week, <regex>user_name</regex>. That's about 34 miles.</p><div class=\"grid\"><div class=\"stat\"><span class=\"label\">Weekly total</span><span class=\"value\">68,420</span></div><div class=\"stat\"><span class=\"label\">Daily average</span><span class=\"value\">9,774</span></div><div class=\"stat\"><span class=\"label\">Best day</span><span class=\"value\">14,200</span><span class=\"delta\">Sat</span></div></div><div class=\"table-wrap\"><table><thead><tr><th>Day</th><th class=\"num\">Steps</th><th>Distance (mi)</th></tr></thead><tbody><tr><td>Mon</td><td class=\"num\">8,200</td><td class=\"num\">4.1</td></tr><tr><td>Tue</td><td class=\"num\">9,500</td><td class=\"num\">4.8</td></tr><tr><td>Wed</td><td class=\"num\">7,800</td><td class=\"num\">3.9</td></tr><tr><td>Thu</td><td class=\"num\">10,300</td><td class=\"num\">5.2</td></tr><tr><td>Fri</td><td class=\"num\">9,100</td><td class=\"num\">4.6</td></tr><tr><td>Sat</td><td class=\"num\">14,200</td><td class=\"num\">7.1</td></tr><tr><td>Sun</td><td class=\"num\">9,320</td><td class=\"num\">4.7</td></tr></tbody></table></div><div class=\"callout good\"><p>Nice work! You hit 10k on two days. Keep it up.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "my sleep log",
+    "how many hours did I sleep?",
+    "sleep tracker",
+    "show my sleep patterns",
+    "am I getting enough sleep?",
+    "bedtime and wake-up times",
+    "sleep diary",
+    "how much sleep did i get each night this week",
+    "weekly sleep tracker",
+    "show my sleep hours for the week",
+    "sleep data for this week",
+    "did i sleep enough this week",
+    "my weekly sleep record"
+   ],
+   "title": "Sleep log for the week",
+   "html": "<div class=\"umi-page\"><h1>Sleep log for the week</h1><p class=\"muted\">You averaged 7h 20m of sleep, <regex>user_name</regex>. Solid, but a little short of 8.</p><div class=\"grid\"><div class=\"stat\"><span class=\"label\">Average sleep</span><span class=\"value\">7h 20m</span></div><div class=\"stat\"><span class=\"label\">Best night</span><span class=\"value\">8h 15m</span><span class=\"delta\">Fri</span></div><div class=\"stat\"><span class=\"label\">Worst night</span><span class=\"value\">6h 10m</span><span class=\"delta\">Tue</span></div></div><div class=\"table-wrap\"><table><thead><tr><th>Day</th><th>Bedtime</th><th>Wake</th><th class=\"num\">Hours</th></tr></thead><tbody><tr><td>Mon</td><td>23:00</td><td>06:45</td><td class=\"num\">7.75</td></tr><tr><td>Tue</td><td>23:30</td><td>05:40</td><td class=\"num\">6.17</td></tr><tr><td>Wed</td><td>22:45</td><td>06:30</td><td class=\"num\">7.75</td></tr><tr><td>Thu</td><td>23:15</td><td>06:50</td><td class=\"num\">7.58</td></tr><tr><td>Fri</td><td>22:30</td><td>06:45</td><td class=\"num\">8.25</td></tr><tr><td>Sat</td><td>00:00</td><td>07:30</td><td class=\"num\">7.50</td></tr><tr><td>Sun</td><td>23:00</td><td>06:30</td><td class=\"num\">7.50</td></tr></tbody></table></div><p class=\"t-small dim\">Try going to bed 15 minutes earlier tonight. Small tweaks add up.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "my reading list",
+    "books I read this month",
+    "reading log",
+    "what have I been reading?",
+    "track my books",
+    "reading progress",
+    "book diary",
+    "what have i read so far this year",
+    "books finished in 2025",
+    "show my reading list for 2025",
+    "my 2025 reading log",
+    "what books did i get through this year",
+    "reading tracker 2025"
+   ],
+   "title": "Reading log 2025",
+   "html": "<div class=\"umi-page\"><h1>Reading log 2025</h1><p class=\"muted\">You've read 12 books so far this year, <regex>user_name</regex>. That's 3,240 pages.</p><div class=\"grid\"><div class=\"stat\"><span class=\"label\">Books read</span><span class=\"value\">12</span></div><div class=\"stat\"><span class=\"label\">Pages read</span><span class=\"value\">3,240</span></div><div class=\"stat\"><span class=\"label\">Currently reading</span><span class=\"value\">2</span></div></div><div class=\"table-wrap\"><table><thead><tr><th>Title</th><th>Author</th><th class=\"num\">Pages</th><th>Status</th></tr></thead><tbody><tr><td>The Midnight Library</td><td>Matt Haig</td><td class=\"num\">304</td><td><span class=\"badge good\">Finished</span></td></tr><tr><td>Project Hail Mary</td><td>Andy Weir</td><td class=\"num\">496</td><td><span class=\"badge good\">Finished</span></td></tr><tr><td>Klara and the Sun</td><td>Kazuo Ishiguro</td><td class=\"num\">320</td><td><span class=\"badge info\">Reading</span></td></tr><tr><td>The Vanishing Half</td><td>Brit Bennett</td><td class=\"num\">352</td><td><span class=\"badge good\">Finished</span></td></tr><tr><td>Atomic Habits</td><td>James Clear</td><td class=\"num\">320</td><td><span class=\"badge info\">Reading</span></td></tr></tbody></table></div><div class=\"callout info\"><p>You're on track to hit 20 books this year. Keep going!</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "my plant watering schedule",
+    "when did I water my plants?",
+    "plant care log",
+    "houseplant watering tracker",
+    "show my plant watering",
+    "did I water the ficus?",
+    "plant diary",
+    "when should i water my plants next",
+    "plant watering log",
+    "did i water the plants today",
+    "watering schedule for my plants",
+    "show me my plant care schedule",
+    "when was the last time i watered each plant"
+   ],
+   "title": "Plant watering schedule",
+   "html": "<div class=\"umi-page\"><h1>Plant watering schedule</h1><p class=\"muted\">Your green friends are thirsty, <regex>user_name</regex>. Here's the latest.</p><div class=\"grid\"><div class=\"stat\"><span class=\"label\">Plants</span><span class=\"value\">6</span></div><div class=\"stat\"><span class=\"label\">Due today</span><span class=\"value\">2</span></div><div class=\"stat\"><span class=\"label\">Overdue</span><span class=\"value\">1</span></div></div><div class=\"table-wrap\"><table><thead><tr><th>Plant</th><th>Last watered</th><th>Next due</th><th>Status</th></tr></thead><tbody><tr><td>Ficus</td><td>Mon</td><td>Today</td><td><span class=\"badge warn\">Due</span></td></tr><tr><td>Snake plant</td><td>Sun</td><td>Next week</td><td><span class=\"badge good\">OK</span></td></tr><tr><td>Pothos</td><td>Tue</td><td>Tomorrow</td><td><span class=\"badge good\">OK</span></td></tr><tr><td>ZZ plant</td><td>Last week</td><td>Yesterday</td><td><span class=\"badge bad\">Overdue</span></td></tr><tr><td>Peace lily</td><td>Wed</td><td>Today</td><td><span class=\"badge warn\">Due</span></td></tr><tr><td>Spider plant</td><td>Thu</td><td>In 3 days</td><td><span class=\"badge good\">OK</span></td></tr></tbody></table></div><p class=\"t-small dim\">The ZZ plant is forgiving, but don't push it.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "make me a table of my sneaker rotation",
+    "which kicks have I worn the most this month?",
+    "sneaker wear log dashboard pls",
+    "track my shoe wears",
+    "show my rotation stats",
+    "i need a dashboard for my sneakers, table style",
+    "how many times have i worn each pair this month?",
+    "which sneakers have i worn lately",
+    "sneaker wearing log",
+    "show my kicks rotation",
+    "what sneakers did i wear this week",
+    "track my sneaker usage",
+    "my sneaker rotation history"
+   ],
+   "title": "Sneaker rotation tracker",
+   "html": "<div class=\"umi-page\">\n  <h1>Sneaker rotation <span class=\"badge accent\">March</span></h1>\n  <p class=\"muted t-small\">Wears logged this month. <regex>user_name</regex>, your Sambas are earning their keep.</p>\n  <div class=\"table-wrap\">\n    <table>\n      <thead>\n        <tr><th>Model</th><th class=\"num\">Wears</th><th class=\"num\">Last worn</th><th>Status</th></tr>\n      </thead>\n      <tbody>\n        <tr><td>Adidas Samba</td><td class=\"num\">9</td><td class=\"num\">Mar 28</td><td><span class=\"badge good\"><i class=\"dot\"></i>Star</span></td></tr>\n        <tr><td>Nike Air Max 90</td><td class=\"num\">6</td><td class=\"num\">Mar 26</td><td><span class=\"badge\">In rotation</span></td></tr>\n        <tr><td>New Balance 574</td><td class=\"num\">4</td><td class=\"num\">Mar 22</td><td><span class=\"badge\">In rotation</span></td></tr>\n        <tr><td>Vans Old Skool</td><td class=\"num\">2</td><td class=\"num\">Mar 15</td><td><span class=\"badge warn\">Neglected</span></td></tr>\n        <tr><td>Converse Chuck 70</td><td class=\"num\">1</td><td class=\"num\">Mar 3</td><td><span class=\"badge bad\">Dusty</span></td></tr>\n      </tbody>\n    </table>\n  </div>\n  <div class=\"grid two\">\n    <div class=\"stat\"><span class=\"label\">Total wears</span><span class=\"value\">22</span></div>\n    <div class=\"stat\"><span class=\"label\">Pairs owned</span><span class=\"value\">5</span></div>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "what movies have i watched lately?",
+    "movie log table pls",
+    "list my recent film watches",
+    "track my movie nights",
+    "show my watch history in a dashboard",
+    "i need a table of films i've seen this month",
+    "how many movies did i watch in march?",
+    "what movies did i watch recently",
+    "movie log",
+    "show my movie nights",
+    "list of movies i've seen lately",
+    "recent movie watch history",
+    "what have i watched for movie night"
+   ],
+   "title": "Movie night log",
+   "html": "<div class=\"umi-page\">\n  <h1>Movie night log <span class=\"badge accent\">March</span></h1>\n  <p class=\"muted t-small\">A tidy record of what you watched, <regex>user_name</regex>. Your taste is impeccable, mostly.</p>\n  <div class=\"table-wrap\">\n    <table>\n      <thead>\n        <tr><th>Title</th><th class=\"num\">Date</th><th class=\"num\">Rating</th><th>Format</th></tr>\n      </thead>\n      <tbody>\n        <tr><td>Dune: Part Two</td><td class=\"num\">Mar 28</td><td class=\"num\">5</td><td><span class=\"badge info\">Cinema</span></td></tr>\n        <tr><td>Poor Things</td><td class=\"num\">Mar 25</td><td class=\"num\">4</td><td><span class=\"badge\">Stream</span></td></tr>\n        <tr><td>The Zone of Interest</td><td class=\"num\">Mar 21</td><td class=\"num\">4</td><td><span class=\"badge\">Stream</span></td></tr>\n        <tr><td>Past Lives</td><td class=\"num\">Mar 17</td><td class=\"num\">5</td><td><span class=\"badge\">Blu-ray</span></td></tr>\n        <tr><td>Anyone But You</td><td class=\"num\">Mar 9</td><td class=\"num\">2</td><td><span class=\"badge bad\">Regret</span></td></tr>\n      </tbody>\n    </table>\n  </div>\n  <div class=\"grid two\">\n    <div class=\"stat\"><span class=\"label\">Films this month</span><span class=\"value\">5</span></div>\n    <div class=\"stat\"><span class=\"label\">Average rating</span><span class=\"value\">4.0</span></div>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "make a dashboard of my household repairs",
+    "what repairs have i done this year?",
+    "track my diy fixes in a table",
+    "list recent household repairs",
+    "show my repair log",
+    "i need a table for home maintenance tasks",
+    "how many repairs have i completed in 2025?",
+    "log the stuff i fixed around the house",
+    "need a table of all my home repair jobs",
+    "what repairs have i done lately?",
+    "track broken stuff n fixes at home",
+    "show my house fixin history",
+    "home maintenance repair list pls"
+   ],
+   "title": "Household repairs ledger",
+   "html": "<div class=\"umi-page\">\n  <h1>Household repairs <span class=\"badge accent\">2025</span></h1>\n  <p class=\"muted t-small\">Your fix-it wins, <regex>user_name</regex>. The dripping tap finally met its match.</p>\n  <div class=\"table-wrap\">\n    <table>\n      <thead>\n        <tr><th>Task</th><th class=\"num\">Date</th><th class=\"num\">Cost</th><th>Status</th></tr>\n      </thead>\n      <tbody>\n        <tr><td>Replace kitchen tap washer</td><td class=\"num\">Jan 12</td><td class=\"num\">\u00a33</td><td><span class=\"badge good\"><i class=\"dot\"></i>Done</span></td></tr>\n        <tr><td>Patch hallway wall</td><td class=\"num\">Feb 3</td><td class=\"num\">\u00a312</td><td><span class=\"badge good\"><i class=\"dot\"></i>Done</span></td></tr>\n        <tr><td>Fix fence panel</td><td class=\"num\">Mar 15</td><td class=\"num\">\u00a328</td><td><span class=\"badge good\"><i class=\"dot\"></i>Done</span></td></tr>\n        <tr><td>Replace bathroom sealant</td><td class=\"num\">Mar 22</td><td class=\"num\">\u00a38</td><td><span class=\"badge info\">In progress</span></td></tr>\n        <tr><td>Service boiler</td><td class=\"num\">Apr 5</td><td class=\"num\">\u00a380</td><td><span class=\"badge warn\">Booked</span></td></tr>\n      </tbody>\n    </table>\n  </div>\n  <div class=\"grid two\">\n    <div class=\"stat\"><span class=\"label\">Total spent</span><span class=\"value\">\u00a3131</span></div>\n    <div class=\"stat\"><span class=\"label\">Jobs completed</span><span class=\"value\">3/5</span></div>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "track my volunteer hours",
+    "volunteering log table pls",
+    "how many hours did i volunteer this month?",
+    "show my volunteer dashboard",
+    "list my recent volunteer shifts",
+    "i need a table of my community service hours",
+    "make a dashboard for volunteering",
+    "how many hrs did i volunteer this month",
+    "log my community service time",
+    "table of my volunteering shifts",
+    "keep track of my charity work hours",
+    "show volunteer hrs by org",
+    "i wanna see my service hrs total"
+   ],
+   "title": "Volunteer hours log",
+   "html": "<div class=\"umi-page\">\n  <h1>Volunteer hours <span class=\"badge accent\">March</span></h1>\n  <p class=\"muted t-small\">Good deeds, neatly counted. <regex>user_name</regex>, the community garden thanks you.</p>\n  <div class=\"table-wrap\">\n    <table>\n      <thead>\n        <tr><th>Organisation</th><th class=\"num\">Date</th><th class=\"num\">Hours</th><th>Role</th></tr>\n      </thead>\n      <tbody>\n        <tr><td>Community garden</td><td class=\"num\">Mar 2</td><td class=\"num\">3</td><td>Planting</td></tr>\n        <tr><td>Food bank</td><td class=\"num\">Mar 9</td><td class=\"num\">4</td><td>Sorting</td></tr>\n        <tr><td>Library</td><td class=\"num\">Mar 16</td><td class=\"num\">2</td><td>Shelving</td></tr>\n        <tr><td>Community garden</td><td class=\"num\">Mar 23</td><td class=\"num\">3</td><td>Weeding</td></tr>\n        <tr><td>Food bank</td><td class=\"num\">Mar 30</td><td class=\"num\">4</td><td>Distribution</td></tr>\n      </tbody>\n    </table>\n  </div>\n  <div class=\"grid two\">\n    <div class=\"stat\"><span class=\"label\">Total hours</span><span class=\"value\">16</span></div>\n    <div class=\"stat\"><span class=\"label\">Organisations</span><span class=\"value\">3</span></div>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "what board games have i played?",
+    "board game log table",
+    "track my board game sessions",
+    "show my game night history",
+    "list recent board game plays",
+    "i need a dashboard for board games",
+    "how many board games did i play this month?",
+    "how many times did we play catan",
+    "log our game night wins",
+    "table of boardgames ive played w dates",
+    "track who wins game night",
+    "what games hit the table this month",
+    "board game sessions list"
+   ],
+   "title": "Board game plays",
+   "html": "<div class=\"umi-page\">\n  <h1>Board game plays <span class=\"badge accent\">March</span></h1>\n  <p class=\"muted t-small\">Every roll, every meeple. <regex>user_name</regex>, your win rate is quietly impressive.</p>\n  <div class=\"table-wrap\">\n    <table>\n      <thead>\n        <tr><th>Game</th><th class=\"num\">Date</th><th class=\"num\">Players</th><th>Result</th></tr>\n      </thead>\n      <tbody>\n        <tr><td>Wingspan</td><td class=\"num\">Mar 1</td><td class=\"num\">3</td><td><span class=\"badge good\"><i class=\"dot\"></i>Win</span></td></tr>\n        <tr><td>Catan</td><td class=\"num\">Mar 8</td><td class=\"num\">4</td><td><span class=\"badge bad\">Loss</span></td></tr>\n        <tr><td>Ticket to Ride</td><td class=\"num\">Mar 15</td><td class=\"num\">2</td><td><span class=\"badge good\"><i class=\"dot\"></i>Win</span></td></tr>\n        <tr><td>Azul</td><td class=\"num\">Mar 22</td><td class=\"num\">3</td><td><span class=\"badge good\"><i class=\"dot\"></i>Win</span></td></tr>\n        <tr><td>Pandemic</td><td class=\"num\">Mar 29</td><td class=\"num\">4</td><td><span class=\"badge info\">Co-op win</span></td></tr>\n      </tbody>\n    </table>\n  </div>\n  <div class=\"grid two\">\n    <div class=\"stat\"><span class=\"label\">Games played</span><span class=\"value\">5</span></div>\n    <div class=\"stat\"><span class=\"label\">Win rate</span><span class=\"value\">80%</span></div>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "track my online orders",
+    "package delivery log table",
+    "what orders are arriving this week?",
+    "show my order history",
+    "list recent online purchases",
+    "i need a dashboard for my deliveries",
+    "how many packages have i ordered this month?",
+    "where are my packages at",
+    "list my recent online purchases",
+    "track shipped stuff i ordered",
+    "table of my orders n delivery status",
+    "did my amazon order arrive yet",
+    "keep tabs on my internet buys"
+   ],
+   "title": "Online orders tracker",
+   "html": "<div class=\"umi-page\">\n  <h1>Online orders <span class=\"badge accent\">March</span></h1>\n  <p class=\"muted t-small\">Packages inbound. <regex>user_name</regex>, the doorbell is about to earn its keep.</p>\n  <div class=\"table-wrap\">\n    <table>\n      <thead>\n        <tr><th>Item</th><th class=\"num\">Ordered</th><th class=\"num\">Total</th><th>Status</th></tr>\n      </thead>\n      <tbody>\n        <tr><td>Running socks (3-pack)</td><td class=\"num\">Mar 25</td><td class=\"num\">\u00a312</td><td><span class=\"badge good\"><i class=\"dot\"></i>Delivered</span></td></tr>\n        <tr><td>Desk lamp</td><td class=\"num\">Mar 27</td><td class=\"num\">\u00a335</td><td><span class=\"badge info\">In transit</span></td></tr>\n        <tr><td>Notebook set</td><td class=\"num\">Mar 28</td><td class=\"num\">\u00a38</td><td><span class=\"badge info\">In transit</span></td></tr>\n        <tr><td>Phone case</td><td class=\"num\">Mar 29</td><td class=\"num\">\u00a315</td><td><span class=\"badge warn\">Processing</span></td></tr>\n        <tr><td>Coffee beans 1kg</td><td class=\"num\">Mar 30</td><td class=\"num\">\u00a322</td><td><span class=\"badge warn\">Processing</span></td></tr>\n      </tbody>\n    </table>\n  </div>\n  <div class=\"grid two\">\n    <div class=\"stat\"><span class=\"label\">Orders this month</span><span class=\"value\">5</span></div>\n    <div class=\"stat\"><span class=\"label\">Total spent</span><span class=\"value\">\u00a392</span></div>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "track my subscriptions",
+    "show me what I'm paying monthly",
+    "subs I keep forgetting about",
+    "list my recurring charges",
+    "why is my card so sad",
+    "subscription audit time",
+    "monthly subs I need to cancel",
+    "what am i subscribed to rn",
+    "list my monthly subs n costs",
+    "how much do subscriptions cost me",
+    "cancel-worthy subs list",
+    "track my recurring payments",
+    "show all my membership charges"
+   ],
+   "title": "Subscription autopilot",
+   "html": "<div class=\"umi-page\"><h1>Subscription autopilot</h1><p class=\"muted\">Everything that bills you without asking. Cancel one today, <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Service</th><th>Billed</th><th class=\"num\">Monthly</th></tr></thead><tbody><tr><td>Streaming video</td><td>1st</td><td class=\"num\">\u00a310.99</td></tr><tr><td>Music</td><td>4th</td><td class=\"num\">\u00a39.99</td></tr><tr><td>Cloud storage</td><td>7th</td><td class=\"num\">\u00a32.49</td></tr><tr><td>Fitness app</td><td>12th</td><td class=\"num\">\u00a36.99</td></tr><tr><td>News</td><td>15th</td><td class=\"num\">\u00a33.99</td></tr><tr><td>Meal kit</td><td>20th</td><td class=\"num\">\u00a324.00</td></tr></tbody><tfoot><tr><th colspan=\"2\">Total</th><th class=\"num\">\u00a358.45</th></tr></tfoot></table></div><div class=\"callout warn\">Two services renew this week. You've got time to decide.</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "mood tracker",
+    "how have I been feeling lately",
+    "daily mood log",
+    "log my emotions",
+    "am I okay?",
+    "show mood history",
+    "feelings chart for the month",
+    "how was my mood this wk",
+    "log how i felt each day",
+    "track my emotions daily",
+    "table of my mood ratings",
+    "was i happy or sad this week",
+    "mood diary pls"
+   ],
+   "title": "Mood ring for the week",
+   "html": "<div class=\"umi-page\"><h1>Mood ring for the week</h1><p class=\"muted\">A quick read on how the days landed.</p><div class=\"table-wrap\"><table><thead><tr><th>Day</th><th>Mood</th><th>Note</th></tr></thead><tbody><tr><td>Mon</td><td>Okay</td><td>Back to back calls</td></tr><tr><td>Tue</td><td>Good</td><td>Walk at lunch</td></tr><tr><td>Wed</td><td>Tired</td><td>Woke at 5am</td></tr><tr><td>Thu</td><td>Good</td><td>Finished the draft</td></tr><tr><td>Fri</td><td>Great</td><td>Pizza night</td></tr><tr><td>Sat</td><td>Okay</td><td>Rain all day</td></tr><tr><td>Sun</td><td>Good</td><td>Slow start, good book</td></tr></tbody></table></div><div class=\"callout info\">Three good days is three more than last week. Keep the walk, <regex>user_name</regex>.</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "car maintenance",
+    "what needs doing on the car",
+    "vehicle service log",
+    "car service due",
+    "car upkeep tracker",
+    "list car maintenance",
+    "when is my car due a checkup",
+    "when did i last change the oil",
+    "log my car service history",
+    "track maintenance on my ride",
+    "table of car repairs n dates",
+    "whats due on my car next",
+    "vehicle upkeep record"
+   ],
+   "title": "Car upkeep",
+   "html": "<div class=\"umi-page\"><h1>Car upkeep</h1><p class=\"muted\">What's due, what's done, what can wait.</p><div class=\"table-wrap\"><table><thead><tr><th>Task</th><th>Due</th><th>Status</th></tr></thead><tbody><tr><td>Oil change</td><td>12 Jun</td><td><span class=\"badge good\">Done</span></td></tr><tr><td>Tyre pressure</td><td>19 Jun</td><td><span class=\"badge warn\">Due</span></td></tr><tr><td>MOT</td><td>3 Aug</td><td><span class=\"badge info\">Booked</span></td></tr><tr><td>Wiper blades</td><td>Jul</td><td><span class=\"badge\">Soon</span></td></tr><tr><td>Coolant check</td><td>Sep</td><td><span class=\"badge\">Later</span></td></tr></tbody></table></div><div class=\"callout warn\">Tyre pressure is overdue. It's a five-minute job at the petrol station.</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "workout log",
+    "gym sessions",
+    "what did I lift this week",
+    "exercise tracker",
+    "track my workouts",
+    "show gym history",
+    "gym log for June",
+    "how often did i work out this month",
+    "log my lifts",
+    "track my gym sessions",
+    "table of my workouts n weights",
+    "did i hit the gym this week",
+    "exercise diary"
+   ],
+   "title": "Gym log",
+   "html": "<div class=\"umi-page\"><h1>Gym log</h1><p class=\"muted\">Five sessions, no excuses, mostly.</p><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Focus</th><th class=\"num\">Duration</th></tr></thead><tbody><tr><td>2 Jun</td><td>Upper body</td><td class=\"num\">45 min</td></tr><tr><td>4 Jun</td><td>Run (5k)</td><td class=\"num\">28 min</td></tr><tr><td>6 Jun</td><td>Legs</td><td class=\"num\">50 min</td></tr><tr><td>9 Jun</td><td>Swim</td><td class=\"num\">30 min</td></tr><tr><td>11 Jun</td><td>Upper body</td><td class=\"num\">42 min</td></tr></tbody></table></div><div class=\"callout good\">That's five this week. Your best streak since April.</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget categories",
+    "where does my money go",
+    "spending by category",
+    "monthly budget breakdown",
+    "show budget",
+    "how much on food",
+    "category spending this month",
+    "how much did i spend per category",
+    "show my budget breakdown",
+    "track my spending by type",
+    "table of my monthly budget",
+    "where did my money go this month",
+    "categorize my expenses pls"
+   ],
+   "title": "Budget categories",
+   "html": "<div class=\"umi-page\"><h1>Budget categories</h1><p class=\"muted\">Where the money went this month.</p><div class=\"table-wrap\"><table><thead><tr><th>Category</th><th class=\"num\">Spent</th><th class=\"num\">Budget</th></tr></thead><tbody><tr><td>Groceries</td><td class=\"num\">\u00a3210</td><td class=\"num\">\u00a3250</td></tr><tr><td>Eating out</td><td class=\"num\">\u00a395</td><td class=\"num\">\u00a380</td></tr><tr><td>Transport</td><td class=\"num\">\u00a360</td><td class=\"num\">\u00a370</td></tr><tr><td>Fun</td><td class=\"num\">\u00a345</td><td class=\"num\">\u00a360</td></tr><tr><td>Bills</td><td class=\"num\">\u00a3320</td><td class=\"num\">\u00a3320</td></tr></tbody></table></div><div class=\"callout warn\">Eating out is \u00a315 over. The rest of the month is home cooking, <regex>user_name</regex>.</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "podcast queue",
+    "what should I listen to",
+    "my podcast list",
+    "podcast backlog",
+    "shows to catch up on",
+    "list podcasts",
+    "unplayed episodes",
+    "what podcasts are lined up",
+    "list eps i havent heard yet",
+    "track my podcast backlog",
+    "table of shows im behind on",
+    "what should i listen to next",
+    "my pod queue"
+   ],
+   "title": "Podcast queue",
+   "html": "<div class=\"umi-page\"><h1>Podcast queue</h1><p class=\"muted\">Episodes waiting for your ears.</p><div class=\"table-wrap\"><table><thead><tr><th>Episode</th><th>Show</th><th class=\"num\">Length</th></tr></thead><tbody><tr><td>Deep sea mysteries</td><td>Ocean Lab</td><td class=\"num\">42 min</td></tr><tr><td>The bread episode</td><td>Kitchen Radio</td><td class=\"num\">35 min</td></tr><tr><td>Sleep science</td><td>Brain Waves</td><td class=\"num\">50 min</td></tr><tr><td>Local history walk</td><td>Footnotes</td><td class=\"num\">28 min</td></tr><tr><td>AI and art</td><td>Future Tense</td><td class=\"num\">44 min</td></tr></tbody></table></div><div class=\"callout info\">That's over three hours of listening. Perfect for the commute, <regex>user_name</regex>.</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "show me my egg production for this week",
+    "chicken egg log",
+    "how many eggs did the hens lay each day",
+    "weekly egg count by day please",
+    "egg tally for the coop",
+    "tracking egg laying this week",
+    "my hens egg numbers",
+    "how many eggs today from the hens",
+    "log our egg count",
+    "track chicken egg production",
+    "table of eggs per day this wk",
+    "are the girls laying well?",
+    "count my eggs pls"
+   ],
+   "title": "Backyard egg tally",
+   "html": "<div class=\"umi-page\"><h1>Backyard egg tally</h1><p class=\"muted t-small\">This week's collection from the coop.</p><div class=\"grid\"><div class=\"stat\"><span class=\"label\">Total eggs</span><span class=\"value\">34</span></div><div class=\"stat\"><span class=\"label\">Best day</span><span class=\"value\">7</span></div><div class=\"stat\"><span class=\"label\">Avg per day</span><span class=\"value\">4.9</span></div></div><div class=\"table-wrap\"><table><thead><tr><th>Day</th><th class=\"num\">Eggs</th></tr></thead><tbody><tr><td>Monday</td><td class=\"num\">5</td></tr><tr><td>Tuesday</td><td class=\"num\">4</td></tr><tr><td>Wednesday</td><td class=\"num\">6</td></tr><tr><td>Thursday</td><td class=\"num\">3</td></tr><tr><td>Friday</td><td class=\"num\">7</td></tr><tr><td>Saturday</td><td class=\"num\">5</td></tr><tr><td>Sunday</td><td class=\"num\">4</td></tr></tbody></table></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how much did i spend on takeout this month",
+    "takeaway spend tracker",
+    "monthly takeout costs",
+    "takeout budget breakdown",
+    "my fast food spending",
+    "eating out expenses this month",
+    "takeout log",
+    "how much did i blow on delivery",
+    "track my takeout orders n cost",
+    "table of eats out this month",
+    "am i spending too much on food delivery",
+    "uber eats spending so far",
+    "restaurant delivery totals"
+   ],
+   "title": "Takeout spending this month",
+   "html": "<div class=\"umi-page\"><h1>Takeout spending this month</h1><p class=\"muted t-small\">A quick look at what delivery and drive-thru cost.</p><div class=\"grid\"><div class=\"stat\"><span class=\"label\">Total spent</span><span class=\"value\">\u00a3128.40</span></div><div class=\"stat\"><span class=\"label\">Orders</span><span class=\"value\">9</span></div><div class=\"stat\"><span class=\"label\">Avg order</span><span class=\"value\">\u00a314.27</span></div></div><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Place</th><th class=\"num\">Cost</th></tr></thead><tbody><tr><td>Mar 3</td><td>Pizza Palace</td><td class=\"num\">\u00a318.50</td></tr><tr><td>Mar 7</td><td>Thai takeaway</td><td class=\"num\">\u00a322.00</td></tr><tr><td>Mar 12</td><td>Burger joint</td><td class=\"num\">\u00a311.80</td></tr><tr><td>Mar 15</td><td>Sushi delivery</td><td class=\"num\">\u00a326.40</td></tr><tr><td>Mar 18</td><td>Fish and chips</td><td class=\"num\">\u00a39.70</td></tr><tr><td>Mar 22</td><td>Indian curry</td><td class=\"num\">\u00a319.00</td></tr><tr><td>Mar 25</td><td>Taco truck</td><td class=\"num\">\u00a38.00</td></tr><tr><td>Mar 28</td><td>Ramen shop</td><td class=\"num\">\u00a313.00</td></tr></tbody></table></div><p class=\"muted t-small\">Total row: \u00a3128.40 across 9 orders. Most expensive: sushi at \u00a326.40. Cheapest: taco truck at \u00a38.00. On track to exceed last month's \u00a3115 if this pace continues.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "show me my daily caffeine intake",
+    "coffee and tea log",
+    "how many cups of coffee this week",
+    "caffeine tracker",
+    "my hot drink count",
+    "weekly caffeine tally",
+    "coffee cups per day",
+    "how many cups of coffee did i have",
+    "log my caffeine",
+    "track my coffee n energy drinks",
+    "table of caffeine per day",
+    "am i drinking too much coffee?",
+    "my daily cups this wk"
+   ],
+   "title": "Caffeine intake this week",
+   "html": "<div class=\"umi-page\"><h1>Caffeine intake this week</h1><p class=\"muted t-small\">Coffee, tea, and the occasional fizzy pick-me-up.</p><div class=\"grid\"><div class=\"stat\"><span class=\"label\">Total cups</span><span class=\"value\">23</span></div><div class=\"stat\"><span class=\"label\">Coffee</span><span class=\"value\">15</span></div><div class=\"stat\"><span class=\"label\">Tea</span><span class=\"value\">8</span></div></div><div class=\"table-wrap\"><table><thead><tr><th>Day</th><th class=\"num\">Cups</th></tr></thead><tbody><tr><td>Monday</td><td class=\"num\">4</td></tr><tr><td>Tuesday</td><td class=\"num\">3</td></tr><tr><td>Wednesday</td><td class=\"num\">5</td></tr><tr><td>Thursday</td><td class=\"num\">3</td></tr><tr><td>Friday</td><td class=\"num\">4</td></tr><tr><td>Saturday</td><td class=\"num\">2</td></tr><tr><td>Sunday</td><td class=\"num\">2</td></tr></tbody></table></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many books did i read this year",
+    "reading log 2025",
+    "books finished this year",
+    "my reading tracker",
+    "yearly book count",
+    "books read by month",
+    "reading progress 2025",
+    "what books did i finish this yr",
+    "log the books i read",
+    "track my reading progress",
+    "table of titles n dates finished",
+    "how many pages did i read",
+    "my book list 2025"
+   ],
+   "title": "Reading log 2025",
+   "html": "<div class=\"umi-page\"><h1>Reading log 2025</h1><p class=\"muted t-small\">Books finished so far this year.</p><div class=\"grid\"><div class=\"stat\"><span class=\"label\">Books read</span><span class=\"value\">14</span></div><div class=\"stat\"><span class=\"label\">Pages</span><span class=\"value\">4,312</span></div><div class=\"stat\"><span class=\"label\">Avg rating</span><span class=\"value\">4.1</span></div></div><div class=\"table-wrap\"><table><thead><tr><th>Title</th><th>Author</th><th class=\"num\">Rating</th></tr></thead><tbody><tr><td>The Midnight Library</td><td>Matt Haig</td><td class=\"num\">4.5</td></tr><tr><td>Project Hail Mary</td><td>Andy Weir</td><td class=\"num\">5.0</td></tr><tr><td>Klara and the Sun</td><td>Kazuo Ishiguro</td><td class=\"num\">3.5</td></tr><tr><td>The Vanishing Half</td><td>Brit Bennett</td><td class=\"num\">4.0</td></tr><tr><td>Circe</td><td>Madeline Miller</td><td class=\"num\">4.5</td></tr><tr><td>Educated</td><td>Tara Westover</td><td class=\"num\">4.0</td></tr><tr><td>Normal People</td><td>Sally Rooney</td><td class=\"num\">3.0</td></tr><tr><td>The Song of Achilles</td><td>Madeline Miller</td><td class=\"num\">5.0</td></tr><tr><td>Where the Crawdads Sing</td><td>Delia Owens</td><td class=\"num\">4.0</td></tr><tr><td>Atomic Habits</td><td>James Clear</td><td class=\"num\">4.5</td></tr><tr><td>The Thursday Murder Club</td><td>Richard Osman</td><td class=\"num\">4.0</td></tr><tr><td>Dune</td><td>Frank Herbert</td><td class=\"num\">4.5</td></tr><tr><td>The Invisible Life of Addie LaRue</td><td>V.E. Schwab</td><td class=\"num\">4.0</td></tr><tr><td>Becoming</td><td>Michelle Obama</td><td class=\"num\">4.5</td></tr></tbody></table></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "my plant watering schedule",
+    "when to water plants",
+    "plant care log",
+    "watering reminders",
+    "houseplant schedule",
+    "plant watering tracker",
+    "next water dates",
+    "when do i water the monstera",
+    "log my plant care",
+    "track which plants got watered",
+    "table of watering days",
+    "did i forget to water anything?",
+    "houseplant schedule pls"
+   ],
+   "title": "Plant watering schedule",
+   "html": "<div class=\"umi-page\"><h1>Plant watering schedule</h1><p class=\"muted t-small\">Next watering dates for your leafy friends.</p><div class=\"grid\"><div class=\"stat\"><span class=\"label\">Plants</span><span class=\"value\">7</span></div><div class=\"stat\"><span class=\"label\">Due today</span><span class=\"value\">2</span></div><div class=\"stat\"><span class=\"label\">Overdue</span><span class=\"value\">0</span></div></div><div class=\"table-wrap\"><table><thead><tr><th>Plant</th><th>Location</th><th>Next water</th></tr></thead><tbody><tr><td>Monstera</td><td>Living room</td><td>Apr 12</td></tr><tr><td>Snake plant</td><td>Bedroom</td><td>Apr 20</td></tr><tr><td>Fiddle leaf fig</td><td>Living room</td><td>Apr 14</td></tr><tr><td>Pothos</td><td>Kitchen</td><td>Apr 13</td></tr><tr><td>ZZ plant</td><td>Office</td><td>Apr 25</td></tr><tr><td>Spider plant</td><td>Bathroom</td><td>Apr 11</td></tr><tr><td>Peace lily</td><td>Hallway</td><td>Apr 15</td></tr></tbody></table></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many steps did i take this week",
+    "step count log",
+    "daily steps tracker",
+    "my walking stats",
+    "weekly step totals",
+    "step goal progress",
+    "steps per day",
+    "how many steps today",
+    "track my walking",
+    "table of my steps this wk",
+    "am i hitting 10k a day?",
+    "show my step history",
+    "pedometer stats pls"
+   ],
+   "title": "Daily step count",
+   "html": "<div class=\"umi-page\"><h1>Daily step count</h1><p class=\"muted t-small\">This week's walking totals, one step at a time.</p><div class=\"grid\"><div class=\"stat\"><span class=\"label\">Total steps</span><span class=\"value\">54,782</span></div><div class=\"stat\"><span class=\"label\">Daily avg</span><span class=\"value\">7,826</span></div><div class=\"stat\"><span class=\"label\">Goal days</span><span class=\"value\">3/7</span></div></div><div class=\"table-wrap\"><table><thead><tr><th>Day</th><th class=\"num\">Steps</th></tr></thead><tbody><tr><td>Monday</td><td class=\"num\">8,432</td></tr><tr><td>Tuesday</td><td class=\"num\">6,215</td></tr><tr><td>Wednesday</td><td class=\"num\">9,876</td></tr><tr><td>Thursday</td><td class=\"num\">5,340</td></tr><tr><td>Friday</td><td class=\"num\">7,890</td></tr><tr><td>Saturday</td><td class=\"num\">10,234</td></tr><tr><td>Sunday</td><td class=\"num\">6,795</td></tr></tbody></table></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "what have i been spending on takeout this month",
+    "show my takeout orders and costs",
+    "takeout tracker for the month please",
+    "how much did i blow on delivery food",
+    "i need a quick view of my takeout spending",
+    "can you list my recent takeout orders with totals",
+    "delivery food expenses this month?",
+    "how much did i blow on delivery food this month",
+    "takeout $ so far this month",
+    "show me a table of my takeout purchases for the month",
+    "eating out budget check - how much spent",
+    "whats my monthly takeout total looking like rn",
+    "takeaway spending tracker for the current month"
+   ],
+   "title": "Takeout spending this month",
+   "html": "<div class=\"umi-page\"><h1>Takeout spending this month</h1><p class=\"muted\">Hey <regex>user_name</regex>, here's where your delivery habit stands.</p><div class=\"grid two\"><div class=\"stat\"><span class=\"label\">Total spend</span><span class=\"value\">$284.50</span></div><div class=\"stat\"><span class=\"label\">Orders</span><span class=\"value\">12</span></div></div><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Restaurant</th><th class=\"num\">Amount</th></tr></thead><tbody><tr><td>Nov 1</td><td>Pizza Palace</td><td class=\"num\">$22.50</td></tr><tr><td>Nov 3</td><td>Sushi Go</td><td class=\"num\">$34.00</td></tr><tr><td>Nov 5</td><td>Burger Barn</td><td class=\"num\">$18.75</td></tr><tr><td>Nov 8</td><td>Thai Express</td><td class=\"num\">$26.30</td></tr><tr><td>Nov 10</td><td>Pizza Palace</td><td class=\"num\">$21.00</td></tr><tr><td>Nov 12</td><td>Taco Fiesta</td><td class=\"num\">$15.80</td></tr><tr><td>Nov 15</td><td>Sushi Go</td><td class=\"num\">$29.50</td></tr><tr><td>Nov 18</td><td>Noodle House</td><td class=\"num\">$24.00</td></tr><tr><td>Nov 21</td><td>Burger Barn</td><td class=\"num\">$17.25</td></tr><tr><td>Nov 24</td><td>Thai Express</td><td class=\"num\">$28.40</td></tr><tr><td>Nov 27</td><td>Pizza Palace</td><td class=\"num\">$23.00</td></tr><tr><td>Nov 29</td><td>Taco Fiesta</td><td class=\"num\">$24.00</td></tr></tbody></table></div><div class=\"callout info\">You're $34.50 over last month's total. The sushi and Thai spots are the usual suspects.</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "track my caffeine this week",
+    "how many coffees have i had",
+    "caffeine intake log for the past 7 days",
+    "coffee count please",
+    "show my daily caffeine consumption",
+    "am i drinking too much coffee this week",
+    "caffeine tracker?",
+    "caffeine mg this wk",
+    "how much coffee have i had since monday",
+    "show my caffeine log for the last 7 days",
+    "am i overdoing it on caffeine this week? show me",
+    "cups of coffee and espresso tally this week",
+    "weekly caffeine tracker table"
+   ],
+   "title": "Caffeine intake this week",
+   "html": "<div class=\"umi-page\"><h1>Caffeine intake this week</h1><p class=\"muted\"><regex>user_name</regex>, your coffee diary is brewing.</p><div class=\"table-wrap\"><table><thead><tr><th>Day</th><th>Drink</th><th class=\"num\">mg</th></tr></thead><tbody><tr><td>Mon</td><td>Espresso x2</td><td class=\"num\">150</td></tr><tr><td>Tue</td><td>Latte</td><td class=\"num\">75</td></tr><tr><td>Wed</td><td>Cold brew</td><td class=\"num\">200</td></tr><tr><td>Thu</td><td>Green tea</td><td class=\"num\">30</td></tr><tr><td>Fri</td><td>Espresso x3</td><td class=\"num\">225</td></tr><tr><td>Sat</td><td>Decaf</td><td class=\"num\">5</td></tr><tr><td>Sun</td><td>Latte</td><td class=\"num\">75</td></tr></tbody></table></div><div class=\"grid two\"><div class=\"stat\"><span class=\"label\">Weekly total</span><span class=\"value\">760 mg</span></div><div class=\"stat\"><span class=\"label\">Daily avg</span><span class=\"value\">109 mg</span></div></div><div class=\"callout good\">Within the 400 mg/day guideline. Friday was your peak.</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many eggs did the chickens lay this month",
+    "backyard egg tally please",
+    "track my egg production",
+    "show egg count by day",
+    "chicken egg log for november",
+    "are my hens still laying",
+    "egg count this month",
+    "eggs collected from the coop this month",
+    "how many eggs have the hens given us lately",
+    "chicken egg count chart",
+    "show the egg log for the backyard flock",
+    "egg production numbers this month",
+    "tally of eggs laid by my hens"
+   ],
+   "title": "Backyard egg tally",
+   "html": "<div class=\"umi-page\"><h1>Backyard egg tally</h1><p class=\"muted\">Cluck cluck, <regex>user_name</regex>. Here's the nest box report.</p><div class=\"grid two\"><div class=\"stat\"><span class=\"label\">Total eggs</span><span class=\"value\">86</span></div><div class=\"stat\"><span class=\"label\">Daily avg</span><span class=\"value\">2.9</span></div></div><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th class=\"num\">Eggs</th><th>Notes</th></tr></thead><tbody><tr><td>Nov 1</td><td class=\"num\">3</td><td></td></tr><tr><td>Nov 2</td><td class=\"num\">3</td><td></td></tr><tr><td>Nov 3</td><td class=\"num\">2</td><td>One soft shell</td></tr><tr><td>Nov 4</td><td class=\"num\">4</td><td></td></tr><tr><td>Nov 5</td><td class=\"num\">3</td><td></td></tr><tr><td>Nov 6</td><td class=\"num\">2</td><td>Rainy</td></tr><tr><td>Nov 7</td><td class=\"num\">3</td><td></td></tr><tr><td>Nov 8</td><td class=\"num\">4</td><td></td></tr><tr><td>Nov 9</td><td class=\"num\">2</td><td></td></tr><tr><td>Nov 10</td><td class=\"num\">3</td><td></td></tr><tr><td>Nov 11</td><td class=\"num\">3</td><td></td></tr><tr><td>Nov 12</td><td class=\"num\">4</td><td></td></tr><tr><td>Nov 13</td><td class=\"num\">2</td><td></td></tr><tr><td>Nov 14</td><td class=\"num\">3</td><td></td></tr><tr><td>Nov 15</td><td class=\"num\">3</td><td></td></tr><tr><td>Nov 16</td><td class=\"num\">4</td><td></td></tr><tr><td>Nov 17</td><td class=\"num\">2</td><td></td></tr><tr><td>Nov 18</td><td class=\"num\">3</td><td></td></tr><tr><td>Nov 19</td><td class=\"num\">3</td><td></td></tr><tr><td>Nov 20</td><td class=\"num\">4</td><td></td></tr><tr><td>Nov 21</td><td class=\"num\">2</td><td></td></tr><tr><td>Nov 22</td><td class=\"num\">3</td><td></td></tr><tr><td>Nov 23</td><td class=\"num\">3</td><td></td></tr><tr><td>Nov 24</td><td class=\"num\">4</td><td></td></tr><tr><td>Nov 25</td><td class=\"num\">2</td><td></td></tr><tr><td>Nov 26</td><td class=\"num\">3</td><td></td></tr><tr><td>Nov 27</td><td class=\"num\">3</td><td></td></tr><tr><td>Nov 28</td><td class=\"num\">4</td><td></td></tr><tr><td>Nov 29</td><td class=\"num\">2</td><td></td></tr><tr><td>Nov 30</td><td class=\"num\">3</td><td></td></tr></tbody></table></div><div class=\"callout info\">Productivity dipped on rainy days. The hens are fair-weather layers.</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "show my podcast queue",
+    "what podcasts are lined up",
+    "podcast backlog please",
+    "my listening list",
+    "podcasts i need to catch up on",
+    "queue of podcast episodes",
+    "what's next in my podcast app",
+    "what podcasts are lined up for me",
+    "show me my unplayed episodes",
+    "podcast backlog list",
+    "wtf is in my podcast queue rn",
+    "episodes i still need to listen to",
+    "list my saved podcast episodes"
+   ],
+   "title": "Podcast queue",
+   "html": "<div class=\"umi-page\"><h1>Podcast queue</h1><p class=\"muted\"><regex>user_name</regex>, your ears have a to-do list.</p><div class=\"table-wrap\"><table><thead><tr><th>Episode</th><th>Podcast</th><th class=\"num\">Length</th></tr></thead><tbody><tr><td>Ep. 142: The Future of AI</td><td>Tech Talk</td><td class=\"num\">45 min</td></tr><tr><td>Ep. 88: Deep Sea Mysteries</td><td>Science Weekly</td><td class=\"num\">32 min</td></tr><tr><td>Ep. 203: Startup Stories</td><td>How I Built This</td><td class=\"num\">58 min</td></tr><tr><td>Ep. 56: Mindfulness at Work</td><td>The Happiness Lab</td><td class=\"num\">28 min</td></tr><tr><td>Ep. 310: History of Coffee</td><td>Stuff You Should Know</td><td class=\"num\">51 min</td></tr><tr><td>Ep. 77: True Crime: The Vanishing</td><td>Crime Junkie</td><td class=\"num\">42 min</td></tr><tr><td>Ep. 19: Financial Independence</td><td>ChooseFI</td><td class=\"num\">36 min</td></tr></tbody></table></div><div class=\"callout\">Total listening time: 4 hours 52 minutes. Better save it for the commute.</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many hours did i volunteer this month",
+    "volunteer log please",
+    "track my volunteer hours",
+    "show my community service hours",
+    "volunteer work this month",
+    "my volunteering record",
+    "hours i spent helping out",
+    "how much time did i give volunteering this month",
+    "volunteer time tracking table",
+    "hours i put in at the shelter this month",
+    "show my community service hours",
+    "total volunteer hrs this mo",
+    "log of my volunteering shifts"
+   ],
+   "title": "Volunteer hours log",
+   "html": "<div class=\"umi-page\"><h1>Volunteer hours log</h1><p class=\"muted\">Nice work, <regex>user_name</regex>. Here's your giving back tally.</p><div class=\"grid two\"><div class=\"stat\"><span class=\"label\">Total hours</span><span class=\"value\">24.5</span></div><div class=\"stat\"><span class=\"label\">Organizations</span><span class=\"value\">3</span></div></div><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Organization</th><th class=\"num\">Hours</th></tr></thead><tbody><tr><td>Nov 2</td><td>Food Bank</td><td class=\"num\">4.0</td></tr><tr><td>Nov 5</td><td>Animal Shelter</td><td class=\"num\">3.5</td></tr><tr><td>Nov 9</td><td>Food Bank</td><td class=\"num\">4.0</td></tr><tr><td>Nov 12</td><td>Community Garden</td><td class=\"num\">2.5</td></tr><tr><td>Nov 16</td><td>Animal Shelter</td><td class=\"num\">3.0</td></tr><tr><td>Nov 19</td><td>Food Bank</td><td class=\"num\">4.0</td></tr><tr><td>Nov 23</td><td>Community Garden</td><td class=\"num\">3.5</td></tr></tbody></table></div><div class=\"callout good\">That's 24.5 hours of impact. The Food Bank loves you.</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "show my board game plays",
+    "what board games have i played lately",
+    "board game log please",
+    "my recent game sessions",
+    "board game tracker",
+    "games played this month",
+    "how many times did i play wingspan",
+    "what games have i played recently",
+    "board game session history",
+    "how many times did i get a game to the table",
+    "show me my plays log",
+    "tabletop plays this month",
+    "games played tracker"
+   ],
+   "title": "Board game plays",
+   "html": "<div class=\"umi-page\"><h1>Board game plays</h1><p class=\"muted\"><regex>user_name</regex>, roll for initiative on these stats.</p><div class=\"table-wrap\"><table><thead><tr><th>Game</th><th class=\"num\">Plays</th><th>Last played</th></tr></thead><tbody><tr><td>Wingspan</td><td class=\"num\">5</td><td>Nov 28</td></tr><tr><td>Catan</td><td class=\"num\">3</td><td>Nov 25</td></tr><tr><td>Ticket to Ride</td><td class=\"num\">4</td><td>Nov 22</td></tr><tr><td>Pandemic</td><td class=\"num\">2</td><td>Nov 18</td></tr><tr><td>7 Wonders</td><td class=\"num\">3</td><td>Nov 15</td></tr><tr><td>Azul</td><td class=\"num\">4</td><td>Nov 10</td></tr></tbody></table></div><div class=\"grid two\"><div class=\"stat\"><span class=\"label\">Total plays</span><span class=\"value\">21</span></div><div class=\"stat\"><span class=\"label\">Most played</span><span class=\"value\">Wingspan</span></div></div><div class=\"callout info\">Wingspan is your current favourite. The birds are winning.</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "create a dashboard table of my laundry loads",
+    "I need a tracker for loads of laundry",
+    "track laundry loads",
+    "make a table showing when I did laundry and what was in it",
+    "Laundry load dashboard",
+    "show me my laundry history in a table",
+    "laundrey loads plz",
+    "how many loads of laundry have i done",
+    "laundry tracker table please",
+    "show my wash cycles log",
+    "loads washed and dried log",
+    "laundry day count",
+    "my laundry history dashboard"
+   ],
+   "title": "Laundry loads log",
+   "html": "<div class=\"umi-page\"><h1>Laundry loads</h1><p class=\"muted\">Every wash, dry and fold. <regex>user_name</regex>, your last load was 4 days ago.</p><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Load type</th><th>Items</th><th>Status</th></tr></thead><tbody><tr><td>Mon 3 Mar</td><td>Whites</td><td>14</td><td><span class=\"badge good\"><i class=\"dot\"></i>Done</span></td></tr><tr><td>Sat 1 Mar</td><td>Darks</td><td>22</td><td><span class=\"badge good\"><i class=\"dot\"></i>Done</span></td></tr><tr><td>Thu 27 Feb</td><td>Towels</td><td>9</td><td><span class=\"badge good\"><i class=\"dot\"></i>Done</span></td></tr><tr><td>Mon 24 Feb</td><td>Bedding</td><td>6</td><td><span class=\"badge warn\"><i class=\"dot\"></i>Folding</span></td></tr><tr><td>Sat 22 Feb</td><td>Darks</td><td>18</td><td><span class=\"badge good\"><i class=\"dot\"></i>Done</span></td></tr><tr><td>Wed 19 Feb</td><td>Gym kit</td><td>7</td><td><span class=\"badge good\"><i class=\"dot\"></i>Done</span></td></tr></tbody></table></div><details class=\"acc\"><summary>Tips</summary><div class=\"body\"><ul class=\"list\"><li>Wash towels at 60\u00b0C to keep them fresh.</li><li>Empty pockets before every load.</li><li>Air-dry shirts to save energy.</li></ul></div></details></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "dashboard of my dishwasher runs",
+    "track dishwasher cycles",
+    "I want a table of dishwasher usage",
+    "show dishwasher history",
+    "dishwasher runs",
+    "make a dashboard for dishwasher loads",
+    "need 2 track dishwashr cycles",
+    "how many times did i run the dishwasher",
+    "dishwasher run count",
+    "show dishwasher usage table",
+    "times the dishwasher ran this month",
+    "dishwasher cycle tracker",
+    "kitchen dishwasher log"
+   ],
+   "title": "Dishwasher cycles",
+   "html": "<div class=\"umi-page\"><h1>Dishwasher cycles</h1><p class=\"muted\"><regex>user_name</regex>, you ran 5 cycles this week. Average duration: 1h 48m.</p><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Program</th><th>Duration</th><th>Result</th></tr></thead><tbody><tr><td>Tue 4 Mar</td><td>Eco</td><td class=\"num\">2h 05m</td><td><span class=\"badge good\"><i class=\"dot\"></i>Clean</span></td></tr><tr><td>Sun 2 Mar</td><td>Intensive</td><td class=\"num\">2h 30m</td><td><span class=\"badge good\"><i class=\"dot\"></i>Clean</span></td></tr><tr><td>Fri 28 Feb</td><td>Quick wash</td><td class=\"num\">0h 35m</td><td><span class=\"badge warn\"><i class=\"dot\"></i>Rinse aid low</span></td></tr><tr><td>Wed 26 Feb</td><td>Eco</td><td class=\"num\">2h 05m</td><td><span class=\"badge good\"><i class=\"dot\"></i>Clean</span></td></tr><tr><td>Mon 24 Feb</td><td>Normal</td><td class=\"num\">1h 45m</td><td><span class=\"badge good\"><i class=\"dot\"></i>Clean</span></td></tr></tbody></table></div><div class=\"callout info\">Salt level is fine. Next rinse aid refill around 10 March.</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "dashboard table of vacuuming",
+    "track vacuum sessions",
+    "when did I last vacuum",
+    "vacuum log",
+    "show vacuum history",
+    "make a table for vacuuming schedule",
+    "vacumming dashboard plz",
+    "when did i last vacuum",
+    "vacuum sessions this month",
+    "show me my vacuuming history",
+    "how often am i vacuuming",
+    "floors vacuumed tracker",
+    "vacuum log dashboard"
+   ],
+   "title": "Vacuuming log",
+   "html": "<div class=\"umi-page\"><h1>Vacuuming log</h1><p class=\"muted\">Keep the floors honest, <regex>user_name</regex>. Last vacuum: yesterday.</p><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Area</th><th>Minutes</th><th>Notes</th></tr></thead><tbody><tr><td>Tue 4 Mar</td><td>Living room</td><td class=\"num\">15</td><td>Under sofa too</td></tr><tr><td>Sat 1 Mar</td><td>Whole flat</td><td class=\"num\">40</td><td>Changed bag</td></tr><tr><td>Wed 26 Feb</td><td>Bedrooms</td><td class=\"num\">20</td><td>\u2014</td></tr><tr><td>Sun 23 Feb</td><td>Hallway &amp; kitchen</td><td class=\"num\">12</td><td>\u2014</td></tr><tr><td>Thu 20 Feb</td><td>Whole flat</td><td class=\"num\">38</td><td>\u2014</td></tr></tbody></table></div><details class=\"acc\"><summary>Upcoming</summary><div class=\"body\"><p>Next deep clean scheduled for 11 March.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "dashboard of my pet feeding",
+    "track cat feedings",
+    "pet feeding log",
+    "show pet feeding times",
+    "make a table for feeding the cat",
+    "cat feeding dashboard",
+    "feedin log 4 cat",
+    "did i feed the dog today? show the log",
+    "pet meal tracker",
+    "feeding schedule history for my pets",
+    "show when the cat and dog were fed",
+    "pet food log table",
+    "my animals feeding record"
+   ],
+   "title": "Pet feeding log",
+   "html": "<div class=\"umi-page\"><h1>Pet feeding log</h1><p class=\"muted\"><regex>user_name</regex>, Miso the cat has been fed 14 times this week.</p><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Time</th><th>Food</th><th>Amount</th></tr></thead><tbody><tr><td>Tue 4 Mar</td><td>07:30</td><td>Dry kibble</td><td class=\"num\">50g</td></tr><tr><td>Tue 4 Mar</td><td>18:00</td><td>Wet food</td><td class=\"num\">1 pouch</td></tr><tr><td>Mon 3 Mar</td><td>07:15</td><td>Dry kibble</td><td class=\"num\">50g</td></tr><tr><td>Mon 3 Mar</td><td>18:10</td><td>Wet food</td><td class=\"num\">1 pouch</td></tr><tr><td>Sun 2 Mar</td><td>08:00</td><td>Dry kibble</td><td class=\"num\">50g</td></tr></tbody></table></div><div class=\"callout good\">Miso is on track. Next vet visit: 15 April.</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "dashboard of my car fuel",
+    "track fuel fill-ups",
+    "fuel log",
+    "show fuel history",
+    "make a table for fuel purchases",
+    "car fuel dashboard",
+    "fuel fillups plz",
+    "gas station visits this month",
+    "how many times did i fill the tank",
+    "show my gas purchases",
+    "fuel stop log",
+    "gas fill up history table",
+    "car refuel tracker"
+   ],
+   "title": "Fuel fill-ups",
+   "html": "<div class=\"umi-page\"><h1>Fuel fill-ups</h1><p class=\"muted\"><regex>user_name</regex>, your last fill-up was 2 days ago. Average spend: \u00a352.</p><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Station</th><th>Litres</th><th>Cost</th></tr></thead><tbody><tr><td>Sun 2 Mar</td><td>Shell A1</td><td class=\"num\">42.1</td><td class=\"num\">\u00a358.10</td></tr><tr><td>Sat 22 Feb</td><td>BP Town</td><td class=\"num\">38.5</td><td class=\"num\">\u00a350.05</td></tr><tr><td>Wed 12 Feb</td><td>Tesco Extra</td><td class=\"num\">40.2</td><td class=\"num\">\u00a352.26</td></tr><tr><td>Fri 31 Jan</td><td>Shell A1</td><td class=\"num\">36.8</td><td class=\"num\">\u00a347.84</td></tr><tr><td>Mon 20 Jan</td><td>BP Town</td><td class=\"num\">39.0</td><td class=\"num\">\u00a350.70</td></tr></tbody></table></div><details class=\"acc\"><summary>Fuel efficiency</summary><div class=\"body\"><p>Your average is 6.2 L/100km. Nice.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "dashboard table of recycling",
+    "track recycling habits",
+    "recycling log",
+    "show recycling history",
+    "make a table for recycling",
+    "recycling dashboard",
+    "recyclin log plz",
+    "what did i recycle this month",
+    "recycling drop off history",
+    "show my recycling table",
+    "how many times did i take recycling out",
+    "recycle bin trips log",
+    "recycling tracker dashboard"
+   ],
+   "title": "Recycling log",
+   "html": "<div class=\"umi-page\"><h1>Recycling log</h1><p class=\"muted\"><regex>user_name</regex>, you recycled 12 items this week. Keep it up.</p><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Item</th><th>Category</th><th>Method</th></tr></thead><tbody><tr><td>Tue 4 Mar</td><td>Milk carton</td><td>Plastic</td><td>Rinse &amp; bin</td></tr><tr><td>Tue 4 Mar</td><td>Newspaper</td><td>Paper</td><td>Bin</td></tr><tr><td>Mon 3 Mar</td><td>Glass jar</td><td>Glass</td><td>Rinse &amp; bin</td></tr><tr><td>Sun 2 Mar</td><td>Cardboard box</td><td>Card</td><td>Flatten &amp; bin</td></tr><tr><td>Sat 1 Mar</td><td>Plastic bottle</td><td>Plastic</td><td>Rinse &amp; bin</td></tr></tbody></table></div><div class=\"callout info\">Remember: no greasy pizza boxes in recycling.</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "track my tea stash",
+    "tea inventory please",
+    "how much tea do I have left",
+    "show tea shelf stock",
+    "my tea cupboard list",
+    "tea bag count",
+    "keep an eye on my tea supply",
+    "how much tea do i have left",
+    "show my tea collection inventory",
+    "tea cupboard count",
+    "what teas are in my stash",
+    "tea bag and loose leaf inventory table",
+    "my tea supply tracker"
+   ],
+   "title": "Tea stash inventory",
+   "html": "<div class=\"umi-page\"><h1>Tea stash inventory</h1><p class=\"muted\">Hey <regex>user_name</regex>, here's what's in the cupboard right now.</p><div class=\"table-wrap\"><table><thead><tr><th>Tea</th><th>Type</th><th class=\"num\">Bags left</th><th>Status</th></tr></thead><tbody><tr><td>Earl Grey</td><td>Black</td><td class=\"num\">12</td><td><span class=\"badge good\">Plenty</span></td></tr><tr><td>Peppermint</td><td>Herbal</td><td class=\"num\">4</td><td><span class=\"badge warn\">Low</span></td></tr><tr><td>Green Sencha</td><td>Green</td><td class=\"num\">8</td><td><span class=\"badge good\">Plenty</span></td></tr><tr><td>Chamomile</td><td>Herbal</td><td class=\"num\">2</td><td><span class=\"badge bad\">Almost out</span></td></tr><tr><td>Lapsang Souchong</td><td>Black</td><td class=\"num\">6</td><td><span class=\"badge good\">Plenty</span></td></tr></tbody></table></div><div class=\"callout info\">You're running low on peppermint and chamomile \u2014 maybe add them to the next shop.</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "cat litter changes",
+    "litter box log",
+    "when did I last change the litter",
+    "track litter scooping",
+    "litter box maintenance",
+    "show litter change dates",
+    "kitty litter schedule",
+    "when did i last change the litter box",
+    "litter box cleaning history",
+    "show my cat litter changes",
+    "how often am i scooping and changing litter",
+    "kitty litter change tracker",
+    "litter box maintenance log"
+   ],
+   "title": "Cat litter change log",
+   "html": "<div class=\"umi-page\"><h1>Cat litter change log</h1><p class=\"muted\">Keeping tabs on the litter box for <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Action</th><th>Notes</th></tr></thead><tbody><tr><td>Mon 6 Oct</td><td>Scooped</td><td>All clear</td></tr><tr><td>Tue 7 Oct</td><td>Scooped</td><td>All clear</td></tr><tr><td>Wed 8 Oct</td><td>Full change</td><td>Fresh litter added</td></tr><tr><td>Thu 9 Oct</td><td>Scooped</td><td>All clear</td></tr><tr><td>Fri 10 Oct</td><td>Scooped</td><td>Needs full change soon</td></tr></tbody></table></div><div class=\"callout warn\">Next full change due by Sunday.</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "show my board game scores",
+    "game night results",
+    "who won at Catan",
+    "track our game scores",
+    "board game leaderboard",
+    "recent game plays",
+    "game night tally",
+    "who won our last game night? show scores",
+    "game night points table",
+    "show my board game results",
+    "scores from recent board game sessions",
+    "board game score history",
+    "my tabletop game scores log"
+   ],
+   "title": "Board game scores",
+   "html": "<div class=\"umi-page\"><h1>Board game scores</h1><p class=\"muted\">Recent plays for <regex>user_name</regex> and friends.</p><div class=\"table-wrap\"><table><thead><tr><th>Game</th><th>Date</th><th>Winner</th><th class=\"num\">Score</th></tr></thead><tbody><tr><td>Catan</td><td>Oct 5</td><td>You</td><td class=\"num\">10</td></tr><tr><td>Ticket to Ride</td><td>Oct 6</td><td>Alex</td><td class=\"num\">112</td></tr><tr><td>Codenames</td><td>Oct 7</td><td>Team Red</td><td class=\"num\">3</td></tr><tr><td>Wingspan</td><td>Oct 8</td><td>You</td><td class=\"num\">78</td></tr><tr><td>Splendor</td><td>Oct 9</td><td>Sam</td><td class=\"num\">15</td></tr></tbody></table></div><div class=\"callout good\">You're on a two-game win streak!</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "my bike rides this week",
+    "cycling log",
+    "how far did I bike",
+    "bike commute distances",
+    "track bike miles",
+    "weekly bike summary",
+    "bike odometer",
+    "how far did i bike this week",
+    "mileage on my bike rides",
+    "show my cycling distances",
+    "bike ride log with miles",
+    "how many miles did i pedal this week",
+    "my bike trips this week table"
+   ],
+   "title": "Bike ride distances",
+   "html": "<div class=\"umi-page\"><h1>Bike ride distances</h1><p class=\"muted\">Your week on two wheels, <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Day</th><th>Route</th><th class=\"num\">Distance</th><th class=\"num\">Time</th></tr></thead><tbody><tr><td>Mon</td><td>Commute</td><td class=\"num\">5.2 mi</td><td class=\"num\">28 min</td></tr><tr><td>Tue</td><td>Commute</td><td class=\"num\">5.2 mi</td><td class=\"num\">30 min</td></tr><tr><td>Wed</td><td>Errands</td><td class=\"num\">3.1 mi</td><td class=\"num\">18 min</td></tr><tr><td>Thu</td><td>Commute</td><td class=\"num\">5.2 mi</td><td class=\"num\">27 min</td></tr><tr><td>Fri</td><td>Commute</td><td class=\"num\">5.2 mi</td><td class=\"num\">26 min</td></tr></tbody></table></div><div class=\"callout info\">Total so far: 23.9 miles.</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "track my meditation minutes",
+    "meditation log",
+    "how long did I meditate",
+    "show meditation sessions",
+    "mindfulness tracker",
+    "weekly meditation",
+    "meditation history",
+    "how long did i meditate today",
+    "log my zen time",
+    "mins meditated this wk",
+    "tracking my meditations",
+    "mindfulness minutes tracker",
+    "i want to see how much i sat still lol"
+   ],
+   "title": "Meditation minutes",
+   "html": "<div class=\"umi-page\"><h1>Meditation minutes</h1><p class=\"muted\">A calm look at your practice, <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Day</th><th class=\"num\">Minutes</th><th>Notes</th></tr></thead><tbody><tr><td>Mon</td><td class=\"num\">10</td><td>Morning</td></tr><tr><td>Tue</td><td class=\"num\">15</td><td>Evening</td></tr><tr><td>Wed</td><td class=\"num\">5</td><td>Quick session</td></tr><tr><td>Thu</td><td class=\"num\">20</td><td>Deep focus</td></tr><tr><td>Fri</td><td class=\"num\">10</td><td>Morning</td></tr></tbody></table></div><div class=\"callout good\">Total this week: 60 minutes.</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "show my package deliveries",
+    "delivery tracker",
+    "when will my stuff arrive",
+    "track my orders",
+    "package log",
+    "delivery schedule",
+    "where are my packages",
+    "where are my packages rn",
+    "parcels coming my way",
+    "when will my amazon stuff arrive",
+    "track my shipments pls",
+    "deliveries expected this week",
+    "stuff i ordered that hasnt shown up yet"
+   ],
+   "title": "Package deliveries",
+   "html": "<div class=\"umi-page\"><h1>Package deliveries</h1><p class=\"muted\">What's on the way for <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Item</th><th>Carrier</th><th>Expected</th><th>Status</th></tr></thead><tbody><tr><td>Book order</td><td>UPS</td><td>Oct 12</td><td><span class=\"badge info\">In transit</span></td></tr><tr><td>New headphones</td><td>FedEx</td><td>Oct 11</td><td><span class=\"badge good\">Delivered</span></td></tr><tr><td>Coffee beans</td><td>USPS</td><td>Oct 13</td><td><span class=\"badge warn\">Delayed</span></td></tr><tr><td>Phone case</td><td>DHL</td><td>Oct 14</td><td><span class=\"badge info\">In transit</span></td></tr><tr><td>Running shoes</td><td>UPS</td><td>Oct 10</td><td><span class=\"badge good\">Delivered</span></td></tr></tbody></table></div><div class=\"callout warn\">Your coffee beans are running late \u2014 tracking says Oct 13 now.</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sourdough starter feeding log",
+   "user_requests": [
+    "sourdough starter feeding log",
+    "track my starter feedings",
+    "keep a record of feeding Doughlores",
+    "log for sourdough starter - flour + water amounts",
+    "my starter feeding schedule table",
+    "when did i last feed the starter",
+    "sourdough feedings pls",
+    "when did i last feed doughy boi",
+    "starter feeding times",
+    "sour dough feed schedule",
+    "did i feed the starter today",
+    "my levain feeding history",
+    "log feedings for my sourdough pet"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Sourdough starter feeding log</h1><p class=\"muted t-small\">Keep <strong>Doughlores</strong> bubbly, <regex>user_name</regex>. Feed within 12h of a collapse.</p><div class=\"table-wrap\"><table><thead><tr><th>Day</th><th>Flour</th><th class=\"num\">Water</th><th>Rise</th></tr></thead><tbody><tr><td>Mon</td><td>50g white</td><td class=\"num\">50g</td><td>doubled</td></tr><tr><td>Tue</td><td>50g rye</td><td class=\"num\">50g</td><td>doubled</td></tr><tr><td>Wed</td><td>50g white</td><td class=\"num\">50g</td><td>flat</td></tr><tr><td>Thu</td><td>50g white</td><td class=\"num\">50g</td><td>doubled</td></tr><tr><td>Fri</td><td>50g rye</td><td class=\"num\">50g</td><td>tripled</td></tr><tr><td>Sat</td><td>50g white</td><td class=\"num\">50g</td><td>doubled</td></tr></tbody></table></div><span class=\"badge good\"><i class=\"dot\"></i>Fed today</span></div>",
+   "augmented": true
+  },
+  {
+   "title": "Houseplant repotting queue",
+   "user_requests": [
+    "which plants need repotting",
+    "houseplant repot list",
+    "plants outgrowing their pots",
+    "repotting queue for my indoor plants",
+    "make me a repot tracker",
+    "my monstera needs a bigger pot - log it",
+    "repot schedule pls",
+    "plants that outgrew their pots",
+    "repotting to-do list",
+    "which of my plants need bigger pots",
+    "houseplant repot reminders",
+    "roots coming out the bottom help",
+    "pot up queue for my plant babies"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Houseplant repotting queue</h1><p class=\"muted t-small\"><regex>user_name</regex>, spring is the window. Roots poking the drainage holes? Move it up.</p><div class=\"table-wrap\"><table><thead><tr><th>Plant</th><th>Last repot</th><th>Pot</th><th>Status</th></tr></thead><tbody><tr><td>Monstera</td><td>Mar 2024</td><td>18cm</td><td><span class=\"badge warn\"><i class=\"dot\"></i>Soon</span></td></tr><tr><td>Fiddle leaf fig</td><td>Jun 2024</td><td>22cm</td><td>Fine</td></tr><tr><td>Snake plant</td><td>Sep 2023</td><td>14cm</td><td><span class=\"badge bad\"><i class=\"dot\"></i>Now</span></td></tr><tr><td>Pothos</td><td>Jan 2025</td><td>15cm</td><td>Fine</td></tr><tr><td>ZZ plant</td><td>Nov 2023</td><td>16cm</td><td><span class=\"badge warn\"><i class=\"dot\"></i>Soon</span></td></tr></tbody></table></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Bread baking experiments",
+   "user_requests": [
+    "bread baking experiments log",
+    "track my bread bakes",
+    "sourdough vs yeast bread results",
+    "loaf log - hydration and crumb notes",
+    "my bread baking table",
+    "log this week's loaves",
+    "bread bakes pls",
+    "my loaf attempts so far",
+    "bread trials log",
+    "what recipes have i tried baking",
+    "sourdough bake results",
+    "notes on my bread bakes",
+    "keep track of my bread making tries"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Bread baking experiments</h1><p class=\"muted t-small\">Every bake is data, <regex>user_name</regex>. The crumb never lies.</p><div class=\"table-wrap\"><table><thead><tr><th>Bake</th><th>Hydration</th><th class=\"num\">Bulk</th><th>Crumb</th></tr></thead><tbody><tr><td>Country sourdough</td><td>75%</td><td class=\"num\">4h</td><td>open</td></tr><tr><td>Spelt blend</td><td>80%</td><td class=\"num\">5h</td><td>tight</td></tr><tr><td>No-knead white</td><td>70%</td><td class=\"num\">12h</td><td>airy</td></tr><tr><td>Rye 40%</td><td>78%</td><td class=\"num\">6h</td><td>dense</td></tr><tr><td>Focaccia tray</td><td>85%</td><td class=\"num\">2h</td><td>holed</td></tr></tbody></table></div><span class=\"badge accent\"><i class=\"dot\"></i>5 bakes this month</span></div>",
+   "augmented": true
+  },
+  {
+   "title": "Compost bin turns",
+   "user_requests": [
+    "compost bin turn log",
+    "when did i last turn the compost",
+    "track my compost tumbler",
+    "compost turn tracker",
+    "log compost browns and greens",
+    "compost schedule pls",
+    "my compost bin notes",
+    "when did i last turn the compost",
+    "compost turning history",
+    "did i flip the pile this week",
+    "compost maintenance log",
+    "turning schedule for my bins",
+    "my compost chore record"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Compost bin turns</h1><p class=\"muted t-small\">Turn it, <regex>user_name</regex> \u2014 a hot pile is a happy pile. Aim for 3 turns a week.</p><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Action</th><th>Browns</th><th>Greens</th></tr></thead><tbody><tr><td>Mon</td><td>turned</td><td>cardboard</td><td>coffee grounds</td></tr><tr><td>Tue</td><td>added</td><td>dry leaves</td><td>banana peels</td></tr><tr><td>Wed</td><td>turned</td><td>\u2014</td><td>\u2014</td></tr><tr><td>Thu</td><td>added</td><td>shredded paper</td><td>veggie scraps</td></tr><tr><td>Fri</td><td>turned</td><td>\u2014</td><td>\u2014</td></tr><tr><td>Sat</td><td>added</td><td>straw</td><td>grass clippings</td></tr></tbody></table></div><span class=\"badge good\"><i class=\"dot\"></i>Pile at 130\u00b0F</span></div>",
+   "augmented": true
+  },
+  {
+   "title": "Seed starting tray",
+   "user_requests": [
+    "seed starting tray log",
+    "track my seed germination",
+    "when did seedlings sprout",
+    "seed starting tracker table",
+    "my seed trays notes",
+    "log seeded trays",
+    "seeds started this week",
+    "what seeds did i start",
+    "seedling tray progress",
+    "when did i sow these",
+    "my seed starting records",
+    "germination log for trays",
+    "track my seedlings sprouting"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Seed starting tray</h1><p class=\"muted t-small\">Patience, <regex>user_name</regex>. Tomatoes pop in 5 days, peppers take their sweet time.</p><div class=\"table-wrap\"><table><thead><tr><th>Seed</th><th>Sown</th><th class=\"num\">Days</th><th>Status</th></tr></thead><tbody><tr><td>Tomato Roma</td><td>Mar 3</td><td class=\"num\">5</td><td><span class=\"badge good\"><i class=\"dot\"></i>Up</span></td></tr><tr><td>Basil</td><td>Mar 5</td><td class=\"num\">6</td><td><span class=\"badge good\"><i class=\"dot\"></i>Up</span></td></tr><tr><td>Pepper jalape\u00f1o</td><td>Mar 1</td><td class=\"num\">14</td><td><span class=\"badge warn\"><i class=\"dot\"></i>Slow</span></td></tr><tr><td>Zinnia</td><td>Mar 8</td><td class=\"num\">4</td><td><span class=\"badge good\"><i class=\"dot\"></i>Up</span></td></tr><tr><td>Lavender</td><td>Mar 6</td><td class=\"num\">21</td><td>Waiting</td></tr></tbody></table></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Rain barrel levels",
+   "user_requests": [
+    "rain barrel level log",
+    "track my rain barrels",
+    "how full are the rain barrels",
+    "rainwater collection tracker",
+    "log rain barrel readings",
+    "rain barrels pls",
+    "my rainwater harvest this week",
+    "how full is my rain barrel",
+    "water storage levels",
+    "rainwater collection amounts",
+    "is my barrel overflowing",
+    "barrel readings after the storm",
+    "track how much rain i captured"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Rain barrel levels</h1><p class=\"muted t-small\">Free water, <regex>user_name</regex>. Check after each storm \u2014 overflow means the garden gets leftovers.</p><div class=\"table-wrap\"><table><thead><tr><th>Day</th><th>Rain</th><th>Barrel A</th><th>Barrel B</th></tr></thead><tbody><tr><td>Mon</td><td>0mm</td><td>60%</td><td>40%</td></tr><tr><td>Tue</td><td>12mm</td><td>100%</td><td>80%</td></tr><tr><td>Wed</td><td>3mm</td><td>100%</td><td>90%</td></tr><tr><td>Thu</td><td>0mm</td><td>95%</td><td>85%</td></tr><tr><td>Fri</td><td>0mm</td><td>90%</td><td>80%</td></tr><tr><td>Sat</td><td>18mm</td><td>100%</td><td>100%</td></tr></tbody></table></div><span class=\"badge info\"><i class=\"dot\"></i>33mm collected</span></div>",
+   "augmented": true
+  },
+  {
+   "title": "Snow shoveling log",
+   "user_requests": [
+    "snow shoveling log",
+    "track my shoveling this winter",
+    "how many times have i shoveled",
+    "show snow shovel sessions",
+    "shoveling tracker",
+    "log for shovel outings this month",
+    "when did i shovel last",
+    "times i shoveled this winter",
+    "did i shovel today",
+    "snow removal record",
+    "driveway shoveling history",
+    "how often have i cleared the walk",
+    "log my shoveling sessions"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Snow shoveling log</h1><p class=\"muted t-small\">Here's the driveway history, <regex>user_name</regex>. Your back has opinions.</p><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Depth</th><th>Minutes</th><th class=\"num\">Pain</th></tr></thead><tbody><tr><td>Feb 3</td><td>12 cm</td><td>25</td><td class=\"num\">2/5</td></tr><tr><td>Feb 9</td><td>6 cm</td><td>15</td><td class=\"num\">1/5</td></tr><tr><td>Feb 14</td><td>20 cm</td><td>48</td><td class=\"num\">4/5</td></tr><tr><td>Feb 21</td><td>9 cm</td><td>20</td><td class=\"num\">2/5</td></tr><tr><td>Mar 1</td><td>4 cm</td><td>12</td><td class=\"num\">1/5</td></tr></tbody></table></div><div class=\"callout info\"><p>Seven sessions total, 2h 45m of shoveling. The Feb 14 dump was the season's heavyweight.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Library book due dates",
+   "user_requests": [
+    "library book due dates",
+    "when are my library books due",
+    "track my library loans",
+    "show me my book returns",
+    "library due date tracker",
+    "books i have out right now",
+    "am i late on library books",
+    "when are my books due back",
+    "library return deadlines",
+    "books i need to return soon",
+    "renewal dates for my loans",
+    "what do i owe the library",
+    "my borrowed books timeline"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Library book due dates</h1><p class=\"muted t-small\">Four titles out, <regex>user_name</regex>. Two renewals left before the librarian starts recognizing you.</p><div class=\"table-wrap\"><table><thead><tr><th>Title</th><th>Due</th><th>Renewals</th></tr></thead><tbody><tr><td>The Overstory</td><td>Mar 18</td><td>1 left</td></tr><tr><td>Piranesi</td><td>Mar 21</td><td>2 left</td></tr><tr><td>Klara and the Sun</td><td>Mar 24</td><td>2 left</td></tr><tr><td>Sea of Tranquility</td><td>Apr 2</td><td>2 left</td></tr></tbody></table></div><div class=\"callout warn\"><p>The Overstory is the closest. Forty pages left, give or take a weekend.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Rain gutter cleaning schedule",
+   "user_requests": [
+    "gutter cleaning schedule",
+    "when did i clean the gutters",
+    "track gutter cleanings",
+    "show my gutter maintenance",
+    "gutter log",
+    "have i cleaned the gutters this year",
+    "track downspout clearings",
+    "when did i last clean the gutters",
+    "gutter maintenance dates",
+    "next time i should clear gutters",
+    "eavestrough cleaning log",
+    "did the gutters get done",
+    "schedule for clearing my downspouts"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Rain gutter cleaning schedule</h1><p class=\"muted t-small\">Twice a year keeps the basement dry, <regex>user_name</regex>. Here's how that's going.</p><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Section</th><th>Debris</th><th>Notes</th></tr></thead><tbody><tr><td>Nov 2</td><td>Front</td><td>Heavy</td><td>Leaves + one tennis ball</td></tr><tr><td>Nov 3</td><td>Back</td><td>Moderate</td><td>Downspout cleared</td></tr><tr><td>Apr 6</td><td>Front</td><td>Light</td><td>Pollen mostly</td></tr><tr><td>Apr 7</td><td>Back</td><td>Moderate</td><td>Nest removed</td></tr></tbody></table></div><div class=\"callout good\"><p>Next window: late October. On track so far, which is rarer than it sounds.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Jar of coins count",
+   "user_requests": [
+    "coin jar total",
+    "how much in my coin jar",
+    "track my change jar",
+    "coin counting log",
+    "show my spare change",
+    "how many quarters do i have",
+    "change jar running total",
+    "how much money is in my jar",
+    "coin jar tally",
+    "count my spare change",
+    "pennies saved up",
+    "change jar total so far",
+    "how many coins have i collected"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Jar of coins count</h1><p class=\"muted t-small\">Rolled and counted, <regex>user_name</regex>. The jar finally earned its keep.</p><div class=\"table-wrap\"><table><thead><tr><th>Coin</th><th class=\"num\">Count</th><th class=\"num\">Value</th></tr></thead><tbody><tr><td>Quarters</td><td class=\"num\">184</td><td class=\"num\">$46.00</td></tr><tr><td>Dimes</td><td class=\"num\">212</td><td class=\"num\">$21.20</td></tr><tr><td>Nickels</td><td class=\"num\">97</td><td class=\"num\">$4.85</td></tr><tr><td>Pennies</td><td class=\"num\">431</td><td class=\"num\">$4.31</td></tr><tr><td>Foreign</td><td class=\"num\">11</td><td class=\"num\">\u2014</td></tr></tbody></table></div><div class=\"stat\"><span class=\"label\">Grand total</span><span class=\"value\">$76.36</span></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Haircut appointments",
+   "user_requests": [
+    "haircut appointments",
+    "when was my last haircut",
+    "track my haircuts",
+    "how often do i get haircuts",
+    "haircut log",
+    "next haircut due",
+    "show my barber visits",
+    "when is my next haircut",
+    "barber visit history",
+    "last time i got a trim",
+    "hair appt schedule",
+    "booked cuts coming up",
+    "when did i last get my hair done"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Haircut appointments</h1><p class=\"muted t-small\">You average about six weeks, <regex>user_name</regex>. The math says you're due.</p><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Stylist</th><th>Cut</th><th class=\"num\">Cost</th></tr></thead><tbody><tr><td>Nov 12</td><td>Mara</td><td>Trim</td><td class=\"num\">$38</td></tr><tr><td>Dec 28</td><td>Mara</td><td>Full cut</td><td class=\"num\">$45</td></tr><tr><td>Feb 8</td><td>Jonas</td><td>Trim</td><td class=\"num\">$38</td></tr><tr><td>Mar 22</td><td>Mara</td><td>Full cut</td><td class=\"num\">$45</td></tr></tbody></table></div><div class=\"callout info\"><p>Last visit 41 days ago. You're in the window where it starts looking intentional.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Emergency fund deposits",
+   "user_requests": [
+    "emergency fund deposits",
+    "track my savings deposits",
+    "emergency fund progress",
+    "how much have i saved",
+    "show savings account deposits",
+    "rainy day fund log",
+    "am i on track with emergency savings",
+    "how much have i saved for emergencies",
+    "rainy day fund contributions",
+    "my savings deposits log",
+    "emergency savings progress",
+    "money ive put in the e-fund",
+    "tracking my safety net savings"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Emergency fund deposits</h1><p class=\"muted t-small\">Steady deposits, <regex>user_name</regex>. Boring, in the best way.</p><div class=\"table-wrap\"><table><thead><tr><th>Month</th><th class=\"num\">Deposit</th><th class=\"num\">Balance</th></tr></thead><tbody><tr><td>Nov</td><td class=\"num\">$250</td><td class=\"num\">$2,100</td></tr><tr><td>Dec</td><td class=\"num\">$250</td><td class=\"num\">$2,350</td></tr><tr><td>Jan</td><td class=\"num\">$400</td><td class=\"num\">$2,750</td></tr><tr><td>Feb</td><td class=\"num\">$250</td><td class=\"num\">$3,000</td></tr><tr><td>Mar</td><td class=\"num\">$300</td><td class=\"num\">$3,300</td></tr></tbody></table></div><div class=\"meter\"><span style=\"width:66%\"></span></div><p class=\"muted t-small\">$3,300 of your $5,000 goal. Sixty-six percent and climbing.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "track my dog walks this week",
+    "dog walking log please <regex>user_name</regex>",
+    "how many times did i walk the dog",
+    "daily dog walk tracker",
+    "walks with the pup this week?",
+    "need a dog walk log",
+    "show me my dog walking stats",
+    "how many times did i walk the pup",
+    "walkies log for my dog",
+    "did we go out today",
+    "dog walking counts",
+    "steps with the doggo this week",
+    "record of our daily walks"
+   ],
+   "title": "Dog walks this week",
+   "html": "<div class=\"umi-page\"><h1>Dog walks this week</h1><p class=\"muted\">Every stroll, sniff, and squirrel standoff.</p><div class=\"table-wrap\"><table><thead><tr><th>Day</th><th>Walks</th><th>Minutes</th><th>Distance</th></tr></thead><tbody><tr><td>Mon</td><td>2</td><td class=\"num\">45</td><td class=\"num\">2.1 km</td></tr><tr><td>Tue</td><td>1</td><td class=\"num\">20</td><td class=\"num\">0.9 km</td></tr><tr><td>Wed</td><td>3</td><td class=\"num\">70</td><td class=\"num\">3.4 km</td></tr><tr><td>Thu</td><td>1</td><td class=\"num\">25</td><td class=\"num\">1.2 km</td></tr><tr><td>Fri</td><td>2</td><td class=\"num\">50</td><td class=\"num\">2.5 km</td></tr><tr><td>Sat</td><td>2</td><td class=\"num\">55</td><td class=\"num\">2.8 km</td></tr><tr><td>Sun</td><td>1</td><td class=\"num\">30</td><td class=\"num\">1.5 km</td></tr></tbody></table></div><div class=\"callout info\">Your pup is averaging <strong>42 minutes</strong> a day. Solid.</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "track my sourdough starter feedings",
+    "sourdough feeding log",
+    "when did i last feed the starter?",
+    "sourdough schedule please <regex>user_name</regex>",
+    "starter feeding tracker",
+    "log my sourdough feedings",
+    "sourdough starter routine",
+    "when did i last feed doughy boi",
+    "starter feeding times",
+    "sour dough feed schedule",
+    "did i feed the starter today",
+    "my levain feeding history",
+    "log feedings for my sourdough pet"
+   ],
+   "title": "Sourdough starter feeding log",
+   "html": "<div class=\"umi-page\"><h1>Sourdough starter feeding log</h1><p class=\"muted\">Keep the yeast happy, keep the bread rising.</p><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Flour</th><th>Water</th><th>Starter</th><th>Rise</th></tr></thead><tbody><tr><td>Apr 1</td><td class=\"num\">50g</td><td class=\"num\">50g</td><td class=\"num\">10g</td><td>Doubled</td></tr><tr><td>Apr 3</td><td class=\"num\">50g</td><td class=\"num\">50g</td><td class=\"num\">10g</td><td>Doubled</td></tr><tr><td>Apr 5</td><td class=\"num\">75g</td><td class=\"num\">75g</td><td class=\"num\">15g</td><td>Tripled</td></tr><tr><td>Apr 7</td><td class=\"num\">50g</td><td class=\"num\">50g</td><td class=\"num\">10g</td><td>Doubled</td></tr><tr><td>Apr 9</td><td class=\"num\">50g</td><td class=\"num\">50g</td><td class=\"num\">10g</td><td>Barely</td></tr><tr><td>Apr 11</td><td class=\"num\">50g</td><td class=\"num\">50g</td><td class=\"num\">10g</td><td>Doubled</td></tr></tbody></table></div><div class=\"callout good\">Barely rising on Apr 9? Maybe a cold kitchen. Try a warmer spot.</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "track my library book due dates",
+    "library due date tracker",
+    "when are my library books due?",
+    "library returns schedule",
+    "book due dates please <regex>user_name</regex>",
+    "help me remember library due dates",
+    "library book deadline log",
+    "when are my library books due back",
+    "show me due dates for borrowed books",
+    "library return deadlines",
+    "which books are almost overdue at the library",
+    "I need to keep tabs on my library loans",
+    "due date reminders for library books"
+   ],
+   "title": "Library book due dates",
+   "html": "<div class=\"umi-page\"><h1>Library book due dates</h1><p class=\"muted\">No more surprise fines.</p><div class=\"table-wrap\"><table><thead><tr><th>Title</th><th>Due</th><th>Status</th></tr></thead><tbody><tr><td>The Overstory</td><td>Apr 15</td><td>Reading</td></tr><tr><td>Piranesi</td><td>Apr 18</td><td>Not started</td></tr><tr><td>Klara and the Sun</td><td>Apr 20</td><td>Reading</td></tr><tr><td>Project Hail Mary</td><td>Apr 22</td><td>Halfway</td></tr><tr><td>The Midnight Library</td><td>Apr 25</td><td>Not started</td></tr><tr><td>Circe</td><td>Apr 28</td><td>Finished</td></tr></tbody></table></div><div class=\"callout warn\">Two books due in 3 days. Might want to renew.</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "track my houseplant repotting",
+    "repotting queue",
+    "which plants need repotting?",
+    "houseplant repot schedule",
+    "repotting list <regex>user_name</regex>",
+    "plant repotting tracker",
+    "when to repot my plants",
+    "which plants need repotting next",
+    "plant repot schedule",
+    "repotting to-do list for my houseplants",
+    "when should I repot my Monstera",
+    "track when I last repotted each plant",
+    "repotting queue for indoor plants"
+   ],
+   "title": "Houseplant repotting queue",
+   "html": "<div class=\"umi-page\"><h1>Houseplant repotting queue</h1><p class=\"muted\">Roots need room. Let's get them sorted.</p><div class=\"table-wrap\"><table><thead><tr><th>Plant</th><th>Last repot</th><th>Pot size</th><th>Priority</th></tr></thead><tbody><tr><td>Monstera</td><td>2023-05</td><td>10 in</td><td><span class=\"badge warn\">Soon</span></td></tr><tr><td>Snake plant</td><td>2022-09</td><td>8 in</td><td><span class=\"badge bad\">Overdue</span></td></tr><tr><td>Fiddle leaf fig</td><td>2023-11</td><td>12 in</td><td><span class=\"badge good\">OK</span></td></tr><tr><td>ZZ plant</td><td>2023-02</td><td>6 in</td><td><span class=\"badge warn\">Soon</span></td></tr><tr><td>Pothos</td><td>2024-01</td><td>8 in</td><td><span class=\"badge good\">OK</span></td></tr><tr><td>Peace lily</td><td>2023-07</td><td>10 in</td><td><span class=\"badge info\">Check</span></td></tr></tbody></table></div><div class=\"callout bad\">Snake plant is overdue. It's probably plotting an escape.</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "track my compost bin turns",
+    "compost turning log",
+    "when did i last turn the compost?",
+    "compost schedule <regex>user_name</regex>",
+    "compost bin tracker",
+    "log compost turns",
+    "compost turning record",
+    "when did I last turn the compost",
+    "compost turning log",
+    "remind me to turn the compost",
+    "compost bin rotation schedule",
+    "track compost turns",
+    "last time I turned the pile"
+   ],
+   "title": "Compost bin turns",
+   "html": "<div class=\"umi-page\"><h1>Compost bin turns</h1><p class=\"muted\">Aeration keeps the microbes munching.</p><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Bin</th><th>Notes</th></tr></thead><tbody><tr><td>Mar 28</td><td>Left</td><td>Dry, added water</td></tr><tr><td>Apr 2</td><td>Left</td><td>Hot, steaming</td></tr><tr><td>Apr 5</td><td>Right</td><td>Added greens</td></tr><tr><td>Apr 9</td><td>Left</td><td>Turned, good temp</td></tr><tr><td>Apr 12</td><td>Right</td><td>Added browns</td></tr><tr><td>Apr 15</td><td>Left</td><td>Ready soon</td></tr></tbody></table></div><div class=\"callout good\">Left bin is heating up nicely. Almost ready for the garden.</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "track my rain barrel levels",
+    "rain barrel log",
+    "how full are my rain barrels?",
+    "rain barrel level tracker",
+    "rain barrel readings <regex>user_name</regex>",
+    "monitor rain barrels",
+    "rainwater collection log",
+    "how full are my rain barrels",
+    "rain barrel water level",
+    "check rain barrel levels",
+    "rainwater collection status",
+    "how much rain have I collected",
+    "barrel level tracker"
+   ],
+   "title": "Rain barrel levels",
+   "html": "<div class=\"umi-page\"><h1>Rain barrel levels</h1><p class=\"muted\">Every drop counts when the sky cooperates.</p><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Barrel</th><th>Level</th><th>Rainfall</th></tr></thead><tbody><tr><td>Apr 1</td><td>Front</td><td class=\"num\">60%</td><td class=\"num\">0 mm</td></tr><tr><td>Apr 3</td><td>Front</td><td class=\"num\">85%</td><td class=\"num\">12 mm</td></tr><tr><td>Apr 5</td><td>Back</td><td class=\"num\">40%</td><td class=\"num\">5 mm</td></tr><tr><td>Apr 7</td><td>Back</td><td class=\"num\">70%</td><td class=\"num\">18 mm</td></tr><tr><td>Apr 9</td><td>Front</td><td class=\"num\">95%</td><td class=\"num\">22 mm</td></tr><tr><td>Apr 11</td><td>Back</td><td class=\"num\">55%</td><td class=\"num\">3 mm</td></tr></tbody></table></div><div class=\"callout info\">Front barrel is nearly full. Good time to water the beds.</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Household cleaning rotation",
+   "user_requests": [
+    "when did i last clean the bathroom",
+    "cleaning rotation table pls",
+    "track chores around the house",
+    "what's due for cleaning this week",
+    "show my housekeeping schedule",
+    "cleaning log with next due dates",
+    "i keep forgetting to mop, help",
+    "cleaning schedule for the house",
+    "when did I last vacuum",
+    "what cleaning tasks are due",
+    "chore rotation for cleaning",
+    "last time I cleaned the kitchen",
+    "household cleaning tracker"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Household cleaning rotation</h1><p class=\"muted\">Hey <regex>user_name</regex> \u2014 everything due within the week is flagged. The mop is judging you gently.</p><div class=\"table-wrap\"><table><thead><tr><th>Task</th><th>Room</th><th>Last done</th><th class=\"num\">Every</th><th>Next due</th></tr></thead><tbody><tr><td>Vacuum</td><td>Living room</td><td>Mon 12 May</td><td class=\"num\">7 d</td><td><span class=\"badge warn\"><i class=\"dot\"></i>Today</span></td></tr><tr><td>Mop floors</td><td>Kitchen</td><td>Thu 8 May</td><td class=\"num\">14 d</td><td>Thu 22 May</td></tr><tr><td>Scrub shower</td><td>Bathroom</td><td>Sat 3 May</td><td class=\"num\">14 d</td><td><span class=\"badge bad\"><i class=\"dot\"></i>2 d late</span></td></tr><tr><td>Change sheets</td><td>Bedroom</td><td>Sun 11 May</td><td class=\"num\">7 d</td><td>Sun 18 May</td></tr><tr><td>Wipe counters</td><td>Kitchen</td><td>Today</td><td class=\"num\">1 d</td><td>Tomorrow</td></tr><tr><td>Dust shelves</td><td>Study</td><td>Fri 9 May</td><td class=\"num\">21 d</td><td>Fri 30 May</td></tr></tbody></table></div><details class=\"acc\"><summary>Why 14 days for the shower?</summary><div class=\"body\"><p class=\"t-small muted\">Two adults, one shower, hard water. Fourteen days keeps the grout honest. Adjust in the card if your household disagrees.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Fridge leftovers countdown",
+   "user_requests": [
+    "what leftovers do i have left",
+    "fridge shelf life tracker",
+    "is the chicken still good",
+    "food waste log",
+    "what do i need to eat first",
+    "leftover countdown please",
+    "help me stop throwing food away",
+    "how many days until leftovers go bad",
+    "leftover expiration dates",
+    "what food in the fridge needs eating soon",
+    "leftovers countdown timer",
+    "track leftover food freshness",
+    "when should I eat the leftovers"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Fridge leftovers countdown</h1><p class=\"muted\"><regex>user_name</regex>, eat top-down. The curry is on its last leg.</p><div class=\"table-wrap\"><table><thead><tr><th>Item</th><th>Cooked</th><th class=\"num\">Keep</th><th>Eat by</th><th>Status</th></tr></thead><tbody><tr><td>Chicken curry</td><td>Fri 10 May</td><td class=\"num\">4 d</td><td>Tue 14 May</td><td><span class=\"badge bad\">Eat today</span></td></tr><tr><td>Roast veg</td><td>Sun 12 May</td><td class=\"num\">5 d</td><td>Fri 17 May</td><td><span class=\"badge warn\">2 days</span></td></tr><tr><td>Lentil soup</td><td>Mon 13 May</td><td class=\"num\">5 d</td><td>Sat 18 May</td><td><span class=\"badge good\">Fine</span></td></tr><tr><td>Cooked rice</td><td>Tue 13 May</td><td class=\"num\">2 d</td><td>Thu 15 May</td><td><span class=\"badge warn\">Tomorrow</span></td></tr><tr><td>Half avocado</td><td>Tue 13 May</td><td class=\"num\">2 d</td><td>Thu 15 May</td><td><span class=\"badge bad\">Brown likely</span></td></tr><tr><td>Pasta bake</td><td>Wed 14 May</td><td class=\"num\">4 d</td><td>Sun 18 May</td><td><span class=\"badge good\">Fresh</span></td></tr></tbody></table></div><details class=\"acc\"><summary>Reheat notes</summary><div class=\"body\"><p class=\"t-small muted\">Rice and curry: piping hot, stir once mid-way. Pasta bake dries out \u2014 splash of water, lid on.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Bike maintenance log",
+   "user_requests": [
+    "when did i last pump my tires",
+    "bike service tracker",
+    "chain lube schedule",
+    "maintenance log for my bicycle",
+    "is it time for a tune up",
+    "my bike log pls",
+    "keep track of bike repairs",
+    "when did I last lube my chain",
+    "bike service history",
+    "track bike repairs",
+    "maintenance schedule for my bicycle",
+    "last bike tune-up",
+    "bike upkeep log"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Bike maintenance log</h1><p class=\"muted\">Chain's been quiet since Tuesday. Keep it that way, <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Job</th><th>Last</th><th class=\"num\">Interval</th><th>Due</th></tr></thead><tbody><tr><td>Tire pressure</td><td>Sat 10 May</td><td class=\"num\">7 d</td><td><span class=\"badge warn\"><i class=\"dot\"></i>Tomorrow</span></td></tr><tr><td>Chain lube</td><td>Tue 6 May</td><td class=\"num\">14 d</td><td>Tue 20 May</td></tr><tr><td>Chain check (wear)</td><td>Sat 5 Apr</td><td class=\"num\">90 d</td><td>Fri 4 Jul</td></tr><tr><td>Brake pads</td><td>Sat 12 Apr</td><td class=\"num\">60 d</td><td>Wed 11 Jun</td></tr><tr><td>Wipe frame</td><td>Sun 11 May</td><td class=\"num\">7 d</td><td>Sun 18 May</td></tr><tr><td>Full tune-up</td><td>Sat 8 Feb</td><td class=\"num\">180 d</td><td>Wed 6 Aug</td></tr></tbody></table></div><details class=\"acc\"><summary>Wear check, 30 seconds</summary><div class=\"body\"><ol class=\"list\"><li>Hook a ruler on a chain pin.</li><li>Measure to the 12th pin \u2014 over 30.6 cm means replace.</li><li>If unsure, ask the shop, not the internet.</li></ol></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Grocery price watch",
+   "user_requests": [
+    "how much is oat milk now",
+    "grocery price tracker",
+    "which shop is cheapest for eggs",
+    "track rising food prices",
+    "my usual basket cost this month",
+    "compare grocery prices",
+    "why is butter so expensive",
+    "compare grocery prices over time",
+    "how much did eggs cost last week",
+    "grocery price tracker",
+    "watch for sales on staples",
+    "price history for milk",
+    "monitor grocery costs"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Grocery price watch</h1><p class=\"muted\">Six staples, three shops. The eggs have opinions, <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Item</th><th>Corner shop</th><th>Market</th><th>Big-box</th><th>Best</th></tr></thead><tbody><tr><td>Oat milk (1 L)</td><td class=\"num\">$2.80</td><td class=\"num\">$2.50</td><td class=\"num\">$2.20</td><td><span class=\"badge good\">Big-box</span></td></tr><tr><td>Eggs (12)</td><td class=\"num\">$4.10</td><td class=\"num\">$3.60</td><td class=\"num\">$3.90</td><td><span class=\"badge good\">Market</span></td></tr><tr><td>Butter (250 g)</td><td class=\"num\">$3.60</td><td class=\"num\">$3.20</td><td class=\"num\">$3.40</td><td><span class=\"badge good\">Market</span></td></tr><tr><td>Pasta (500 g)</td><td class=\"num\">$1.40</td><td class=\"num\">$1.20</td><td class=\"num\">$1.00</td><td><span class=\"badge good\">Big-box</span></td></tr><tr><td>Coffee (250 g)</td><td class=\"num\">$6.20</td><td class=\"num\">$5.80</td><td class=\"num\">$6.00</td><td><span class=\"badge good\">Market</span></td></tr><tr><td>Bananas (1 kg)</td><td class=\"num\">$2.10</td><td class=\"num\">$1.80</td><td class=\"num\">$1.90</td><td><span class=\"badge good\">Market</span></td></tr></tbody></table></div><div class=\"callout info\"><p class=\"t-small\">Basket total today: market $18.10, big-box $18.40, corner shop $20.20. The market wins by a nose.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Screen time by device",
+   "user_requests": [
+    "how long was i on my phone",
+    "screen time tracker",
+    "which device eats most of my day",
+    "weekly screen usage",
+    "phone vs laptop hours",
+    "my screen time pls",
+    "i think i scroll too much",
+    "how much time on my tablet today",
+    "screen time breakdown",
+    "device usage stats",
+    "track screen time per device",
+    "how long did I use my laptop",
+    "my screen time report"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Screen time by device</h1><p class=\"muted\">Your phone wins the week again, <regex>user_name</regex>. No trophy, just the truth.</p><div class=\"grid two\"><div class=\"stat\"><span class=\"label\">Total this week</span><span class=\"value\">31<span class=\"unit\">h 40m</span></span><span class=\"delta down\">\u2193 2 h vs last</span></div><div class=\"stat\"><span class=\"label\">Daily average</span><span class=\"value\">4<span class=\"unit\">h 31m</span></span></div></div><div class=\"table-wrap\"><table><thead><tr><th>Device</th><th class=\"num\">Hours</th><th>Top app</th><th>Trend</th></tr></thead><tbody><tr><td>Phone</td><td class=\"num\">16.2</td><td>Messages</td><td><span class=\"badge bad\">Up 1 h</span></td></tr><tr><td>Laptop</td><td class=\"num\">11.4</td><td>Browser</td><td><span class=\"badge good\">Down 2 h</span></td></tr><tr><td>Tablet</td><td class=\"num\">3.1</td><td>Reader</td><td><span class=\"badge accent\">Steady</span></td></tr><tr><td>TV</td><td class=\"num\">1.0</td><td>Film night</td><td><span class=\"badge info\">Once</span></td></tr></tbody></table></div><details class=\"acc\"><summary>Tip you'll ignore</summary><div class=\"body\"><p class=\"t-small muted\">Phone stays in the kitchen after 22:00. Works about 40% of the time. Better than 0%.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sunrise alarm log",
+   "user_requests": [
+    "did i wake up before my alarm",
+    "wake up time log",
+    "sunrise alarm tracker",
+    "how many mornings did i get up early",
+    "morning routine data",
+    "my wakeup times pls",
+    "what time did i wake up this week",
+    "did I get up before sunrise",
+    "sunrise wake-up tracker",
+    "log of sunrise alarms",
+    "when did I wake up today",
+    "sunrise alarm history",
+    "track my wake-up time vs sunrise"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Sunrise alarm log</h1><p class=\"muted\">Four early starts, three snoozes. The snooze button is winning, <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Day</th><th>Alarm</th><th>Up at</th><th class=\"num\">Snoozes</th><th>Mood</th></tr></thead><tbody><tr><td>Mon</td><td>06:30</td><td>06:30</td><td class=\"num\">0</td><td><span class=\"badge good\">Bright</span></td></tr><tr><td>Tue</td><td>06:30</td><td>06:48</td><td class=\"num\">1</td><td><span class=\"badge warn\">Rusty</span></td></tr><tr><td>Wed</td><td>06:30</td><td>06:30</td><td class=\"num\">0</td><td><span class=\"badge good\">Bright</span></td></tr><tr><td>Thu</td><td>06:30</td><td>07:02</td><td class=\"num\">2</td><td><span class=\"badge bad\">Heavy</span></td></tr><tr><td>Fri</td><td>06:30</td><td>06:30</td><td class=\"num\">0</td><td><span class=\"badge good\">Bright</span></td></tr><tr><td>Sat</td><td>07:30</td><td>08:15</td><td class=\"num\">3</td><td><span class=\"badge info\">Weekend</span></td></tr><tr><td>Sun</td><td>07:30</td><td>07:35</td><td class=\"num\">0</td><td><span class=\"badge good\">Fine</span></td></tr></tbody></table></div><details class=\"acc\"><summary>Pattern worth noting</summary><div class=\"body\"><p class=\"t-small muted\">Snoozes cluster on days after late screens. Not a coincidence; just a trade.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sock drawer census",
+   "user_requests": [
+    "count my socks",
+    "sock inventory please",
+    "how many socks do I have left",
+    "track my sock drawer",
+    "sock status",
+    "i keep losin socks, help me count em",
+    "sock drawer census",
+    "how many pairs of socks do I have",
+    "sock inventory",
+    "count my socks again",
+    "sock drawer audit",
+    "do I need more socks",
+    "tally my socks"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Sock drawer census</h1><p class=\"muted\">A quick headcount, because mismatched pairs are a lifestyle.</p><div class=\"table-wrap\"><table><thead><tr><th>Sock</th><th class=\"num\">Pairs</th><th class=\"num\">Singles</th><th>Status</th></tr></thead><tbody><tr><td>Black crew</td><td class=\"num\">6</td><td class=\"num\">2</td><td><span class=\"badge good\"><i class=\"dot\"></i>solid</span></td></tr><tr><td>Grey ankle</td><td class=\"num\">4</td><td class=\"num\">1</td><td><span class=\"badge info\">okay</span></td></tr><tr><td>Striped novelty</td><td class=\"num\">2</td><td class=\"num\">3</td><td><span class=\"badge warn\">chaos</span></td></tr><tr><td>Running socks</td><td class=\"num\">3</td><td class=\"num\">0</td><td><span class=\"badge good\">matched</span></td></tr><tr><td>Hiking wool</td><td class=\"num\">1</td><td class=\"num\">0</td><td><span class=\"badge bad\">solo</span></td></tr></tbody></table></div><div class=\"callout info\">Add a <code>+1</code> for every new pair. That's it. Sock math is forgiving.</div><p class=\"t-small muted\">Last updated by <regex>user_name</regex> at laundry o'clock.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Spice rack audit",
+   "user_requests": [
+    "what spices do I have",
+    "spice rack check",
+    "audit my spices",
+    "spice inventory",
+    "show my spice rack",
+    "spices runnin low?",
+    "rack audit",
+    "check my spice inventory",
+    "which spices are running low",
+    "spice rack status",
+    "do I have cumin",
+    "inventory of spices",
+    "spice jar count"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Spice rack audit</h1><p class=\"muted\">Half-full jars are still half-full. Some are just dusty.</p><div class=\"table-wrap\"><table><thead><tr><th>Spice</th><th>Level</th><th class=\"num\">Jars</th><th>Action</th></tr></thead><tbody><tr><td>Cumin</td><td><span class=\"meter\"><span style=\"width:30%;\"></span></span></td><td class=\"num\">1</td><td>reorder</td></tr><tr><td>Smoked paprika</td><td><span class=\"meter\"><span style=\"width:80%;\"></span></span></td><td class=\"num\">2</td><td>\u2014</td></tr><tr><td>Oregano</td><td><span class=\"meter\"><span style=\"width:55%;\"></span></span></td><td class=\"num\">1</td><td>\u2014</td></tr><tr><td>Cinnamon</td><td><span class=\"meter\"><span style=\"width:90%;\"></span></span></td><td class=\"num\">3</td><td>why three?</td></tr><tr><td>Bay leaves</td><td><span class=\"meter\"><span style=\"width:15%;\"></span></span></td><td class=\"num\">1</td><td>replace</td></tr></tbody></table></div><details class=\"acc\"><summary>Notes</summary><div class=\"body\"><p>Bay leaves from 2019 are decorative at this point.</p></div></details><p class=\"t-small muted\">Audited for <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Board game shelf",
+   "user_requests": [
+    "what games do I own",
+    "board game list",
+    "show my shelf",
+    "games inventory",
+    "board game collection",
+    "did I already buy Catan?",
+    "shelf audit",
+    "list my board games",
+    "what board games do I have",
+    "game shelf inventory",
+    "board game collection tracker",
+    "do I own Catan",
+    "count my board games"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Board game shelf</h1><p class=\"muted\">A catalog of boxes that promise fun and occasionally deliver.</p><div class=\"table-wrap\"><table><thead><tr><th>Game</th><th class=\"num\">Players</th><th class=\"num\">Plays</th><th>Vibe</th></tr></thead><tbody><tr><td>Catan</td><td class=\"num\">3\u20134</td><td class=\"num\">12</td><td>classic</td></tr><tr><td>Wingspan</td><td class=\"num\">1\u20135</td><td class=\"num\">5</td><td>cozy</td></tr><tr><td>Azul</td><td class=\"num\">2\u20134</td><td class=\"num\">20</td><td>sharp</td></tr><tr><td>Gloomhaven</td><td class=\"num\">1\u20134</td><td class=\"num\">0</td><td>intimidating</td></tr><tr><td>Codenames</td><td class=\"num\">4\u20138</td><td class=\"num\">8</td><td>loud</td></tr></tbody></table></div><div class=\"callout good\">Gloomhaven has been on the shelf for 2 years. It's basically furniture now.</div><p class=\"t-small muted\">Shelf curated by <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Water bottle refills",
+   "user_requests": [
+    "track my water",
+    "water bottle count",
+    "refill log",
+    "how much water today",
+    "water tracker",
+    "im bad at drinking water",
+    "bottle refills",
+    "how many times did I refill my water bottle",
+    "water intake tracker",
+    "count my water bottle refills",
+    "daily water log",
+    "track my hydration",
+    "refill count for water bottle"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Water bottle refills</h1><p class=\"muted\">Counting every time you topped up. Hydration is a habit, not a personality.</p><div class=\"table-wrap\"><table><thead><tr><th>Day</th><th class=\"num\">Refills</th><th class=\"num\">Total (L)</th><th>Trend</th></tr></thead><tbody><tr><td>Mon</td><td class=\"num\">3</td><td class=\"num\">2.4</td><td><span class=\"badge good\">up</span></td></tr><tr><td>Tue</td><td class=\"num\">2</td><td class=\"num\">1.6</td><td>\u2014</td></tr><tr><td>Wed</td><td class=\"num\">4</td><td class=\"num\">3.2</td><td><span class=\"badge good\">up</span></td></tr><tr><td>Thu</td><td class=\"num\">1</td><td class=\"num\">0.8</td><td><span class=\"badge bad\">low</span></td></tr><tr><td>Fri</td><td class=\"num\">3</td><td class=\"num\">2.4</td><td>\u2014</td></tr></tbody></table></div><p class=\"t-small muted\">Log kept by <regex>user_name</regex>. Bottle size: 800ml.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Pen and ink inventory",
+   "user_requests": [
+    "my pens",
+    "ink levels",
+    "pen inventory",
+    "check my fountain pens",
+    "pen collection",
+    "which pen needs ink",
+    "ink and pens",
+    "how much ink is left in my pens",
+    "pen collection tracker",
+    "inventory of pens and ink",
+    "which pens are running out",
+    "check my ink levels",
+    "list my fountain pens"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Pen and ink inventory</h1><p class=\"muted\">For the fountain pen devotees. Your handwriting deserves better than a ballpoint.</p><div class=\"table-wrap\"><table><thead><tr><th>Pen</th><th>Ink</th><th>Level</th><th class=\"num\">Last used</th></tr></thead><tbody><tr><td>Lamy Safari</td><td>Pilot Iroshizuku</td><td><span class=\"meter\"><span style=\"width:40%;\"></span></span></td><td class=\"num\">2d ago</td></tr><tr><td>Pilot Custom 74</td><td>Diamine Oxblood</td><td><span class=\"meter\"><span style=\"width:75%;\"></span></span></td><td class=\"num\">today</td></tr><tr><td>Kaweco Sport</td><td>Noodler's Black</td><td><span class=\"meter\"><span style=\"width:10%;\"></span></span></td><td class=\"num\">1wk ago</td></tr><tr><td>TWSBI Eco</td><td>Waterman Serenity</td><td><span class=\"meter\"><span style=\"width:60%;\"></span></span></td><td class=\"num\">3d ago</td></tr></tbody></table></div><p class=\"t-small muted\">Curated by <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Candle burn log",
+   "user_requests": [
+    "candle tracker",
+    "how long have I burned this candle",
+    "candle burn log",
+    "my candles",
+    "track candle hours",
+    "candles almost gone?",
+    "burn log",
+    "how long have I burned this candle",
+    "candle usage tracker",
+    "log my candle burning",
+    "track candle burn time",
+    "how many hours left on this candle",
+    "candle burn history"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Candle burn log</h1><p class=\"muted\">Because a good candle deserves a countdown.</p><div class=\"table-wrap\"><table><thead><tr><th>Candle</th><th>Scent</th><th class=\"num\">Hours left</th><th>Status</th></tr></thead><tbody><tr><td>Winter Fir</td><td>fir + citrus</td><td class=\"num\">12</td><td><span class=\"badge good\">going</span></td></tr><tr><td>Vanilla Oak</td><td>warm vanilla</td><td class=\"num\">3</td><td><span class=\"badge warn\">low</span></td></tr><tr><td>Sea Salt</td><td>ocean air</td><td class=\"num\">0</td><td><span class=\"badge bad\">done</span></td></tr><tr><td>Lavender</td><td>calm</td><td class=\"num\">20</td><td><span class=\"badge info\">new</span></td></tr></tbody></table></div><div class=\"callout info\">Rotate candles. Even burn, happier wax, better scent throw.</div><p class=\"t-small muted\">Logged for <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Bird feeder visits",
+   "user_requests": [
+    "log my bird feeder visits",
+    "who's been at the feeder this week",
+    "track backyard birds",
+    "bird feeder count please",
+    "i want a table of birds visiting my feeder",
+    "keep track of whos eating the birdseed",
+    "make me a bird watching tally"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Bird feeder visits</h1><p class=\"muted\">Week of March 3. Hey <regex>user_name</regex> \u2014 the chickadees are winning, as usual.</p><div class=\"table-wrap\"><table><thead><tr><th>Species</th><th class=\"num\">Visits</th><th>Feed</th><th>Peak time</th></tr></thead><tbody><tr><td>Black-capped chickadee</td><td class=\"num\">64</td><td>Sunflower</td><td>7\u20139 am</td></tr><tr><td>House finch</td><td class=\"num\">41</td><td>Sunflower</td><td>8\u201310 am</td></tr><tr><td>Downy woodpecker</td><td class=\"num\">12</td><td>Suet</td><td>Noon</td></tr><tr><td>Blue jay</td><td class=\"num\">9</td><td>Peanuts</td><td>4\u20136 pm</td></tr><tr><td>American goldfinch</td><td class=\"num\">7</td><td>Nyjer</td><td>10\u201311 am</td></tr><tr><td>Dark-eyed junco</td><td class=\"num\">23</td><td>Ground mix</td><td>Dusk</td></tr></tbody></table></div><div class=\"callout info\">The feeder emptied twice this week. Suet is holding well through the rain.</div></div>"
+  },
+  {
+   "title": "Water heater flush log",
+   "user_requests": [
+    "when did i last flush the water heater",
+    "water heater maintenance log",
+    "track my water heater flushes",
+    "remind me about the water heater",
+    "water heater flush history",
+    "i need a log for flushing the hot water tank",
+    "keep track of water heater upkeep"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Water heater flush log</h1><p class=\"muted\">Every 12 months keeps the sediment down, <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Task</th><th>Sediment</th><th>Notes</th></tr></thead><tbody><tr><td>2026-01-14</td><td>Full flush</td><td>Light</td><td>15 min, ran clear</td></tr><tr><td>2025-01-08</td><td>Full flush</td><td>Moderate</td><td>Replaced drain valve washer</td></tr><tr><td>2024-02-19</td><td>Full flush</td><td>Heavy</td><td>First flush in 3 yrs, murky start</td></tr><tr><td>2024-02-19</td><td>Anode check</td><td>\u2014</td><td>~40% left, recheck 2027</td></tr></tbody></table></div><div class=\"callout warn\">Next flush due <strong>January 2027</strong>. Anode rod is the thing to watch.</div><details class=\"acc\"><summary>How to flush it</summary><div class=\"body\"><ol class=\"list\"><li>Cut power or gas, shut the cold inlet.</li><li>Attach hose to drain valve, run to a safe spot.</li><li>Open a hot tap upstairs, then drain.</li><li>Refill fully before restoring power.</li></ol></div></details></div>"
+  },
+  {
+   "title": "Neighbourhood noise log",
+   "user_requests": [
+    "log the noise complaints",
+    "track noisy nights on my street",
+    "keep a record of late night noise",
+    "noise log for the apartment",
+    "when is it loudest where i live",
+    "make a noise journal",
+    "track construction noise hours"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Noise log</h1><p class=\"muted\">Three weeks of it, <regex>user_name</regex>. The 11 pm leaf blower is a bold choice.</p><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Time</th><th>Source</th><th>Level</th></tr></thead><tbody><tr><td>Mar 4</td><td>23:10</td><td>Leaf blower, #12</td><td><span class=\"badge bad\"><i class=\"dot\"></i>Loud</span></td></tr><tr><td>Mar 5</td><td>07:05</td><td>Construction, corner lot</td><td><span class=\"badge warn\"><i class=\"dot\"></i>Medium</span></td></tr><tr><td>Mar 7</td><td>01:30</td><td>Music, upstairs</td><td><span class=\"badge bad\"><i class=\"dot\"></i>Loud</span></td></tr><tr><td>Mar 9</td><td>22:40</td><td>Dog barking</td><td><span class=\"badge info\"><i class=\"dot\"></i>Brief</span></td></tr><tr><td>Mar 11</td><td>18:00</td><td>Leaf blower again</td><td><span class=\"badge warn\"><i class=\"dot\"></i>Medium</span></td></tr></tbody></table></div><div class=\"callout\">Quietest stretches are Tuesday and Wednesday evenings. Worth planning around.</div></div>"
+  },
+  {
+   "title": "Household battery inventory",
+   "user_requests": [
+    "how many batteries do i have",
+    "battery drawer inventory",
+    "track my battery stash",
+    "do i have enough AA batteries",
+    "battery stock check",
+    "keep an inventory of batteries",
+    "count my batteries please"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Battery drawer</h1><p class=\"muted\">Counted today, <regex>user_name</regex>. The 9V situation is grim.</p><div class=\"grid two\"><div class=\"stat\"><span class=\"label\">AA</span><span class=\"value\">18</span><span class=\"delta down\">reorder soon</span></div><div class=\"stat\"><span class=\"label\">AAA</span><span class=\"value\">26</span></div></div><div class=\"table-wrap\"><table><thead><tr><th>Type</th><th class=\"num\">In stock</th><th class=\"num\">Rechargeable</th><th>Used for</th></tr></thead><tbody><tr><td>AA</td><td class=\"num\">18</td><td class=\"num\">8</td><td>Remotes, scale, clock</td></tr><tr><td>AAA</td><td class=\"num\">26</td><td class=\"num\">4</td><td>Thermostat, mouseless mouse</td></tr><tr><td>9V</td><td class=\"num\">1</td><td class=\"num\">1</td><td>Smoke alarms</td></tr><tr><td>CR2032</td><td class=\"num\">5</td><td class=\"num\">0</td><td>Key fob, kitchen scale</td></tr><tr><td>D</td><td class=\"num\">2</td><td class=\"num\">0</td><td>Old flashlight</td></tr></tbody></table></div><div class=\"callout warn\">Smoke alarm season is coming. Grab a 2-pack of 9V.</div></div>"
+  },
+  {
+   "title": "Paint touch-up queue",
+   "user_requests": [
+    "what needs repainting in my house",
+    "my paint touch up list",
+    "track rooms that need paint",
+    "paint colors by room",
+    "touch up list for the house",
+    "which walls need painting",
+    "keep track of paint jobs"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Paint touch-up queue</h1><p class=\"muted\">Rooms, colours, and what's actually urgent, <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Room</th><th>Colour</th><th>Job</th><th>Priority</th></tr></thead><tbody><tr><td>Hallway</td><td>Soft linen, eggshell</td><td>Patch + full wall</td><td><span class=\"badge bad\"><i class=\"dot\"></i>Now</span></td></tr><tr><td>Kitchen ceiling</td><td>Bright white, matte</td><td>Stain block + 2 coats</td><td><span class=\"badge warn\"><i class=\"dot\"></i>Soon</span></td></tr><tr><td>Back bedroom</td><td>Dusty sage</td><td>Full repaint</td><td><span class=\"badge info\"><i class=\"dot\"></i>Spring</span></td></tr><tr><td>Stair rail</td><td>Semi-gloss white</td><td>Scuff touch-up</td><td><span class=\"badge good\"><i class=\"dot\"></i>Done</span></td></tr><tr><td>Front door</td><td>Deep navy, satin</td><td>Sand + repaint</td><td><span class=\"badge info\"><i class=\"dot\"></i>Summer</span></td></tr></tbody></table></div><details class=\"acc\"><summary>Leftover paint on hand</summary><div class=\"body\"><ul class=\"list\"><li>Soft linen \u2014 half gallon, still good</li><li>Dusty sage \u2014 quarter gallon, seal cracked</li><li>Bright white ceiling \u2014 full gallon, opened 2025</li></ul></div></details></div>"
+  },
+  {
+   "title": "Tap water test log",
+   "user_requests": [
+    "track my water test results",
+    "water quality log for the tap",
+    "test my water hardness each month",
+    "log tap water ph and hardness",
+    "keep a water test record",
+    "is my tap water ok",
+    "water test history"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Tap water tests</h1><p class=\"muted\">Monthly strips, <regex>user_name</regex>. Nothing scary so far.</p><div class=\"table-wrap\"><table><thead><tr><th>Month</th><th class=\"num\">pH</th><th class=\"num\">Hardness</th><th class=\"num\">Chlorine</th><th>Verdict</th></tr></thead><tbody><tr><td>Jan</td><td class=\"num\">7.2</td><td class=\"num\">140 ppm</td><td class=\"num\">0.5</td><td><span class=\"badge good\"><i class=\"dot\"></i>Normal</span></td></tr><tr><td>Feb</td><td class=\"num\">7.4</td><td class=\"num\">150 ppm</td><td class=\"num\">0.5</td><td><span class=\"badge good\"><i class=\"dot\"></i>Normal</span></td></tr><tr><td>Mar</td><td class=\"num\">7.0</td><td class=\"num\">160 ppm</td><td class=\"num\">1.0</td><td><span class=\"badge good\"><i class=\"dot\"></i>Normal</span></td></tr><tr><td>Apr</td><td class=\"num\">6.8</td><td class=\"num\">175 ppm</td><td class=\"num\">0.5</td><td><span class=\"badge info\"><i class=\"dot\"></i>Watch</span></td></tr></tbody></table></div><div class=\"chart\"><svg viewBox=\"0 0 300 70\" role=\"img\" aria-label=\"Hardness trend rising\"><rect class=\"bar\" x=\"20\" y=\"42\" width=\"40\" height=\"20\"></rect><rect class=\"bar\" x=\"80\" y=\"38\" width=\"40\" height=\"24\"></rect><rect class=\"bar\" x=\"140\" y=\"34\" width=\"40\" height=\"28\"></rect><rect class=\"bar alt\" x=\"200\" y=\"28\" width=\"40\" height=\"34\"></rect></svg></div><div class=\"callout info\">Hardness creeping up. A descale of the kettle is a fair call.</div></div>"
+  },
+  {
+   "title": "Board game shelf audit",
+   "user_requests": [
+    "how many board games do I own",
+    "board game shelf inventory",
+    "catalogue my games collection",
+    "show me my board game list",
+    "boardgame collection tracker",
+    "what games are on my shelf",
+    "board game audit"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Board game shelf audit</h1><p class=\"muted\">A quick look at what's taking up shelf space, <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Game</th><th>Players</th><th>Last played</th></tr></thead><tbody><tr><td>Catan</td><td class=\"num\">3\u20134</td><td>3 weeks ago</td></tr><tr><td>Ticket to Ride</td><td class=\"num\">2\u20135</td><td>2 months ago</td></tr><tr><td>Pandemic</td><td class=\"num\">2\u20134</td><td>Never</td></tr><tr><td>Wingspan</td><td class=\"num\">1\u20135</td><td>Yesterday</td></tr><tr><td>Azul</td><td class=\"num\">2\u20134</td><td>1 week ago</td></tr></tbody></table></div><div class=\"callout info\">5 games, 2 dust magnets. Maybe a shelf cull?</div></div>"
+  },
+  {
+   "title": "Water bottle refills",
+   "user_requests": [
+    "how many times did I fill my water bottle",
+    "water bottle refill count",
+    "track my water intake",
+    "daily water bottle log",
+    "hydration tracker",
+    "refill tally",
+    "bottle fills this week"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Water bottle refills</h1><p class=\"muted\">Keeping tabs on hydration, <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Refills</th><th>Total (L)</th></tr></thead><tbody><tr><td>Mon</td><td class=\"num\">4</td><td class=\"num\">3.2</td></tr><tr><td>Tue</td><td class=\"num\">5</td><td class=\"num\">4.0</td></tr><tr><td>Wed</td><td class=\"num\">3</td><td class=\"num\">2.4</td></tr><tr><td>Thu</td><td class=\"num\">6</td><td class=\"num\">4.8</td></tr><tr><td>Fri</td><td class=\"num\">4</td><td class=\"num\">3.2</td></tr></tbody></table></div><div class=\"callout good\">Solid week. Thursday was a personal best.</div></div>"
+  },
+  {
+   "title": "Pen and ink inventory",
+   "user_requests": [
+    "how much ink do I have left",
+    "pen and ink inventory",
+    "my fountain pen collection",
+    "ink bottle levels",
+    "track my pens",
+    "pen stash audit",
+    "fountain pen ink log"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Pen and ink inventory</h1><p class=\"muted\">Ink levels at a glance, <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Ink</th><th>Colour</th><th>Level</th></tr></thead><tbody><tr><td>Diamine Oxblood</td><td>Red</td><td class=\"num\">80%</td></tr><tr><td>Pilot Iroshizuku</td><td>Blue</td><td class=\"num\">45%</td></tr><tr><td>Noodler's Black</td><td>Black</td><td class=\"num\">95%</td></tr><tr><td>J. Herbin Emerald</td><td>Green</td><td class=\"num\">20%</td></tr><tr><td>Pelikan 4001</td><td>Brown</td><td class=\"num\">60%</td></tr></tbody></table></div><div class=\"callout warn\">Emerald of Chivor is running low. Reorder soon?</div></div>"
+  },
+  {
+   "title": "Candle burn log",
+   "user_requests": [
+    "candle burn time log",
+    "how long do my candles last",
+    "track candle usage",
+    "candle inventory and burn hours",
+    "my candle collection",
+    "candle burn tracker",
+    "when did I last burn a candle"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Candle burn log</h1><p class=\"muted\">Every candle's hours, <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Candle</th><th>Scent</th><th>Hours</th></tr></thead><tbody><tr><td>Yankee</td><td>Vanilla</td><td class=\"num\">12</td></tr><tr><td>DW Home</td><td>Sea Salt</td><td class=\"num\">8</td></tr><tr><td>Bath & Body</td><td>Eucalyptus</td><td class=\"num\">20</td></tr><tr><td>Local beeswax</td><td>Honey</td><td class=\"num\">4</td></tr><tr><td>IKEA</td><td>Unscented</td><td class=\"num\">30</td></tr></tbody></table></div><div class=\"callout info\">Beeswax one is new; give it a proper session.</div></div>"
+  },
+  {
+   "title": "Bird feeder visits",
+   "user_requests": [
+    "what birds visited my feeder",
+    "bird feeder log",
+    "track bird visits",
+    "my bird watching diary",
+    "feeder activity this week",
+    "bird count at feeder",
+    "who's been eating the seeds"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Bird feeder visits</h1><p class=\"muted\">The regulars and the rarities, <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Species</th><th>Count</th><th>Last seen</th></tr></thead><tbody><tr><td>House sparrow</td><td class=\"num\">12</td><td>Today</td></tr><tr><td>Blue tit</td><td class=\"num\">5</td><td>Yesterday</td></tr><tr><td>Robin</td><td class=\"num\">2</td><td>2 days ago</td></tr><tr><td>Goldfinch</td><td class=\"num\">3</td><td>Today</td></tr><tr><td>Great spotted woodpecker</td><td class=\"num\">1</td><td>3 days ago</td></tr></tbody></table></div><div class=\"callout good\">Woodpecker! A rare and excellent guest.</div></div>"
+  },
+  {
+   "title": "Water heater flush log",
+   "user_requests": [
+    "when did I last flush the water heater",
+    "water heater maintenance log",
+    "flush the heater reminder",
+    "my water heater service history",
+    "track water heater flushes",
+    "heater flush schedule",
+    "water heater upkeep"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Water heater flush log</h1><p class=\"muted\">Keeping the tank happy, <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Type</th><th>Notes</th></tr></thead><tbody><tr><td>2025-01-15</td><td>Full flush</td><td>Sediment heavy</td></tr><tr><td>2024-07-10</td><td>Full flush</td><td>Routine</td></tr><tr><td>2024-01-05</td><td>Partial drain</td><td>Quick top-up</td></tr><tr><td>2023-08-22</td><td>Full flush</td><td>Anode checked</td></tr><tr><td>2023-02-14</td><td>Full flush</td><td>First since install</td></tr></tbody></table></div><div class=\"callout warn\">Next flush due in July. Set a reminder.</div></div>"
+  },
+  {
+   "title": "Household candle inventory",
+   "user_requests": [
+    "show me my candle stash",
+    "how many candles do i have left?",
+    "candle inventory pls",
+    "which candles r nearly burned out",
+    "track my candle collection",
+    "need a quick list of my candles",
+    "whats my candle situation look like"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Candle stash</h1><p class=\"muted t-small\">Last counted by <regex>user_name</regex> \u00b7 burn hours are rough estimates.</p><div class=\"table-wrap\"><table><thead><tr><th>Candle</th><th>Scent</th><th class=\"num\">Burn left</th><th>Status</th></tr></thead><tbody><tr><td>Big jar #1</td><td>Vanilla oak</td><td class=\"num\">38 h</td><td><span class=\"badge good\"><i class=\"dot\"></i>Fresh</span></td></tr><tr><td>Big jar #2</td><td>Sea salt</td><td class=\"num\">24 h</td><td><span class=\"badge good\"><i class=\"dot\"></i>Fresh</span></td></tr><tr><td>Tea light tin</td><td>Unscented</td><td class=\"num\">11 left</td><td><span class=\"badge info\"><i class=\"dot\"></i>Steady</span></td></tr><tr><td>Pillar, green</td><td>Cedar</td><td class=\"num\">6 h</td><td><span class=\"badge warn\"><i class=\"dot\"></i>Low</span></td></tr><tr><td>Gift set, small</td><td>Fig</td><td class=\"num\">2 h</td><td><span class=\"badge bad\"><i class=\"dot\"></i>Finish soon</span></td></tr><tr><td>Emergency drawer</td><td>Unscented</td><td class=\"num\">9 left</td><td><span class=\"badge accent\">Backup</span></td></tr></tbody></table></div><div class=\"callout info\"><p>Two candles are down to the last few evenings. Cozy season runs on planning, <regex>user_name</regex>.</p></div></div>"
+  },
+  {
+   "title": "Kettle descaling schedule",
+   "user_requests": [
+    "when did i last descale the kettle",
+    "kettle descaling log",
+    "how often should i clean my kettle",
+    "show kettle maintenance",
+    "is my kettle overdue for a clean?",
+    "descale tracker plz",
+    "kettle cleaning history"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Kettle descaling</h1><p class=\"muted t-small\">Hard water here means every ~6 weeks. <regex>user_name</regex>, you're on schedule.</p><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Method</th><th class=\"num\">Minutes</th><th>Result</th></tr></thead><tbody><tr><td>Mar 4</td><td>Citric acid, 1 tbsp</td><td class=\"num\">15</td><td><span class=\"badge good\"><i class=\"dot\"></i>Spotless</span></td></tr><tr><td>Apr 18</td><td>White vinegar 1:1</td><td class=\"num\">20</td><td><span class=\"badge good\"><i class=\"dot\"></i>Good</span></td></tr><tr><td>May 30</td><td>Citric acid</td><td class=\"num\">15</td><td><span class=\"badge warn\"><i class=\"dot\"></i>Faint ring</span></td></tr><tr><td>Jul 11</td><td>Citric acid, 2 tbsp</td><td class=\"num\">15</td><td><span class=\"badge good\"><i class=\"dot\"></i>Spotless</span></td></tr><tr><td>Aug 22</td><td>Vinegar soak</td><td class=\"num\">25</td><td><span class=\"badge good\"><i class=\"dot\"></i>Good</span></td></tr><tr><td>Today</td><td>Skipped</td><td class=\"num\">0</td><td><span class=\"badge bad\"><i class=\"dot\"></i>Pending</span></td></tr></tbody></table></div><details class=\"acc\"><summary>Why citric beats vinegar here</summary><div class=\"body\"><p>Softer on the seal, faster on limescale, and no lingering smell in the next pot of tea. Boil, rest 10 minutes, rinse twice.</p></div></details></div>"
+  },
+  {
+   "title": "Monthly grocery spend by store",
+   "user_requests": [
+    "what did i spend at each store this month",
+    "grocery totals by shop",
+    "break down my food spending",
+    "which store is eating my budget",
+    "monthly grocery report",
+    "grocery spend table",
+    "show me where my grocery money went"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Grocery spend this month</h1><div class=\"grid two\"><div class=\"stat\"><span class=\"label\">Total</span><span class=\"value\">412<span class=\"unit\">.60</span></span><span class=\"delta down\">-8% vs last month</span></div><div class=\"stat\"><span class=\"label\">Trips</span><span class=\"value\">9</span><span class=\"delta\">avg 45.84</span></div></div><div class=\"table-wrap\"><table><thead><tr><th>Store</th><th class=\"num\">Trips</th><th class=\"num\">Spent</th><th>Share</th></tr></thead><tbody><tr><td>Corner market</td><td class=\"num\">5</td><td class=\"num\">186.20</td><td>45%</td></tr><tr><td>Big supermarket</td><td class=\"num\">2</td><td class=\"num\">141.90</td><td>34%</td></tr><tr><td>Farmers market</td><td class=\"num\">1</td><td class=\"num\">58.50</td><td>14%</td></tr><tr><td>Bakery</td><td class=\"num\">1</td><td class=\"num\">26.00</td><td>6%</td></tr></tbody></table></div><div class=\"callout warn\"><p>Quick trips to the corner market add up quietly, <regex>user_name</regex>. One big shop might beat five small ones.</p></div></div>"
+  },
+  {
+   "title": "Selftest clutter legends",
+   "user_requests": [
+    "len 3 boolean",
+    "network devs increasing = 3",
+    "density controls and tree walking",
+    "unique values in list positive numbers",
+    "weighted preference and observable list",
+    "debug configurations elsewhere",
+    "selftest scope likes"
+   ],
+   "html": ""
+  },
+  {
+   "title": "Printer ink refills",
+   "user_requests": [
+    "is my printer ink low",
+    "ink cartridge tracking",
+    "when did i last change ink",
+    "printer status log",
+    "how much ink do i have left",
+    "ink levels pls",
+    "cartridge change history"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Printer ink log</h1><p class=\"muted t-small\">Estimates from the last 20 pages per cartridge.</p><div class=\"table-wrap\"><table><thead><tr><th>Cartridge</th><th>Colour</th><th class=\"num\">Pages left</th><th>Status</th></tr></thead><tbody><tr><td>Slot 1</td><td>Black</td><td class=\"num\">140</td><td><span class=\"badge good\"><i class=\"dot\"></i>Fine</span></td></tr><tr><td>Slot 2</td><td>Cyan</td><td class=\"num\">60</td><td><span class=\"badge info\"><i class=\"dot\"></i>Half</span></td></tr><tr><td>Slot 3</td><td>Magenta</td><td class=\"num\">22</td><td><span class=\"badge warn\"><i class=\"dot\"></i>Low</span></td></tr><tr><td>Slot 4</td><td>Yellow</td><td class=\"num\">9</td><td><span class=\"badge bad\"><i class=\"dot\"></i>Replace</span></td></tr></tbody></table></div><details class=\"acc\"><summary>Cheaper than a new printer</summary><div class=\"body\"><p>Own-brand cartridges here run about a third of the branded ones and the colour matching is close enough for school forms. Keep one spare yellow, <regex>user_name</regex> \u2014 it always goes first.</p></div></details></div>"
+  },
+  {
+   "title": "Umbrella and raincoat rotation",
+   "user_requests": [
+    "umbrella inventory",
+    "what umbrellas do i still have",
+    "raincoat and rain jacket list",
+    "check my rain gear",
+    "how many umbrellas r broken?",
+    "wet weather kit pls",
+    "show rain gear status"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Rain gear shelf</h1><div class=\"table-wrap\"><table><thead><tr><th>Item</th><th>Where kept</th><th>Condition</th></tr></thead><tbody><tr><td>Compact umbrella</td><td>Bag pocket</td><td><span class=\"badge good\"><i class=\"dot\"></i>Ready</span></td></tr><tr><td>Long umbrella</td><td>Hall stand</td><td><span class=\"badge good\"><i class=\"dot\"></i>Ready</span></td></tr><tr><td>Kids' umbrella</td><td>School hook</td><td><span class=\"badge warn\"><i class=\"dot\"></i>One rib bent</span></td></tr><tr><td>Raincoat, navy</td><td>Closet door</td><td><span class=\"badge good\"><i class=\"dot\"></i>Waxed</span></td></tr><tr><td>Raincoat, old</td><td>Garage bin</td><td><span class=\"badge bad\"><i class=\"dot\"></i>Seam leak</span></td></tr></tbody></table></div><p class=\"muted t-small\">The old coat can be re-waxed or repurposed as a bike cover. Your call, <regex>user_name</regex>.</p><div class=\"meter\"><span style=\"width:80%\"></span></div><p class=\"dim t-small\">80% of the shelf is storm-ready.</p></div>"
+  },
+  {
+   "title": "Wi-Fi password changes",
+   "user_requests": [
+    "when did i last change the wifi password?",
+    "wifi password update history pls",
+    "show my router password change log",
+    "i need to remember when i rotated the wifi key",
+    "wifi pw changes list",
+    "track wifi password changes for me",
+    "history of when I changed the wireless password"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Wi-Fi password changes</h1><p class=\"muted\">A log for <regex>user_name</regex>. Keep it fresh.</p><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>New password hint</th><th>Reason</th></tr></thead><tbody><tr><td>2025-01-04</td><td>quilt-alpaca-42</td><td>New router</td></tr><tr><td>2024-11-20</td><td>pixel-mango-77</td><td>Roommate moved out</td></tr><tr><td>2024-09-02</td><td>cobalt-otter-13</td><td>Forgot it again</td></tr><tr><td>2024-07-15</td><td>velvet-lynx-88</td><td>Annual refresh</td></tr><tr><td>2024-05-01</td><td>solar-kite-29</td><td>Guest leaked it</td></tr><tr><td>2024-02-14</td><td>amber-fox-61</td><td>Valentine's paranoia</td></tr></tbody></table></div><p class=\"t-small dim\">Last changed 12 days ago. Next by June.</p></div>"
+  },
+  {
+   "title": "Craft beer tastings",
+   "user_requests": [
+    "log the craft beers i tried",
+    "beer tasting notes pls",
+    "show my beer log",
+    "what beers did i have this month?",
+    "beer tasting tracker",
+    "keep track of craft beers for me",
+    "my beer tasting journal"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Craft beer tastings</h1><p class=\"muted\">Bottles and notes for <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Beer</th><th>Brewery</th><th class=\"num\">Rating</th></tr></thead><tbody><tr><td>2025-01-12</td><td>Hazy Pale Ale</td><td>Cloudy Peak</td><td class=\"num\">4.5</td></tr><tr><td>2025-01-05</td><td>Chocolate Stout</td><td>Dark Harbor</td><td class=\"num\">5.0</td></tr><tr><td>2024-12-28</td><td>Belgian Wit</td><td>White Crow</td><td class=\"num\">3.8</td></tr><tr><td>2024-12-20</td><td>IPA</td><td>Hop Rocket</td><td class=\"num\">4.2</td></tr><tr><td>2024-12-10</td><td>Pilsner</td><td>Golden Field</td><td class=\"num\">3.5</td></tr><tr><td>2024-11-30</td><td>Sour Cherry</td><td>Tangy Tree</td><td class=\"num\">4.0</td></tr></tbody></table></div><p class=\"t-small dim\">Average rating: 4.2. Top pick: Chocolate Stout.</p></div>"
+  },
+  {
+   "title": "Board game shelf inventory",
+   "user_requests": [
+    "what board games do i own?",
+    "list my board game collection",
+    "show my board game shelf",
+    "inventory of board games pls",
+    "board game inventory tracker",
+    "how many board games do i have?",
+    "my board game catalog"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Board game shelf</h1><p class=\"muted\">Games owned by <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Game</th><th>Players</th><th class=\"num\">Play time</th><th>Notes</th></tr></thead><tbody><tr><td>Catan</td><td>3-4</td><td class=\"num\">60 min</td><td>Classic</td></tr><tr><td>Ticket to Ride</td><td>2-5</td><td class=\"num\">45 min</td><td>Family favourite</td></tr><tr><td>Pandemic</td><td>2-4</td><td class=\"num\">45 min</td><td>Co-op</td></tr><tr><td>7 Wonders</td><td>3-7</td><td class=\"num\">30 min</td><td>Quick</td></tr><tr><td>Gloomhaven</td><td>1-4</td><td class=\"num\">120 min</td><td>Campaign</td></tr><tr><td>Azul</td><td>2-4</td><td class=\"num\">30 min</td><td>Abstract</td></tr></tbody></table></div><p class=\"t-small dim\">6 games. Most played: Ticket to Ride.</p></div>"
+  },
+  {
+   "title": "Meditation session log",
+   "user_requests": [
+    "show my meditation log",
+    "how many minutes did i meditate this week?",
+    "meditation session history pls",
+    "track my meditation sessions",
+    "meditation minutes log",
+    "i want to see my meditation stats",
+    "my mindfulness log"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Meditation sessions</h1><p class=\"muted\">Minutes logged by <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Type</th><th class=\"num\">Minutes</th><th>Notes</th></tr></thead><tbody><tr><td>2025-01-12</td><td>Guided</td><td class=\"num\">15</td><td>Calm app</td></tr><tr><td>2025-01-11</td><td>Unguided</td><td class=\"num\">10</td><td>Morning</td></tr><tr><td>2025-01-10</td><td>Guided</td><td class=\"num\">20</td><td>Body scan</td></tr><tr><td>2025-01-09</td><td>Unguided</td><td class=\"num\">5</td><td>Busy day</td></tr><tr><td>2025-01-08</td><td>Guided</td><td class=\"num\">15</td><td>Loving-kindness</td></tr><tr><td>2025-01-07</td><td>Unguided</td><td class=\"num\">10</td><td>Evening</td></tr></tbody></table></div><p class=\"t-small dim\">Total this week: 75 minutes. Average 12.5 min/day.</p></div>"
+  },
+  {
+   "title": "Grocery shopping list",
+   "user_requests": [
+    "what's on my grocery list?",
+    "show my shopping list",
+    "grocery list pls",
+    "i need to see my grocery items",
+    "my grocery list for this week",
+    "current grocery list",
+    "what do i need to buy at the store?"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Grocery list</h1><p class=\"muted\">Current list for <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Item</th><th>Quantity</th><th>Category</th><th>Got it?</th></tr></thead><tbody><tr><td>Milk</td><td>1 gallon</td><td>Dairy</td><td>No</td></tr><tr><td>Eggs</td><td>12</td><td>Dairy</td><td>Yes</td></tr><tr><td>Bread</td><td>1 loaf</td><td>Bakery</td><td>No</td></tr><tr><td>Apples</td><td>6</td><td>Produce</td><td>No</td></tr><tr><td>Chicken breast</td><td>2 lbs</td><td>Meat</td><td>Yes</td></tr><tr><td>Rice</td><td>1 bag</td><td>Pantry</td><td>No</td></tr></tbody></table></div><p class=\"t-small dim\">4 items left. Eggs and chicken already checked off.</p></div>"
+  },
+  {
+   "title": "Yoga practice log",
+   "user_requests": [
+    "show my yoga log",
+    "yoga sessions this month?",
+    "track my yoga practice",
+    "yoga log pls",
+    "how often did i do yoga?",
+    "my yoga history",
+    "yoga session tracker"
+   ],
+   "html": "<div class=\"umi-page\"><h1>Yoga practice</h1><p class=\"muted\">Sessions for <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Date</th><th>Style</th><th class=\"num\">Duration</th><th>Notes</th></tr></thead><tbody><tr><td>2025-01-12</td><td>Vinyasa</td><td class=\"num\">60 min</td><td>Strong flow</td></tr><tr><td>2025-01-10</td><td>Hatha</td><td class=\"num\">45 min</td><td>Gentle</td></tr><tr><td>2025-01-08</td><td>Yin</td><td class=\"num\">75 min</td><td>Deep stretch</td></tr><tr><td>2025-01-05</td><td>Vinyasa</td><td class=\"num\">60 min</td><td>Morning</td></tr><tr><td>2025-01-03</td><td>Restorative</td><td class=\"num\">30 min</td><td>Relaxing</td></tr><tr><td>2025-01-01</td><td>Hatha</td><td class=\"num\">45 min</td><td>New year</td></tr></tbody></table></div><p class=\"t-small dim\">6 sessions this month. Total 315 minutes.</p></div>"
+  }
+ ]
+}

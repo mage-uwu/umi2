@@ -1,0 +1,245 @@
+{
+ "widget": "answer_tab",
+ "instances": [
+  {
+   "title": "Accent Tab with Icon",
+   "user_requests": [
+    "show me the reply in a tab",
+    "I want it tabbed like before",
+    "can you put that in a tab for me?",
+    "tab it pls",
+    "make it look like a tabbed answer",
+    "answer in a tab, thanks",
+    "can u tab dat?",
+    "put the answer in a fancy tab with an icon",
+    "I want the response displayed in a tab that has a visual icon",
+    "show reply in a tab with a lil picture",
+    "can u place the ans in a tab w/ an icon plz",
+    "render that output inside a tab adorned with a small symbol",
+    "need the answer in a tab that has some kinda icon on it"
+   ],
+   "html": "<details class=\"tab\"><summary><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M4 6h16M4 12h16M4 18h16\"/></svg> Answer for <regex>user_name</regex></summary><div class=\"body\">{{answer}}</div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Minimal Tab, No Icon",
+   "user_requests": [
+    "just give me a simple tab",
+    "plain tab please",
+    "i don't need frills, just a tab",
+    "tab without extras",
+    "minimal tab",
+    "can you do a barebones tab?",
+    "simple tab, no icon",
+    "plain tab no extra stuff",
+    "I'd like a barebones tab without any icons",
+    "just a basic tab no frills",
+    "give me a tab that's as simple as possible no icon",
+    "tab with nothing but the text",
+    "show it in a minimalist tab, no images or icons"
+   ],
+   "html": "<details class=\"tab\"><summary>Answer</summary><div class=\"body\">{{answer}}</div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Tab with Custom Label",
+   "user_requests": [
+    "use 'Details' as the tab label",
+    "label it 'More info'",
+    "call the tab 'Show answer'",
+    "change the tab text to 'Read more'",
+    "tab titled 'Your answer'",
+    "make the tab say 'Click here'",
+    "set tab label to 'Expand'",
+    "name the tab 'Summary'",
+    "call the tab 'More Info'",
+    "label the tab as 'Results'",
+    "can you title the tab 'Key Points'?",
+    "set the tab's label to 'Overview'",
+    "I want the tab to say 'Answer'"
+   ],
+   "html": "<details class=\"tab\"><summary>Show answer</summary><div class=\"body\">{{answer}}</div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Tab with Accent Color",
+   "user_requests": [
+    "accent-colored tab",
+    "make the tab pop with accent",
+    "use accent color for the tab",
+    "tab in accent shade",
+    "accent tab please",
+    "give it an accent tint",
+    "tab with colorful accent",
+    "make the tab blue",
+    "use a green colored tab",
+    "I'd like the tab to have a red accent",
+    "tab in purple please",
+    "give it a colorful tab, maybe orange",
+    "accent the tab with teal"
+   ],
+   "html": "<details class=\"tab\" style=\"--accent: var(--accent-2);\"><summary>Answer for <regex>user_name</regex></summary><div class=\"body\">{{answer}}</div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Compact Tab for Mobile",
+   "user_requests": [
+    "mobile-friendly tab",
+    "compact tab for phone",
+    "small tab that fits mobile",
+    "tab optimized for mobile",
+    "slim tab please",
+    "make it compact",
+    "tight tab for small screens",
+    "small tab for phone",
+    "make it fit on a mobile screen",
+    "I need a tab that's compact for my phone",
+    "tab sized for mobile devices",
+    "mobile optimized tab",
+    "show in a tab that works well on small screens"
+   ],
+   "html": "<details class=\"tab\" style=\"padding: var(--s-2);\"><summary style=\"font-size: var(--t-2);\">Answer</summary><div class=\"body\" style=\"padding: var(--s-2);\">{{answer}}</div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Tab with Badge Icon",
+   "user_requests": [
+    "tab with a little badge",
+    "add a badge to the tab",
+    "show a badge in the summary",
+    "tab that has an icon",
+    "badge-style tab",
+    "include a badge on the tab",
+    "tab with visual badge",
+    "tab with a notification dot",
+    "include a small badge on the tab",
+    "I want a tab that has a little icon showing a number",
+    "add a badge to the tab",
+    "tab with a count indicator",
+    "put a lil badge icon on the tab"
+   ],
+   "html": "<details class=\"tab\"><summary><span class=\"badge accent\"><i class=\"dot\"></i> Answer</span> for <regex>user_name</regex></summary><div class=\"body\">{{answer}}</div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Tab with Copy Hint",
+   "user_requests": [
+    "show me that again but in a tab",
+    "can u put the answer in a little tab thing",
+    "tab it plz",
+    "I want to see the reply in a tabbed box",
+    "wrap the answer in a tab",
+    "make a tab with the answer inside",
+    "pls tab the reply for me",
+    "show me in a tab and remind me I can copy",
+    "tab with a copy tip",
+    "give me the answer in a tab and tell me to copy it",
+    "I want a tab that hints to copy the text",
+    "can you show that in a tab and mention copying?",
+    "tab with a little note about copying"
+   ],
+   "html": "<details class=\"tab\"><summary><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:middle;flex:none\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\"/><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"/></svg> Answer for <regex>user_name</regex> <span class=\"badge accent\">tap to open</span></summary><div class=\"body\">{{answer}}</div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Tab with Inline Meter",
+   "user_requests": [
+    "give me that reply in a tab with a match meter",
+    "tab it but show how sure u are",
+    "answer in a tab + confidence bar",
+    "show the answer in a tabbed panel w/ a little meter",
+    "tab the reply with a confidence thingy",
+    "wrap it in a tab and show match confidence",
+    "put the answer in a tab and add a meter pls",
+    "tab with a confidence bar",
+    "show the reply in a tab with a score meter",
+    "I want a tab that includes a match percentage",
+    "give me a tab with a little meter showing relevance",
+    "tab with an inline gauge",
+    "put the answer in a tab with a meter next to it"
+   ],
+   "html": "<details class=\"tab\"><summary><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:middle;flex:none\"><path d=\"M3 12h18M3 6h18M3 18h18\"/></svg> Answer for <regex>user_name</regex> <span class=\"badge info\">cached match</span></summary><div class=\"body\"><div class=\"meter\"><span style=\"width:82%\"></span></div><p class=\"t-small muted\">I'd say this one's about 82% on the nose.</p>{{answer}}</div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Tab with Asides",
+   "user_requests": [
+    "can you show the reply in a tab with some notes",
+    "tab it and add a little aside",
+    "answer in a tab w/ a callout",
+    "I want the answer in a tabbed thing with a note",
+    "tab the reply and slip in a side note",
+    "wrap the answer in a tab and drop a note",
+    "pls put the reply in a tab w/ an aside",
+    "tab with some extra comments",
+    "show the reply in a tab and add side notes",
+    "I want the answer in a tab with annotations",
+    "tab with additional remarks",
+    "can you include asides in the tab?",
+    "give me a tab with some side info"
+   ],
+   "html": "<details class=\"tab\"><summary><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:middle;flex:none\"><path d=\"M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z\"/><path d=\"M12 16v-4M12 8h.01\"/></svg> Answer for <regex>user_name</regex> <span class=\"badge accent\">note inside</span></summary><div class=\"body\"><div class=\"callout info\">Tiny aside: this one's from cache, so it's quick.</div>{{answer}}</div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Tab with Source Badge",
+   "user_requests": [
+    "show me that in a tab and point to the source",
+    "tab it w/ a source tag",
+    "answer in a tabbed box with a from-where badge",
+    "wrap the reply in a tab and say where it came from",
+    "tab the answer and add a source chip",
+    "put the reply in a tab w/ a source marker",
+    "can u tab it and badge the source",
+    "tab with a citation badge",
+    "show the answer in a tab and indicate the source",
+    "I want a tab that shows where the info came from",
+    "tab with a little source tag",
+    "include a source indicator in the tab",
+    "tab with a badge for the source"
+   ],
+   "html": "<details class=\"tab\"><summary><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:middle;flex:none\"><path d=\"M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z\"/><path d=\"M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z\"/></svg> Answer for <regex>user_name</regex> <span class=\"badge\">source: cache</span></summary><div class=\"body\">{{answer}}<p class=\"t-small dim\">Pulled from my cached notes, no lookup needed.</p></div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Tab with Expand Hint",
+   "user_requests": [
+    "show the answer in a tab but tell me to click it",
+    "tab it and hint how to open",
+    "answer in a tab w/ an open hint",
+    "I want a tabbed reply with a tap hint",
+    "tab the reply and say 'tap to expand'",
+    "wrap it in a tab and nudge me to expand",
+    "pls tab the answer w/ an expand tip",
+    "tab that says click to see more",
+    "show in a tab and tell me to expand",
+    "I want a tab with a hint to open it",
+    "tab with an expand instruction",
+    "put the reply in a tab and mention clicking to expand",
+    "give me a tab that hints at expanding"
+   ],
+   "html": "<details class=\"tab\"><summary><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:middle;flex:none\"><path d=\"M6 9l6 6 6-6\"/></svg> Answer for <regex>user_name</regex></summary><div class=\"body\"><p class=\"t-small muted\">Tap the tab to unfold it.</p>{{answer}}</div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Tab with Timeline",
+   "user_requests": [
+    "give me the reply in a tab with a little history",
+    "tab it and show when u found it",
+    "answer in a tab w/ a timeline",
+    "show the answer in a tabbed panel and list the steps",
+    "tab the reply and add a timeline",
+    "wrap the answer in a tab w/ a when",
+    "pls tab the reply and show the sequence",
+    "tab with a time sequence",
+    "show the answer in a tab with a timeline",
+    "I want a tab that includes a history",
+    "tab with a chronological view",
+    "give me the reply in a tab with timeline details",
+    "put a small timeline in the tab"
+   ],
+   "html": "<details class=\"tab\"><summary><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:middle;flex:none\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 6v6l4 2\"/></svg> Answer for <regex>user_name</regex> <span class=\"badge info\">just now</span></summary><div class=\"body\"><ul class=\"timeline\"><li><span class=\"when\">0s</span> checked cache</li><li><span class=\"when\">1s</span> matched reply</li><li><span class=\"when\">2s</span> wrapped in a tab</li></ul>{{answer}}</div></details>",
+   "augmented": true
+  }
+ ]
+}

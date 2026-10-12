@@ -1,0 +1,2349 @@
+{
+ "widget": "stat_tile",
+ "instances": [
+  {
+   "user_requests": [
+    "how many steps did I get today",
+    "show me my step count for today",
+    "steps walked today",
+    "daily steps",
+    "how active have I been today",
+    "my step stats",
+    "wat r my steps 2day",
+    "steps count today?",
+    "how many steps have I walked so far",
+    "gimme my step total for today",
+    "did i hit my step goal",
+    "stepz 4 today",
+    "what's my current step count"
+   ],
+   "title": "Daily Steps",
+   "html": "<div class=\"stat\"><div class=\"label\">Steps today</div><div class=\"value\">8,432</div><div class=\"delta\">+12% vs yesterday</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "what's my bank balance",
+    "how much money do I have",
+    "show me my checking account balance",
+    "current balance",
+    "how much is in my account",
+    "balance check",
+    "how much $$ do i have rn",
+    "how much money is in my account",
+    "check my balance",
+    "bank account total?",
+    "whats my current balance",
+    "do i have enough in my checking",
+    "balance plz"
+   ],
+   "title": "Account Balance",
+   "html": "<div class=\"stat\"><div class=\"label\">Checking balance</div><div class=\"value\">$2,847<span class=\"unit\">.63</span></div><div class=\"delta\">+$320 this month</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many unread emails do I have",
+    "show me my inbox count",
+    "unread messages",
+    "email notifications",
+    "how many new emails",
+    "inbox status",
+    "how many unread emails r there",
+    "how many emails haven't i read",
+    "unread count?",
+    "inbox unread number",
+    "any new emails",
+    "how many unread msgs in my inbox",
+    "email unread tally"
+   ],
+   "title": "Unread Emails",
+   "html": "<div class=\"stat\"><div class=\"label\">Unread emails</div><div class=\"value\">23</div><div class=\"delta down\">-5 since morning</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "what's the temperature outside",
+    "current weather temp",
+    "how hot is it today",
+    "outside temperature",
+    "weather right now",
+    "temp check",
+    "wats the temp outside",
+    "how hot is it right now",
+    "temp outside?",
+    "whats the weather temp",
+    "current temp",
+    "is it cold outside",
+    "temperature reading"
+   ],
+   "title": "Current Temperature",
+   "html": "<div class=\"stat\"><div class=\"label\">Outside temp</div><div class=\"value\">72<span class=\"unit\">\u00b0F</span></div><div class=\"delta\">+3\u00b0 from yesterday</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how much did I spend this month",
+    "monthly spending total",
+    "show me my expenses",
+    "what's my spending this month",
+    "total spent in March",
+    "spending summary",
+    "how much did i spend this month",
+    "how much have i spent this month",
+    "monthly expenses so far",
+    "whats my spending this month",
+    "total spent this month",
+    "how much money went out this month",
+    "month spend"
+   ],
+   "title": "Monthly Spending",
+   "html": "<div class=\"stat\"><div class=\"label\">Spent this month</div><div class=\"value\">$1,234<span class=\"unit\">.56</span></div><div class=\"delta down\">+8% vs last month</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many books did I read this year",
+    "books read so far",
+    "my reading progress",
+    "how many books this year",
+    "reading count",
+    "books completed",
+    "how many books have i read this yr",
+    "how many books have i finished this year",
+    "book count this year",
+    "how many books did i read",
+    "books completed so far",
+    "reading progress",
+    "number of books read"
+   ],
+   "title": "Books Read",
+   "html": "<div class=\"stat\"><div class=\"label\">Books read this year</div><div class=\"value\">17</div><div class=\"delta\">+3 vs last year</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Water Intake",
+   "user_requests": [
+    "how much water have I had today",
+    "water tracker widget",
+    "H2O today",
+    "how many glasses of water today?",
+    "am i hydrated",
+    "watre intake stat",
+    "daily water count",
+    "how many ounces of water today",
+    "water consumed today?",
+    "hydration level",
+    "how much h2o have i had",
+    "water tracker",
+    "cups of water today"
+   ],
+   "html": "<div class=\"card\"><div class=\"stat\"><div class=\"label\">Water today</div><div class=\"value\">1.8<span class=\"unit\">L</span></div><div class=\"delta down\">-0.4 L vs goal</div></div><div class=\"meter\" aria-label=\"Hydration progress\"><span style=\"width:64%\"></span></div><p class=\"t-small muted\">Goal 2.8 L. Six of eight glasses in, <regex>user_name</regex> \u2014 one more with lunch and you're done.</p><details class=\"acc\"><summary>What counts toward it?</summary><div class=\"body\"><p class=\"t-small\">Plain water, sparkling, and unsweetened tea. Coffee is its own conversation.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sleep Last Night",
+   "user_requests": [
+    "how long did I sleep",
+    "sleep stat for last night",
+    "hours slept",
+    "sleep tracker",
+    "did i get enough sleep last nite",
+    "last nights sleep",
+    "sleep numbers",
+    "how many hours did i sleep last night",
+    "sleep duration",
+    "time slept",
+    "how long was my sleep",
+    "hours of rest last night",
+    "sleep last nite"
+   ],
+   "html": "<div class=\"card\"><div class=\"stat\"><div class=\"label\">Sleep last night</div><div class=\"value\">7<span class=\"unit\">h 12m</span></div><div class=\"delta\">+18 min vs average</div></div><svg class=\"chart\" viewBox=\"0 0 300 80\" role=\"img\" aria-label=\"Sleep hours over the past week\"><rect class=\"bar alt\" x=\"10\" y=\"30\" width=\"24\" height=\"40\" rx=\"3\"></rect><rect class=\"bar alt\" x=\"48\" y=\"22\" width=\"24\" height=\"48\" rx=\"3\"></rect><rect class=\"bar alt\" x=\"86\" y=\"36\" width=\"24\" height=\"34\" rx=\"3\"></rect><rect class=\"bar alt\" x=\"124\" y=\"26\" width=\"24\" height=\"44\" rx=\"3\"></rect><rect class=\"bar alt\" x=\"162\" y=\"34\" width=\"24\" height=\"36\" rx=\"3\"></rect><rect class=\"bar alt\" x=\"200\" y=\"40\" width=\"24\" height=\"30\" rx=\"3\"></rect><rect class=\"bar\" x=\"238\" y=\"20\" width=\"24\" height=\"50\" rx=\"3\"></rect><line class=\"guide\" x1=\"0\" y1=\"20\" x2=\"300\" y2=\"20\"></line></svg><p class=\"t-small dim\">Rightmost bar is last night. Solid 7+ sits above the line \u2014 nice run, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Inbox Zero Streak",
+   "user_requests": [
+    "how many days straight have i hit inbox zero",
+    "inbox zero streak stat",
+    "email streak",
+    "am i still on my inbox zero run",
+    "consecutive days inbox zero",
+    "email zero streak tracker",
+    "inbox zero how long",
+    "inbox zero days in a row",
+    "streak for empty inbox",
+    "how many consecutive days of inbox zero",
+    "inbox zero run",
+    "current inbox zero streak",
+    "days of zero inbox"
+   ],
+   "html": "<div class=\"card\"><div class=\"stat\"><div class=\"label\">Inbox zero streak</div><div class=\"value\">12<span class=\"unit\">days</span></div><div class=\"delta\">best: 19</div></div><p class=\"t-small muted\">You've cleared it before bed twelve nights running, <regex>user_name</regex>. Seven more and you tie your record.</p><details class=\"acc\"><summary>How the streak breaks</summary><div class=\"body\"><p class=\"t-small\">Any inbox left above zero when midnight rolls past. Archived doesn't count as cleared \u2014 you have to actually deal with it.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Commute Time",
+   "user_requests": [
+    "how long was my commute today",
+    "commute stat",
+    "time spent commuting this week",
+    "how many hours did i spend on the train",
+    "commute tracker",
+    "traffic time today",
+    "how long getting to work",
+    "how long did it take to get to work today",
+    "commute duration",
+    "time spent commuting",
+    "how many minutes was my commute",
+    "travel time to work",
+    "commute today"
+   ],
+   "html": "<div class=\"card\"><div class=\"stat\"><div class=\"label\">Commute today</div><div class=\"value\">38<span class=\"unit\">min</span></div><div class=\"delta down\">-6 min vs usual</div></div><div class=\"row between\"><span class=\"badge good\"><i class=\"dot\"></i>clear roads</span><span class=\"t-small dim\">This week: 3 h 12 m</span></div><svg class=\"chart\" viewBox=\"0 0 300 70\" role=\"img\" aria-label=\"Commute minutes by day\"><polyline class=\"line\" fill=\"none\" points=\"20,30 70,48 120,40 170,22 220,44 270,32\"></polyline><circle class=\"lbl in\" cx=\"270\" cy=\"32\" r=\"3\"></circle></svg><p class=\"t-small muted\"><regex>user_name</regex>, Tuesday's the outlier \u2014 everything else is that slow bridge.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Pushups This Week",
+   "user_requests": [
+    "how many pushups this week",
+    "pushup count stat",
+    "weekly pushups",
+    "am i on track for pushups",
+    "pushups tracker",
+    "how many press ups have i done",
+    "pushup totals",
+    "how many push ups have i done this week",
+    "pushup count this week",
+    "weekly pushups",
+    "total pushups for the week",
+    "push ups this wk",
+    "how many pushups so far this week"
+   ],
+   "html": "<div class=\"card\"><div class=\"stat\"><div class=\"label\">Pushups this week</div><div class=\"value\">240<span class=\"unit\">reps</span></div><div class=\"delta\">+35 vs last week</div></div><div class=\"meter\" aria-label=\"Weekly goal progress\"><span style=\"width:80%\"></span></div><p class=\"t-small muted\">Goal 300. Forty a day for the next day and a half gets you there, <regex>user_name</regex> \u2014 or one heroic evening.</p><div class=\"legend\"><i></i>done <i class=\"alt\"></i>remaining</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Plant Watering",
+   "user_requests": [
+    "when did i last water the plants",
+    "plant watering stat",
+    "how long since i watered",
+    "are my plants thirsty",
+    "watering tracker",
+    "last plant water day",
+    "plant care status",
+    "when did i water the plants last",
+    "last plant watering date",
+    "plant water schedule",
+    "did i water the plants today",
+    "when was the last time i watered",
+    "plant hydration status"
+   ],
+   "html": "<div class=\"card\"><div class=\"stat\"><div class=\"label\">Since watering</div><div class=\"value\">3<span class=\"unit\">days</span></div><div class=\"delta down\">1 day past due</div></div><p class=\"t-small muted\"><regex>user_name</regex>, the ferns are dramatic about it but fine. The basil, on the other hand, is writing you a letter.</p><details class=\"acc\"><summary>Plant-by-plant</summary><div class=\"body\"><ul class=\"list t-small\"><li>Fern \u2014 last watered Monday</li><li>Basil \u2014 last watered Monday</li><li>Snake plant \u2014 last watered 11 days ago</li></ul></div></details></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many days until my next period",
+    "period countdown",
+    "when is my period due",
+    "days left till period",
+    "cycle day tracker",
+    "next period date",
+    "period tracker show days",
+    "how many days until my period starts",
+    "period countdown",
+    "days left until period",
+    "when is my next period",
+    "period in how many days",
+    "time until period"
+   ],
+   "title": "Days Until Period",
+   "html": "<div class=\"stat\"><div class=\"label\">Days until period</div><div class=\"value\">4<span class=\"unit\">days</span></div><div class=\"delta down\">\u22122 days</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "word count today",
+    "how many words did i write",
+    "daily writing count",
+    "words written",
+    "today's word count",
+    "writing progress",
+    "my word count",
+    "how many words have i written today",
+    "today's word count",
+    "writing progress today",
+    "words typed today",
+    "word tally for today",
+    "how many words so far"
+   ],
+   "title": "Words Written Today",
+   "html": "<div class=\"stat\"><div class=\"label\">Words written today</div><div class=\"value\">1,247</div><div class=\"delta\">+312</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "hours of focus today",
+    "deep work time",
+    "how long did i focus",
+    "focus hours",
+    "time spent focusing",
+    "today's focus time",
+    "focus session total",
+    "how many hours did i focus today",
+    "deep work hours today",
+    "focus time today",
+    "hours spent focusing",
+    "total focus hours",
+    "focus duration today"
+   ],
+   "title": "Focus Hours Today",
+   "html": "<div class=\"stat\"><div class=\"label\">Focus hours today</div><div class=\"value\">3.5<span class=\"unit\">h</span></div><div class=\"delta\">+0.5</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many tasks done today",
+    "tasks completed",
+    "todo count",
+    "tasks finished",
+    "completed tasks today",
+    "task progress",
+    "my task count",
+    "how many tasks have i finished today",
+    "completed tasks count",
+    "todo items done today",
+    "tasks done",
+    "number of tasks completed today",
+    "how many to-dos did i check off"
+   ],
+   "title": "Tasks Completed",
+   "html": "<div class=\"stat\"><div class=\"label\">Tasks completed</div><div class=\"value\">7</div><div class=\"delta down\">\u22121</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "calories eaten today",
+    "how many calories",
+    "calorie count",
+    "cals consumed",
+    "today's calories",
+    "food calories",
+    "my calorie total",
+    "cals today",
+    "what's my calorie count rn",
+    "kcal eaten so far",
+    "calory intake 2day",
+    "show me todays food calories",
+    "how many calories have i had"
+   ],
+   "title": "Calories Consumed",
+   "html": "<div class=\"stat\"><div class=\"label\">Calories consumed</div><div class=\"value\">1,850<span class=\"unit\">cal</span></div><div class=\"delta\">+200</div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "minutes meditated today",
+    "meditation time",
+    "how long did i meditate",
+    "mindfulness minutes",
+    "meditation count",
+    "today's meditation",
+    "meditated minutes",
+    "meditaton time today",
+    "how long did i sit today",
+    "mindfulness mins",
+    "med minutes 2day",
+    "total time meditating",
+    "zen minutes so far today"
+   ],
+   "title": "Meditation Minutes",
+   "html": "<div class=\"stat\"><div class=\"label\">Meditation minutes</div><div class=\"value\">15<span class=\"unit\">min</span></div><div class=\"delta\">+5</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sunshine Hours",
+   "user_requests": [
+    "how many hours of sun today?",
+    "sunshine hours",
+    "Hours of sunlight today?",
+    "how much sun did we get today",
+    "sun hours today",
+    "Today's sunshine hours",
+    "how many sun hours today",
+    "sun hrs today",
+    "how long was it sunny",
+    "sunshine 2day",
+    "hours of daylight so far",
+    "was it sunny much today",
+    "sun minutes logged today"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Sunshine Hours</div><div class=\"value\">7.5<span class=\"unit\">hours</span></div><div class=\"delta down\">-1.2 hours</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Rainfall Today",
+   "user_requests": [
+    "how much rain today?",
+    "rainfall today",
+    "Rain today?",
+    "how many mm of rain today",
+    "Rainfall amount today",
+    "rain today in mm",
+    "wet stuff from sky today?",
+    "rain 2day",
+    "how wet has it been",
+    "precip today",
+    "rainfall so far today",
+    "did it rain much",
+    "inches of rain rn"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Rainfall Today</div><div class=\"value\">12<span class=\"unit\">mm</span></div><div class=\"delta\">+3 mm</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Flights On Time",
+   "user_requests": [
+    "flight status today",
+    "on time flights",
+    "flights on time today",
+    "how many flights are on time",
+    "flight punctuality today",
+    "on-time flights today",
+    "are flights running on time?",
+    "ontime flights 2day",
+    "how many flights delayed",
+    "flight punctuality today",
+    "planes on schedule",
+    "airline on-time stats",
+    "late flights count"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Flights On Time</div><div class=\"value\">78<span class=\"unit\">%</span></div><div class=\"delta down\">-5%</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Traffic Delay",
+   "user_requests": [
+    "traffic delay today?",
+    "how bad is traffic?",
+    "traffic delay",
+    "Traffic delay today",
+    "How much delay in traffic today",
+    "traffic delay in minutes",
+    "is traffic bad right now?",
+    "how bads traffic",
+    "commute delay 2day",
+    "mins stuck in traffic",
+    "traffic time lost today",
+    "delay on my route",
+    "how long was i in traffic"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Traffic Delay</div><div class=\"value\">15<span class=\"unit\">min</span></div><div class=\"delta\">+2 min</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Books Read",
+   "user_requests": [
+    "books read this year?",
+    "how many books have I read?",
+    "books read",
+    "Books read this year",
+    "How many books this year?",
+    "books finished this year",
+    "reading progress this year",
+    "books finished this yr",
+    "how many books have i read",
+    "reading count 2024",
+    "novels done so far",
+    "book tally",
+    "how many did i finish reading"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Books Read</div><div class=\"value\">7<span class=\"unit\">books</span></div><div class=\"delta\">+1 book</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Water Intake",
+   "user_requests": [
+    "water intake today?",
+    "how much water did I drink?",
+    "water intake",
+    "Water intake today",
+    "How much water today?",
+    "cups of water today",
+    "hydration today",
+    "h2o today",
+    "how much water have i drunk",
+    "water 2day",
+    "hydration so far",
+    "glasses of water today",
+    "ounces drank today"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Water Intake</div><div class=\"value\">6<span class=\"unit\">cups</span></div><div class=\"delta down\">-1 cup</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "CO2 Saved",
+   "user_requests": [
+    "co2 saved this month",
+    "how much carbon have I avoided?",
+    "co2e offset",
+    "carbon savings so far",
+    "green miles",
+    "co2 saved since january",
+    "show my co2 savings",
+    "carbon saved this mo",
+    "co2 offset",
+    "how much co2 did i save",
+    "emissions avoided",
+    "co2 2day",
+    "carbon footprint saved so far"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">CO\u2082 saved</div><div class=\"value\">42<span class=\"unit\">kg</span></div><div class=\"delta down\">\u221218%</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Music Minutes",
+   "user_requests": [
+    "minutes listened this week",
+    "spotify stats?",
+    "how long have i been playing music",
+    "music time",
+    "weekly listening minutes",
+    "tunes time",
+    "music minutes",
+    "how many mins of music",
+    "listening time this wk",
+    "songs time today",
+    "music hrs",
+    "how long have i listened",
+    "spotify minutes this week"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Music minutes</div><div class=\"value\">327<span class=\"unit\">min</span></div><div class=\"delta\">+45 min</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Keyboard Shortcuts",
+   "user_requests": [
+    "shortcuts used today",
+    "how many shortcuts?",
+    "keyboard shortcut count",
+    "shortcuts this week",
+    "ctrl+c count",
+    "shortcut usage",
+    "keyboard shortcuts",
+    "shortcuts 2day",
+    "how many hotkeys used",
+    "keyboard combos today",
+    "shortcut count",
+    "short cuts this week",
+    "how many times did i use shortcuts"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Shortcuts used</div><div class=\"value\">128<span class=\"unit\">x</span></div><div class=\"delta\">+12 today</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Coffee Cups",
+   "user_requests": [
+    "cups of coffee today",
+    "coffee count",
+    "how many coffees?",
+    "daily coffee",
+    "coffee cups",
+    "caffeine intake cups",
+    "coffees this morning",
+    "coffees 2day",
+    "how many cups have i had",
+    "java count today",
+    "cups of joe",
+    "coffee tally",
+    "how many brews so far"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Coffee cups</div><div class=\"value\">4<span class=\"unit\">cups</span></div><div class=\"delta down\">\u22121</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Plants Alive",
+   "user_requests": [
+    "how many plants are alive",
+    "plant survival rate",
+    "plants not dead",
+    "green things count",
+    "plant status",
+    "alive plants",
+    "plants alive",
+    "how many plants r still kickin",
+    "plant count",
+    "are my plants alive",
+    "living plants total",
+    "how many survived",
+    "plant status"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Plants alive</div><div class=\"value\">7<span class=\"unit\">of 8</span></div><div class=\"delta down\">\u22121</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Tabs Open",
+   "user_requests": [
+    "how many tabs are open",
+    "browser tabs count",
+    "tabs open right now",
+    "tab count",
+    "open tabs",
+    "tabs",
+    "how many tabs?",
+    "tab count",
+    "how many tabs do i have open",
+    "browser tabs rn",
+    "tabs 2day",
+    "open tabs right now",
+    "how many windows/tabs open"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Tabs open</div><div class=\"value\">23<span class=\"unit\">tabs</span></div><div class=\"delta up\">+5</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Library Returns",
+   "user_requests": [
+    "how many library books did I return this month",
+    "library returns this month",
+    "show my library return count",
+    "books returned to library",
+    "how many library books have I returned",
+    "library returns tracker",
+    "lib returns this mo",
+    "books returned to lib this mo",
+    "how many did i return",
+    "library dropoffs",
+    "returned books count",
+    "lib returns 2day",
+    "how many books did i bring back"
+   ],
+   "html": "<div class=\"stat\">\n  <div class=\"label\">Books returned to the library</div>\n  <div class=\"value\">12<span class=\"unit\">books</span></div>\n  <div class=\"delta down\">-3 vs last month</div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Packages Delivered",
+   "user_requests": [
+    "how many packages have I received this month",
+    "packages delivered count",
+    "show my package deliveries",
+    "how many parcels did I get",
+    "package tracker this month",
+    "deliveries so far",
+    "how many boxes showed up",
+    "packages 2day",
+    "how many boxes arrived",
+    "deliveries this mo",
+    "parcel count",
+    "how many packages came",
+    "stuff delivered so far"
+   ],
+   "html": "<div class=\"stat\">\n  <div class=\"label\">Packages delivered this month</div>\n  <div class=\"value\">8<span class=\"unit\">packages</span></div>\n  <div class=\"delta\">+2 vs last month</div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Job Applications Sent",
+   "user_requests": [
+    "how many job applications have I sent",
+    "job applications count",
+    "show my job applications",
+    "how many resumes did I send out",
+    "job app tracker",
+    "applications sent this month",
+    "how many jobs did I apply to",
+    "count of apps I've submitted so far",
+    "applications i sent out this wk",
+    "tally my job app submissions",
+    "How many positions did I apply to?",
+    "num of job apps fired off",
+    "how many resumes have i handed in"
+   ],
+   "html": "<div class=\"stat\">\n  <div class=\"label\">Job applications sent</div>\n  <div class=\"value\">14<span class=\"unit\">applications</span></div>\n  <div class=\"delta down\">-2 vs last week</div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Podcasts Listened",
+   "user_requests": [
+    "how many podcast episodes did I listen to this week",
+    "podcast episodes listened",
+    "show my podcast listening",
+    "how many podcasts have I heard",
+    "podcast tracker",
+    "episodes this week",
+    "how many pods did I listen to",
+    "pod ep count this wk",
+    "how many eps did i get thru",
+    "number of shows I've listened to lately",
+    "podcasts i finished listening to",
+    "count my podcast episodes played",
+    "how many casts have i heard this month"
+   ],
+   "html": "<div class=\"stat\">\n  <div class=\"label\">Podcast episodes listened</div>\n  <div class=\"value\">9<span class=\"unit\">episodes</span></div>\n  <div class=\"delta\">+3 vs last week</div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Language Lessons Completed",
+   "user_requests": [
+    "how many language lessons have I done this month",
+    "language lessons completed",
+    "show my language lesson count",
+    "how many lessons did I finish",
+    "language learning tracker",
+    "lessons completed this month",
+    "how many language lessons",
+    "duolingo lessons done 2day",
+    "how many lessons did i knock out",
+    "lang lesson tally",
+    "number of spanish classes i finished",
+    "lessons completed in my language app",
+    "how many units did i get thru"
+   ],
+   "html": "<div class=\"stat\">\n  <div class=\"label\">Language lessons completed</div>\n  <div class=\"value\">22<span class=\"unit\">lessons</span></div>\n  <div class=\"delta\">+5 vs last month</div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Charity Donations",
+   "user_requests": [
+    "how much have I donated to charity this year",
+    "charity donations total",
+    "show my charity giving",
+    "how much did I give to charity",
+    "donation tracker",
+    "charity donations this year",
+    "how much donated",
+    "total $ i gave to charity",
+    "how much did i donate so far",
+    "give amount to nonprofits this yr",
+    "sum of my charitable giving",
+    "donations tally in dollars",
+    "what have i contributed to causes"
+   ],
+   "html": "<div class=\"stat\">\n  <div class=\"label\">Charity donations</div>\n  <div class=\"value\">$250<span class=\"unit\"></span></div>\n  <div class=\"delta\">+$50 vs last year</div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Laundry Loads This Week",
+   "user_requests": [
+    "How many laundry loads did I do this week?",
+    "laundry count",
+    "loads of laundry this week",
+    "how many times did I run the washer",
+    "laundry loads",
+    "weekly laundry tally",
+    "did I do laundry enough this week?",
+    "loads of laundry done",
+    "how many washes did i run",
+    "laundry count for the wk",
+    "number of times i did laundry",
+    "how many loads have i washed this week",
+    "laundry cycles so far"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Laundry loads this week</div><div class=\"value\">4<span class=\"unit\"> loads</span></div><div class=\"delta\">+1 vs last week</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Dishes Washed",
+   "user_requests": [
+    "How many dishes have I washed today?",
+    "dishes washed",
+    "dish count",
+    "how many dishes today",
+    "my dishwashing stats",
+    "dishes done today",
+    "did I wash enough dishes?",
+    "how many plates did i wash",
+    "dish count 2day",
+    "number of dishes i cleaned",
+    "how many sink loads did i do",
+    "dishes washed tally",
+    "how many pots and pans have i scrubbed"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Dishes washed today</div><div class=\"value\">12<span class=\"unit\"> dishes</span></div><div class=\"delta down\">-3 vs yesterday</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Trash Taken Out",
+   "user_requests": [
+    "How many times did I take out the trash this week?",
+    "trash taken out",
+    "trash count",
+    "how many times trash",
+    "my trash stats",
+    "trash duty",
+    "did I take out the trash enough?",
+    "how many times did i haul the garbage out",
+    "trash trips this wk",
+    "number of times i emptied the bin",
+    "garbage runs count",
+    "how often did i take out rubbish",
+    "trash duty tally"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Trash taken out this week</div><div class=\"value\">3<span class=\"unit\"> times</span></div><div class=\"delta\">+1 vs last week</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Bike Rides",
+   "user_requests": [
+    "How many bike rides did I take this week?",
+    "bike rides",
+    "bike count",
+    "how many times did I ride my bike",
+    "my cycling stats",
+    "bike rides this week",
+    "am I biking enough?",
+    "how many times did i ride my bike",
+    "cycling trips this wk",
+    "bike ride count",
+    "number of rides i took on my bicycle",
+    "how many times did i pedal somewhere",
+    "bicycle outings tally"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Bike rides this week</div><div class=\"value\">5<span class=\"unit\"> rides</span></div><div class=\"delta\">+2 vs last week</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Times Late",
+   "user_requests": [
+    "How many times was I late this week?",
+    "late count",
+    "times late",
+    "how many times late",
+    "my lateness stats",
+    "late this week",
+    "was I late a lot this week?",
+    "how many times did i show up late",
+    "late count this wk",
+    "number of tardies",
+    "how often was i behind schedule",
+    "times i was late tally",
+    "how many late arrivals did i have"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Times late this week</div><div class=\"value\">2<span class=\"unit\"> times</span></div><div class=\"delta down\">-1 vs last week</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Items Decluttered",
+   "user_requests": [
+    "How many items did I declutter this week?",
+    "decluttered items",
+    "declutter count",
+    "how many things did I get rid of",
+    "my decluttering stats",
+    "items decluttered this week",
+    "did I declutter enough?",
+    "how many things did i get rid of",
+    "declutter tally",
+    "number of items i tossed or donated",
+    "stuff i cleared out count",
+    "how many possessions did i purge",
+    "decluttering count this wk"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Items decluttered this week</div><div class=\"value\">15<span class=\"unit\"> items</span></div><div class=\"delta\">+5 vs last week</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Songs in Practice Queue",
+   "user_requests": [
+    "how many songs are in my practice queue",
+    "show me my practice songs count",
+    "songs to practice rn?",
+    "how many tunes do i still gotta learn",
+    "practice queue size",
+    "tunes waiting",
+    "how many songs left to practice",
+    "how many tunes are queued up to practice",
+    "practice list count",
+    "number of songs i need to work on",
+    "songs waiting in my queue",
+    "how many pieces are in my practice backlog",
+    "tunes on my to-practice list"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Songs in practice queue</div><div class=\"value\">12<span class=\"unit\">songs</span></div><div class=\"delta down\">\u22123 this week</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Board Game Wins This Month",
+   "user_requests": [
+    "how many board games have I won this month",
+    "my board game wins",
+    "board game wins this month",
+    "wins at board games?",
+    "how many games did I win",
+    "board game victory count",
+    "games won this month",
+    "how many games have i won",
+    "board game victory count",
+    "number of wins at game night",
+    "how many matches did i take this month",
+    "tabletop wins tally",
+    "games i came out on top in"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Board game wins this month</div><div class=\"value\">7<span class=\"unit\">wins</span></div><div class=\"delta\">+2 vs last month</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Recipes Tried",
+   "user_requests": [
+    "how many new recipes have I tried",
+    "recipes tried count",
+    "new recipes tried this year",
+    "how many recipes have I cooked",
+    "recipes attempted",
+    "count of recipes tried",
+    "how many dishes have I made",
+    "how many new dishes did i cook",
+    "recipe count",
+    "number of recipes i've attempted",
+    "how many meals did i make from scratch",
+    "new recipes tally",
+    "dishes i cooked for the first time"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Recipes tried</div><div class=\"value\">23<span class=\"unit\">recipes</span></div><div class=\"delta\">+5 this month</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Days Since Last Workout",
+   "user_requests": [
+    "how many days since my last workout",
+    "days since workout",
+    "last workout was how long ago",
+    "when did I last workout",
+    "time since last workout",
+    "how many days since I exercised",
+    "days without workout",
+    "how long since i hit the gym",
+    "days off from exercise",
+    "number of days since i exercised",
+    "how many rest days have i had",
+    "time since my last training session",
+    "how many days since i lifted"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Days since last workout</div><div class=\"value\">2<span class=\"unit\">days</span></div><div class=\"delta down\">\u22121 from last</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Emails Sent Today",
+   "user_requests": [
+    "how many emails have I sent today",
+    "emails sent today",
+    "sent emails count",
+    "how many emails did I send",
+    "emails sent so far",
+    "today's sent emails",
+    "count of emails sent today",
+    "how many messages did i send",
+    "email count 2day",
+    "number of mails i fired off",
+    "how many emails went out today",
+    "sent emails tally",
+    "how many inbox replies did i send"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Emails sent today</div><div class=\"value\">14<span class=\"unit\">emails</span></div><div class=\"delta\">+3 vs yesterday</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Minutes of Reading",
+   "user_requests": [
+    "how many minutes did I read",
+    "reading minutes today",
+    "time spent reading",
+    "minutes read today",
+    "how long did I read for",
+    "total reading minutes",
+    "reading time",
+    "how long did i read 2day",
+    "reading time tally",
+    "number of minutes i spent with a book",
+    "how many mins did i read",
+    "time spent reading this wk",
+    "how long have i had my nose in a book"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Minutes of reading</div><div class=\"value\">45<span class=\"unit\">min</span></div><div class=\"delta\">+10 vs avg</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sunrise Alarms Set",
+   "user_requests": [
+    "how many alarms did i set for sunrise this week",
+    "sunrise alarms count",
+    "did i actually get up for sunrise?",
+    "show me my sunrise alarm streak",
+    "early bird stats",
+    "alarms before dawn tracker",
+    "how many 5am wakeups this week \ud83d\ude34",
+    "sunrise alarm count this wk",
+    "how many alarms set for dawn",
+    "alarms set before sunrise?",
+    "number of sunrise wake-up alarms",
+    "did i set any sunrise alarms",
+    "sunrise alarms i made this week"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Sunrise alarms set</div><div class=\"value\">5<span class=\"unit\">days</span></div><div class=\"delta down\">-2 vs last week</div><details class=\"acc\"><summary>Breakdown</summary><div class=\"body\"><ul class=\"list\"><li>Mon 5:42am \u2014 got up</li><li>Tue 5:43am \u2014 snoozed twice</li><li>Wed 5:41am \u2014 got up</li><li>Thu 5:44am \u2014 got up</li><li>Fri 5:42am \u2014 gave up, slept in</li></ul></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Neighbor Cats Spotted",
+   "user_requests": [
+    "cat count today",
+    "how many cats did i see on my walk?",
+    "neighborhood cat sightings",
+    "cats spotted log",
+    "did the orange one show up?",
+    "cat tally this week",
+    "my daily cat report",
+    "how many neighbor cats did i see",
+    "cats spotted in the neighborhood",
+    "neighbor cat sightings today",
+    "how many cats next door",
+    "count of neighbor cats",
+    "spotted any neighbor cats?"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Neighbor cats spotted</div><div class=\"value\">3<span class=\"unit\">cats</span></div><div class=\"delta\">+1 today</div><details class=\"acc\"><summary>Species log</summary><div class=\"body\"><ul class=\"list\"><li>Ginger tabby \u2014 sunning on wall</li><li>Grey fluff \u2014 under car</li><li>Black &amp; white \u2014 crossing road</li></ul></div></details><p class=\"muted t-small\">Orange one still MIA.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sourdough Starter Feedings",
+   "user_requests": [
+    "how many times did i feed the starter",
+    "sourdough feeding count",
+    "is my starter alive?",
+    "feeding schedule check",
+    "starter stats",
+    "how often did i feed Doug the starter?",
+    "sourdough log this week",
+    "how many times did i feed my starter",
+    "sourdough feedings this week",
+    "starter feeding count",
+    "did i feed the sourdough today",
+    "number of sourdough starter meals",
+    "feedings for my starter"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Starter feedings</div><div class=\"value\">6<span class=\"unit\">feeds</span></div><div class=\"delta\">on track</div><p class=\"muted t-small\">Target: 2 per day. Doug is bubbly.</p><div class=\"meter\"><div class=\"progress\"><span style=\"width: 85%\"></span></div></div><details class=\"acc\"><summary>Last feed</summary><div class=\"body\"><p>Yesterday 8pm \u2014 50g flour, 50g water.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Songs Shazamed",
+   "user_requests": [
+    "how many songs did i shazam this month",
+    "shazam count",
+    "music discovery stats",
+    "songs identified",
+    "did i shazam that song at the cafe?",
+    "shazam history",
+    "what songs have i been tagging",
+    "how many songs did i shazam",
+    "shazam count this month",
+    "songs i shazamed today",
+    "number of shazams",
+    "did i shazam any songs",
+    "how many tracks have i shazamed"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Songs Shazamed</div><div class=\"value\">14<span class=\"unit\">tracks</span></div><div class=\"delta down\">-4 this month</div><details class=\"acc\"><summary>Recent tags</summary><div class=\"body\"><ul class=\"list\"><li>\u201cMidnight City\u201d \u2014 M83</li><li>\u201cDreams\u201d \u2014 Fleetwood Mac</li><li>\u201cSpace Song\u201d \u2014 Beach House</li></ul></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Phone Battery at Bedtime",
+   "user_requests": [
+    "what was my battery at bedtime",
+    "phone charge last night",
+    "did i plug in before sleep?",
+    "bedtime battery percentage",
+    "battery drain overnight",
+    "phone battery stats",
+    "how low did my phone get last night",
+    "battery percentage when i went to bed",
+    "what was my phone battery at bedtime",
+    "bedtime battery level",
+    "how much battery did i have at bedtime",
+    "phone charge at night",
+    "battery at sleep time"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Battery at bedtime</div><div class=\"value\">18<span class=\"unit\">%</span></div><div class=\"delta down\">-32% from 9pm</div><p class=\"muted t-small\">Plugged in at 11:14pm. Cutting it close.</p><svg class=\"chart\" viewBox=\"0 0 100 30\"><rect class=\"bar\" x=\"0\" y=\"10\" width=\"20\" height=\"20\"></rect><rect class=\"bar alt\" x=\"25\" y=\"15\" width=\"20\" height=\"15\"></rect><rect class=\"bar\" x=\"50\" y=\"22\" width=\"20\" height=\"8\"></rect><rect class=\"bar alt\" x=\"75\" y=\"25\" width=\"20\" height=\"5\"></rect></svg></div>",
+   "augmented": true
+  },
+  {
+   "title": "Spam Calls Blocked",
+   "user_requests": [
+    "how many spam calls today",
+    "spam call count",
+    "blocked numbers this week",
+    "robo call stats",
+    "did i get that warranty call again?",
+    "spam call log",
+    "phone spam tally",
+    "how many spam calls got blocked",
+    "spam call block count today",
+    "number of blocked spam calls",
+    "did i block any spam calls",
+    "spam calls stopped",
+    "how many robocalls blocked"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Spam calls blocked</div><div class=\"value\">7<span class=\"unit\">calls</span></div><div class=\"delta down\">-3 vs yesterday</div><details class=\"acc\"><summary>Recent</summary><div class=\"body\"><ul class=\"list\"><li>+1 (555) 012-3456 \u2014 \u201ccar warranty\u201d</li><li>+1 (555) 987-6543 \u2014 \u201cfinal notice\u201d</li><li>Unknown \u2014 silence</li></ul></div></details><p class=\"muted t-small\">Your number is on a list somewhere.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Stairs Climbed Today",
+   "user_requests": [
+    "how many flights of stairs today?",
+    "stair count",
+    "flights climbed",
+    "stairs",
+    "how many flights today",
+    "flights",
+    "stairs climbed this day",
+    "how many stairs did i climb",
+    "flights of stairs today",
+    "stair count",
+    "number of stairs climbed",
+    "did i climb any stairs",
+    "how many steps up today"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Stairs climbed today</div><div class=\"value\">12<span class=\"unit\">flights</span></div><div class=\"delta up\">+3</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Minutes of Sunlight",
+   "user_requests": [
+    "how much sun did I get today?",
+    "sunlight minutes",
+    "sun today",
+    "minutes in the sun",
+    "sun exposure",
+    "how much sun today",
+    "sunlight today",
+    "how many minutes of sun today",
+    "sunlight minutes",
+    "time spent in sunlight",
+    "how much sun did i get",
+    "sun exposure minutes",
+    "minutes in the sun"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Sunlight</div><div class=\"value\">45<span class=\"unit\">min</span></div><div class=\"delta\">-10 min</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Words Spoken Today",
+   "user_requests": [
+    "how many words have I spoken today?",
+    "word count spoken",
+    "words today",
+    "how many words",
+    "spoken words",
+    "word tally",
+    "words uttered",
+    "how many words did i say",
+    "word count today",
+    "number of words spoken",
+    "how many words have i said",
+    "spoken word count",
+    "words i spoke today"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Words spoken</div><div class=\"value\">7,842</div><div class=\"delta down\">-12%</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Steps to Mordor",
+   "user_requests": [
+    "how many steps to Mordor?",
+    "steps to mordor",
+    "mordor progress",
+    "steps left to mordor",
+    "how far to mordor",
+    "mordor steps",
+    "steps to mordor today",
+    "how many steps to mordor",
+    "mordor step count",
+    "steps taken toward mordor",
+    "how far to mordor in steps",
+    "number of steps to mordor",
+    "did i walk to mordor"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Steps to Mordor</div><div class=\"value\">245,012<span class=\"unit\">steps</span></div><div class=\"delta\">1,243,456 left</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Taps (NFC)",
+   "user_requests": [
+    "how many nfc taps today?",
+    "nfc taps",
+    "taps",
+    "how many taps",
+    "nfc count",
+    "taps today",
+    "near field taps",
+    "how many nfc taps did i do",
+    "nfc tap count",
+    "number of nfc taps",
+    "did i tap nfc today",
+    "nfc taps made",
+    "how many times did i tap"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">NFC taps</div><div class=\"value\">8</div><div class=\"delta up\">+2</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Bluetooth Connects",
+   "user_requests": [
+    "how many bluetooth connections today?",
+    "bluetooth connects",
+    "bluetooth count",
+    "how many bt connections",
+    "bt connects",
+    "bluetooth today",
+    "connections via bluetooth",
+    "how many bluetooth connections",
+    "bluetooth connect count",
+    "number of bluetooth connects",
+    "did my bluetooth connect",
+    "bluetooth pairing count",
+    "how many times did bluetooth connect"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Bluetooth connects</div><div class=\"value\">5</div><div class=\"delta\">same</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Steps to Mordor",
+   "user_requests": [
+    "how far have I walked toward Mordor today",
+    "steps to mordor update",
+    "mordor progress",
+    "am I any closer to mordor",
+    "steps walked today in mordor units",
+    "my walk to mordor",
+    "how many steps to mordor so far",
+    "how many steps to mordor",
+    "mordor step count",
+    "steps taken toward mordor",
+    "how far to mordor in steps",
+    "number of steps to mordor",
+    "did i walk to mordor"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Steps to Mordor</div><div class=\"value\">8,432<span class=\"unit\">steps</span></div><div class=\"delta down\">-432 from yesterday</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sourdough Starter Feedings",
+   "user_requests": [
+    "how many times did I feed my starter today",
+    "sourdough feed count",
+    "starter feedings",
+    "did I feed the starter",
+    "sourdough starter updates",
+    "feedings for my starter",
+    "my starter feeding log",
+    "how many times did i feed my starter",
+    "sourdough feedings this week",
+    "starter feeding count",
+    "did i feed the sourdough today",
+    "number of sourdough starter meals",
+    "feedings for my starter"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Sourdough feedings</div><div class=\"value\">2<span class=\"unit\">times</span></div><div class=\"delta\">+1 from yesterday</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Neighbor Cats Spotted",
+   "user_requests": [
+    "how many neighbor cats did I see today",
+    "cat sightings",
+    "neighbor cat count",
+    "any cats outside",
+    "cats spotted today",
+    "my cat spotting log",
+    "number of neighbor cats",
+    "how many neighbor cats did i see",
+    "cats spotted in the neighborhood",
+    "neighbor cat sightings today",
+    "how many cats next door",
+    "count of neighbor cats",
+    "spotted any neighbor cats?"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Neighbor cats spotted</div><div class=\"value\">3<span class=\"unit\">cats</span></div><div class=\"delta\">+1 from yesterday</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Phone Battery at Bedtime",
+   "user_requests": [
+    "what was my phone battery when I went to bed",
+    "bedtime battery level",
+    "phone battery at night",
+    "battery percentage before sleep",
+    "how much battery did I have at bedtime",
+    "last night's battery",
+    "my phone battery at bedtime",
+    "battery percentage when i went to bed",
+    "what was my phone battery at bedtime",
+    "bedtime battery level",
+    "how much battery did i have at bedtime",
+    "phone charge at night",
+    "battery at sleep time"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Phone battery at bedtime</div><div class=\"value\">42<span class=\"unit\">%</span></div><div class=\"delta down\">-8% from yesterday</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Spam Calls Blocked",
+   "user_requests": [
+    "how many spam calls did I block today",
+    "spam call blocker count",
+    "blocked calls today",
+    "number of spam calls blocked",
+    "my spam call stats",
+    "blocked spam calls",
+    "how many spam calls were blocked",
+    "spam calls blocked count today?",
+    "how many junk calls did i keep off my phone today",
+    "blocked spam call tally for today pls",
+    "number of dodgy calls screened out so far today",
+    "how many caller scammers got blocked 2day",
+    "today's blocked spam call total"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Spam calls blocked</div><div class=\"value\">5<span class=\"unit\">calls</span></div><div class=\"delta\">+2 from yesterday</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Stairs Climbed Today",
+   "user_requests": [
+    "how many stairs did I climb today",
+    "stair count today",
+    "stairs climbed",
+    "flights of stairs today",
+    "my stair climbing stats",
+    "number of stairs today",
+    "how many flights did I climb",
+    "stair count so far today",
+    "how many flights did i go up today",
+    "stairs stepper thing for today",
+    "count of staircases i walked up since this morning",
+    "how many steps on stairs today?",
+    "flights climbed today plz"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Stairs climbed today</div><div class=\"value\">12<span class=\"unit\">flights</span></div><div class=\"delta down\">-3 from yesterday</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sunrise Alarms Set",
+   "user_requests": [
+    "how many sunrise alarms did i set this week",
+    "sunrise alarms count",
+    "track my early wakeups",
+    "alarms before dawn this week",
+    "sunrise alarm stats",
+    "how many times did i wake up early",
+    "early bird alarms",
+    "how many dawn alarms do i have on this wk",
+    "sunrise alarm tally",
+    "dawn wake up alarms set for the week",
+    "how many alarm clocks for sunrise have i made this week",
+    "count of my sunrise alarms?",
+    "sun-up alarms i scheduled this week"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Sunrise alarms set</div><div class=\"value\">5<span class=\"unit\">days</span></div><div class=\"delta down\">\u22122</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Neighbor Cats Spotted",
+   "user_requests": [
+    "neighbor cats spotted today",
+    "how many cats have i seen",
+    "cat sightings count",
+    "neighborhood cat watch",
+    "cats i saw this week",
+    "track the local cats",
+    "how many neighbor cats",
+    "cats from next door seen today?",
+    "how many neighbourhood cats did i spot today",
+    "kitty sightings next door today",
+    "count of the neighbor's cats i saw",
+    "how many of the neighbours cats have i seen 2day",
+    "next door cat spots today"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Neighbor cats spotted</div><div class=\"value\">3<span class=\"unit\">today</span></div><div class=\"delta\">+1</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sourdough Starter Feedings",
+   "user_requests": [
+    "sourdough starter feedings",
+    "how often did i feed the starter",
+    "starter feed count",
+    "my sourdough schedule",
+    "feedings this week",
+    "track my starter",
+    "sourdough feed stats",
+    "how many times did i feed my sourdough starter",
+    "sourdough feed count",
+    "starter feeding tally",
+    "how many feeds has my starter had",
+    "times i fed the sourdough?",
+    "my starter feedings total"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Sourdough starter feedings</div><div class=\"value\">14<span class=\"unit\">feeds</span></div><div class=\"delta\">+3</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Phone Battery at Bedtime",
+   "user_requests": [
+    "phone battery at bedtime",
+    "how much battery left when i go to bed",
+    "bedtime battery level",
+    "battery percentage at night",
+    "phone charge before sleep",
+    "track my bedtime battery",
+    "battery at bedtime stats",
+    "battery level when i went to bed",
+    "what % was my phone at lights out",
+    "phone charge at bedtime?",
+    "how much battery was left when i hit the sack",
+    "bedtime battery percentage",
+    "phone batt at bedtime last nite"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Phone battery at bedtime</div><div class=\"value\">42<span class=\"unit\">%</span></div><div class=\"delta down\">\u22128%</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Spam Calls Blocked",
+   "user_requests": [
+    "spam calls blocked",
+    "how many spam calls did i block",
+    "blocked calls count",
+    "spam call stats",
+    "calls i blocked this week",
+    "track spam calls",
+    "how many robocalls blocked",
+    "spam calls blocked count today?",
+    "how many junk calls did i keep off my phone today",
+    "blocked spam call tally for today pls",
+    "number of dodgy calls screened out so far today",
+    "how many caller scammers got blocked 2day",
+    "today's blocked spam call total"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Spam calls blocked</div><div class=\"value\">17<span class=\"unit\">calls</span></div><div class=\"delta\">+4</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Stairs Climbed Today",
+   "user_requests": [
+    "stairs climbed today",
+    "how many stairs did i climb",
+    "stair count for today",
+    "steps up",
+    "flights of stairs today",
+    "track my stair climbing",
+    "stairs this day",
+    "stair count so far today",
+    "how many flights did i go up today",
+    "stairs stepper thing for today",
+    "count of staircases i walked up since this morning",
+    "how many steps on stairs today?",
+    "flights climbed today plz"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Stairs climbed today</div><div class=\"value\">8<span class=\"unit\">flights</span></div><div class=\"delta\">+2</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Pushups Today",
+   "user_requests": [
+    "how many pushups have i done today",
+    "pushup counter widget pls",
+    "track my pushups for today",
+    "show pushups done today",
+    "i need a pushup stat tile",
+    "push ups today count",
+    "gimme my pushup tally",
+    "pushup tally today",
+    "how many press ups have i done 2day",
+    "count my push ups for today",
+    "push-ups done today?",
+    "how many push ups today so far",
+    "today's pushup count pls"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Pushups Today</div><div class=\"value\">62<span class=\"unit\">reps</span></div><div class=\"delta down\">&minus;18 vs. target 80</div></div>\n<details class=\"acc\"><summary>Sets so far</summary><div class=\"body\"><div class=\"timeline\"><ul class=\"list\"><li>Morning: 20 &middot; 15</li><li>Lunch: 12</li><li>Evening: 15</li></ul></div><p class=\"muted t-small\">Solid start, <regex>user_name</regex>. Three sets left and you're square.</p></div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Pages Printed",
+   "user_requests": [
+    "how many pages did i print this month",
+    "printer page count tile",
+    "show pages printed",
+    "track my printing",
+    "pages printed stat please",
+    "printer usage widget",
+    "count of pages ive printed",
+    "how many sheets did i print this month",
+    "print page count for the month",
+    "pages i printed this mo",
+    "how many pages have gone thru the printer this month",
+    "monthly print tally",
+    "count of printed pages this month?"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Pages Printed</div><div class=\"value\">148<span class=\"unit\">sheets</span></div><div class=\"delta down\">&minus;32 this week</div></div>\n<details class=\"acc\"><summary>By job</summary><div class=\"body\"><div class=\"table-wrap\"><table><thead><tr><th>Job</th><th class=\"num\">Pages</th></tr></thead><tbody><tr><td>Invoices</td><td class=\"num\">36</td></tr><tr><td>Rebate forms</td><td class=\"num\">9</td></tr><tr><td>Sheet music</td><td class=\"num\">103</td></tr></tbody></table></div><p class=\"muted t-small\">Sheet music is doing the heavy lifting, <regex>user_name</regex>. Maybe double-sided next run.</p></div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Trash Emptied",
+   "user_requests": [
+    "how many times have i emptied the trash bin",
+    "trash emptied count",
+    "show my trash empty tally",
+    "widget for trash bin empties",
+    "how often do i take out the trash",
+    "trash empties today",
+    "trash bin count please",
+    "how many times did i take out the trash",
+    "times i emptied the bin",
+    "bin emptying count",
+    "how many trips did i make emptying garbage",
+    "how often have i emptied the rubbish bin?",
+    "garbage bin empties tally"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Trash Emptied</div><div class=\"value\">3<span class=\"unit\">bins</span></div><div class=\"delta\">&plus;1 vs. last week</div></div>\n<details class=\"acc\"><summary>Which bins</summary><div class=\"body\"><ul class=\"list\"><li>Kitchen &mdash; 2x</li><li>Bathroom &mdash; 1x</li><li>Office &mdash; still waiting</li></ul><p class=\"muted t-small\">The office bin knows what it did, <regex>user_name</regex>.</p></div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Groceries Bought",
+   "user_requests": [
+    "how many grocery items did i buy",
+    "grocery haul count",
+    "show grocery items bought",
+    "widget for grocery tally",
+    "track my grocery shopping",
+    "groceries bought stat",
+    "items in my grocery cart",
+    "how many food items did i pick up",
+    "grocery item count",
+    "count of groceries i got",
+    "how many things did i buy at the store",
+    "grocery haul item tally?",
+    "number of grocery items purchased"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Groceries Bought</div><div class=\"value\">27<span class=\"unit\">items</span></div><div class=\"delta\">&plus;6 vs. last trip</div></div>\n<details class=\"acc\"><summary>Breakdown</summary><div class=\"body\"><div class=\"table-wrap\"><table><thead><tr><th>Category</th><th class=\"num\">Items</th></tr></thead><tbody><tr><td>Produce</td><td class=\"num\">11</td></tr><tr><td>Pantry</td><td class=\"num\">8</td></tr><tr><td>Dairy</td><td class=\"num\">5</td></tr><tr><td>Frozen</td><td class=\"num\">3</td></tr></tbody></table></div><p class=\"muted t-small\">Produce wins again, <regex>user_name</regex>. The crisper drawer is proud.</p></div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Pushups Today",
+   "user_requests": [
+    "pushup count tile",
+    "how many pushups did i do today",
+    "track pushups",
+    "show pushups done",
+    "pushup tally widget",
+    "my pushup numbers",
+    "pushups today pls",
+    "pushup tally today",
+    "how many press ups have i done 2day",
+    "count my push ups for today",
+    "push-ups done today?",
+    "how many push ups today so far",
+    "today's pushup count pls"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Pushups Today</div><div class=\"value\">62<span class=\"unit\">reps</span></div><div class=\"delta down\">&minus;18 vs. target 80</div></div>\n<div class=\"meter\"><span style=\"width:78%\"></span></div>\n<p class=\"muted t-small\">78% of target. Three sets and you're square, <regex>user_name</regex>.</p>",
+   "augmented": true
+  },
+  {
+   "title": "Cups of Tea",
+   "user_requests": [
+    "how many cups of tea today",
+    "tea count widget",
+    "track my tea drinking",
+    "show tea cups today",
+    "tea tally please",
+    "cups of tea stat",
+    "how much tea have i had",
+    "tea count today",
+    "how many brews have i had 2day",
+    "cups of tea so far today?",
+    "how many cuppas today",
+    "my tea tally for today",
+    "tea drank today count"
+   ],
+   "html": "<div class=\"stat\"><div class=\"label\">Cups of Tea</div><div class=\"value\">5<span class=\"unit\">cups</span></div><div class=\"delta\">&plus;2 vs. yesterday</div></div>\n<details class=\"acc\"><summary>By type</summary><div class=\"body\"><ul class=\"list\"><li>English Breakfast &mdash; 3</li><li>Green &mdash; 1</li><li>Chamomile &mdash; 1</li></ul><p class=\"muted t-small\">Five cups and counting, <regex>user_name</regex>. Hydration with style.</p></div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Cups of Tea Since Monday",
+   "user_requests": [
+    "How many teas have I had since monday?",
+    "tea counter pls",
+    "show my tea tally for this week",
+    "How much tea did I drink mon-wed?",
+    "cups of tea widget",
+    "track my tea drinking",
+    "tea stats",
+    "how many teas since mon",
+    "tea count from monday till now",
+    "cups of tea since the start of the week",
+    "how many cuppas have i had since monday?",
+    "teas drunk since mon",
+    "count my teas since monday"
+   ],
+   "html": "<div class=\"card\"><div class=\"between row\"><div class=\"card-title\">Cups of Tea</div><span class=\"badge accent\"><i class=\"dot\"></i>since Mon</span></div><div class=\"stat\"><div class=\"label\">Total brewed</div><div class=\"value\">9<span class=\"unit\">cups</span></div><div class=\"delta\">+2 vs last wk</div></div><p class=\"muted t-small\"><regex>user_name</regex>, that's 3 a day. Two were probably Earl Grey.</p><details class=\"acc\"><summary>Where the cups landed</summary><div class=\"body\"><div class=\"chart\"><svg viewBox=\"0 0 320 120\" role=\"img\" aria-label=\"Tea cups by day\"><line class=\"guide\" x1=\"0\" y1=\"20\" x2=\"320\" y2=\"20\"/><line class=\"axis\" x1=\"0\" y1=\"108\" x2=\"320\" y2=\"108\"/><rect class=\"bar\" x=\"18\" y=\"30\" width=\"38\" height=\"78\" rx=\"4\"/><rect class=\"bar\" x=\"80\" y=\"46\" width=\"38\" height=\"62\" rx=\"4\"/><rect class=\"bar\" x=\"142\" y=\"62\" width=\"38\" height=\"46\" rx=\"4\"/><rect class=\"bar alt\" x=\"204\" y=\"78\" width=\"38\" height=\"30\" rx=\"4\"/><rect class=\"bar alt\" x=\"266\" y=\"80\" width=\"38\" height=\"28\" rx=\"4\"/><text class=\"lbl\" x=\"37\" y=\"118\">Mon</text><text class=\"lbl\" x=\"99\" y=\"118\">Tue</text><text class=\"lbl\" x=\"161\" y=\"118\">Wed</text><text class=\"lbl\" x=\"223\" y=\"118\">Thu</text><text class=\"lbl\" x=\"285\" y=\"118\">Fri</text></svg></div><div class=\"legend\"><i></i>hot <i class=\"alt\"></i>iced</div></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Umbrellas Left Behind",
+   "user_requests": [
+    "how many umbrellas have I lost this year",
+    "umbrella count",
+    "lost umbrellas tracker",
+    "umbrellas abandoned this year?",
+    "where do my umbrellas go widget",
+    "count of umbrellas i left places",
+    "umbrella stats pls",
+    "how many brollies have i lost this year",
+    "umbrella loss count for the year",
+    "how many umbrellas did i leave somewhere this yr",
+    "count of lost umbrellas this year?",
+    "umbrellas i misplaced this year",
+    "how many umbrellas have gone missing this year"
+   ],
+   "html": "<div class=\"card\"><div class=\"between row\"><div class=\"card-title\">Umbrellas Left Behind</div><span class=\"badge warn\">not cached</span></div><div class=\"stat\"><div class=\"label\">This year</div><div class=\"value\">4<span class=\"unit\">umbrellas</span></div><div class=\"delta\">+1 vs last yr</div></div><p class=\"muted t-small\"><regex>user_name</regex>, I don't have your exact drop-off spots&mdash;but four is a solid number to guess by. The bus stop one haunts me.</p><details class=\"acc\"><summary>Where they tend to vanish</summary><div class=\"body\"><ul class=\"list\"><li>Cafe by the gym</li><li>Bus stop, Route 12</li><li>Someone's car trunk</li><li>Coat check, still unclaimed</li></ul></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "New Words Learned",
+   "user_requests": [
+    "how many new words did I learn this month",
+    "vocab count",
+    "new words tracker",
+    "words i picked up this week?",
+    "word learning stats",
+    "show my vocab picks",
+    "how many new words this month",
+    "word count new vocab this month",
+    "how many new words did I pick up",
+    "vocab learned this month?",
+    "count of fresh words I learned",
+    "new words added to my brain this month",
+    "how many new words have I learned lately"
+   ],
+   "html": "<div class=\"card\"><div class=\"between row\"><div class=\"card-title\">New Words Learned</div><span class=\"badge good\"><i class=\"dot\"></i>cached match</span></div><div class=\"stat\"><div class=\"label\">This month</div><div class=\"value\">23<span class=\"unit\">words</span></div><div class=\"delta\">+7 vs last mo</div></div><p class=\"muted t-small\">Nice pace, <regex>user_name</regex>. Three of them came from a single article about mycelium.</p><details class=\"acc\"><summary>Recent keepers</summary><div class=\"body\"><div class=\"table-wrap\"><table><thead><tr><th>Word</th><th class=\"num\">Day</th></tr></thead><tbody><tr><td>petrichor</td><td class=\"num\">3</td></tr><tr><td>sonder</td><td class=\"num\">9</td></tr><tr><td>mycelium</td><td class=\"num\">14</td></tr><tr><td>liminal</td><td class=\"num\">21</td></tr></tbody></table></div></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Screen-Free Evenings",
+   "user_requests": [
+    "how many nights did I skip screens",
+    "screen free evening count",
+    "nights without scrolling",
+    "screen-free streaks",
+    "show my no-screen evenings",
+    "how many evening screen breaks this week",
+    "screen break stats",
+    "nights without screens?",
+    "how many evenings did I avoid my phone",
+    "count screen-free nights",
+    "no-screen evenings this week",
+    "how many nights did I not look at a screen",
+    "screenless evenings tally"
+   ],
+   "html": "<div class=\"card\"><div class=\"between row\"><div class=\"card-title\">Screen-Free Evenings</div><span class=\"badge info\"><i class=\"dot\"></i>this week</span></div><div class=\"stat\"><div class=\"label\">Evenings offline</div><div class=\"value\">3<span class=\"unit\">nights</span></div><div class=\"delta\">+1 vs last wk</div></div><p class=\"muted t-small\"><regex>user_name</regex>, three quiet nights. Your eyes sent a thank-you note.</p><details class=\"acc\"><summary>How the week went</summary><div class=\"body\"><div class=\"meter\" aria-label=\"3 of 7 evenings\"><span style=\"width:43%\"></span></div><ol class=\"list\"><li>Mon &mdash; walked instead</li><li>Wed &mdash; read a paper book</li><li>Fri &mdash; kitchen table drawing</li></ol></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Breadcrumbs Escaped the Toaster",
+   "user_requests": [
+    "how many breadcrumbs do I sweep a week",
+    "toaster crumb count",
+    "toaster mess stats",
+    "toaster cleaning tracker",
+    "how often do I clean the toaster",
+    "crumb sweep tally",
+    "toaster crumb widget",
+    "breadcrumb cleanup count",
+    "how many crumbs do I sweep weekly",
+    "toaster crumb tally per week",
+    "breadcrumbs on the counter?",
+    "how many times do I sweep breadcrumbs",
+    "weekly breadcrumb sweep count"
+   ],
+   "html": "<div class=\"card\"><div class=\"between row\"><div class=\"card-title\">Breadcrumbs Escaped the Toaster</div><span class=\"badge accent\">est.</span></div><div class=\"stat\"><div class=\"label\">Swept this week</div><div class=\"value\">~40<span class=\"unit\">crumbs</span></div><div class=\"delta down\">&minus;10 vs last wk</div></div><p class=\"muted t-small\"><regex>user_name</regex>, I can't count them exactly. But the tray says you skipped a shake-out again.</p><details class=\"acc\"><summary>Rough daily breakdown</summary><div class=\"body\"><div class=\"chart\"><svg viewBox=\"0 0 320 100\" role=\"img\" aria-label=\"Estimated crumbs swept per day\"><line class=\"axis\" x1=\"0\" y1=\"88\" x2=\"320\" y2=\"88\"/><rect class=\"bar\" x=\"24\" y=\"28\" width=\"34\" height=\"60\" rx=\"4\"/><rect class=\"bar\" x=\"86\" y=\"40\" width=\"34\" height=\"48\" rx=\"4\"/><rect class=\"bar\" x=\"148\" y=\"52\" width=\"34\" height=\"36\" rx=\"4\"/><rect class=\"bar\" x=\"210\" y=\"64\" width=\"34\" height=\"24\" rx=\"4\"/><rect class=\"bar alt\" x=\"272\" y=\"72\" width=\"34\" height=\"16\" rx=\"4\"/><text class=\"lbl\" x=\"41\" y=\"98\">M</text><text class=\"lbl\" x=\"103\" y=\"98\">T</text><text class=\"lbl\" x=\"165\" y=\"98\">W</text><text class=\"lbl\" x=\"227\" y=\"98\">T</text><text class=\"lbl\" x=\"289\" y=\"98\">F</text></svg></div></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Photos Not Deleted",
+   "user_requests": [
+    "how many blurry photos am I keeping",
+    "blurry photo count",
+    "junk photo tally",
+    "photos i should delete",
+    "how many bad pics in my library",
+    "photo cleanup stats",
+    "blurry pic counter",
+    "how many pics am I hoarding",
+    "blurry photo count",
+    "count of undeleted photos",
+    "how many photos haven't I deleted",
+    "photos I should have deleted",
+    "how many blurry pics still on my phone"
+   ],
+   "html": "<div class=\"card\"><div class=\"between row\"><div class=\"card-title\">Photos Not Deleted</div><span class=\"badge bad\"><i class=\"dot\"></i>blurry</span></div><div class=\"stat\"><div class=\"label\">Candidates for the bin</div><div class=\"value\">142<span class=\"unit\">photos</span></div><div class=\"delta\">+18 vs last scan</div></div><p class=\"muted t-small\"><regex>user_name</regex>, 142 blurry shots. Eleven of them are of a thumb. I counted.</p><details class=\"acc\"><summary>Worst offenders</summary><div class=\"body\"><div class=\"table-wrap\"><table><thead><tr><th>Reason</th><th class=\"num\">Count</th></tr></thead><tbody><tr><td>Motion blur</td><td class=\"num\">61</td></tr><tr><td>Duplicates</td><td class=\"num\">44</td></tr><tr><td>Accidental thumbs</td><td class=\"num\">11</td></tr><tr><td>Floor shots</td><td class=\"num\">26</td></tr></tbody></table></div></div></details></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many glasses of water did i drink today",
+    "track my water intake",
+    "H2O status",
+    "show me my hydration for the day",
+    "water drank 2day",
+    "i need to see my water count",
+    "hydration tracker",
+    "how much water did I drink today",
+    "water intake count",
+    "glasses of water today?",
+    "how many cups of water have I had",
+    "water drank today",
+    "how many glasses of water so far"
+   ],
+   "title": "Glasses of Water",
+   "html": "<div class=\"stat\"><div class=\"label\">Glasses of water</div><div class=\"value\">6<span class=\"unit\">glasses</span></div><div class=\"delta down\">\u22121 from yesterday</div></div>\n<details class=\"acc\"><summary>Today's log</summary><div class=\"body\">\n<ul class=\"list\"><li>7:15 am \u00b7 1 glass</li><li>9:30 am \u00b7 1 glass</li><li>12:00 pm \u00b7 2 glasses</li><li>3:20 pm \u00b7 1 glass</li><li>5:45 pm \u00b7 1 glass</li></ul>\n</div></details>\n<div class=\"callout info\">Your goal is 8. Two more to go, <regex>user_name</regex>. You've got this.</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many times did i say um today",
+    "um counter",
+    "count my filler words",
+    "did i um a lot?",
+    "tracker for ums",
+    "filler word count",
+    "how many ums",
+    "um count today",
+    "how many times did I say like",
+    "filler word tally",
+    "how many ums and uhs",
+    "count my filler words",
+    "how often did I say you know"
+   ],
+   "title": "Filler Words Said",
+   "html": "<div class=\"stat\"><div class=\"label\">Filler words said</div><div class=\"value\">14<span class=\"unit\">times</span></div><div class=\"delta down\">\u22123 from yesterday</div></div>\n<details class=\"acc\"><summary>Breakdown</summary><div class=\"body\">\n<ul class=\"list\"><li>um \u00b7 8</li><li>uh \u00b7 4</li><li>like \u00b7 2</li></ul>\n<p class=\"muted t-small\">Mostly during the morning stand-up.</p>\n</div></details>\n<div class=\"callout\">You're getting smoother, <regex>user_name</regex>. Keep it up.</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many times did i check my phone",
+    "phone pickups today",
+    "show me my screen time",
+    "phone checking count",
+    "did i look at my phone a lot?",
+    "pickups",
+    "how often did i pick up my phone",
+    "how many times did I grab my phone",
+    "phone check count",
+    "pickups today?",
+    "how often did I pick up my phone",
+    "phone pickup tally",
+    "times I looked at my phone"
+   ],
+   "title": "Phone Pickups",
+   "html": "<div class=\"stat\"><div class=\"label\">Phone pickups</div><div class=\"value\">47<span class=\"unit\">times</span></div><div class=\"delta down\">\u221212 from yesterday</div></div>\n<details class=\"acc\"><summary>Busiest hours</summary><div class=\"body\">\n<ul class=\"list\"><li>9\u201310 am \u00b7 11 pickups</li><li>1\u20132 pm \u00b7 9 pickups</li><li>8\u20139 pm \u00b7 7 pickups</li></ul>\n</div></details>\n<div class=\"callout good\">Nice work, <regex>user_name</regex>. Fewer pickups than yesterday.</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many times did i say sorry",
+    "sorry count",
+    "did i apologize too much?",
+    "track my sorrys",
+    "number of sorries",
+    "how many apologies today",
+    "sorry tracker",
+    "sorry count today",
+    "how many apologies did I make",
+    "times I said sorry?",
+    "apology tally",
+    "how many times did I apologize",
+    "sorry said today"
+   ],
+   "title": "Times Said Sorry",
+   "html": "<div class=\"stat\"><div class=\"label\">Times said sorry</div><div class=\"value\">9<span class=\"unit\">times</span></div><div class=\"delta\">+2 from yesterday</div></div>\n<details class=\"acc\"><summary>Context</summary><div class=\"body\">\n<ul class=\"list\"><li>4 to strangers</li><li>3 to coworkers</li><li>2 to yourself</li></ul>\n<p class=\"muted t-small\">One was definitely not your fault.</p>\n</div></details>\n<div class=\"callout\">No need to apologize for being human, <regex>user_name</regex>.</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many times did i check the fridge",
+    "fridge visits today",
+    "fridge opening count",
+    "how often did i open the fridge?",
+    "fridge checks",
+    "track fridge opens",
+    "number of fridge trips",
+    "how many times did I open the fridge",
+    "fridge peek count",
+    "fridge visits today?",
+    "how often do I check the fridge",
+    "fridge opening tally",
+    "times I looked in the fridge"
+   ],
+   "title": "Fridge Checks",
+   "html": "<div class=\"stat\"><div class=\"label\">Fridge checks</div><div class=\"value\">12<span class=\"unit\">times</span></div><div class=\"delta down\">\u22123 from yesterday</div></div>\n<details class=\"acc\"><summary>Peak hours</summary><div class=\"body\">\n<ul class=\"list\"><li>10 am \u00b7 3</li><li>2 pm \u00b7 2</li><li>4 pm \u00b7 4</li><li>9 pm \u00b7 3</li></ul>\n</div></details>\n<div class=\"callout info\">Twelve checks, zero snacks. Impressive restraint, <regex>user_name</regex>.</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many times did i hit snooze",
+    "snooze count today",
+    "did i snooze a lot?",
+    "snooze button presses",
+    "how many snoozes",
+    "track my snoozes",
+    "snooze tally",
+    "how many times did I snooze today",
+    "snooze button count",
+    "snoozes today?",
+    "how often did I hit snooze",
+    "snooze tally",
+    "times I pressed snooze"
+   ],
+   "title": "Snoozes Hit",
+   "html": "<div class=\"stat\"><div class=\"label\">Snoozes hit</div><div class=\"value\">3<span class=\"unit\">times</span></div><div class=\"delta down\">\u22121 from yesterday</div></div>\n<details class=\"acc\"><summary>Alarm history</summary><div class=\"body\">\n<ul class=\"list\"><li>6:30 am \u00b7 alarm</li><li>6:39 am \u00b7 snooze 1</li><li>6:48 am \u00b7 snooze 2</li><li>6:57 am \u00b7 snooze 3</li><li>7:06 am \u00b7 up</li></ul>\n</div></details>\n<div class=\"callout\">You made it up eventually, <regex>user_name</regex>. That counts.</div>",
+   "augmented": true
+  },
+  {
+   "title": "Times You Said \"You Too\" to Someone Not Your Server",
+   "user_requests": [
+    "how many times have I said you too to the wrong person",
+    "you too counter",
+    "track my awkward you too moments",
+    "how often do I do the you too thing",
+    "youtoo tally pls",
+    "count my accidental 'you too' replies",
+    "how many you-toos aimed at nobody",
+    "you too mistakes count",
+    "how many times did I say you too wrong",
+    "you too to the wrong person?",
+    "awkward you too tally",
+    "how often do I say you too incorrectly",
+    "you too blunders"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"card-title\"><regex>user_name</regex>'s Most Awkward Reflex</div>\n  <div class=\"grid two\">\n    <div class=\"stat\">\n      <div class=\"label\">Accidental \"You Too\"s</div>\n      <div class=\"value\">23<span class=\"unit\">times</span></div>\n      <div class=\"delta down\">+2 this week</div>\n    </div>\n    <div class=\"stat\">\n      <div class=\"label\">Recovered Gracefully</div>\n      <div class=\"value\">4<span class=\"unit\">times</span></div>\n      <div class=\"delta\">17% survival rate</div>\n    </div>\n  </div>\n  <blockquote class=\"quote\">\n    \"Enjoy your meal!\" \u2014 \"You too!\" \u2014 the barista, who was not eating.\n    <cite>Tuesday, 8:14am</cite>\n  </blockquote>\n  <details class=\"acc\">\n    <summary>Worst offenders</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Movie ticket ripper \u2014 said \"enjoy the show\"</li>\n        <li>Flight attendant at the door \u2014 \"safe travels\"</li>\n        <li>Someone's birthday wish \u2014 \"happy birthday\"</li>\n      </ul>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Times You Walked Into a Room and Forgot Why",
+   "user_requests": [
+    "how many times have I forgotten why I walked into a room",
+    "room amnesia count",
+    "track my doorway memory losses",
+    "times I stood in the kitchen confused",
+    "doorway effect tally",
+    "count the room-forgetting incidents",
+    "how often do I forget mid-walk what I needed",
+    "forgot why I entered a room count",
+    "room amnesia tally",
+    "how many times did I forget my purpose",
+    "walked in and blanked?",
+    "how often do I forget why I walked in",
+    "room entry forgetfulness count"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"card-title\"><regex>user_name</regex> vs. The Doorway Effect</div>\n  <div class=\"grid two\">\n    <div class=\"stat\">\n      <div class=\"label\">Rooms Entered, Purpose Lost</div>\n      <div class=\"value\">31<span class=\"unit\">times</span></div>\n      <div class=\"delta down\">+5 this month</div>\n    </div>\n    <div class=\"stat\">\n      <div class=\"label\">Recovered the Memory</div>\n      <div class=\"value\">9<span class=\"unit\">times</span></div>\n      <div class=\"delta\">29% recall rate</div>\n    </div>\n  </div>\n  <div class=\"meter\"><span style=\"width:29%\"></span></div>\n  <p class=\"t-small muted\">Recall rate: 29% \u2014 scientists say walking back helps. You just look suspicious.</p>\n  <details class=\"acc\">\n    <summary>Where it happens most</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Kitchen \u2014 12 times</li>\n        <li>Bedroom closet \u2014 8 times</li>\n        <li>Office, doorway, mid-sentence \u2014 6 times</li>\n      </ul>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Tabs Open Right Now",
+   "user_requests": [
+    "how many tabs do I have open",
+    "tab hoarding count",
+    "my browser tabs right now",
+    "count my endless open tabs",
+    "tab situation check",
+    "how many tabs is too many",
+    "tell me my open tab number",
+    "how many browser tabs do I have open",
+    "tab count",
+    "tabs open?",
+    "current tab tally",
+    "how many tabs are open right now",
+    "number of open tabs"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"card-title\"><regex>user_name</regex>'s Tab Situation</div>\n  <div class=\"grid two\">\n    <div class=\"stat\">\n      <div class=\"label\">Tabs Currently Open</div>\n      <div class=\"value\">47<span class=\"unit\">tabs</span></div>\n      <div class=\"delta down\">+11 since Monday</div>\n    </div>\n    <div class=\"stat\">\n      <div class=\"label\">Actually Still Needed</div>\n      <div class=\"value\">3<span class=\"unit\">tabs</span></div>\n      <div class=\"delta\">6% essential</div>\n    </div>\n  </div>\n  <div class=\"callout warn\">\n    <strong>Warning:</strong> The browser is showing a small frowny face next to the tab count. It's not you. It's the tabs.\n  </div>\n  <details class=\"acc\">\n    <summary>The Forgotten Den</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>14 open tabs of recipe pages you'll never cook</li>\n        <li>9 open flights to cities you're not going to</li>\n        <li>24 open Wikipedia tabs from one rabbit hole</li>\n      </ul>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Times You Reheated the Same Coffee",
+   "user_requests": [
+    "how many times did I microwave my coffee today",
+    "coffee reheat count",
+    "track my cold coffee reheats",
+    "times I reheated the same mug",
+    "coffee nuking tally",
+    "count my reheated coffees",
+    "how often do I re-microwave my coffee",
+    "how many times did I nuke my coffee",
+    "coffee reheating count",
+    "reheated coffee today?",
+    "how often do I reheat coffee",
+    "coffee microwave tally",
+    "times I warmed up my coffee again"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"card-title\"><regex>user_name</regex>'s Coffee Warming Cycle</div>\n  <div class=\"grid two\">\n    <div class=\"stat\">\n      <div class=\"label\">Reheats This Week</div>\n      <div class=\"value\">8<span class=\"unit\">times</span></div>\n      <div class=\"delta down\">+3 vs last week</div>\n    </div>\n    <div class=\"stat\">\n      <div class=\"label\">Cups Actually Finished Hot</div>\n      <div class=\"value\">1<span class=\"unit\">cup</span></div>\n      <div class=\"delta\">12.5% success</div>\n    </div>\n  </div>\n  <ul class=\"list\">\n    <li>Monday: 1 reheat, gave up, made new cup</li>\n    <li>Wednesday: 2 reheats, drank it cold on purpose</li>\n    <li>Friday: 3 reheats, admitted defeat to the mug</li>\n  </ul>\n  <p class=\"t-small dim\">There is no known cure. Some say drinking it faster works, but that's a myth.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Photos of Food You'll Never Post",
+   "user_requests": [
+    "how many food photos haven't I posted",
+    "unposted food pics count",
+    "my graveyard of dinner photos",
+    "count the food photos I never shared",
+    "food photo hoard number",
+    "pics of meals that never went up",
+    "how many plating shots did I skip posting",
+    "how many food pics are just sitting there",
+    "unposted food photo count",
+    "food photos I won't share?",
+    "how many meal photos never made it online",
+    "foodie photo hoard",
+    "count of food pics not posted"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"card-title\"><regex>user_name</regex>'s Secret Photo Vault</div>\n  <div class=\"grid two\">\n    <div class=\"stat\">\n      <div class=\"label\">Food Photos, Never Posted</div>\n      <div class=\"value\">216<span class=\"unit\">photos</span></div>\n      <div class=\"delta down\">+9 this week</div>\n    </div>\n    <div class=\"stat\">\n      <div class=\"label\">Actually Post-Worthy</div>\n      <div class=\"value\">2<span class=\"unit\">photos</span></div>\n      <div class=\"delta\">0.9% publish rate</div>\n    </div>\n  </div>\n  <details class=\"acc\">\n    <summary>Hall of Fame (never posted)</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>The toast that looked like a map of Ohio</li>\n        <li>A pancake stack with impressive structural integrity</li>\n        <li>Soup, photographed from a very flattering angle</li>\n      </ul>\n    </div>\n  </details>\n  <p class=\"t-small muted\">The photos remain. The captions never came.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Times You Said \"I'll Remember That\" and Didn't",
+   "user_requests": [
+    "how many times did I say I'd remember and forget",
+    "memory promise count",
+    "track the things I swear I'll recall",
+    "times I wrote nothing down",
+    "empty promise memory tally",
+    "count my mental sticky notes that fell off",
+    "how often do I swear to remember and then don't",
+    "how many times did I promise to remember and forget",
+    "i'll remember that fails count",
+    "forgot what I said I'd remember?",
+    "how often do I say I'll remember and don't",
+    "memory promise tally",
+    "times I claimed I'd remember and didn't"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"card-title\"><regex>user_name</regex>'s Confident Forgetting</div>\n  <div class=\"grid two\">\n    <div class=\"stat\">\n      <div class=\"label\">\"I'll Remember That\"s</div>\n      <div class=\"value\">44<span class=\"unit\">times</span></div>\n      <div class=\"delta down\">+6 this month</div>\n    </div>\n    <div class=\"stat\">\n      <div class=\"label\">Genuinely Remembered</div>\n      <div class=\"value\">2<span class=\"unit\">things</span></div>\n      <div class=\"delta\">4.5% retention</div>\n    </div>\n  </div>\n  <div class=\"meter\"><span style=\"width:5%\"></span></div>\n  <p class=\"t-small muted\">A handwritten note would've solved roughly all of these. Just saying.</p>\n  <blockquote class=\"quote\">\n    \"I don't need to write it down, I'll remember.\" \u2014 you, about the wifi password.\n    <cite>Then and now</cite>\n  </blockquote>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many times did I check the fridge today",
+    "fridge checks",
+    "track my fridge raids",
+    "times I opened the fridge for no reason",
+    "fridge check count",
+    "how often did I stare into the fridge",
+    "fridge raids today",
+    "number of times I peeked in the fridge today",
+    "fridge door openings count",
+    "how many fridge raids did I do",
+    "fridge peeks today?",
+    "count my fridge visits",
+    "times I opened the refrigerator today"
+   ],
+   "title": "Fridge Checks",
+   "html": "<div class=\"stat\"><div class=\"label\">Fridge checks</div><div class=\"value\">7</div><div class=\"delta down\">-2 from yesterday</div></div>\n<div class=\"muted t-small\">Opened the door, stared, closed it. We all do it.</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many times did I say sorry today",
+    "sorry count",
+    "track my apologies",
+    "times I said sorry",
+    "apology tally",
+    "how often did I apologize",
+    "sorrys today",
+    "how often did I apologize today",
+    "sorry count for today",
+    "number of times I said sry",
+    "how many apologies did I make",
+    "times I uttered sorry",
+    "count my sorrys today"
+   ],
+   "title": "Times Said Sorry",
+   "html": "<div class=\"stat\"><div class=\"label\">Times said sorry</div><div class=\"value\">12</div><div class=\"delta\">+3 from yesterday</div></div>\n<div class=\"muted t-small\">To inanimate objects, mostly. The doorframe knows.</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many times did I hit snooze",
+    "snooze count",
+    "track my snoozes",
+    "times I hit snooze today",
+    "snooze tally",
+    "how often did I snooze",
+    "snoozes this morning",
+    "how many times did I press snooze",
+    "number of snoozes today",
+    "snooze button count",
+    "how often did I snooze my alarm",
+    "times I delayed my alarm",
+    "count my snoozes"
+   ],
+   "title": "Snoozes Hit",
+   "html": "<div class=\"stat\"><div class=\"label\">Snoozes hit</div><div class=\"value\">5</div><div class=\"delta down\">-1 from yesterday</div></div>\n<div class=\"muted t-small\">Each one felt like a tiny rebellion. Worth it.</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many times did I say you too to someone who wasn't my server",
+    "you too count",
+    "track my you too moments",
+    "times I said you too awkwardly",
+    "you too tally",
+    "how often did I say you too",
+    "you too slips",
+    "how many times did I say you too to a non-server",
+    "you too mistakes count",
+    "times I said you too to the wrong person",
+    "number of you too blunders",
+    "how often did I respond you too to someone who wasn't my waiter",
+    "you too to non-server tally"
+   ],
+   "title": "Times You Said \"You Too\" to Someone Not Your Server",
+   "html": "<div class=\"stat\"><div class=\"label\">Times said \"you too\"</div><div class=\"value\">3</div><div class=\"delta\">+1 from yesterday</div></div>\n<div class=\"muted t-small\">To the barista who said \"enjoy your coffee.\" You too, buddy.</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many tabs do I have open",
+    "tabs open",
+    "current tab count",
+    "how many browser tabs are open",
+    "tab tally",
+    "number of tabs open right now",
+    "tabs open now",
+    "current tab count",
+    "how many browser tabs are open",
+    "number of tabs open",
+    "tabs open?",
+    "count my open tabs",
+    "how many tabs do I have"
+   ],
+   "title": "Tabs Open Right Now",
+   "html": "<div class=\"stat\"><div class=\"label\">Tabs open right now</div><div class=\"value\">42</div><div class=\"delta\">+6 from yesterday</div></div>\n<div class=\"muted t-small\">Each one a promise you'll definitely keep. Eventually.</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many times did I reheat my coffee today",
+    "coffee reheats",
+    "track my coffee reheats",
+    "times I microwaved my coffee",
+    "coffee reheat count",
+    "how often did I reheat coffee",
+    "coffee rewarming tally",
+    "how many times did I microwave my coffee",
+    "coffee reheats today",
+    "number of times I warmed up my coffee again",
+    "how often did I reheat the same cup of coffee",
+    "count my coffee reheat cycles",
+    "times I nuked my coffee"
+   ],
+   "title": "Times You Reheated the Same Coffee",
+   "html": "<div class=\"stat\"><div class=\"label\">Times reheated the same coffee</div><div class=\"value\">4</div><div class=\"delta down\">-1 from yesterday</div></div>\n<div class=\"muted t-small\">By round three, it's just warm bean water. Still counts.</div>",
+   "augmented": true
+  },
+  {
+   "title": "Tuesday's Wordle Streak",
+   "user_requests": [
+    "how many wordle wins in a row",
+    "wordle streak tracker",
+    "my wordle run this month",
+    "track wordle",
+    "wordle stats",
+    "streak of wordle wins",
+    "how am i doing at wordle",
+    "wordle win streak on tuesday",
+    "how many wordle wins in a row on tuesday",
+    "tuesday wordle streak count",
+    "my wordle streak for tuesday",
+    "consecutive wordle wins on tuesday",
+    "how long is my tuesday wordle streak"
+   ],
+   "html": "<div class=\"card stack\">\n  <div class=\"between row\">\n    <div class=\"card-title\">Tuesday's Wordle Streak</div>\n    <span class=\"badge accent\"><i class=\"dot\"></i>cached match</span>\n  </div>\n  <div class=\"grid two\">\n    <div class=\"stat\">\n      <div class=\"label\">Wins in a row</div>\n      <div class=\"value\">38<span class=\"unit\"> days</span></div>\n      <div class=\"delta\">+1 today</div>\n    </div>\n    <div class=\"stat\">\n      <div class=\"label\">Guess average</div>\n      <div class=\"value\">3.7<span class=\"unit\"> tries</span></div>\n      <div class=\"delta down\">-0.2 vs last week</div>\n    </div>\n  </div>\n  <details class=\"acc\">\n    <summary>Luckiest guesses</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li><strong>CRANE</strong> - solved in 2, twice this month</li>\n        <li><strong>SLATE</strong> - the reliable opener, 14 wins attached</li>\n      </ul>\n      <p class=\"muted t-small\">Yesterday nearly ended the run. Four tries, one letter left, and a lucky hunch.</p>\n    </div>\n  </details>\n  <details class=\"acc\">\n    <summary>One loss in January</summary>\n    <div class=\"body\">\n      <p class=\"muted t-small\">It was a double-letter day, <regex>user_name</regex>. We don't speak of it.</p>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Library Books Out",
+   "user_requests": [
+    "how many library books do i have",
+    "books checked out right now",
+    "library loan tracker",
+    "any books due soon",
+    "track my library holds",
+    "books out from the library",
+    "library stuff",
+    "how many books do I have checked out from the library",
+    "library book count",
+    "number of library books I borrowed",
+    "how many library books are in my possession",
+    "count my library loans",
+    "library books currently out"
+   ],
+   "html": "<div class=\"card stack\">\n  <div class=\"between row\">\n    <div class=\"card-title\">Library Books Out</div>\n    <span class=\"badge info\"><i class=\"dot\"></i>cached match</span>\n  </div>\n  <div class=\"grid two\">\n    <div class=\"stat\">\n      <div class=\"label\">Checked out</div>\n      <div class=\"value\">7<span class=\"unit\"> books</span></div>\n      <div class=\"delta\">+2 this week</div>\n    </div>\n    <div class=\"stat\">\n      <div class=\"label\">Due in 3 days</div>\n      <div class=\"value\">2<span class=\"unit\"> titles</span></div>\n      <div class=\"delta down\">renew soon</div>\n    </div>\n  </div>\n  <p class=\"muted\">Fines so far: <strong>$0.00</strong>. The streak lives.</p>\n  <details class=\"acc\">\n    <summary>Which two are due</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li><em>The Overstory</em> - 42 pages in, going well</li>\n        <li><em>Piranesi</em> - opened once, stared at once</li>\n      </ul>\n      <p class=\"muted t-small\"><regex>user_name</regex>, renewing takes nine seconds online. Just saying.</p>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Plants Still Alive",
+   "user_requests": [
+    "how many plants survived",
+    "my plant count",
+    "plants alive tracker",
+    "did i kill another plant",
+    "houseplant stats",
+    "track plants",
+    "plant ownership",
+    "how many of my plants are still kicking",
+    "plant survival count",
+    "number of plants I haven't killed",
+    "how many plants are alive",
+    "count my living plants",
+    "plants that are still alive"
+   ],
+   "html": "<div class=\"card stack\">\n  <div class=\"between row\">\n    <div class=\"card-title\">Plants Still Alive</div>\n    <span class=\"badge good\"><i class=\"dot\"></i>cached match</span>\n  </div>\n  <div class=\"grid two\">\n    <div class=\"stat\">\n      <div class=\"label\">Alive right now</div>\n      <div class=\"value\">11<span class=\"unit\"> plants</span></div>\n      <div class=\"delta\">+1 propagated</div>\n    </div>\n    <div class=\"stat\">\n      <div class=\"label\">Memorial shelf</div>\n      <div class=\"value\">4<span class=\"unit\"> lost</span></div>\n      <div class=\"delta down\">last: a fern, June</div>\n    </div>\n  </div>\n  <div class=\"meter\">\n    <span style=\"width:73%\"></span>\n  </div>\n  <p class=\"muted t-small\">73% survival rate. Better than most hobbyists, <regex>user_name</regex>.</p>\n  <details class=\"acc\">\n    <summary>Thirstiest plant</summary>\n    <div class=\"body\">\n      <p class=\"muted t-small\">The calathea. It is always the calathea.</p>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Board Game Wins This Year",
+   "user_requests": [
+    "board game win count",
+    "how many games have i won",
+    "track board game wins",
+    "my win rate",
+    "games won this year",
+    "board game tracker",
+    "who wins more",
+    "how many board games have I won this year",
+    "board game victory count for the year",
+    "number of board game wins in 2025",
+    "how many times did I win at board games this year",
+    "count my board game triumphs",
+    "this year's board game wins"
+   ],
+   "html": "<div class=\"card stack\">\n  <div class=\"between row\">\n    <div class=\"card-title\">Board Game Wins This Year</div>\n    <span class=\"badge accent\"><i class=\"dot\"></i>cached match</span>\n  </div>\n  <div class=\"grid two\">\n    <div class=\"stat\">\n      <div class=\"label\">Wins logged</div>\n      <div class=\"value\">24<span class=\"unit\"> games</span></div>\n      <div class=\"delta\">+3 this month</div>\n    </div>\n    <div class=\"stat\">\n      <div class=\"label\">Win rate</div>\n      <div class=\"value\">41<span class=\"unit\">%</span></div>\n      <div class=\"delta down\">-2 pts vs last year</div>\n    </div>\n  </div>\n  <details class=\"acc\">\n    <summary>By game</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li><strong>Wingspan</strong> - 9 wins, clearly your game</li>\n        <li><strong>Catan</strong> - 6 wins, several disputed</li>\n        <li><strong>Codenames</strong> - 4 wins, mostly as clue-giver</li>\n      </ul>\n      <p class=\"muted t-small\">Five more and you pass your record, <regex>user_name</regex>.</p>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Jars of Jam Made",
+   "user_requests": [
+    "jam jars made this year",
+    "how much jam did i make",
+    "track jam batches",
+    "jam count",
+    "my canning log",
+    "how many jars of jam",
+    "jam tally",
+    "how many jars of jam did I make",
+    "jam jar count",
+    "number of jam batches I've canned",
+    "how many jars of preserves did I make",
+    "count my jam jars",
+    "jam made this year"
+   ],
+   "html": "<div class=\"card stack\">\n  <div class=\"between row\">\n    <div class=\"card-title\">Jars of Jam Made</div>\n    <span class=\"badge good\"><i class=\"dot\"></i>cached match</span>\n  </div>\n  <div class=\"grid two\">\n    <div class=\"stat\">\n      <div class=\"label\">Jars sealed</div>\n      <div class=\"value\">31<span class=\"unit\"> jars</span></div>\n      <div class=\"delta\">+6 this batch</div>\n    </div>\n    <div class=\"stat\">\n      <div class=\"label\">Batches</div>\n      <div class=\"value\">5<span class=\"unit\"> runs</span></div>\n      <div class=\"delta\">+1 strawberry</div>\n    </div>\n  </div>\n  <details class=\"acc\">\n    <summary>Full flavour list</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Strawberry - 11 jars</li>\n        <li>Apricot - 8 jars</li>\n        <li>Plum - 7 jars</li>\n        <li>Fig - 5 jars, best of the lot</li>\n      </ul>\n      <p class=\"muted t-small\">Enough to gift, <regex>user_name</regex>. Barely enough to keep.</p>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Emails Sent Today",
+   "user_requests": [
+    "emails sent today",
+    "how many emails did i send",
+    "track my email count",
+    "email tally today",
+    "how many emails so far",
+    "email stats",
+    "emails out",
+    "how many emails did I send today",
+    "email send count for today",
+    "number of emails I dispatched today",
+    "how many emails went out today",
+    "count my sent emails today",
+    "today's email tally"
+   ],
+   "html": "<div class=\"card stack\">\n  <div class=\"between row\">\n    <div class=\"card-title\">Emails Sent Today</div>\n    <span class=\"badge accent\"><i class=\"dot\"></i>cached match</span>\n  </div>\n  <div class=\"grid two\">\n    <div class=\"stat\">\n      <div class=\"label\">Sent so far</div>\n      <div class=\"value\">19<span class=\"unit\"> emails</span></div>\n      <div class=\"delta\">+4 since noon</div>\n    </div>\n    <div class=\"stat\">\n      <div class=\"label\">Awaiting reply</div>\n      <div class=\"value\">6<span class=\"unit\"> threads</span></div>\n      <div class=\"delta down\">2 are just reminders</div>\n    </div>\n  </div>\n  <details class=\"acc\">\n    <summary>Busiest hour</summary>\n    <div class=\"body\">\n      <p class=\"muted t-small\">9 to 10am, seven sent. You were on one, <regex>user_name</regex>.</p>\n    </div>\n  </details>\n  <details class=\"acc\">\n    <summary>Longest subject line</summary>\n    <div class=\"body\">\n      <p class=\"muted t-small\">A 41-word subject about a meeting that could have been three.</p>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Bananas Ripened on the Counter",
+   "user_requests": [
+    "how many bananas have ripened on my counter?",
+    "banana ripening stat",
+    "count of bananas that turned yellow",
+    "bananas ripened tracker",
+    "show me banana ripening numbers",
+    "how many bananas went from green to yellow?",
+    "bananas turned yellow count",
+    "how many bananas turned ripe on my counter",
+    "banana ripening count",
+    "number of bananas that ripened on the counter",
+    "how many bananas have ripened on my counter",
+    "count my ripened bananas",
+    "bananas that got ripe on the counter"
+   ],
+   "html": "<div class=\"stat\">\n  <div class=\"label\">Bananas Ripened</div>\n  <div class=\"value\">7</div>\n  <div class=\"delta\">+2 this week</div>\n  <div class=\"meter\" style=\"--p:100\">\n    <span style=\"width:100%\"></span>\n  </div>\n  <div class=\"t-small muted\">Peak ripeness: Tuesday</div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Traffic Lights Hit Green",
+   "user_requests": [
+    "how many green lights did I hit today?",
+    "green light count",
+    "traffic light luck stat",
+    "number of green traffic lights",
+    "show my green light streak",
+    "how many greens on my commute?",
+    "count of green lights this morning",
+    "how many green lights did I catch today",
+    "green light count for today",
+    "number of green traffic lights I hit",
+    "how many times did I get a green light",
+    "count my green lights",
+    "green lights today"
+   ],
+   "html": "<div class=\"stat\">\n  <div class=\"label\">Green Lights Hit</div>\n  <div class=\"value\">14</div>\n  <div class=\"delta down\">-3 vs yesterday</div>\n  <div class=\"meter\" style=\"--p:82\">\n    <span style=\"width:82%\"></span>\n  </div>\n  <div class=\"t-small muted\">82% success rate</div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Songs Hummed Without Knowing",
+   "user_requests": [
+    "how many songs did I hum today?",
+    "humming stats",
+    "count of tunes I hummed",
+    "songs hummed tracker",
+    "show humming numbers",
+    "how many melodies did I hum?",
+    "hummed songs count today",
+    "how many tunes did I hum without realizing",
+    "unconscious humming count",
+    "number of songs I hummed unknowingly",
+    "how many songs did I hum without knowing",
+    "count my absentminded humming",
+    "songs hummed without awareness"
+   ],
+   "html": "<div class=\"stat\">\n  <div class=\"label\">Songs Hummed</div>\n  <div class=\"value\">5</div>\n  <div class=\"delta\">+1 new tune</div>\n  <div class=\"meter\" style=\"--p:100\">\n    <span style=\"width:100%\"></span>\n  </div>\n  <div class=\"t-small muted\">Mostly in the shower</div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Leaves Raked This Fall",
+   "user_requests": [
+    "how many leaves have I raked?",
+    "leaf raking stats",
+    "count of leaves raked",
+    "leaves raked tracker",
+    "show me leaf raking numbers",
+    "how many bags of leaves?",
+    "leaves raked count this season",
+    "how many leaves did I rake this autumn",
+    "fall leaf raking count",
+    "number of leaves I gathered with a rake",
+    "how many leaves have I raked this season",
+    "count my raked leaves",
+    "leaves raked this autumn"
+   ],
+   "html": "<div class=\"stat\">\n  <div class=\"label\">Leaves Raked</div>\n  <div class=\"value\">3</div>\n  <div class=\"unit\">bags</div>\n  <div class=\"delta\">+1 today</div>\n  <div class=\"meter\" style=\"--p:30\">\n    <span style=\"width:30%\"></span>\n  </div>\n  <div class=\"t-small muted\">30% of the yard</div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Mugs of Coffee Reheated",
+   "user_requests": [
+    "how many times did I reheat my coffee?",
+    "coffee reheat count",
+    "reheated coffee stats",
+    "number of coffee reheats",
+    "show coffee reheat numbers",
+    "how many mugs reheated today?",
+    "coffee reheats tracker"
+   ],
+   "html": "<div class=\"stat\">\n  <div class=\"label\">Mugs Reheated</div>\n  <div class=\"value\">2</div>\n  <div class=\"delta down\">-1 vs yesterday</div>\n  <div class=\"meter\" style=\"--p:67\">\n    <span style=\"width:67%\"></span>\n  </div>\n  <div class=\"t-small muted\">Maybe just drink it hot</div>\n</div>"
+  },
+  {
+   "title": "Pens Lost and Found",
+   "user_requests": [
+    "how many pens have I lost?",
+    "pen lost and found stats",
+    "count of lost pens",
+    "pens lost tracker",
+    "show me pen stats",
+    "how many pens went missing?",
+    "lost pens count"
+   ],
+   "html": "<div class=\"stat\">\n  <div class=\"label\">Pens Lost</div>\n  <div class=\"value\">4</div>\n  <div class=\"delta\">+2 found</div>\n  <div class=\"meter\" style=\"--p:50\">\n    <span style=\"width:50%\"></span>\n  </div>\n  <div class=\"t-small muted\">Half recovered</div>\n</div>"
+  },
+  {
+   "user_requests": [
+    "how many times did I open the fridge today",
+    "fridge checks count",
+    "can you show my fridge visits?",
+    "I keep opening the fridge for no reason",
+    "fridge opens today",
+    "count my fridge checks",
+    "how often did I check the fridge"
+   ],
+   "title": "Fridge Checks",
+   "html": "<div class=\"stat\"><div class=\"label\">Fridge Checks</div><div class=\"value\">8</div><div class=\"delta\">+3 today</div></div>"
+  },
+  {
+   "user_requests": [
+    "how many times did I say sorry today",
+    "sorry count",
+    "track my apologies",
+    "I say sorry too much",
+    "times I said sorry",
+    "count my sorrys",
+    "did I say sorry a lot today?"
+   ],
+   "title": "Times Said Sorry",
+   "html": "<div class=\"stat\"><div class=\"label\">Times Said Sorry</div><div class=\"value\">14</div><div class=\"delta\">+2 from yesterday</div></div>"
+  },
+  {
+   "user_requests": [
+    "how many snoozes today",
+    "snooze count",
+    "how often did I hit snooze",
+    "snoozes hit",
+    "track my snoozes",
+    "did I snooze a lot?",
+    "snooze button presses"
+   ],
+   "title": "Snoozes Hit",
+   "html": "<div class=\"stat\"><div class=\"label\">Snoozes Hit</div><div class=\"value\">5</div><div class=\"delta down\">-1 from yesterday</div></div>"
+  },
+  {
+   "user_requests": [
+    "how many times did I say you too to someone not my server",
+    "you too count",
+    "awkward you too moments",
+    "times I said you too wrong",
+    "track my you too slips",
+    "did I say you too to the barista?",
+    "you too to non-servers"
+   ],
+   "title": "Times You Said \"You Too\" to Someone Not Your Server",
+   "html": "<div class=\"stat\"><div class=\"label\">Times You Said \"You Too\" to Someone Not Your Server</div><div class=\"value\">3</div><div class=\"delta\">+1 today</div></div>"
+  },
+  {
+   "user_requests": [
+    "how many tabs do I have open right now",
+    "tab count",
+    "browser tabs open",
+    "tabs open",
+    "how many tabs in my browser?",
+    "count my open tabs",
+    "current tab tally"
+   ],
+   "title": "Tabs Open Right Now",
+   "html": "<div class=\"stat\"><div class=\"label\">Tabs Open Right Now</div><div class=\"value\">42</div><div class=\"delta\">+5 since morning</div></div>"
+  },
+  {
+   "user_requests": [
+    "how many times did I reheat my coffee today",
+    "coffee reheats",
+    "reheated coffee count",
+    "times I microwaved my coffee",
+    "coffee reheating tally",
+    "did I reheat my coffee again?",
+    "reheat count for coffee"
+   ],
+   "title": "Times You Reheated the Same Coffee",
+   "html": "<div class=\"stat\"><div class=\"label\">Times You Reheated the Same Coffee</div><div class=\"value\">4</div><div class=\"delta\">+1 from yesterday</div></div>"
+  }
+ ]
+}

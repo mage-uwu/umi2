@@ -34,11 +34,11 @@ def main(webdir, chatdata, out, plain_n=4000, seed=0):
         p = os.path.join(webdir, f"w{i:02d}_{w['name']}.json")
         if not os.path.exists(p): continue
         seen = set()
-        insts = [x for x in json.load(open(p))["instances"] if not (x["title"] in seen or seen.add(x["title"]))][:64]
+        insts = [x for x in json.load(open(p))["instances"] if not (x["title"] in seen or seen.add(x["title"]))][:4096]
         for j, x in enumerate(insts):
             h = sanitize(x["html"])
             if w["wraps_answer"] and "{{answer}}" not in h: continue
-            cid = f"{i}.{j}.0"
+            cid = f"{i}.{j % 64}.{j // 64}"
             answers.append((cid, f"{w['name']}/{tsv(x['title'])[:60]}", h, h.replace(TAG, ""), "-"))
             reqs = [clean(r) for r in x["user_requests"] if r.strip()]
             train += [(cid, r) for r in reqs[:-1]]; test += [(cid, reqs[-1])] if reqs else []

@@ -1,0 +1,2237 @@
+{
+ "widget": "budget",
+ "instances": [
+  {
+   "title": "Monthly Grocery Budget",
+   "user_requests": [
+    "grocery budget for the month",
+    "help me budget groceries",
+    "monthly food spend breakdown",
+    "how much should i budget for food",
+    "make me a grocery budget",
+    "food money plan pls",
+    "budget my groceries for february",
+    "how much should i spend on food each month",
+    "grocery spending plan 4 my family of 4",
+    "need help figurin out weekly food shop costs",
+    "make me a grocery budget, we keep overspending at costco",
+    "budget widget for supermarket runs",
+    "food budget pls"
+   ],
+   "html": "<div class=\"card\"><div class=\"row between\"><h4 class=\"card-title\">Grocery budget \u00b7 month</h4><span class=\"badge accent\">plan</span></div><p class=\"muted t-small\">Hi <regex>user_name</regex> \u2014 a rough split, tweak to taste.</p><div class=\"between\"><span>Produce &amp; veg</span><b>$120</b></div><div class=\"between\"><span>Protein (meat, eggs, beans)</span><b>$160</b></div><div class=\"between\"><span>Dairy &amp; alternatives</span><b>$60</b></div><div class=\"between\"><span>Pantry &amp; dry goods</span><b>$70</b></div><div class=\"between\"><span>Snacks &amp; treats</span><b>$40</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$450</b></div><div class=\"meter\" aria-label=\"Weekly allowance $112 of $450\"><span style=\"width:25%\"></span></div><p class=\"dim t-small\">\u2248 $112 a week. Leftovers night is a budget superhero.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Home Move Cost Planner",
+   "user_requests": [
+    "moving cost budget",
+    "plan my move money",
+    "how much to save for moving",
+    "moving expenses breakdown",
+    "budget for relocation",
+    "help me plan a move budget",
+    "costs to move apartments",
+    "how much does it cost to move apartments",
+    "i'm relocating cross country next spring, what's the damage",
+    "moving out of my parents place, need a money plan",
+    "calc total expenses for my move in august",
+    "first apartment move budget help",
+    "relocation costs tracker"
+   ],
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Move-out budget</h4><p class=\"muted t-small\">Because tape and tears aren't free, <regex>user_name</regex>.</p><div class=\"between\"><span>Truck rental (1 day)</span><b>$180</b></div><div class=\"between\"><span>Boxes, tape, wrap</span><b>$65</b></div><div class=\"between\"><span>Movers (2 hrs)</span><b>$220</b></div><div class=\"between\"><span>Cleaning supplies</span><b>$40</b></div><div class=\"between\"><span>Pizza for helpers</span><b>$35</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$540</b></div><div class=\"callout info\">Book the truck midweek \u2014 rates drop, and the elevator lobby stays calm.</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Wedding Savings Tracker",
+   "user_requests": [
+    "wedding budget",
+    "how much do weddings cost",
+    "wedding money breakdown",
+    "help me budget a wedding",
+    "wedding spend plan",
+    "save for wedding costs",
+    "wedding budget checklist",
+    "how much do i need to save each month to pay for a wedding",
+    "getting hitched next year, help me plan the money side",
+    "wedding expenses are adding up, need a budget",
+    "my fiance and i need a savings schedule for the big day",
+    "plan our nuptials budget",
+    "need 2 save 30k for wedding, break it down"
+   ],
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Wedding budget \u00b7 small &amp; lovely</h4><p class=\"muted t-small\"><regex>user_name</regex>, 60 guests, one very good cake.</p><div class=\"between\"><span>Venue + ceremony</span><b>$3200</b></div><div class=\"between\"><span>Catering &amp; cake</span><b>$2800</b></div><div class=\"between\"><span>Photographer</span><b>$1400</b></div><div class=\"between\"><span>Attire</span><b>$600</b></div><div class=\"between\"><span>Flowers &amp; d\u00e9cor</span><b>$500</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$8500</b></div><div class=\"meter\"><span style=\"width:62%\"></span></div><p class=\"dim t-small\">Saved so far: $5,270 of $8,500.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Car Ownership Costs",
+   "user_requests": [
+    "car costs per year",
+    "budget for owning a car",
+    "how much does a car cost yearly",
+    "car expense breakdown",
+    "car budget plan",
+    "cost to run my car",
+    "yearly car budget",
+    "what does owning a car actually cost yearly",
+    "insurance gas repairs... add it all up for me",
+    "thinking abt buying a used car, what's the true monthly hit",
+    "car budget including payments and maintenance",
+    "should i budget for a new ride? figure the costs",
+    "yearly vehicle expense breakdown"
+   ],
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Car \u00b7 yearly running costs</h4><div class=\"grid two\"><div class=\"stat\"><div class=\"label\">Per month</div><div class=\"value\">$345<span class=\"unit\">avg</span></div></div><div class=\"stat\"><div class=\"label\">Per mile</div><div class=\"value\">$0.43</div></div></div><div class=\"between\"><span>Insurance</span><b>$1,240</b></div><div class=\"between\"><span>Fuel</span><b>$1,450</b></div><div class=\"between\"><span>Maintenance &amp; tyres</span><b>$900</b></div><div class=\"between\"><span>Registration &amp; fees</span><b>$180</b></div><div class=\"between\"><span>Parking</span><b>$360</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$4,130</b></div><p class=\"dim t-small\">Depreciation not included \u2014 that one stings quietly.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Small Business Monthly Budget",
+   "user_requests": [
+    "small business budget",
+    "budget for my shop",
+    "monthly expenses for small biz",
+    "run my business budget",
+    "biz money plan",
+    "business cost breakdown",
+    "how to budget a small business",
+    "my shop needs a monthly spending plan",
+    "freelance biz budget, revenue vs expenses",
+    "how do i budget my etsy store income",
+    "small biz cash flow budget please",
+    "track overhead for my startup each month",
+    "i run a bakery and need a budget"
+   ],
+   "html": "<div class=\"card\"><div class=\"row between\"><h4 class=\"card-title\">Small biz \u00b7 monthly</h4><span class=\"badge good\"><i class=\"dot\"></i>on track</span></div><div class=\"between\"><span>Rent &amp; utilities</span><b>$1,200</b></div><div class=\"between\"><span>Inventory</span><b>$1,800</b></div><div class=\"between\"><span>Payroll</span><b>$2,400</b></div><div class=\"between\"><span>Software &amp; SaaS</span><b>$150</b></div><div class=\"between\"><span>Ads &amp; marketing</span><b>$300</b></div><div class=\"between\"><span>Misc buffer</span><b>$150</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$6,000</b></div><div class=\"between dim t-small\"><span>Break-even sales</span><span>$9,600</span></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Travel Fund Split",
+   "user_requests": [
+    "travel budget",
+    "how much for a trip",
+    "budget my vacation",
+    "trip money breakdown",
+    "save for travel",
+    "vacation budget plan",
+    "what does a trip cost",
+    "splitting vacation costs between me and 3 friends",
+    "how much should each of us put in for the trip",
+    "group trip money plan, 5 ppl going to bali",
+    "travel savings budget for two",
+    "me and my partner wanna save for italy, split it",
+    "vacay fund breakdown"
+   ],
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Trip fund \u00b7 2 weeks</h4><p class=\"muted t-small\"><regex>user_name</regex>, one bag, zero regrets.</p><div class=\"between\"><span>Flights</span><b>$520</b></div><div class=\"between\"><span>Lodging (14 nights)</span><b>$1,120</b></div><div class=\"between\"><span>Food</span><b>$560</b></div><div class=\"between\"><span>Local transport</span><b>$180</b></div><div class=\"between\"><span>Activities</span><b>$300</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$2,680</b></div><div class=\"meter\"><span style=\"width:45%\"></span></div><p class=\"dim t-small\">$1,206 tucked away. Keep going, you're nearly half-wild.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Holiday Gift Budget",
+   "user_requests": [
+    "holiday gift budget",
+    "how much should i spend on xmas presents",
+    "christmas gift spending plan",
+    "budget for gifts this december",
+    "xmas prezzie budget",
+    "whats a good holiday gift budget for a family of 4",
+    "help me not overspend on christmas gifts",
+    "christmas presents budget so i don't go broke",
+    "how much to spend on gifts this december",
+    "holiday shopping cap, family of 6",
+    "xmas gift fund, i always overspend",
+    "budget for bday + holiday gifts",
+    "secret santa budget planner"
+   ],
+   "html": "<div class=\"card\"><h4>Holiday Gift Budget</h4><p class=\"t-small muted\">A plan for <regex>user_name</regex> \u2014 9 people, no panic buying.</p><div class=\"between\"><span>Immediate family (4)</span><b>$240</b></div><div class=\"between\"><span>Grandparents (2)</span><b>$80</b></div><div class=\"between\"><span>Friends &amp; exchanges (3)</span><b>$75</b></div><div class=\"between\"><span>Cards, wrap, postage</span><b>$25</b></div><div class=\"between\"><span>Buffer for \"just one more\"</span><b>$30</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$450</b></div><div class=\"chart\" style=\"margin-top:var(--s-4)\"><svg viewBox=\"0 0 220 60\"><g class=\"axis\"><line x1=\"0\" y1=\"55\" x2=\"220\" y2=\"55\"/></g><rect class=\"bar\" x=\"6\" y=\"25\" width=\"24\" height=\"30\"/><rect class=\"bar\" x=\"42\" y=\"45\" width=\"24\" height=\"10\"/><rect class=\"bar alt\" x=\"78\" y=\"46\" width=\"24\" height=\"9\"/><rect class=\"bar alt\" x=\"114\" y=\"52\" width=\"24\" height=\"3\"/><rect class=\"bar alt\" x=\"150\" y=\"51\" width=\"24\" height=\"4\"/></svg></div><p class=\"t-small dim\">Tallest bar wins the wallet. Nothing surprising there.</p><details class=\"acc\"><summary>Where this usually leaks</summary><div class=\"body\"><ul class=\"list\"><li>Shipping added at checkout</li><li>Gift wrap bought on a separate trip</li><li>The one extra present on Dec 23</li></ul></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Emergency Fund Builder",
+   "user_requests": [
+    "emergency fund plan",
+    "how big should my emergency fund be",
+    "rainy day savings budget",
+    "build a 6 month cushion",
+    "emergency fund calculator breakdown",
+    "how much do i need saved for emergencies",
+    "savings buffer plan please",
+    "how long to save 3 months of expenses",
+    "rainy day fund plan for me",
+    "i need a safety net, help me build one",
+    "emergency savings schedule, 6 months goal",
+    "building a cushion in case i lose my job",
+    "set aside cash for surprises budget"
+   ],
+   "html": "<div class=\"card\"><h4>Emergency Fund Builder</h4><p class=\"t-small muted\">Target: 6 months of essentials, built in 3 phases.</p><div class=\"grid two\"><div class=\"stat\"><span class=\"label\">Monthly essentials</span><span class=\"value\">$2,300</span></div><div class=\"stat\"><span class=\"label\">Target</span><span class=\"value\">$13,800</span></div></div><div class=\"between\"><span>Rent &amp; utilities</span><b>$1,450</b></div><div class=\"between\"><span>Food &amp; transport</span><b>$620</b></div><div class=\"between\"><span>Insurance &amp; phone</span><b>$230</b></div><hr class=\"divider\"><div class=\"between\"><b>6-month goal</b><b>$13,800</b></div><div class=\"meter\" style=\"margin-top:var(--s-4)\"><div class=\"progress\"><span style=\"width:32%\"></span></div></div><p class=\"t-small dim\">Phase 1 done: $4,400 banked. Keep going, <regex>user_name</regex>.</p><details class=\"tab\"><summary>Phase plan</summary><div class=\"body\"><ol class=\"list\"><li>1 month \u2014 $2,300</li><li>3 months \u2014 $6,900</li><li>6 months \u2014 $13,800</li></ol></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Laptop Replacement Plan",
+   "user_requests": [
+    "laptop fund plan",
+    "save up for a new laptop",
+    "how much should i budget for a laptop",
+    "computer upgrade savings",
+    "macbook budget plan",
+    "new computer fund breakdown",
+    "im saving for a laptop whats the plan",
+    "my macbook died, need to save for a new one",
+    "saving up for a 2k laptop, how many months",
+    "how much per paycheck for a new computer",
+    "plan to replace my old thinkpad by summer",
+    "laptop fund tracker",
+    "need a new notebook, whats the budget look like"
+   ],
+   "html": "<div class=\"card\"><h4>Laptop Replacement Plan</h4><p class=\"t-small muted\">Machine, then the boring bits that keep it alive.</p><div class=\"between\"><span>Laptop (mid-range)</span><b>$1,300</b></div><div class=\"between\"><span>Extended warranty / insurance</span><b>$120</b></div><div class=\"between\"><span>External drive for backups</span><b>$70</b></div><div class=\"between\"><span>Dock &amp; cables</span><b>$85</b></div><div class=\"between\"><span>Software licences</span><b>$45</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$1,620</b></div><div class=\"chart\" style=\"margin-top:var(--s-4)\"><svg viewBox=\"0 0 220 56\"><line class=\"guide\" x1=\"0\" y1=\"46\" x2=\"220\" y2=\"46\"/><rect class=\"bar\" x=\"8\" y=\"10\" width=\"30\" height=\"36\"/><rect class=\"bar alt\" x=\"50\" y=\"43\" width=\"30\" height=\"3\"/><rect class=\"bar alt\" x=\"92\" y=\"44\" width=\"30\" height=\"2\"/><rect class=\"bar alt\" x=\"134\" y=\"43\" width=\"30\" height=\"3\"/></svg></div><div class=\"legend\"><i></i> machine <i class=\"alt\"></i> supporting kit</div><details class=\"acc\"><summary>When to buy</summary><div class=\"body\"><p>Wait for the back-to-school or end-of-year cycle. Prices drop near model refreshes \u2014 patience pays about $150 here.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Pet Care Budget",
+   "user_requests": [
+    "pet budget",
+    "how much does a dog cost per month",
+    "cat expenses breakdown",
+    "budget for my dog",
+    "pet care costs monthly",
+    "what should i budget for a new puppy",
+    "pet spending plan",
+    "how much does a dog cost per month",
+    "vet bills food toys... budget for my puppy",
+    "new kitten expenses, help me plan",
+    "monthly spending for my cat including insurance",
+    "budget widget for pet ownership",
+    "got a rescue dog, what should i set aside"
+   ],
+   "html": "<div class=\"card\"><h4>Pet Care Budget</h4><p class=\"t-small muted\">One medium dog, one frugal human.</p><div class=\"between\"><span>Food &amp; treats</span><b>$70</b></div><div class=\"between\"><span>Vet checkups (amortised)</span><b>$35</b></div><div class=\"between\"><span>Flea, tick &amp; worming</span><b>$22</b></div><div class=\"between\"><span>Grooming</span><b>$28</b></div><div class=\"between\"><span>Insurance</span><b>$40</b></div><div class=\"between\"><span>Toys &amp; chewed shoes</span><b>$15</b></div><hr class=\"divider\"><div class=\"between\"><b>Monthly total</b><b>$210</b></div><div class=\"grid two\" style=\"margin-top:var(--s-4)\"><div class=\"stat\"><span class=\"label\">Annual</span><span class=\"value\">$2,520</span></div><div class=\"stat\"><span class=\"label\">Emergency vet fund</span><span class=\"value\">$1,000</span></div></div><div class=\"callout warn\">The emergency vet fund is not optional. Keep it separate, <regex>user_name</regex>.</div><details class=\"acc\"><summary>Trim without guilt</summary><div class=\"body\"><ul class=\"list\"><li>Grooming every 8 weeks, not 4</li><li>Buy food in the large bag</li><li>Ask the vet about bundled vaccine plans</li></ul></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Baby Arrival Budget",
+   "user_requests": [
+    "baby budget",
+    "first year baby costs",
+    "how much to budget for a new baby",
+    "baby gear budget breakdown",
+    "nursery and baby expenses",
+    "money plan for newborn",
+    "what do i need to save before baby comes",
+    "how much do we need before the baby comes",
+    "newborn expenses budget for first year",
+    "expecting in 7 months, help us save",
+    "diapers daycare gear... add it up",
+    "first baby money plan",
+    "prepping financially for our little one"
+   ],
+   "html": "<div class=\"card\"><h4>Baby Arrival Budget</h4><p class=\"t-small muted\">Setup costs plus the first three months of running.</p><div class=\"between\"><span>Nursery &amp; furniture</span><b>$420</b></div><div class=\"between\"><span>Pram &amp; car seat</span><b>$650</b></div><div class=\"between\"><span>Clothing bundle</span><b>$150</b></div><div class=\"between\"><span>Feeding gear</span><b>$200</b></div><div class=\"between\"><span>First 3 months of nappies</span><b>$180</b></div><div class=\"between\"><span>Medical buffer</span><b>$300</b></div><hr class=\"divider\"><div class=\"between\"><b>Total setup</b><b>$1,900</b></div><div class=\"meter\" style=\"margin-top:var(--s-4)\"><div class=\"progress\"><span style=\"width:55%\"></span></div></div><p class=\"t-small dim\">Halfway saved. Good pace, <regex>user_name</regex>.</p><details class=\"tab\"><summary>Skip or borrow</summary><div class=\"body\"><p>Borrow: bassinet, baby bath, travel cot. Buy new: car seat, mattress. Everything else is negotiable.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Hobby & Craft Budget",
+   "user_requests": [
+    "hobby budget",
+    "how much do i spend on my hobbies",
+    "craft supplies budget",
+    "monthly spending on fun stuff",
+    "budget for my hobbies please",
+    "my hobby costs are out of control",
+    "fun money budget breakdown",
+    "i spend too much on yarn, help me budget",
+    "monthly allowance for my painting supplies",
+    "budget for my woodworking hobby",
+    "knitting and crochet spending limit",
+    "how do i cap my craft store hauls",
+    "hobby cash plan, i collect sneakers"
+   ],
+   "html": "<div class=\"card\"><h4>Hobby &amp; Craft Budget</h4><p class=\"t-small muted\">Keeping the joy, capping the pile of unused supplies.</p><div class=\"between\"><span>Materials &amp; kits</span><b>$60</b></div><div class=\"between\"><span>Tools &amp; equipment</span><b>$25</b></div><div class=\"between\"><span>Classes &amp; workshops</span><b>$30</b></div><div class=\"between\"><span>Books &amp; patterns</span><b>$12</b></div><div class=\"between\"><span>Storage &amp; shelves</span><b>$8</b></div><hr class=\"divider\"><div class=\"between\"><b>Monthly cap</b><b>$135</b></div><div class=\"callout info\"><kbd>$135</kbd> is the ceiling, not the goal. Leftover rolls into next month.</div><div class=\"chart\" style=\"margin-top:var(--s-4)\"><svg viewBox=\"0 0 220 50\"><rect class=\"bar\" x=\"6\" y=\"14\" width=\"34\" height=\"26\"/><rect class=\"bar alt\" x=\"52\" y=\"39\" width=\"34\" height=\"4\"/><rect class=\"bar alt\" x=\"98\" y=\"37\" width=\"34\" height=\"6\"/><rect class=\"bar alt\" x=\"144\" y=\"45\" width=\"34\" height=\"2\"/></svg></div><details class=\"acc\"><summary>Rule that actually works</summary><div class=\"body\"><p>Finish the last project before starting a new one. Your shelf, your wallet, and your future self all agree.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "help me budget for a streaming subscription audit",
+    "I'm spending too much on streaming services",
+    "make a budget for cutting streaming costs",
+    "streaming budget audit",
+    "how much do my streaming subs cost?",
+    "budget my tv subscriptions",
+    "I need a plan to lower my streaming bills",
+    "how many streaming services am i paying for, cut costs",
+    "netflix hulu disney... too many, help me trim",
+    "annual subscription spending review",
+    "which subs should i cancel to save money",
+    "audit my monthly streaming bills",
+    "figure out my tv subscription expenses, its outta hand"
+   ],
+   "title": "Streaming Subscription Audit",
+   "html": "<div class=\"card\"><h4>Streaming Subscriptions</h4><div class=\"between\"><span>Netflix</span><b>$15.99</b></div><div class=\"between\"><span>Disney+</span><b>$7.99</b></div><div class=\"between\"><span>Hulu</span><b>$7.99</b></div><div class=\"between\"><span>HBO Max</span><b>$15.99</b></div><div class=\"between\"><span>Spotify</span><b>$10.99</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$58.95</b></div><div class=\"callout info\"><p class=\"t-small\">Cutting two could save you $24/mo. That's a nice dinner out, <regex>user_name</regex>.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "make a budget for a weekend getaway",
+    "weekend trip budget",
+    "I need a budget for a 2-day trip",
+    "plan costs for a weekend trip",
+    "budget for a short vacation",
+    "how much for a weekend escape?",
+    "weekend getaway spending plan",
+    "2 day trip costs, hotel + gas + food",
+    "cheap weekend escape money plan",
+    "how much for a 3 day road trip getaway",
+    "quick vacay budget for me and my gf",
+    "plan a budget for sat-sun trip to the mountains",
+    "mini vacation spending tracker"
+   ],
+   "title": "Weekend Getaway Budget",
+   "html": "<div class=\"card\"><h4>Weekend Getaway</h4><div class=\"between\"><span>Gas / Transport</span><b>$80</b></div><div class=\"between\"><span>Lodging (1 night)</span><b>$120</b></div><div class=\"between\"><span>Food & Drinks</span><b>$100</b></div><div class=\"between\"><span>Activities</span><b>$50</b></div><div class=\"between\"><span>Souvenirs</span><b>$30</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$380</b></div><div class=\"callout good\"><p class=\"t-small\">You could trim souvenirs to $10 and still have a great time, <regex>user_name</regex>.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for a new gaming pc",
+    "how much should I save for a gaming rig?",
+    "gaming computer budget",
+    "plan my gaming pc build costs",
+    "I need a budget for building a pc",
+    "budget for custom pc",
+    "gaming rig savings plan",
+    "how much for a 1500 dollar rig, part by part",
+    "building my first setup, need a spending plan",
+    "gpu cpu ram... budget the whole thing",
+    "saving for a custom pc, break it down",
+    "budget widget for my battlestation",
+    "pc parts budget, want it under 2 grand"
+   ],
+   "title": "Gaming PC Build Budget",
+   "html": "<div class=\"card\"><h4>Gaming PC Build</h4><div class=\"between\"><span>CPU</span><b>$200</b></div><div class=\"between\"><span>GPU</span><b>$400</b></div><div class=\"between\"><span>Motherboard</span><b>$150</b></div><div class=\"between\"><span>RAM</span><b>$80</b></div><div class=\"between\"><span>Storage</span><b>$100</b></div><div class=\"between\"><span>Case & PSU</span><b>$120</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$1050</b></div><div class=\"callout info\"><p class=\"t-small\">Prices fluctuate, so check current deals before buying, <regex>user_name</regex>.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for a music festival",
+    "festival cost breakdown",
+    "how much to save for a festival?",
+    "music festival budget",
+    "plan spending for a festival weekend",
+    "budget for concert festival",
+    "I need a festival budget",
+    "coachella is pricey, help me budget",
+    "festival tickets + camping + food, whats the total",
+    "how much to save for a 3 day fest",
+    "planning for lollapalooza, need a money plan",
+    "budget for festival season, 2 events",
+    "money i need for a music fest weekend"
+   ],
+   "title": "Music Festival Budget",
+   "html": "<div class=\"card\"><h4>Music Festival</h4><div class=\"between\"><span>Tickets</span><b>$300</b></div><div class=\"between\"><span>Camping / Hotel</span><b>$200</b></div><div class=\"between\"><span>Travel</span><b>$150</b></div><div class=\"between\"><span>Food & Drinks</span><b>$150</b></div><div class=\"between\"><span>Merch</span><b>$50</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$850</b></div><div class=\"callout warn\"><p class=\"t-small\">Don't forget earplugs\u2014they're cheap but priceless, <regex>user_name</regex>.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for home office setup",
+    "how much for a home office?",
+    "home office furniture budget",
+    "plan my home office expenses",
+    "I need a budget for a home office",
+    "home office setup costs",
+    "budget for remote work setup",
+    "how much to furnish a work-from-home office?",
+    "wfh setup costs pls",
+    "I need a desk chair monitor and stuff for working from home, what's the damage?",
+    "office setup $$$",
+    "budget breakdown for remote work station",
+    "starting a home office from scratch, how much should I save"
+   ],
+   "title": "Home Office Setup Budget",
+   "html": "<div class=\"card\"><h4>Home Office Setup</h4><div class=\"between\"><span>Desk</span><b>$250</b></div><div class=\"between\"><span>Chair</span><b>$300</b></div><div class=\"between\"><span>Monitor</span><b>$200</b></div><div class=\"between\"><span>Keyboard & Mouse</span><b>$100</b></div><div class=\"between\"><span>Lighting</span><b>$50</b></div><div class=\"between\"><span>Decor</span><b>$100</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$1000</b></div><div class=\"callout info\"><p class=\"t-small\">A good chair is worth the splurge\u2014your back will thank you, <regex>user_name</regex>.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for learning guitar",
+    "guitar lessons and gear budget",
+    "how much to start guitar?",
+    "I want to learn guitar, budget?",
+    "cost to start playing guitar",
+    "guitar beginner budget",
+    "plan for guitar expenses",
+    "cost to pick up guitar as a beginner",
+    "how much for a starter guitar + lessons?",
+    "guitr budget help",
+    "what do I need to spend to learn guitar",
+    "startin guitar what it cost",
+    "total price to get into playing guitar"
+   ],
+   "title": "Guitar Learning Budget",
+   "html": "<div class=\"card\"><h4>Guitar Learning</h4><div class=\"between\"><span>Guitar</span><b>$200</b></div><div class=\"between\"><span>Amp</span><b>$100</b></div><div class=\"between\"><span>Lessons (3 months)</span><b>$240</b></div><div class=\"between\"><span>Accessories</span><b>$60</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$600</b></div><div class=\"callout good\"><p class=\"t-small\">You could start with just a guitar and free YouTube lessons, <regex>user_name</regex>.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "I want to start doing my own gel manicures at home, what would the startup cost be?",
+    "how much to set up a home nail salon for personal use",
+    "nail stuff budget?",
+    "I'm tired of paying for manicures every two weeks, what's the upfront cost to DIY?",
+    "home gel manicure kit budget",
+    "cost of switching to at-home nail care",
+    "DIY nail setup expenses pls",
+    "how much for a DIY gel nail setup?",
+    "starting my own manicures at home, startup costs?",
+    "nail stuff budget",
+    "what would it cost to stop going to the salon and do nails myself",
+    "gel manicure kit price range",
+    "budget 4 home nail care"
+   ],
+   "title": "At-Home Nail Care Kit",
+   "html": "<div class=\"card\"><h4>At-Home Nail Care Kit</h4><div class=\"between\"><span>Gel lamp + base/top coats</span><b>$65</b></div><div class=\"between\"><span>Polish set (6 colors)</span><b>$42</b></div><div class=\"between\"><span>Tools (files, cuticle pusher, buffer)</span><b>$22</b></div><div class=\"between\"><span>Removal kit (acetone, wraps)</span><b>$18</b></div><div class=\"between\"><span>Hand care (lotion, cuticle oil)</span><b>$15</b></div><hr class=\"divider\"><div class=\"between\"><b>Total upfront</b><b>$162</b></div><p class=\"t-small dim\">At $45 per salon visit, this pays for itself in about 4 sessions. After that, it's basically free manicures for <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how much does a balcony vegetable garden cost to start?",
+    "I want to grow tomatoes and herbs on my balcony, what's the budget?",
+    "balcony garden startup",
+    "cost to start container gardening on a small balcony",
+    "what do I need to spend to get a balcony veggie patch going?",
+    "balcony garden budget pls",
+    "starting a small balcony garden, what am I looking at?",
+    "cost to grow veggies on my balcony",
+    "how much for container gardening on a small balcony?",
+    "balcony garden start up cost",
+    "whats the budget for a patio veggie garden",
+    "I want tomatoes and herbs on my balcony, how much money do I need",
+    "prices for balcony gardening supplies"
+   ],
+   "title": "Balcony Vegetable Garden",
+   "html": "<div class=\"card\"><h4>Balcony Vegetable Garden</h4><div class=\"between\"><span>Containers &amp; pots</span><b>$35</b></div><div class=\"between\"><span>Potting mix (2 bags)</span><b>$20</b></div><div class=\"between\"><span>Seeds &amp; seedlings</span><b>$18</b></div><div class=\"between\"><span>Fertilizer &amp; plant food</span><b>$12</b></div><div class=\"between\"><span>Watering can &amp; small tools</span><b>$15</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$100</b></div><p class=\"t-small dim\">First harvest usually covers the cost. After that, it's fresh herbs for pennies. <regex>user_name</regex>, your balcony is about to get productive.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "what does it cost to start a podcast?",
+    "podcast equipment and hosting budget",
+    "I want to start a podcast, what's the minimum spend?",
+    "podcast startup costs pls",
+    "how much for a basic podcast setup?",
+    "starting a podcast, budget breakdown",
+    "podcast gear and hosting expenses",
+    "how much to launch a podcast?",
+    "cost of podcasting equipment for beginners",
+    "podcast setup budget plz",
+    "what do I need to buy to start a podcast and how much",
+    "start a podcast what will it cost me",
+    "budget for mic interface and hosting for a new podcast"
+   ],
+   "title": "Podcast Starter Kit",
+   "html": "<div class=\"card\"><h4>Podcast Starter Kit</h4><div class=\"between\"><span>USB microphone</span><b>$65</b></div><div class=\"between\"><span>Headphones</span><b>$30</b></div><div class=\"between\"><span>Pop filter &amp; stand</span><b>$20</b></div><div class=\"between\"><span>Hosting (first year)</span><b>$60</b></div><div class=\"between\"><span>Editing software (annual)</span><b>$45</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$220</b></div><p class=\"t-small dim\">That's the no-frills version. You can upgrade later once <regex>user_name</regex> gets famous.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how much to set up a home coffee bar?",
+    "coffee station budget for espresso and pour over",
+    "I want to stop buying coffee out, what's the home setup cost?",
+    "home coffee bar budget",
+    "cost of a decent home espresso setup",
+    "coffee gear budget pls",
+    "starting a home coffee station, what do I need to spend?",
+    "how much to build a coffee station at home?",
+    "cost to set up espresso bar at home",
+    "home coffee setup $",
+    "whats the budget for a nice home coffee bar",
+    "I wanna make lattes at home, how much to spend",
+    "starting a home coffee corner, price?"
+   ],
+   "title": "Home Coffee Bar",
+   "html": "<div class=\"card\"><h4>Home Coffee Bar</h4><div class=\"between\"><span>Espresso machine</span><b>$250</b></div><div class=\"between\"><span>Burr grinder</span><b>$90</b></div><div class=\"between\"><span>Scale &amp; tamper</span><b>$35</b></div><div class=\"between\"><span>Milk frother</span><b>$25</b></div><div class=\"between\"><span>Mugs &amp; storage</span><b>$30</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$430</b></div><p class=\"t-small dim\">If <regex>user_name</regex> buys one $5 latte a day, this pays off in about 3 months. Then it's pure caffeine profit.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how much to start a book club?",
+    "book club budget for snacks and books",
+    "I want to host a monthly book club, what's the cost?",
+    "book club startup budget",
+    "cost to run a book club for a year",
+    "book club expenses pls",
+    "starting a book club, what should I budget?",
+    "cost to start a book club?",
+    "how much to launch a reading group",
+    "bookclub budget",
+    "what do I need to spend to start a book club",
+    "starting a book club, what's the financial cost",
+    "budget for first few months of a book club"
+   ],
+   "title": "Book Club Launch",
+   "html": "<div class=\"card\"><h4>Book Club Launch</h4><div class=\"between\"><span>First 3 months' books (host copy)</span><b>$45</b></div><div class=\"between\"><span>Snacks &amp; drinks (monthly)</span><b>$30</b></div><div class=\"between\"><span>Name tags &amp; notebook</span><b>$10</b></div><div class=\"between\"><span>Cozy throw pillows (optional)</span><b>$25</b></div><div class=\"between\"><span>Wine (essential)</span><b>$20</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$130</b></div><p class=\"t-small dim\">After the first month, you can rotate hosts. <regex>user_name</regex>, your living room is now a literary salon.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how much to build a home gym?",
+    "home gym equipment budget",
+    "I want to work out at home, what's the basic setup cost?",
+    "home gym startup budget pls",
+    "cost of a home gym with weights and bench",
+    "starting a home gym, what do I need to spend?",
+    "home gym budget breakdown",
+    "cost to set up a home gym?",
+    "how much for home workout equipment",
+    "home gym budget",
+    "what should I spend on a garage gym",
+    "I want to work out at home, how much money needed",
+    "price to build a basic home gym"
+   ],
+   "title": "Home Gym Setup",
+   "html": "<div class=\"card\"><h4>Home Gym Setup</h4><div class=\"between\"><span>Adjustable dumbbells</span><b>$180</b></div><div class=\"between\"><span>Bench</span><b>$120</b></div><div class=\"between\"><span>Yoga mat &amp; resistance bands</span><b>$35</b></div><div class=\"between\"><span>Pull-up bar</span><b>$25</b></div><div class=\"between\"><span>Kettlebell (one)</span><b>$40</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$400</b></div><p class=\"t-small dim\">That's about 8 months of a $50 gym membership. After that, <regex>user_name</regex> works out for free, in pajamas.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Backyard Chicken Coop Budget",
+   "user_requests": [
+    "budget for starting a backyard chicken coop",
+    "how much to set up chickens in my yard",
+    "chicken coop startup costs pls",
+    "i want hens. what's the damage to my wallet",
+    "coop, feed, the whole thing - budget it",
+    "backyard eggs budget breakdown",
+    "costs for 4 hens and a coop?",
+    "cost to start raising chickens in my yard",
+    "how much for a chicken coop and supplies?",
+    "chicken coop startup $",
+    "whats the budget for backyard chickens",
+    "I want fresh eggs, how much to get started with chickens",
+    "price breakdown for a small backyard flock"
+   ],
+   "html": "<div class=\"card\"><h4>Backyard Chicken Coop</h4><p class=\"muted t-small\">Four hens, one sturdy coop. Prices are typical mid-range, <regex>user_name</regex>.</p><div class=\"between\"><span>Coop kit (4 birds)</span><b>$340</b></div><div class=\"between\"><span>Feeders &amp; waterer</span><b>$45</b></div><div class=\"between\"><span>Chick feed (first 8 wks)</span><b>$38</b></div><div class=\"between\"><span>Layer feed, 50 lb bag</span><b>$24</b></div><div class=\"between\"><span>Bedding (pine shavings)</span><b>$18</b></div><div class=\"between\"><span>Heat lamp &amp; bulb</span><b>$32</b></div><div class=\"between\"><span>Grit &amp; oyster shell</span><b>$14</b></div><hr class=\"divider\"><div class=\"between\"><b>Startup total</b><b>$511</b></div><details class=\"acc\"><summary>Ongoing &amp; honest notes</summary><div class=\"body\"><ul class=\"list\"><li>Feed runs about $12/month for four hens.</li><li>Expect a few weeks with zero eggs, then a happy surplus.</li><li>Check local rules on flock size before you build.</li></ul></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Bike Commute Setup Budget",
+   "user_requests": [
+    "cost to start commuting by bike",
+    "bike commute gear budget",
+    "what do i need to spend to ride to work",
+    "commuter bike setup costs",
+    "budget for biking to the office",
+    "how much for a safe bike commute kit",
+    "bike to work - what's it gonna run me",
+    "cost to start biking to work?",
+    "how much to commute by bicycle",
+    "bike commuting budget",
+    "what do I need to spend to bike commute",
+    "starting to ride bike to office, how much money",
+    "budget for a commuter bike and gear"
+   ],
+   "html": "<div class=\"card\"><h4>Bike Commute Setup</h4><p class=\"muted t-small\">One solid ride, geared for rain and dark mornings.</p><div class=\"between\"><span>Used commuter bike</span><b>$420</b></div><div class=\"between\"><span>Helmet</span><b>$65</b></div><div class=\"between\"><span>Front &amp; rear lights</span><b>$48</b></div><div class=\"between\"><span>U-lock</span><b>$55</b></div><div class=\"between\"><span>Fenders</span><b>$40</b></div><div class=\"between\"><span>Rack &amp; pannier</span><b>$95</b></div><div class=\"between\"><span>Tune-up &amp; spare tube</span><b>$70</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$793</b></div><div class=\"callout info\"><p class=\"t-small\">A $90/month transit pass pays this back in about nine months, <regex>user_name</regex>.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Seed Starting Season Budget",
+   "user_requests": [
+    "budget for starting seeds indoors",
+    "seed starting supplies cost",
+    "what does it cost to grow from seed",
+    "indoor seed setup budget",
+    "seed trays, lights, soil - total please",
+    "cheap seed starting plan",
+    "how much for a seedling station",
+    "how much to start seeds indoors?",
+    "cost for seed starting supplies",
+    "seed starting budget",
+    "whats the budget for growing from seed",
+    "I want to start my own seedlings, how much to spend",
+    "price for lights trays and seeds to start plants"
+   ],
+   "html": "<div class=\"card\"><h4>Seed Starting Season</h4><p class=\"muted t-small\">Enough to raise a few dozen transplants before spring.</p><div class=\"between\"><span>Seed packets (12)</span><b>$42</b></div><div class=\"between\"><span>Seed-starting mix</span><b>$16</b></div><div class=\"between\"><span>Trays &amp; cells</span><b>$22</b></div><div class=\"between\"><span>Grow light + timer</span><b>$58</b></div><div class=\"between\"><span>Heat mat</span><b>$30</b></div><div class=\"between\"><span>Labels &amp; markers</span><b>$8</b></div><div class=\"between\"><span>Pots for transplanting</span><b>$19</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$195</b></div><details class=\"acc\"><summary>Save a little</summary><div class=\"body\"><p class=\"t-small\">A sunny windowsill replaces the grow light, and egg cartons replace trays. Drops this to about $95.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Language Class Budget",
+   "user_requests": [
+    "budget for learning a new language",
+    "what does a language course cost",
+    "spanish class + app budget",
+    "language study costs breakdown",
+    "budget to actually get conversational",
+    "tutor vs app - whats the spend",
+    "how much to learn french this year",
+    "cost to learn a new language?",
+    "how much for language lessons",
+    "language learning budget",
+    "what should I budget for Spanish classes",
+    "I want to become fluent, how much money will it take",
+    "price of language classes and apps"
+   ],
+   "html": "<div class=\"card\"><h4>Language Class Plan</h4><p class=\"muted t-small\">Six months of steady practice, mixed self-study and live speaking.</p><div class=\"between\"><span>App subscription (6 mo)</span><b>$54</b></div><div class=\"between\"><span>Community class</span><b>$180</b></div><div class=\"between\"><span>Tutor, 8 sessions</span><b>$200</b></div><div class=\"between\"><span>Textbook &amp; workbook</span><b>$45</b></div><div class=\"between\"><span>Flashcard app (one-time)</span><b>$12</b></div><div class=\"between\"><span>Notebook &amp; pens</span><b>$9</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$500</b></div><div class=\"callout good\"><p class=\"t-small\">Live speaking is where the money works hardest. Keep that line, trim the rest.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Home Brew Beer Budget",
+   "user_requests": [
+    "budget for brewing beer at home",
+    "homebrew starter costs",
+    "whats it cost to make my own beer",
+    "beer brewing equipment budget",
+    "extract brew setup price",
+    "budget: kettle to first pint",
+    "cost to brew 5 gallons at home",
+    "how much to start brewing beer at home?",
+    "cost of homebrew equipment",
+    "home brewing budget",
+    "what do I need to spend to brew my own beer",
+    "starting homebrewing, how much money",
+    "price for a beginner beer brewing kit"
+   ],
+   "html": "<div class=\"card\"><h4>Home Brew, First Batch</h4><p class=\"muted t-small\">Five gallons of extract brew, minus bottles you already have.</p><div class=\"between\"><span>Brew kettle (5 gal)</span><b>$70</b></div><div class=\"between\"><span>Fermenting bucket &amp; lid</span><b>$28</b></div><div class=\"between\"><span>Air lock &amp; stopper</span><b>$6</b></div><div class=\"between\"><span>Hydrometer &amp; tube</span><b>$18</b></div><div class=\"between\"><span>Bottling wand &amp; siphon</span><b>$26</b></div><div class=\"between\"><span>Sanitizer</span><b>$12</b></div><div class=\"between\"><span>Ingredient kit</span><b>$45</b></div><div class=\"between\"><span>Caps &amp; capper</span><b>$30</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$235</b></div><p class=\"dim t-small\">Roughly 48 bottles. The next batch costs about $57.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Winter Gear Refresh Budget",
+   "user_requests": [
+    "budget to refresh my winter clothes",
+    "new coat boots and layers - cost",
+    "winter wardrobe budget",
+    "what to spend on cold weather gear",
+    "winter gear shopping list with prices",
+    "rebuild my winter kit cheaply",
+    "coat, boots, gloves - total?",
+    "how much to buy new winter clothes?",
+    "cost to update my cold weather wardrobe",
+    "winter gear budget",
+    "what should I spend on a new winter coat and boots",
+    "need warmer clothes, how much money",
+    "budget for winter essentials"
+   ],
+   "html": "<div class=\"card\"><h4>Winter Gear Refresh</h4><p class=\"muted t-small\">Replace the worn pieces without buying a whole new wardrobe.</p><div class=\"between\"><span>Insulated coat</span><b>$190</b></div><div class=\"between\"><span>Waterproof boots</span><b>$125</b></div><div class=\"between\"><span>Wool socks (3 pr)</span><b>$36</b></div><div class=\"between\"><span>Thermal base layers (2)</span><b>$58</b></div><div class=\"between\"><span>Gloves &amp; hat</span><b>$44</b></div><div class=\"between\"><span>Scarf</span><b>$22</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$475</b></div><details class=\"acc\"><summary>Stretch it further</summary><div class=\"body\"><ul class=\"list\"><li>Buy boots and coat in late winter sales.</li><li>One good coat beats three cheap ones, <regex>user_name</regex>.</li></ul></div></details></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "Plan my standing desk budget.",
+    "how much for a standing desk setup?",
+    "Standing desk cost breakdown please",
+    "I need a budget for a home standing desk",
+    "What's the total for a standing desk and accessories?",
+    "standing desk budget calc",
+    "Help me plan standing desk spending",
+    "how much for a standing desk setup?",
+    "cost of a sit stand desk and accessories",
+    "standing desk budget",
+    "what do I need to spend for an adjustable desk",
+    "I want to stand while working, how much money",
+    "price for ergonomic standing workstation"
+   ],
+   "title": "Standing Desk Setup Budget",
+   "html": "<div class=\"card\"><h4>Standing Desk Setup Budget</h4><div class=\"between\"><span>Adjustable desk frame</span><b>$350</b></div><div class=\"between\"><span>Solid wood top</span><b>$120</b></div><div class=\"between\"><span>Monitor arm</span><b>$80</b></div><div class=\"between\"><span>Anti-fatigue mat</span><b>$40</b></div><div class=\"between\"><span>Cable management kit</span><b>$25</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$615</b></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "Budget for a first apartment kitchen.",
+    "What do I need to spend on kitchen stuff for a new apartment?",
+    "kitchen startup budget",
+    "How much to outfit a kitchen from scratch?",
+    "Plan my kitchen essentials budget",
+    "apartment kitchen shopping list budget",
+    "Cost to set up a basic kitchen",
+    "how much to stock a kitchen for a first apartment?",
+    "cost to furnish my first kitchen",
+    "first apt kitchen budget",
+    "what do I need to buy for a new kitchen and how much",
+    "moving into my first place, kitchen stuff costs?",
+    "budget for plates pots and pans for new apartment"
+   ],
+   "title": "First Apartment Kitchen Budget",
+   "html": "<div class=\"card\"><h4>First Apartment Kitchen Budget</h4><div class=\"between\"><span>Cookware set</span><b>$150</b></div><div class=\"between\"><span>Knife set + block</span><b>$70</b></div><div class=\"between\"><span>Dinnerware for 4</span><b>$45</b></div><div class=\"between\"><span>Glassware &amp; mugs</span><b>$30</b></div><div class=\"between\"><span>Utensils &amp; gadgets</span><b>$35</b></div><div class=\"between\"><span>Storage containers</span><b>$25</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$355</b></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "Monthly budget for a cat.",
+    "What does a cat cost each month?",
+    "cat expenses per month",
+    "How much to budget for a cat monthly?",
+    "Planning monthly cat costs",
+    "cat budget breakdown",
+    "monthly cost of owning a cat",
+    "how much do ppl usually spend a month on their cat",
+    "cat budget?? mine eats like a king lol",
+    "monthly expenses for keeping a kitty",
+    "wanna track what my cat costs me every month",
+    "budgt for cat food litter vet n toys",
+    "whats a realistic monthly number for one cat"
+   ],
+   "title": "Monthly Cat Care Budget",
+   "html": "<div class=\"card\"><h4>Monthly Cat Care Budget</h4><div class=\"between\"><span>Dry &amp; wet food</span><b>$40</b></div><div class=\"between\"><span>Litter</span><b>$20</b></div><div class=\"between\"><span>Treats &amp; dental chews</span><b>$10</b></div><div class=\"between\"><span>Flea &amp; tick prevention</span><b>$15</b></div><div class=\"between\"><span>Vet visit savings</span><b>$25</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$110</b></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "Budget for a weekend camping trip.",
+    "How much for a camping weekend?",
+    "camping trip cost",
+    "Plan camping expenses",
+    "weekend camping budget",
+    "Cost of a 2-night camping trip",
+    "camping gear and fees budget",
+    "camping 2 nights, whats that gonna run me",
+    "how much cash do i need for a weekend in the woods",
+    "budgt for a 2 day camping trip w the fam",
+    "planning a sat-sun camping thing, cost breakdown?",
+    "tent camping weekend costs",
+    "what should i set aside for camping this weekend"
+   ],
+   "title": "Weekend Camping Trip Budget",
+   "html": "<div class=\"card\"><h4>Weekend Camping Trip Budget</h4><div class=\"between\"><span>Campsite fees (2 nights)</span><b>$60</b></div><div class=\"between\"><span>Food &amp; drinks</span><b>$45</b></div><div class=\"between\"><span>Firewood &amp; ice</span><b>$20</b></div><div class=\"between\"><span>Gas (round trip)</span><b>$35</b></div><div class=\"between\"><span>Permit or parking</span><b>$15</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$175</b></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "Budget for a mountain bike tune-up.",
+    "How much for bike maintenance?",
+    "bike service cost",
+    "Plan my bike repair budget",
+    "mountain bike tune-up price",
+    "What to budget for bike upkeep?",
+    "annual bike maintenance budget",
+    "my mtb needs a tune up, how much should i budget",
+    "cost of servicing a mountain bike",
+    "bike shop wants my money, what do tune ups cost",
+    "budgt for mtb maintenance",
+    "how much is a full tune up on a mountain bike",
+    "gettin my trail bike fixed, what to expect to pay"
+   ],
+   "title": "Mountain Bike Tune-Up Budget",
+   "html": "<div class=\"card\"><h4>Mountain Bike Tune-Up Budget</h4><div class=\"between\"><span>Basic tune-up labor</span><b>$75</b></div><div class=\"between\"><span>New chain</span><b>$30</b></div><div class=\"between\"><span>Brake pads (pair)</span><b>$25</b></div><div class=\"between\"><span>Gear cable &amp; housing</span><b>$15</b></div><div class=\"between\"><span>Tire sealant</span><b>$10</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$155</b></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "Monthly budget for a bookworm.",
+    "How much do books cost monthly?",
+    "book buying budget",
+    "Plan my reading expenses",
+    "monthly book budget",
+    "Cost of a book habit",
+    "budget for books and audiobooks",
+    "how much do i spend on books each month",
+    "budgt for book buying addiction",
+    "monthly budget for a heavy reader",
+    "i read like 5 books a month, whats that cost",
+    "track my book spend monthly",
+    "money for books every month"
+   ],
+   "title": "Monthly Bookworm Budget",
+   "html": "<div class=\"card\"><h4>Monthly Bookworm Budget</h4><div class=\"between\"><span>2 new paperbacks</span><b>$30</b></div><div class=\"between\"><span>1 audiobook credit</span><b>$15</b></div><div class=\"between\"><span>Used book splurge</span><b>$10</b></div><div class=\"between\"><span>Book club snacks</span><b>$15</b></div><div class=\"between\"><span>Library late fees (oops)</span><b>$5</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$75</b></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for a small birthday party",
+    "how much for kid's bday bash?",
+    "birthday party costs",
+    "planning a birthday party budget",
+    "party budget for 20 guests",
+    "cheap birthday party ideas budget",
+    "budget breakdown for birthday party",
+    "throwing a lil bday party, what should i spend",
+    "budgt for a kids birthday",
+    "how much for a small party w cake n decorations",
+    "bday bash costs for like 15 ppl",
+    "planning my friends surprise party, budget ideas",
+    "whats reasonable to spend on a birthday party"
+   ],
+   "title": "Birthday Party Budget",
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Birthday Party Budget</h4>\n  <p class=\"muted t-small\">A simple plan for a small gathering at home.</p>\n  <div class=\"between\"><span>Decorations</span><b>$30</b></div>\n  <div class=\"between\"><span>Food & snacks</span><b>$80</b></div>\n  <div class=\"between\"><span>Drinks</span><b>$25</b></div>\n  <div class=\"between\"><span>Cake</span><b>$35</b></div>\n  <div class=\"between\"><span>Paper goods</span><b>$15</b></div>\n  <hr class=\"divider\">\n  <div class=\"between\"><b>Total</b><b>$185</b></div>\n  <p class=\"dim t-small\">Tips: keep it potluck-style to trim the food line. Leftover cake is a breakfast food, right?</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for starting a podcast",
+    "podcast equipment costs",
+    "how much to start a podcast?",
+    "podcast setup budget",
+    "budget for podcast mic and stuff",
+    "podcast starter kit cost",
+    "small budget podcast gear",
+    "want to start a podcast, what do i need to spend",
+    "budgt for podcasting gear",
+    "mic interface n stuff, how much to get going",
+    "cost to launch a podcast from scratch",
+    "podcast setup on a budget??",
+    "how much to kick off my own show"
+   ],
+   "title": "Podcast Starter Kit Budget",
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Podcast Starter Kit Budget</h4>\n  <p class=\"muted t-small\">Everything you need to sound decent without going broke.</p>\n  <div class=\"between\"><span>USB microphone</span><b>$70</b></div>\n  <div class=\"between\"><span>Headphones</span><b>$40</b></div>\n  <div class=\"between\"><span>Pop filter</span><b>$15</b></div>\n  <div class=\"between\"><span>Editing software (annual)</span><b>$60</b></div>\n  <div class=\"between\"><span>Hosting (annual)</span><b>$120</b></div>\n  <hr class=\"divider\">\n  <div class=\"between\"><b>Total</b><b>$305</b></div>\n  <p class=\"dim t-small\">Use free software for the first month. Your voice is the real investment.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for home coffee bar",
+    "coffee bar setup cost",
+    "how much for espresso machine?",
+    "home coffee station budget",
+    "budget for coffee gear",
+    "coffee bar essentials cost",
+    "small coffee bar budget",
+    "building a coffee station at home, budget?",
+    "budgt for espresso setup at home",
+    "how much for a home coffee corner w machine n grinder",
+    "wanna make fancy coffee at home, what will it cost",
+    "coffee bar setup costs",
+    "price out a home cafe thing"
+   ],
+   "title": "Home Coffee Bar Budget",
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Home Coffee Bar Budget</h4>\n  <p class=\"muted t-small\">Skip the caf\u00e9 line. Build a little corner of joy.</p>\n  <div class=\"between\"><span>Espresso machine</span><b>$250</b></div>\n  <div class=\"between\"><span>Grinder</span><b>$80</b></div>\n  <div class=\"between\"><span>Milk frother</span><b>$30</b></div>\n  <div class=\"between\"><span>Mugs & accessories</span><b>$40</b></div>\n  <div class=\"between\"><span>Beans (first month)</span><b>$20</b></div>\n  <hr class=\"divider\">\n  <div class=\"between\"><b>Total</b><b>$420</b></div>\n  <p class=\"dim t-small\">A burr grinder matters more than the machine. Trust.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for book club launch",
+    "book club start up costs",
+    "how much to start a book club?",
+    "book club budget",
+    "planning a book club budget",
+    "book club expenses",
+    "cheap book club ideas budget",
+    "starting a book club, what should i budget",
+    "budgt to get a book club going",
+    "costs to launch a reading group",
+    "first month of book club expenses?",
+    "how much to start a book club w snacks n books",
+    "kickoff budget for my new book club"
+   ],
+   "title": "Book Club Launch Budget",
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Book Club Launch Budget</h4>\n  <p class=\"muted t-small\">All you need is a few good reads and some snacks.</p>\n  <div class=\"between\"><span>First book (5 copies)</span><b>$75</b></div>\n  <div class=\"between\"><span>Snacks & drinks</span><b>$40</b></div>\n  <div class=\"between\"><span>Name tags & pens</span><b>$10</b></div>\n  <div class=\"between\"><span>Meeting space (free at library)</span><b>$0</b></div>\n  <hr class=\"divider\">\n  <div class=\"between\"><b>Total</b><b>$125</b></div>\n  <p class=\"dim t-small\">Ask members to chip in for books. Sharing stories is free.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for home gym setup",
+    "home gym equipment cost",
+    "how much for home gym?",
+    "home gym budget",
+    "small home gym budget",
+    "home gym essentials cost",
+    "cheap home gym setup",
+    "want a home gym, what should i spend",
+    "budgt for workout gear at home",
+    "how much for rack barbell n weights",
+    "setting up garage gym, cost?",
+    "home gym on a budget ideas",
+    "whats it cost to build a decent home gym"
+   ],
+   "title": "Home Gym Setup Budget",
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Home Gym Setup Budget</h4>\n  <p class=\"muted t-small\">No commute, no waiting for the squat rack.</p>\n  <div class=\"between\"><span>Adjustable dumbbells</span><b>$200</b></div>\n  <div class=\"between\"><span>Yoga mat</span><b>$30</b></div>\n  <div class=\"between\"><span>Resistance bands</span><b>$25</b></div>\n  <div class=\"between\"><span>Bench</span><b>$100</b></div>\n  <div class=\"between\"><span>Mirror (optional)</span><b>$40</b></div>\n  <hr class=\"divider\">\n  <div class=\"between\"><b>Total</b><b>$395</b></div>\n  <p class=\"dim t-small\">Start with bodyweight and bands. Upgrade when you actually miss a workout.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for backyard chicken coop",
+    "chicken coop costs",
+    "how much for chickens?",
+    "backyard chicken budget",
+    "small chicken coop budget",
+    "chicken coop setup cost",
+    "budget for raising chickens",
+    "want chickens, what does a coop cost",
+    "budgt for backyard hens",
+    "how much to start keeping chickens",
+    "coop feed n supplies, total cost",
+    "chicken math, whats the real budget lol",
+    "cost to get 4 hens going in my yard"
+   ],
+   "title": "Backyard Chicken Coop Budget",
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Backyard Chicken Coop Budget</h4>\n  <p class=\"muted t-small\">Fresh eggs and tiny dinosaurs in your yard.</p>\n  <div class=\"between\"><span>Coop kit</span><b>$300</b></div>\n  <div class=\"between\"><span>Feed (50 lb)</span><b>$30</b></div>\n  <div class=\"between\"><span>Chicks (4)</span><b>$20</b></div>\n  <div class=\"between\"><span>Bedding</span><b>$15</b></div>\n  <div class=\"between\"><span>Feeder & waterer</span><b>$25</b></div>\n  <hr class=\"divider\">\n  <div class=\"between\"><b>Total</b><b>$390</b></div>\n  <p class=\"dim t-small\">Check local rules first. Some neighborhoods are anti-chicken.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Sourdough Starter Kitchen Budget",
+   "user_requests": [
+    "budget for starting sourdough at home",
+    "how much do I need to spend to get a starter going",
+    "sourdough set up costs pls",
+    "I wanna bake my own bread, whats the starter kit cost",
+    "sourdough starter budget breakdown",
+    "cost to start baking sourdough bread from scratch?",
+    "starter + jar + flour money plan",
+    "getting into sourdough, what do i need to buy",
+    "budgt for bread baking hobby",
+    "how much for a starter jar flour n banneton",
+    "cost to start making sourdough at home",
+    "sourdough stuff i need, price it out",
+    "whats the startup cost for sourdough baking"
+   ],
+   "html": "<div class=\"card\"><h4>Sourdough Starter Kitchen Budget</h4><p class=\"muted t-small\">One-time gear, then pennies a week for flour. Feeding schedule: twice daily at first.</p><div class=\"between\"><span>Glass jar + lid (1 L)</span><b>$8</b></div><div class=\"between\"><span>Digital kitchen scale</span><b>$18</b></div><div class=\"between\"><span>Bread flour, 5 kg</span><b>$9</b></div><div class=\"between\"><span>Whole wheat flour, 2 kg</span><b>$6</b></div><div class=\"between\"><span>Bench scraper + banneton</span><b>$16</b></div><div class=\"between\"><span>Dutch oven (or thrifted pot)</span><b>$45</b></div><hr class=\"divider\"><div class=\"between\"><b>Total to start</b><b>$102</b></div><details class=\"acc\"><summary>Where you can trim</summary><div class=\"body\"><ul class=\"list\"><li>Skip the banneton: a flour-dusted tea towel in a bowl works fine.</li><li>Check thrift shops for cast iron. A heavy lidded pot is a heavy lidded pot.</li><li>Cheapest flours rise the same as fancy ones. The starter does not read labels.</li></ul></div></details><p class=\"dim t-small\">Ongoing: about <b>$2/week</b> in flour once you stop tossing half of it.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Monthly Phone Plan Audit",
+   "user_requests": [
+    "am I overpaying for my phone plan",
+    "monthly cell bill budget",
+    "phone plan cost check",
+    "how much should my phone bill be",
+    "audit my mobile plan spending",
+    "cell phone budget breakdown monthly",
+    "my phone bill feels high, help",
+    "is my cell bill too high",
+    "budgt check on my phone plan",
+    "should i switch carriers, am i overpaying",
+    "compare my monthly phone cost",
+    "phone bill seems crazy, halp",
+    "whats normal to pay for a phone plan each month"
+   ],
+   "html": "<div class=\"card\"><h4>Monthly Phone Plan Audit</h4><p class=\"muted t-small\">Typical single-line cost in the US: $40\u2013$65 on a mid-tier plan. If you're over that, something's padded.</p><div class=\"between\"><span>Base plan (unlimited talk/text/data)</span><b>$45</b></div><div class=\"between\"><span>Device installment</span><b>$22</b></div><div class=\"between\"><span>Insurance / protection add-on</span><b>$12</b></div><div class=\"between\"><span>Hotspot or extra data</span><b>$10</b></div><div class=\"between\"><span>Taxes and fees</span><b>$6</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$95</b></div><div class=\"callout warn\"><b>Two line items worth a second look:</b> protection plans rarely pay out more than the repair costs, and unused hotspot data is pure margin. Dropping both saves <b>$22/mo</b> \u2014 <b>$264/year</b>.</div><details class=\"acc\"><summary>Checklist before you switch</summary><div class=\"body\"><ol class=\"list\"><li>Note your remaining device balance \u2014 some carriers charge it off in full.</li><li>Compare MVNOs on the same network; coverage is identical, price isn't.</li><li>Keep your number: porting takes minutes and costs nothing.</li></ol></div></details><p class=\"dim t-small\">One hour of comparing usually beats a year of \"loyalty\" discounts.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Deep Clean Weekend Budget",
+   "user_requests": [
+    "budget for a big house deep clean",
+    "cost to deep clean my apartment",
+    "spring cleaning supplies budget",
+    "how much for a one time deep clean",
+    "deep clean weekend cost",
+    "cleaning supplies money plan",
+    "what do I need to spend to deep clean the whole place",
+    "doing a huge house clean, what will supplies cost",
+    "budgt for a deep cleaning spree",
+    "how much for cleaning products n stuff for a whole house scrub",
+    "spring cleaning weekend, budget?",
+    "cost to deep clean everything in one weekend",
+    "what should i spend on a big clean out"
+   ],
+   "html": "<div class=\"card\"><h4>Deep Clean Weekend Budget</h4><p class=\"muted t-small\">One brutal Saturday, one sparkling apartment. Supplies last for months after.</p><div class=\"between\"><span>All-purpose cleaner + degreaser</span><b>$9</b></div><div class=\"between\"><span>Microfibre cloths (pack of 12)</span><b>$12</b></div><div class=\"between\"><span>Mop + bucket</span><b>$22</b></div><div class=\"between\"><span>Scrub brushes (grout, corners)</span><b>$8</b></div><div class=\"between\"><span>Bathroom descaler + mould spray</span><b>$11</b></div><div class=\"between\"><span>Vacuum bags / filters</span><b>$14</b></div><div class=\"between\"><span>Trash bags + nitrile gloves</span><b>$7</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$83</b></div><div class=\"callout info\">Do the kitchen first while you still have energy. By the time you reach the bathroom, you'll be negotiating with yourself.</div><details class=\"acc\"><summary>Order of operations</summary><div class=\"body\"><ol class=\"list\"><li>Declutter surfaces \u2014 you can't clean around clutter, only move it.</li><li>Dust top-down, including ceiling corners and light fittings.</li><li>Kitchen: degrease hood filter, wipe cabinet fronts.</li><li>Bathroom last. Descaler needs a dwell time, so start it, then walk away.</li><li>Floors: vacuum, then mop back toward the door.</li></ol></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Airport Day Trip Budget",
+   "user_requests": [
+    "budget for flying out for a one day trip",
+    "day trip by plane costs",
+    "what does a same day flight cost",
+    "quick flight there and back budget",
+    "one day work trip by plane money",
+    "plane day trip spend plan",
+    "flying somewhere for a day, whats the damage",
+    "flying out n back same day, what will it cost",
+    "budgt for a quick one day flight",
+    "how much for a day trip by plane",
+    "same day flight there n back, expenses?",
+    "day trip via airport, whats the damage",
+    "cost of a fly in fly out same day trip"
+   ],
+   "html": "<div class=\"card\"><h4>Airport Day Trip Budget</h4><p class=\"muted t-small\">Fly out in the morning, home for dinner. Cheaper than a hotel if you plan it right.</p><div class=\"between\"><span>Round-trip airfare</span><b>$180</b></div><div class=\"between\"><span>Airport parking, one day</span><b>$24</b></div><div class=\"between\"><span>Checked bag (if needed)</span><b>$35</b></div><div class=\"between\"><span>Rideshare at both ends</span><b>$40</b></div><div class=\"between\"><span>Airport food + coffee</span><b>$22</b></div><div class=\"between\"><span>Buffer for delays</span><b>$25</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$326</b></div><details class=\"acc\"><summary>Three ways to shave it</summary><div class=\"body\"><ul class=\"list\"><li>Carry-on only. The $35 bag fee buys a decent lunch at your destination instead.</li><li>Off-airport parking lots run about half the garage rate, shuttle included.</li><li>Fill a water bottle after security \u2014 airport water is a luxury good.</li></ul></div></details><div class=\"callout warn\">The buffer line isn't optional. Delays happen, and a missed last flight home means a hotel night you didn't budget for.</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Beginner Pottery Class Budget",
+   "user_requests": [
+    "how much to start pottery as a hobby",
+    "pottery class + clay costs",
+    "budget for beginner ceramics",
+    "what does pottery cost to get into",
+    "clay hobby startup money",
+    "pottery lessons budget breakdown",
+    "thinking of doing pottery, what will it run me",
+    "want to try pottery, what should i budget",
+    "budgt for a first ceramics class",
+    "how much to start pottery lessons n clay",
+    "cost to begin pottery as a newbie",
+    "pottery class n supplies, price?",
+    "whats it cost to get into pottery"
+   ],
+   "html": "<div class=\"card\"><h4>Beginner Pottery Class Budget</h4><p class=\"muted t-small\">Most classes include clay and tools. Ask before you buy anything \u2014 that's where people overspend.</p><div class=\"between\"><span>6-week beginner class</span><b>$195</b></div><div class=\"between\"><span>Clay + glaze (included in many)</span><b>$0</b></div><div class=\"between\"><span>Tool kit (wire, ribs, sponge, needle)</span><b>$18</b></div><div class=\"between\"><span>Firing fees, if separate</span><b>$30</b></div><div class=\"between\"><span>Apron + old towels</span><b>$12</b></div><div class=\"between\"><span>Nail trim (seriously)</span><b>$0</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$255</b></div><details class=\"acc\"><summary>Skip for now</summary><div class=\"body\"><ul class=\"list\"><li>A wheel. Studios rent hours for a few dollars; a home wheel is a $700 commitment to a hobby you've tried twice.</li><li>Fancy trimming tools \u2014 a bent paperclip does the job at week two.</li><li>Your own kiln. Obviously.</li></ul></div></details><blockquote class=\"quote\">Clay is forgiving. Your first bowl is not, but that's not clay's fault.<cite>\u2014 every pottery teacher</cite></blockquote></div>",
+   "augmented": true
+  },
+  {
+   "title": "Riding Lawn Mower Upkeep",
+   "user_requests": [
+    "cost to maintain a riding mower",
+    "rider mower yearly upkeep budget",
+    "lawn tractor service costs",
+    "what does it cost to keep a riding mower running",
+    "mower tune up + parts budget",
+    "riding mower maintenance money plan",
+    "my mower needs work, what should I set aside",
+    "what does it cost to keep a riding mower running",
+    "budgt for mower maintenance",
+    "how much for blades oil n belts on a riding mower",
+    "lawn tractor upkeep costs per year",
+    "my rider needs service, what should i expect to pay",
+    "yearly cost to maintain a riding lawn mower"
+   ],
+   "html": "<div class=\"card\"><h4>Riding Lawn Mower Upkeep</h4><p class=\"muted t-small\">A rider that's serviced yearly outlasts one that isn't by a decade. These are annual figures.</p><div class=\"between\"><span>Engine oil + filter</span><b>$28</b></div><div class=\"between\"><span>Spark plug + air filter</span><b>$18</b></div><div class=\"between\"><span>Blades (sharpen, or replace pair)</span><b>$45</b></div><div class=\"between\"><span>Battery, amortised over 3 years</span><b>$30</b></div><div class=\"between\"><span>Belts + spindle parts, average</span><b>$40</b></div><div class=\"between\"><span>Fuel + stabiliser for the season</span><b>$95</b></div><div class=\"between\"><span>Deck wash + grease</span><b>$8</b></div><hr class=\"divider\"><div class=\"between\"><b>Yearly total</b><b>$264</b></div><div class=\"callout good\">Roughly <b>$22/month</b> set aside covers everything above except a surprise transmission failure.</div><details class=\"acc\"><summary>Season-end ritual (worth the ten minutes)</summary><div class=\"body\"><ol class=\"list\"><li>Run the tank near empty, then add stabiliser-treated fuel.</li><li>Sharpen or swap blades \u2014 dull blades tear grass and invite disease.</li><li>Disconnect the battery and store it somewhere that doesn't freeze.</li><li>Scrape the deck. Wet grass clippings are quietly corrosive.</li></ol></div></details></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "make a budget for a neighborhood block party",
+    "block party budget",
+    "how much for a street party?",
+    "I'm planning a block party, need a budget",
+    "cost breakdown for community block party",
+    "block party money plan",
+    "help me budget a block party",
+    "how much should I set aside for a block party?",
+    "neighborhood bash budget planner",
+    "budget 4 a block party",
+    "street party money breakdown",
+    "planning a block party, need a budget",
+    "whats the cost for throwing a block party"
+   ],
+   "title": "Block Party Budget",
+   "html": "<div class=\"card\"><h4>Block Party Budget</h4><div class=\"between\"><span>Permits &amp; insurance</span><b>$75</b></div><div class=\"between\"><span>Food &amp; drinks</span><b>$220</b></div><div class=\"between\"><span>Decorations</span><b>$45</b></div><div class=\"between\"><span>Music &amp; games</span><b>$60</b></div><div class=\"between\"><span>Cleanup supplies</span><b>$30</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$430</b></div><p class=\"muted t-small\">Split 10 ways: <b>$43</b> per household. <regex>user_name</regex>, maybe ask the HOA to chip in for permits?</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for a home library",
+    "how much to build a home library?",
+    "home library budget",
+    "I want to set up a home library, budget?",
+    "cost to start a home library",
+    "library nook budget",
+    "home library money plan",
+    "cost to set up a home library",
+    "budgeting for bookshelves and books at home",
+    "how much for a cozy home library?",
+    "home lib budget",
+    "make a spending plan for my home library",
+    "I want to build a home library, whats the budget"
+   ],
+   "title": "Home Library Budget",
+   "html": "<div class=\"card\"><h4>Home Library Budget</h4><div class=\"between\"><span>Bookshelves (2)</span><b>$180</b></div><div class=\"between\"><span>Books (30)</span><b>$150</b></div><div class=\"between\"><span>Reading chair</span><b>$120</b></div><div class=\"between\"><span>Lamp</span><b>$40</b></div><div class=\"between\"><span>Cozy blanket</span><b>$25</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$515</b></div><p class=\"muted t-small\"><regex>user_name</regex>, thrift stores are gold for books. That chair? Marketplace.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for learning to play drums",
+    "drumming budget",
+    "how much for drum lessons and kit?",
+    "I want to learn drums, what's the cost?",
+    "drumming start-up costs",
+    "budget for drum lessons",
+    "drum kit + lessons budget",
+    "how much to start drumming?",
+    "budget for drum kit and lessons",
+    "drumming setup cost",
+    "I wanna learn drums, need a budget",
+    "plan my drumming budget",
+    "starting drums, how much money do I need"
+   ],
+   "title": "Drumming Start-Up Budget",
+   "html": "<div class=\"card\"><h4>Drumming Start-Up Budget</h4><div class=\"between\"><span>Practice pad &amp; sticks</span><b>$50</b></div><div class=\"between\"><span>Lessons (4)</span><b>$200</b></div><div class=\"between\"><span>Electronic drum kit</span><b>$400</b></div><div class=\"between\"><span>Headphones</span><b>$60</b></div><div class=\"between\"><span>Drum throne</span><b>$70</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$780</b></div><p class=\"muted t-small\">Start with just pad + lessons: <b>$250</b>. <regex>user_name</regex>, your neighbors will thank you.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for a beach day trip",
+    "beach trip budget",
+    "how much for a day at the beach?",
+    "planning a beach day, cost?",
+    "beach day expenses",
+    "budget beach day",
+    "beach day money plan",
+    "budget for a day at the beach",
+    "how much for beach trip",
+    "beach day expenses",
+    "plan a cheap beach day, budget",
+    "whats the cost for a beach day out",
+    "beach trip budget calculator"
+   ],
+   "title": "Beach Day Trip Budget",
+   "html": "<div class=\"card\"><h4>Beach Day Trip Budget</h4><div class=\"between\"><span>Gas</span><b>$20</b></div><div class=\"between\"><span>Parking</span><b>$15</b></div><div class=\"between\"><span>Snacks &amp; drinks</span><b>$30</b></div><div class=\"between\"><span>Sunscreen</span><b>$10</b></div><div class=\"between\"><span>Umbrella rental</span><b>$25</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$100</b></div><p class=\"muted t-small\">Pack a cooler, <regex>user_name</regex>, and you'll halve that.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for a home wine tasting",
+    "wine tasting party budget",
+    "how much for wine tasting at home?",
+    "I'm hosting a wine tasting, budget?",
+    "cost for wine tasting event",
+    "budget wine tasting",
+    "wine tasting night budget",
+    "budget for wine tasting at home",
+    "how much for a home wine tasting party",
+    "wine tasting night budget",
+    "cost to host wine tasting",
+    "I want to do a wine tasting at home, budget",
+    "home wine tasting expenses"
+   ],
+   "title": "Home Wine Tasting Budget",
+   "html": "<div class=\"card\"><h4>Home Wine Tasting Budget</h4><div class=\"between\"><span>Wines (6 bottles)</span><b>$120</b></div><div class=\"between\"><span>Cheese &amp; crackers</span><b>$35</b></div><div class=\"between\"><span>Grapes &amp; nuts</span><b>$15</b></div><div class=\"between\"><span>Tasting glasses (6)</span><b>$30</b></div><div class=\"between\"><span>Spit cups &amp; napkins</span><b>$10</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$210</b></div><p class=\"muted t-small\"><regex>user_name</regex>, ask guests to bring a bottle instead of a host gift.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for a knitting starter kit",
+    "knitting budget",
+    "how much to start knitting?",
+    "I want to learn knitting, cost?",
+    "knitting supplies budget",
+    "budget for knitting supplies",
+    "knitting kit cost",
+    "how much for knitting supplies to start",
+    "budget for beginner knitting kit",
+    "cost of knitting starter set",
+    "knitting newbie budget",
+    "I wanna start knitting, what's the budget",
+    "plan a budget for knitting supplies"
+   ],
+   "title": "Knitting Starter Kit Budget",
+   "html": "<div class=\"card\"><h4>Knitting Starter Kit Budget</h4><div class=\"between\"><span>Yarn (3 skeins)</span><b>$36</b></div><div class=\"between\"><span>Knitting needles</span><b>$15</b></div><div class=\"between\"><span>Stitch markers</span><b>$8</b></div><div class=\"between\"><span>Tapestry needle</span><b>$5</b></div><div class=\"between\"><span>Project bag</span><b>$20</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$84</b></div><p class=\"muted t-small\">Start with a scarf, <regex>user_name</regex>. Cheaper than a sweater you'll never finish.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "plan a budget for my balcony herb garden",
+    "herb garden budget",
+    "how much to spend on a small balcony herb setup",
+    "I want to start a herb garden on my balcony, what should I budget?",
+    "herb garden start up costs",
+    "budget for balcony herbs",
+    "how much for a balcony herb garden",
+    "budget for herbs on my balcony",
+    "how much to start a balcony herb garden",
+    "cost for balcony herb garden",
+    "herb garden budget balcony",
+    "I want to grow herbs on my balcony, budget",
+    "planning a balcony herb garden, need costs"
+   ],
+   "title": "Balcony Herb Garden Budget",
+   "html": "<div class=\"card\"><h4>Balcony Herb Garden Budget</h4><p class=\"muted\">A small setup for <regex>user_name</regex>.</p><div class=\"between\"><span>Pots &amp; planters</span><b>$25</b></div><div class=\"between\"><span>Potting mix</span><b>$12</b></div><div class=\"between\"><span>Herb seedlings</span><b>$18</b></div><div class=\"between\"><span>Watering can</span><b>$10</b></div><div class=\"between\"><span>Fertilizer</span><b>$8</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$73</b></div><p class=\"t-small dim\">Start with basil, mint, and parsley. They forgive neglect.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for a beginner home yoga setup",
+    "home yoga budget",
+    "how much to start yoga at home",
+    "I want to do yoga at home, what should I budget?",
+    "yoga at home start up costs",
+    "budget for home yoga",
+    "how much for a home yoga setup",
+    "how much for a home yoga setup",
+    "budget for yoga mat and props",
+    "cost to set up yoga at home",
+    "yoga at home budget",
+    "I wanna do yoga at home, whats the budget",
+    "plan a budget for home yoga gear"
+   ],
+   "title": "Home Yoga Setup Budget",
+   "html": "<div class=\"card\"><h4>Home Yoga Setup Budget</h4><p class=\"muted\">A calm corner for <regex>user_name</regex>.</p><div class=\"between\"><span>Yoga mat</span><b>$30</b></div><div class=\"between\"><span>Blocks (2)</span><b>$15</b></div><div class=\"between\"><span>Strap</span><b>$10</b></div><div class=\"between\"><span>Bolster</span><b>$25</b></div><div class=\"between\"><span>Online classes (1 month)</span><b>$15</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$95</b></div><p class=\"t-small dim\">A mat and a wall are enough to begin. The bolster is a treat.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for a beginner home photography setup",
+    "home photography budget",
+    "how much to start photography at home",
+    "I want to try photography, what should I budget?",
+    "photography start up costs",
+    "budget for photography hobby",
+    "how much for a home photo setup",
+    "budget for camera and gear at home",
+    "how much to start home photography",
+    "cost for home photo setup",
+    "home photography gear budget",
+    "I want to get into photography at home, budget",
+    "plan my home photography budget"
+   ],
+   "title": "Home Photography Budget",
+   "html": "<div class=\"card\"><h4>Home Photography Budget</h4><p class=\"muted\">For <regex>user_name</regex>'s first camera.</p><div class=\"between\"><span>Used DSLR camera</span><b>$200</b></div><div class=\"between\"><span>50mm lens</span><b>$80</b></div><div class=\"between\"><span>SD card</span><b>$15</b></div><div class=\"between\"><span>Camera bag</span><b>$25</b></div><div class=\"between\"><span>Editing software (annual)</span><b>$60</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$380</b></div><p class=\"t-small dim\">Buy used. Lenses hold value; camera bodies don't.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for a beginner home DJ setup",
+    "home DJ budget",
+    "how much to start DJing at home",
+    "I want to learn DJing, what should I budget?",
+    "DJ start up costs",
+    "budget for DJ hobby",
+    "how much for a home DJ setup",
+    "how much for a home DJ setup",
+    "budget for DJ controller and speakers",
+    "cost to start DJing at home",
+    "DJ setup budget home",
+    "I wanna DJ at home, whats the budget",
+    "plan a budget for home DJ gear"
+   ],
+   "title": "Home DJ Setup Budget",
+   "html": "<div class=\"card\"><h4>Home DJ Setup Budget</h4><p class=\"muted\">For <regex>user_name</regex>'s first mix.</p><div class=\"between\"><span>DJ controller</span><b>$250</b></div><div class=\"between\"><span>Headphones</span><b>$50</b></div><div class=\"between\"><span>Laptop stand</span><b>$20</b></div><div class=\"between\"><span>DJ software (annual)</span><b>$100</b></div><div class=\"between\"><span>Music downloads</span><b>$30</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$450</b></div><p class=\"t-small dim\">Start with a controller that includes software. Your laptop can wait.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for a beginner home aquarium setup",
+    "home aquarium budget",
+    "how much to start an aquarium at home",
+    "I want to set up a fish tank, what should I budget?",
+    "aquarium start up costs",
+    "budget for fish tank",
+    "how much for a home aquarium",
+    "how much for a home aquarium",
+    "budget for fish tank setup",
+    "cost to start an aquarium at home",
+    "aquarium setup budget",
+    "I want a home aquarium, whats the budget",
+    "plan a budget for a fish tank"
+   ],
+   "title": "Home Aquarium Budget",
+   "html": "<div class=\"card\"><h4>Home Aquarium Budget</h4><p class=\"muted\">A small tank for <regex>user_name</regex>.</p><div class=\"between\"><span>Tank (10 gal)</span><b>$40</b></div><div class=\"between\"><span>Filter</span><b>$25</b></div><div class=\"between\"><span>Heater</span><b>$20</b></div><div class=\"between\"><span>Gravel &amp; decor</span><b>$15</b></div><div class=\"between\"><span>Fish &amp; food</span><b>$20</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$120</b></div><p class=\"t-small dim\">Cycle the tank before adding fish. Patience saves lives.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for a beginner home 3D printing setup",
+    "home 3D printing budget",
+    "how much to start 3D printing at home",
+    "I want to get into 3D printing, what should I budget?",
+    "3D printing start up costs",
+    "budget for 3D printing hobby",
+    "how much for a home 3D printer",
+    "how much for a 3D printer at home",
+    "budget for 3D printing setup",
+    "cost to start 3D printing at home",
+    "3D printing budget home",
+    "I wanna get into 3D printing, whats the budget",
+    "plan a budget for a 3D printer"
+   ],
+   "title": "Home 3D Printing Budget",
+   "html": "<div class=\"card\"><h4>Home 3D Printing Budget</h4><p class=\"muted\">For <regex>user_name</regex>'s first prints.</p><div class=\"between\"><span>3D printer</span><b>$200</b></div><div class=\"between\"><span>Filament (2 rolls)</span><b>$40</b></div><div class=\"between\"><span>Tools &amp; pliers</span><b>$15</b></div><div class=\"between\"><span>Build plate adhesive</span><b>$10</b></div><div class=\"between\"><span>Upgrades</span><b>$35</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$300</b></div><p class=\"t-small dim\">Start with PLA filament. It's forgiving and cheap.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for a backyard movie night",
+    "How much for an outdoor movie setup?",
+    "movie night in the yard costs?",
+    "planning a backyard cinema budget",
+    "what do I need to spend for a backyard movie night?",
+    "Budget: backyard movie night",
+    "outdoor movie night expenses",
+    "how much for a backyard movie night",
+    "budget for outdoor movie setup",
+    "cost to host a movie night in the yard",
+    "backyard cinema budget",
+    "I want to do a backyard movie night, budget",
+    "plan a budget for movie night outside"
+   ],
+   "title": "Backyard Movie Night Budget",
+   "html": "<div class=\"card\"><h4>Backyard Movie Night</h4><div class=\"between\"><span>Projector rental</span><b>$50</b></div><div class=\"between\"><span>Screen</span><b>$30</b></div><div class=\"between\"><span>Snacks & drinks</span><b>$40</b></div><div class=\"between\"><span>Fairy lights</span><b>$15</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$135</b></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for a sushi making class at home",
+    "How much to host a sushi night?",
+    "sushi party budget",
+    "cost of making sushi at home for a group",
+    "what's the damage for a sushi making party?",
+    "Sushi night budget",
+    "expenses for DIY sushi class",
+    "how much for a sushi making class",
+    "budget for sushi class at home",
+    "cost of sushi making workshop",
+    "sushi class budget",
+    "I wanna take a sushi making class, whats the budget",
+    "plan a budget for sushi making lessons"
+   ],
+   "title": "Sushi Making Class Budget",
+   "html": "<div class=\"card\"><h4>Sushi Making Class</h4><div class=\"between\"><span>Fish & seafood</span><b>$60</b></div><div class=\"between\"><span>Rice & nori</span><b>$15</b></div><div class=\"between\"><span>Condiments</span><b>$10</b></div><div class=\"between\"><span>Bamboo mats</span><b>$12</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$97</b></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for a home karaoke setup",
+    "How much for karaoke at home?",
+    "karaoke night budget",
+    "cost of a karaoke machine and mics",
+    "what do I need to spend for a karaoke party?",
+    "Karaoke setup budget",
+    "expenses for home karaoke",
+    "how much for a karaoke setup at home",
+    "budget for karaoke machine and mics",
+    "cost to set up karaoke at home",
+    "home karaoke budget",
+    "I wanna do karaoke at home, whats the budget",
+    "plan a budget for karaoke gear"
+   ],
+   "title": "Home Karaoke Setup Budget",
+   "html": "<div class=\"card\"><h4>Home Karaoke Setup</h4><div class=\"between\"><span>Karaoke machine</span><b>$80</b></div><div class=\"between\"><span>Microphones</span><b>$40</b></div><div class=\"between\"><span>Speaker</span><b>$60</b></div><div class=\"between\"><span>Song downloads</span><b>$20</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$200</b></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for a cheese tasting party",
+    "How much for a cheese and wine night?",
+    "cheese tasting budget",
+    "cost of hosting a cheese tasting",
+    "what's the cost for a cheese party?",
+    "Cheese tasting budget",
+    "expenses for cheese and wine evening",
+    "how much for a cheese tasting party",
+    "budget for cheese and crackers party",
+    "cost to host a cheese tasting",
+    "cheese party budget",
+    "I wanna throw a cheese tasting, whats the budget",
+    "plan a budget for a cheese tasting night"
+   ],
+   "title": "Cheese Tasting Party Budget",
+   "html": "<div class=\"card\"><h4>Cheese Tasting Party</h4><div class=\"between\"><span>Assorted cheeses</span><b>$45</b></div><div class=\"between\"><span>Crackers & bread</span><b>$15</b></div><div class=\"between\"><span>Fruit & nuts</span><b>$12</b></div><div class=\"between\"><span>Wine pairings</span><b>$30</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$102</b></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for a DIY escape room",
+    "How much to build an escape room at home?",
+    "escape room party budget",
+    "cost of a homemade escape room",
+    "what do I need to spend for an escape room?",
+    "Escape room budget",
+    "expenses for DIY escape room",
+    "how much to build an escape room at home",
+    "escap room party cost breakdown",
+    "I wanna turn my garage into an escape room, what's the damage",
+    "puzzle room budget for a birthday",
+    "cost to make my own escape room for friends",
+    "planning a diy escape room need a budget"
+   ],
+   "title": "DIY Escape Room Budget",
+   "html": "<div class=\"card\"><h4>DIY Escape Room</h4><div class=\"between\"><span>Locks & hasps</span><b>$25</b></div><div class=\"between\"><span>Props & puzzles</span><b>$35</b></div><div class=\"between\"><span>Blacklights</span><b>$20</b></div><div class=\"between\"><span>Timer</span><b>$10</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$90</b></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for a home spa day",
+    "How much for a DIY spa day?",
+    "spa day at home budget",
+    "cost of a home spa setup",
+    "what's the cost for a spa day at home?",
+    "Home spa day budget",
+    "expenses for DIY spa day",
+    "spa day at home how much will it run me",
+    "self care sunday budget ideas",
+    "cost of a DIY spa day w/ candles and stuff",
+    "at home pamper day spending plan",
+    "how much for face masks bath bombs n wine",
+    "budget for turning my bathroom into a spa"
+   ],
+   "title": "Home Spa Day Budget",
+   "html": "<div class=\"card\"><h4>Home Spa Day</h4><div class=\"between\"><span>Face masks</span><b>$15</b></div><div class=\"between\"><span>Massage oil</span><b>$10</b></div><div class=\"between\"><span>Candles</span><b>$12</b></div><div class=\"between\"><span>Bath salts</span><b>$8</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$45</b></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Tattoo Appointment Budget",
+   "user_requests": [
+    "budget for my first tattoo",
+    "how much should I set aside for ink",
+    "tattoo sesh money plan",
+    "planning a tattoo, what's it cost",
+    "tattoo budget pls",
+    "getting inked soon, help me save right",
+    "what to budget for a small tattoo",
+    "how much should I save for ink",
+    "gettin my first tat whats the cost",
+    "tattoo price planning + tip",
+    "budget for a sleeve in progress",
+    "what do tattoos cost these days help",
+    "saving up for my next tattoo session"
+   ],
+   "html": "<div class=\"card\"><h4>Tattoo Appointment Budget</h4><p class=\"muted t-small\">Small piece, single session, <regex>user_name</regex>.</p><div class=\"between\"><span>Artist hourly (2 hrs @ $150)</span><b>$300</b></div><div class=\"between\"><span>Design &amp; stencil prep</span><b>$50</b></div><div class=\"between\"><span>Tip (18%)</span><b>$63</b></div><div class=\"between\"><span>Aftercare (balm, wash)</span><b>$22</b></div><div class=\"between\"><span>Snacks &amp; water for the room</span><b>$8</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$443</b></div><details class=\"acc\"><summary>Notes</summary><div class=\"body\"><ul class=\"list\"><li>Ask the shop if hourly or flat-rate.</li><li>Tip is customary but never mandatory.</li></ul></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Monthly Fuel &amp; Commute Budget",
+   "user_requests": [
+    "gas money budget for the month",
+    "how much am I spending on fuel",
+    "commute cost breakdown",
+    "budget for driving to work",
+    "monthly gas spend",
+    "fuel plan for my car",
+    "what should gas cost me each month",
+    "how much do I spend on gas each month",
+    "commute costs budget calculator",
+    "petrol budget for work driving",
+    "monthly gas + tolls + parking plan",
+    "my car eats money help me budget it",
+    "budget for driving to work every day"
+   ],
+   "html": "<div class=\"card\"><h4>Monthly Fuel &amp; Commute Budget</h4><div class=\"grid two\"><div class=\"stat\"><span class=\"label\">Weekly fill</span><span class=\"value\">$54</span></div><div class=\"stat\"><span class=\"label\">Month est.</span><span class=\"value\">$216</span></div></div><div class=\"between\"><span>Fuel (4 fills)</span><b>$216</b></div><div class=\"between\"><span>Parking / garage</span><b>$40</b></div><div class=\"between\"><span>Tolls</span><b>$18</b></div><div class=\"between\"><span>Service sinking fund</span><b>$35</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$309</b></div><div class=\"meter\"><span style=\"width:72%\"></span></div><p class=\"dim t-small\">Sinking fund covers oil, tires, and the occasional mystery light.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Wedding Guest Budget",
+   "user_requests": [
+    "budget for attending a wedding",
+    "how much to spend as a wedding guest",
+    "wedding trip costs",
+    "guest budget for the big day",
+    "money for a wedding I'm invited to",
+    "what's a wedding guest cost",
+    "plan my spend as a plus one",
+    "how much to spend as a wedding guest",
+    "cost of going to a friends wedding",
+    "outfit gift travel for a wedding budget",
+    "wedding attendance expenses help",
+    "I got invited to a wedding what will it cost",
+    "budget for one wedding invite"
+   ],
+   "html": "<div class=\"card\"><h4>Wedding Guest Budget</h4><p class=\"muted t-small\">One summer wedding, travel included.</p><div class=\"between\"><span>Gift (registry item)</span><b>$100</b></div><div class=\"between\"><span>Outfit (assuming closet exists)</span><b>$75</b></div><div class=\"between\"><span>Shoes or alterations</span><b>$30</b></div><div class=\"between\"><span>Travel (fuel/train)</span><b>$60</b></div><div class=\"between\"><span>Hotel night</span><b>$140</b></div><div class=\"between\"><span>Bachelorette share</span><b>$45</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$450</b></div><details class=\"acc\"><summary>Ways to trim</summary><div class=\"body\"><ul class=\"list\"><li>Split the hotel room with another guest.</li><li>Gift as a group from the friend circle.</li></ul></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Home Network Upgrade Budget",
+   "user_requests": [
+    "budget for better wifi",
+    "mesh router cost plan",
+    "upgrade my home network budget",
+    "how much for a new router and all",
+    "wifi is trash, what will fixing it cost",
+    "home internet gear budget",
+    "plan a network refresh spend",
+    "mesh wifi system cost planning",
+    "my internet is trash whats a fix gonna cost",
+    "budget for router and maybe new modem",
+    "upgrade home wifi budget breakdown",
+    "better internet at home how much",
+    "cost to fix dead zones in my house wifi"
+   ],
+   "html": "<div class=\"card\"><h4>Home Network Upgrade Budget</h4><div class=\"between\"><span>Mesh router kit (3 pack)</span><b>$230</b></div><div class=\"between\"><span>Ethernet cables</span><b>$24</b></div><div class=\"between\"><span>Powerline or MoCA adapter</span><b>$55</b></div><div class=\"between\"><span>Smart plug for reboot ritual</span><b>$14</b></div><div class=\"between\"><span>Surge protector</span><b>$22</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$345</b></div><div class=\"chart\"><svg viewBox=\"0 0 200 60\" role=\"img\" aria-label=\"Signal strength comparison\"><line class=\"axis\" x1=\"10\" y1=\"50\" x2=\"190\" y2=\"50\"></line><rect class=\"bar\" x=\"30\" y=\"34\" width=\"24\" height=\"16\"></rect><rect class=\"bar alt\" x=\"90\" y=\"14\" width=\"24\" height=\"36\"></rect><text class=\"lbl\" x=\"28\" y=\"12\">old</text><text class=\"lbl\" x=\"92\" y=\"12\">new</text></svg><div class=\"legend\"><i></i>Before <i class=\"alt\"></i>After</div></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Kids' School Supplies Budget",
+   "user_requests": [
+    "school supply budget for two kids",
+    "back to school money plan",
+    "how much for school supplies",
+    "budget for classroom list",
+    "backpack and notebook costs",
+    "plan for school shopping",
+    "kid school stuff budget",
+    "back to school shopping budget",
+    "how much for school stuff for 2 kids",
+    "crayons notebooks backpack budget",
+    "school list costs add up help",
+    "budget for backpacks and supplies x3",
+    "getting kids ready for school money plan"
+   ],
+   "html": "<div class=\"card\"><h4>Kids' School Supplies Budget</h4><p class=\"muted t-small\">Two students, elementary.</p><div class=\"between\"><span>Backpacks (2)</span><b>$70</b></div><div class=\"between\"><span>Notebooks &amp; binders</span><b>$34</b></div><div class=\"between\"><span>Pencils, pens, markers</span><b>$26</b></div><div class=\"between\"><span>Lunchbox &amp; water bottle</span><b>$32</b></div><div class=\"between\"><span>Uniform basics</span><b>$85</b></div><div class=\"between\"><span>Classroom wishlist items</span><b>$18</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$265</b></div><details class=\"acc\"><summary>Timing tip</summary><div class=\"body\"><p class=\"t-small\">Buy basics in July, wait for the paper-aisle markdowns in mid-August for the rest.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Home Renovation Paint Budget",
+   "user_requests": [
+    "budget to repaint a room",
+    "painting project cost",
+    "how much to paint my living room",
+    "paint supplies budget",
+    "room refresh paint spend",
+    "repaint cost planner",
+    "what's painting a bedroom cost me",
+    "cost to paint one bedroom",
+    "paint job budget for living room",
+    "how much paint do I need and what will it cost",
+    "repainting my kitchen budget help",
+    "budget for painters vs diy paint",
+    "wall paint project cost estimate"
+   ],
+   "html": "<div class=\"card\"><h4>Home Renovation Paint Budget</h4><p class=\"muted t-small\">One 12x14 room, two coats.</p><div class=\"between\"><span>Paint (2 gallons)</span><b>$90</b></div><div class=\"between\"><span>Primer</span><b>$32</b></div><div class=\"between\"><span>Tape, trays, drop cloth</span><b>$28</b></div><div class=\"between\"><span>Rollers &amp; brushes</span><b>$24</b></div><div class=\"between\"><span>Spackle &amp; sanding</span><b>$16</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$190</b></div><div class=\"grid two\"><div class=\"stat\"><span class=\"label\">DIY</span><span class=\"value\">$190</span></div><div class=\"stat\"><span class=\"label\">Hire out</span><span class=\"value\">$650</span></div></div><p class=\"dim t-small\">Weekend labor. Podcast queued, pizza earned.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Monthly Grocery Budget",
+   "user_requests": [
+    "help me plan a monthly grocery budget",
+    "grocery budget for one person",
+    "how much should i spend on food each month",
+    "can you make a grocery budget breakdown",
+    "i need a food budget for 2 adults",
+    "monthly supermarket spend plan",
+    "budget for groceries fam of 4",
+    "food budget for the month",
+    "how much should I spend on groceries",
+    "grocery spending plan for family of four",
+    "help me stop overspending at the store",
+    "monthly food shop budget breakdown",
+    "whats a realistic grocery budget"
+   ],
+   "html": "<div class=\"card\"><div class=\"between\"><h4>Monthly Grocery Budget</h4><span class=\"badge accent\"><i class=\"dot\"></i>2 adults</span></div><p class=\"muted t-small\">Built for <regex>user_name</regex>. Swap the numbers for your own receipts.</p><div class=\"between\"><span>Produce</span><b>$180</b></div><div class=\"between\"><span>Protein &amp; dairy</span><b>$210</b></div><div class=\"between\"><span>Pantry &amp; dry goods</span><b>$95</b></div><div class=\"between\"><span>Snacks &amp; drinks</span><b>$60</b></div><div class=\"between\"><span>Household basics</span><b>$45</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$590</b></div><div class=\"meter\"><span style=\"width:78%\"></span></div><p class=\"dim t-small\">78% of a $750 ceiling. The gap is your wiggle room.</p><details class=\"acc\"><summary>Trim it fast</summary><div class=\"body\"><ul class=\"list\"><li>Two meatless dinners a week saves roughly $40.</li><li>Buy the store brand on staples you cook with, not on treats.</li><li>Shop the fridge before you shop the store.</li></ul></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Wedding Season Guest Budget",
+   "user_requests": [
+    "how much do wedding guests really spend",
+    "budget for attending 3 weddings this year",
+    "wedding guest costs per event",
+    "what does it cost to be a wedding guest",
+    "help me budget for my friends weddings",
+    "wedding season spending plan",
+    "cost of being in a wedding party",
+    "I have 4 weddings this year help",
+    "cost of being a guest all summer",
+    "wedding season spending how much",
+    "multiple weddings travel gifts budget",
+    "attend 3 weddings this fall whats my total",
+    "wedding guest costs stacked up"
+   ],
+   "html": "<div class=\"card\"><div class=\"between\"><h4>Per-Wedding Guest Budget</h4><span class=\"badge info\"><i class=\"dot\"></i>one event</span></div><p class=\"muted t-small\">Here's <regex>user_name</regex>'s rough shape for a single wedding, travel included.</p><div class=\"between\"><span>Gift</span><b>$100</b></div><div class=\"between\"><span>Outfit or rental</span><b>$85</b></div><div class=\"between\"><span>Travel &amp; fuel</span><b>$70</b></div><div class=\"between\"><span>Hotel night</span><b>$130</b></div><div class=\"between\"><span>Meals on the road</span><b>$35</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$420</b></div><p class=\"dim t-small\">Three weddings at this size is $1,260 for the season.</p><details class=\"acc\"><summary>Where guests usually overspend</summary><div class=\"body\"><ul class=\"list\"><li>The gift, not the travel. Cash is fine and always was.</li><li>New shoes nobody sees under a long dress.</li><li>The second hotel night you don't actually need.</li></ul></div></details><div class=\"callout info\"><p class=\"t-small\">Two weddings in one month? Skip a rental and rewear. Nobody's keeping score.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Balance Bike to Pedal Bike Budget",
+   "user_requests": [
+    "budget for getting my kid a first real bike",
+    "kid bike upgrade budget",
+    "how much does a kids bike cost",
+    "first pedal bike budget for a 4 year old",
+    "bike and helmet budget for my child",
+    "toddler to big kid bike plan",
+    "cost of kids bike gear",
+    "kid outgrew balance bike need real one",
+    "first pedal bike cost + helmet",
+    "budget for upgrading my toddlers bike",
+    "how much for a kids bike with pedals",
+    "bike and gear budget for a 5 year old",
+    "transitioning to a pedal bike what to spend"
+   ],
+   "html": "<div class=\"card\"><div class=\"between\"><h4>First Pedal Bike Budget</h4><span class=\"badge good\"><i class=\"dot\"></i>ages 4-6</span></div><p class=\"muted t-small\">A sane starting point for <regex>user_name</regex>. Light bikes cost more and teach faster.</p><div class=\"between\"><span>16\" pedal bike</span><b>$180</b></div><div class=\"between\"><span>Helmet (certified)</span><b>$45</b></div><div class=\"between\"><span>Training wheels</span><b>$20</b></div><div class=\"between\"><span>Bell &amp; grips</span><b>$15</b></div><div class=\"between\"><span>Pads, if they'll wear them</span><b>$30</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$290</b></div><div class=\"meter\"><span style=\"width:64%\"></span></div><p class=\"dim t-small\">Buying used on the frame alone can free up $100.</p><details class=\"acc\"><summary>Skip these</summary><div class=\"body\"><ul class=\"list\"><li>Basket and streamers. They rattle and lose charm in a week.</li><li>Any frame that weighs more than the kid.</li></ul></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Furnace Replacement Budget",
+   "user_requests": [
+    "how much does a new furnace cost",
+    "budget for replacing our furnace",
+    "furnace swap out budget breakdown",
+    "old furnace died what will this cost",
+    "heating system replacement budget",
+    "planning for a new hvac furnace",
+    "cost to replace furnace and ac",
+    "new furnace cost installed",
+    "my furnace died how much to replace",
+    "hvac replacement budget planning",
+    "cost for furnace swap + install",
+    "how much should I set aside for a furnace",
+    "old furnace needs replacing whats the bill"
+   ],
+   "html": "<div class=\"card\"><div class=\"between\"><h4>Furnace Replacement Budget</h4><span class=\"badge warn\"><i class=\"dot\"></i>plan ahead</span></div><p class=\"muted t-small\">Rough national mid-range numbers, <regex>user_name</regex>. Get three quotes before you commit.</p><div class=\"between\"><span>Furnace unit</span><b>$2,600</b></div><div class=\"between\"><span>Labor &amp; install</span><b>$1,400</b></div><div class=\"between\"><span>Duct inspection</span><b>$250</b></div><div class=\"between\"><span>Permit</span><b>$150</b></div><div class=\"between\"><span>Thermostat upgrade</span><b>$180</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$4,580</b></div><div class=\"meter\"><span style=\"width:46%\"></span></div><p class=\"dim t-small\">Some utility rebates knock $200-$500 off a high-efficiency unit.</p><details class=\"acc\"><summary>If it dies in January</summary><div class=\"body\"><p class=\"t-small\">You'll pay emergency rates, often 15-25% more. A space heater and a sweater buy you a week to get normal quotes.</p></div></details><div class=\"callout warn\"><p class=\"t-small\">Repair quote over $1,200 on a unit past 15 years? Put it toward the new one.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Monthly Pet Bird Budget",
+   "user_requests": [
+    "budget for keeping a parrot",
+    "how much per month for a pet bird",
+    "cockatiel monthly costs",
+    "bird food and cage budget",
+    "cost of owning a budgie monthly",
+    "pet bird upkeep budget",
+    "parrot monthly expenses breakdown",
+    "cost of owning a parrot monthly",
+    "bird food toys vet budget",
+    "how much does a pet bird cost to keep",
+    "budget for my cockatiel every month",
+    "parakeet expenses monthly plan",
+    "what do birds cost me each month"
+   ],
+   "html": "<div class=\"card\"><div class=\"between\"><h4>Monthly Pet Bird Budget</h4><span class=\"badge accent\"><i class=\"dot\"></i>cockatiel</span></div><p class=\"muted t-small\">Steady and small, <regex>user_name</regex>. The cage is the big one-time cost.</p><div class=\"between\"><span>Seed &amp; pellets</span><b>$18</b></div><div class=\"between\"><span>Fresh veg &amp; fruit</span><b>$12</b></div><div class=\"between\"><span>Cage liner &amp; litter</span><b>$8</b></div><div class=\"between\"><span>Toys (chewed through)</span><b>$15</b></div><div class=\"between\"><span>Vet fund set-aside</span><b>$30</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$83</b></div><div class=\"meter\"><span style=\"width:55%\"></span></div><p class=\"dim t-small\">Start-up cage, perch, and carrier run $150-$300 once.</p><details class=\"acc\"><summary>The quiet budget line</summary><div class=\"body\"><p class=\"t-small\">Avian vets are rare and pricey. That $30 a month means an exam doesn't wreck your week.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Monthly Subscription Audit",
+   "user_requests": [
+    "audit my subscriptions",
+    "how much am i paying in subscriptions",
+    "find my monthly recurring charges",
+    "subscription clean up help",
+    "what am i subscribed to",
+    "cancel some subscriptions budget",
+    "recurring payment audit",
+    "find and cut my monthly subscriptions",
+    "how many subscriptions do I have help",
+    "cancel unused apps save money",
+    "subscription spending review",
+    "I keep forgetting what I pay for monthly",
+    "trim my recurring charges budget"
+   ],
+   "html": "<div class=\"card\"><div class=\"between\"><h4>Monthly Subscription Audit</h4><span class=\"badge bad\"><i class=\"dot\"></i>4 to cut</span></div><p class=\"muted t-small\">Ten minutes now, <regex>user_name</regex>. Here's the shape of a typical stack.</p><div class=\"between\"><span>Video streaming x3</span><b>$46</b></div><div class=\"between\"><span>Music</span><b>$12</b></div><div class=\"between\"><span>Cloud storage</span><b>$10</b></div><div class=\"between\"><span>App you forgot</span><b>$8</b></div><div class=\"between\"><span>Fitness app, unused</span><b>$15</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$91</b></div><hr class=\"divider\"><div class=\"between\"><span class=\"muted\">After cutting 2 and 5</span><b>$68</b></div><p class=\"dim t-small\">$276 a year back in your pocket for two taps.</p><details class=\"acc\"><summary>How to catch the hidden ones</summary><div class=\"body\"><ol class=\"list\"><li>Search your email for \"receipt\" and \"renews.\"</li><li>Check the app store's subscription page, not the bank.</li><li>Set a phone reminder 3 days before anything renews.</li></ol></div></details></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "Budget for a home karaoke night",
+    "karaoke party budget",
+    "How much for a karaoke setup at home?",
+    "I want to host a karaoke night, what's the budget?",
+    "Karaoke night budget breakdown",
+    "budget for karaoke party",
+    "Cost of a home karaoke setup",
+    "karaoke party at home cost",
+    "mic speakers snacks for karaoke budget",
+    "how much for a karaoke setup night",
+    "hosting karaoke with friends money plan",
+    "diy karaoke party spending",
+    "budget for a fun karaoke evening in"
+   ],
+   "title": "Home Karaoke Night Budget",
+   "html": "<div class=\"card\"><h4>Home Karaoke Night Budget</h4><div class=\"between\"><span>Karaoke machine</span><b>$80</b></div><div class=\"between\"><span>Microphones (2)</span><b>$40</b></div><div class=\"between\"><span>Snacks & drinks</span><b>$30</b></div><div class=\"between\"><span>Decorations</span><b>$15</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$165</b></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "How much to start a home DJ setup?",
+    "DJ setup budget",
+    "budget for DJ equipment",
+    "I want to start DJing at home, what's the cost?",
+    "Home DJ setup budget breakdown",
+    "cost of DJ controller and speakers",
+    "DJ gear budget",
+    "cost to start djing at home",
+    "turntables mixer speakers budget",
+    "beginner dj gear price plan",
+    "what do I need to spend for a dj setup",
+    "home dj rig budget breakdown",
+    "getting into djing how much money"
+   ],
+   "title": "Home DJ Setup Budget",
+   "html": "<div class=\"card\"><h4>Home DJ Setup Budget</h4><div class=\"between\"><span>DJ controller</span><b>$250</b></div><div class=\"between\"><span>Studio monitors</span><b>$200</b></div><div class=\"between\"><span>Headphones</span><b>$100</b></div><div class=\"between\"><span>Software</span><b>$50</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$600</b></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "Budget for a home aquarium",
+    "aquarium setup budget",
+    "How much to set up a fish tank?",
+    "I want to start a home aquarium, what's the budget?",
+    "Home aquarium budget breakdown",
+    "cost of fish tank setup",
+    "fish tank budget",
+    "What's a realistic cost to set up a fish tank at home?",
+    "How much do I need to start a 20-gallon aquarium?",
+    "rough cost for aquarium setup?",
+    "I wanna get a betta fish setup, what's the damage?",
+    "aquarium startup budget help",
+    "price for everything to start a home fish tank"
+   ],
+   "title": "Home Aquarium Budget",
+   "html": "<div class=\"card\"><h4>Home Aquarium Budget</h4><div class=\"between\"><span>Tank & stand</span><b>$150</b></div><div class=\"between\"><span>Filter & heater</span><b>$80</b></div><div class=\"between\"><span>Decor & substrate</span><b>$50</b></div><div class=\"between\"><span>Fish & plants</span><b>$70</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$350</b></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "How much to get into 3D printing?",
+    "3D printing budget",
+    "budget for a 3D printer",
+    "I want to start 3D printing at home, what's the cost?",
+    "Home 3D printing budget breakdown",
+    "cost of 3D printer and filament",
+    "3D printer budget",
+    "What's the total cost to get into 3D printing as a hobby?",
+    "How much money to start 3D printing at home?",
+    "budget breakdown for buying a 3D printer",
+    "3d printer startup costs?",
+    "I want to buy an Ender 3, what else do I need and how much?",
+    "cost to begin 3d printing hobby"
+   ],
+   "title": "Home 3D Printing Budget",
+   "html": "<div class=\"card\"><h4>Home 3D Printing Budget</h4><div class=\"between\"><span>3D printer</span><b>$300</b></div><div class=\"between\"><span>Filament (1kg)</span><b>$25</b></div><div class=\"between\"><span>Tools & accessories</span><b>$50</b></div><div class=\"between\"><span>Software (optional)</span><b>$20</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$395</b></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "Budget for a backyard movie night",
+    "backyard movie night budget",
+    "How much for an outdoor movie setup?",
+    "I want to host a backyard movie night, what's the budget?",
+    "Backyard movie night budget breakdown",
+    "cost of projector and screen for backyard",
+    "outdoor movie night budget",
+    "How much to set up an outdoor movie night in my backyard?",
+    "Budget for a projector and screen for backyard movies",
+    "backyard cinema night costs?",
+    "what do I need for a backyard movie night and how much?",
+    "outdoor movie party budget",
+    "cost for a DIY backyard theater night"
+   ],
+   "title": "Backyard Movie Night Budget",
+   "html": "<div class=\"card\"><h4>Backyard Movie Night Budget</h4><div class=\"between\"><span>Projector</span><b>$200</b></div><div class=\"between\"><span>Screen or sheet</span><b>$50</b></div><div class=\"between\"><span>Speakers</span><b>$80</b></div><div class=\"between\"><span>Snacks & drinks</span><b>$40</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$370</b></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "How much for a sushi making class?",
+    "sushi class budget",
+    "budget for sushi making class",
+    "I want to take a sushi making class, what's the cost?",
+    "Sushi making class budget breakdown",
+    "cost of sushi class",
+    "sushi class cost",
+    "How much does a sushi making class usually cost?",
+    "Budget for taking a sushi rolling class",
+    "sushi class price?",
+    "I want to learn to make sushi, how much for a class?",
+    "cost of sushi making workshop",
+    "how much should I budget for a sushi making course"
+   ],
+   "title": "Sushi Making Class Budget",
+   "html": "<div class=\"card\"><h4>Sushi Making Class Budget</h4><div class=\"between\"><span>Class fee</span><b>$75</b></div><div class=\"between\"><span>Ingredients</span><b>$30</b></div><div class=\"between\"><span>Mat & tools</span><b>$20</b></div><div class=\"between\"><span>Apron</span><b>$15</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$140</b></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Monthly Houseplant Budget",
+   "user_requests": [
+    "budget for my houseplants each month",
+    "how much do people spend on plants monthly",
+    "plant money help",
+    "monthly plant care costs",
+    "i keep buying plants lol whats a budget",
+    "houseplant upkeep budget",
+    "cost of keeping plants alive each month",
+    "How much do you spend on houseplants each month?",
+    "Monthly budget for my indoor plant addiction",
+    "plant budget per month?",
+    "what's a reasonable monthly spend on houseplants?",
+    "I keep buying plants, how much should I budget monthly?",
+    "average monthly cost for houseplant hobby"
+   ],
+   "html": "<div class=\"card\">\n<h4>Monthly Houseplant Budget</h4>\n<p class=\"muted t-small\">Hey <regex>user_name</regex> \u2014 plants are cheap until you discover rare aroids. Here's a sane baseline.</p>\n<div class=\"between\"><span>Potting mix &amp; perlite</span><b>$8</b></div>\n<div class=\"between\"><span>Fertilizer (liquid, monthly)</span><b>$4</b></div>\n<div class=\"between\"><span>New plant allowance</span><b>$15</b></div>\n<div class=\"between\"><span>Pots &amp; saucers</span><b>$6</b></div>\n<hr class=\"divider\">\n<div class=\"between\"><b>Total</b><b>$33</b></div>\n<details class=\"acc\"><summary>Where this goes sideways</summary><div class=\"body\"><p class=\"t-small\">One big-box purchase a month max. Prices tripled since 2020, so buying bare-root cuttings from a local swap beats a nursery run every time.</p></div></details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Monthly Streaming Bundle Budget",
+   "user_requests": [
+    "streaming budget",
+    "how much am i spending on netflix hulu etc",
+    "cut my streaming costs",
+    "subscription tv budget",
+    "streaming services cost breakdown",
+    "i pay too much for streaming",
+    "budget for netflix disney spotify",
+    "How much am I paying for all my streaming services each month?",
+    "Monthly budget for Netflix, Hulu, Disney+ etc.",
+    "streaming services cost per month?",
+    "what's the total for a streaming bundle?",
+    "I want to cut my streaming bill, what's a budget?",
+    "monthly cost for multiple streaming subscriptions"
+   ],
+   "html": "<div class=\"card\">\n<h4>Monthly Streaming Bundle</h4>\n<p class=\"muted t-small\">Real talk, <regex>user_name</regex>: the average household stacks four services and forgets two.</p>\n<div class=\"between\"><span>Ad-supported tier</span><b>$7</b></div>\n<div class=\"between\"><span>Second service (rotating)</span><b>$11</b></div>\n<div class=\"between\"><span>Music</span><b>$11</b></div>\n<div class=\"between\"><span>Buffer for a splurge month</span><b>$5</b></div>\n<hr class=\"divider\">\n<div class=\"between\"><b>Total</b><b>$34</b></div>\n<div class=\"callout info\"><p class=\"t-small\">Rotate one service per quarter. You'll watch the same amount and pay for one at a time.</p></div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Monthly Haircut &amp; Grooming Budget",
+   "user_requests": [
+    "how much for haircuts a month",
+    "grooming budget",
+    "barber costs",
+    "hair budget help",
+    "i spend a fortune on my hair",
+    "monthly self care grooming budget",
+    "cost of keeping a haircut",
+    "How much should I budget for haircuts and grooming each month?",
+    "Monthly cost for haircuts and beard trims",
+    "grooming budget per month?",
+    "what do people spend on haircuts monthly?",
+    "I get a haircut every 4 weeks, how much monthly?",
+    "budget for salon visits and grooming products monthly"
+   ],
+   "html": "<div class=\"card\">\n<h4>Monthly Haircut &amp; Grooming</h4>\n<p class=\"muted t-small\">You're not vain, <regex>user_name</regex>. You're just visible.</p>\n<div class=\"between\"><span>Cut (averaged, every 6 wks)</span><b>$38</b></div>\n<div class=\"between\"><span>Product</span><b>$9</b></div>\n<div class=\"between\"><span>At-home tools sinking fund</span><b>$5</b></div>\n<hr class=\"divider\">\n<div class=\"between\"><b>Total</b><b>$52</b></div>\n<details class=\"acc\"><summary>Stretch it</summary><div class=\"body\"><p class=\"t-small\">Ask for a dry cut if your stylist offers it \u2014 often $10 less. Skip the upsell shampoo every other visit.</p></div></details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Board Game Night Budget",
+   "user_requests": [
+    "budget for game night",
+    "how much to host board games",
+    "game night costs",
+    "hosting board game night budget",
+    "cheap game night ideas money",
+    "what do snacks for game night cost",
+    "board game group budget",
+    "How much to host a board game night?",
+    "Budget for snacks and drinks for game night",
+    "board game night costs?",
+    "what's the budget for a game night with friends?",
+    "I want to start a monthly board game night, how much?",
+    "cost to host board game evening"
+   ],
+   "html": "<div class=\"card\">\n<h4>Board Game Night</h4>\n<p class=\"muted t-small\">Four people, one table, <regex>user_name</regex>. Keep it under a pizza delivery.</p>\n<div class=\"between\"><span>Snacks &amp; drinks</span><b>$14</b></div>\n<div class=\"between\"><span>New game (every other month)</span><b>$12</b></div>\n<div class=\"between\"><span>Card sleeves / organizer</span><b>$3</b></div>\n<hr class=\"divider\">\n<div class=\"between\"><b>Total</b><b>$29</b></div>\n<div class=\"callout good\"><p class=\"t-small\">Host brings the table, guests bring a snack. Everyone saves, nobody resents it.</p></div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Monthly Cycling Commute Budget",
+   "user_requests": [
+    "bike commuting costs monthly",
+    "budget for cycling to work",
+    "how much does bike commuting cost",
+    "bike commute expenses",
+    "cycling budget help",
+    "i ride to work what should i budget",
+    "cost of biking instead of driving",
+    "How much does it cost to commute by bike each month?",
+    "Monthly budget for cycling to work",
+    "bike commuter monthly expenses?",
+    "what's the monthly cost of cycling to work?",
+    "I'm switching to bike commuting, what's the budget?",
+    "cost of commuting by bicycle monthly"
+   ],
+   "html": "<div class=\"card\">\n<h4>Monthly Cycling Commute</h4>\n<p class=\"muted t-small\">Cheaper than gas, <regex>user_name</regex> \u2014 just not free. The wear adds up quietly.</p>\n<div class=\"between\"><span>Chain, lube, tubes</span><b>$10</b></div>\n<div class=\"between\"><span>Shop tune-up (amortized)</span><b>$12</b></div>\n<div class=\"between\"><span>Lights, lock, tape</span><b>$5</b></div>\n<div class=\"between\"><span>Coffee at the halfway point</span><b>$8</b></div>\n<hr class=\"divider\">\n<div class=\"between\"><b>Total</b><b>$35</b></div>\n<details class=\"acc\"><summary>Compare to driving</summary><div class=\"body\"><p class=\"t-small\">A 10-mile round-trip commute runs about $80/month in fuel and wear. You're ahead.</p></div></details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Monthly Laundry &amp; Dry Cleaning Budget",
+   "user_requests": [
+    "laundry budget",
+    "dry cleaning costs monthly",
+    "how much for laundry each month",
+    "budget for dry cleaning",
+    "laundromat vs machine cost",
+    "i spend so much on laundry help",
+    "monthly clothes care budget",
+    "How much should I budget for laundry and dry cleaning each month?",
+    "Monthly cost for dry cleaning and laundry service",
+    "laundry and dry cleaning budget?",
+    "what's the average monthly spend on laundry?",
+    "I use a laundromat and dry cleaner, how much monthly?",
+    "budget for laundry and dry cleaning per month"
+   ],
+   "html": "<div class=\"card\">\n<h4>Monthly Laundry &amp; Dry Cleaning</h4>\n<p class=\"muted t-small\">Nobody warns you about this one, <regex>user_name</regex>. Here's the tally.</p>\n<div class=\"between\"><span>Detergent, softener, sheets</span><b>$9</b></div>\n<div class=\"between\"><span>Laundromat (2 loads/wk)</span><b>$24</b></div>\n<div class=\"between\"><span>Dry cleaning (1\u20132 items)</span><b>$14</b></div>\n<hr class=\"divider\">\n<div class=\"between\"><b>Total</b><b>$47</b></div>\n<div class=\"callout warn\"><p class=\"t-small\">Dry cleaning is the sneaky line. Hang and air instead of cleaning when you can \u2014 suits forgive more than you think.</p></div>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "Cheap skiing day trip?",
+    "ski budget for a day trip",
+    "how much for skiing one day",
+    "day ski trip costs",
+    "budget for skiing saturday",
+    "skiing expenses?",
+    "cost of ski day trip",
+    "How much for a day trip skiing?",
+    "Budget for a one-day ski trip",
+    "ski day trip costs?",
+    "what's the cost of a ski day including lift ticket and gas?",
+    "I want to go skiing for a day, what's the budget?",
+    "cheap ski day trip budget"
+   ],
+   "title": "Ski Day Trip Budget",
+   "html": "<div class=\"card\">\n  <h4>Ski Day Trip Budget</h4>\n  <p class=\"t-small muted\">One lift ticket, packed lunch, and gas for a solo trip to the local mountain.</p>\n  <div class=\"between\"><span>Lift ticket</span><b>$85</b></div>\n  <div class=\"between\"><span>Gas (round trip)</span><b>$30</b></div>\n  <div class=\"between\"><span>Packed lunch &amp; snacks</span><b>$15</b></div>\n  <div class=\"between\"><span>Parking</span><b>$10</b></div>\n  <hr class=\"divider\">\n  <div class=\"between\"><b>Total</b><b>$140</b></div>\n  <p class=\"t-small dim\">Tip: bring your own gear to skip rentals.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for tie dye party?",
+    "how much to spend on tie dye supplies",
+    "tie dye party costs",
+    "planning a tie dye party budget",
+    "what do I need to buy for tie dye",
+    "cost of tie dye craft night",
+    "tie dyeing with friends budget",
+    "How much to host a tie-dye party?",
+    "Budget for tie-dye supplies for a group",
+    "tie dye party costs?",
+    "what's the budget for a tie-dye party with friends?",
+    "I'm planning a tie-dye party, how much for supplies?",
+    "cost for a DIY tie-dye party"
+   ],
+   "title": "Tie-Dye Party Budget",
+   "html": "<div class=\"card\">\n  <h4>Tie-Dye Party Budget</h4>\n  <p class=\"t-small muted\">For four friends. Dyes, shirts, and a few extras for a colorful afternoon.</p>\n  <div class=\"between\"><span>Tie-dye kit</span><b>$25</b></div>\n  <div class=\"between\"><span>5 white T-shirts</span><b>$20</b></div>\n  <div class=\"between\"><span>Rubber bands &amp; gloves</span><b>$5</b></div>\n  <div class=\"between\"><span>Plastic table cover</span><b>$3</b></div>\n  <hr class=\"divider\">\n  <div class=\"between\"><b>Total</b><b>$53</b></div>\n  <p class=\"t-small dim\">Wash shirts first for better dye take-up.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how much for a skateboard tune up",
+    "skateboard maintenance budget",
+    "cost to replace skateboard parts",
+    "budget for skateboard repairs",
+    "skateboard upkeep costs",
+    "tune up my skateboard budget",
+    "skateboard bearing and wheel replacement cost",
+    "How much for a skateboard tune-up?",
+    "Budget for replacing skateboard parts",
+    "skateboard maintenance costs?",
+    "what's the cost to tune up a skateboard?",
+    "I need new bearings and grip tape, how much?",
+    "price for skateboard tune-up service"
+   ],
+   "title": "Skateboard Tune-Up Budget",
+   "html": "<div class=\"card\">\n  <h4>Skateboard Tune-Up Budget</h4>\n  <p class=\"t-small muted\">Refresh bearings, wheels, and grip tape for a smoother ride.</p>\n  <div class=\"between\"><span>Bearings (set of 8)</span><b>$30</b></div>\n  <div class=\"between\"><span>Wheels (set of 4)</span><b>$35</b></div>\n  <div class=\"between\"><span>Grip tape</span><b>$10</b></div>\n  <div class=\"between\"><span>Hardware (bolts)</span><b>$5</b></div>\n  <hr class=\"divider\">\n  <div class=\"between\"><b>Total</b><b>$80</b></div>\n  <p class=\"t-small dim\">Check your local shop for installation deals.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for a bee hotel",
+    "bee hotel supplies cost",
+    "how much to build a bee hotel",
+    "diy bee hotel budget",
+    "bee house materials",
+    "cost of mason bee house",
+    "bee hotel project budget",
+    "How much to build a bee hotel?",
+    "Budget for DIY bee house materials",
+    "bee hotel costs?",
+    "what's the cost to make a bee hotel?",
+    "I want to build a bee hotel, what materials and budget?",
+    "price for making a bee hotel"
+   ],
+   "title": "DIY Bee Hotel Budget",
+   "html": "<div class=\"card\">\n  <h4>DIY Bee Hotel Budget</h4>\n  <p class=\"t-small muted\">A simple wooden bee hotel for solitary bees. Materials from the hardware store.</p>\n  <div class=\"between\"><span>Untreated wood block</span><b>$12</b></div>\n  <div class=\"between\"><span>Bamboo tubes</span><b>$8</b></div>\n  <div class=\"between\"><span>Drill bits (if needed)</span><b>$15</b></div>\n  <div class=\"between\"><span>Sandpaper</span><b>$5</b></div>\n  <hr class=\"divider\">\n  <div class=\"between\"><b>Total</b><b>$40</b></div>\n  <p class=\"t-small dim\">Skip the drill bits if you already have a set.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how much for a rain barrel setup",
+    "rain barrel budget",
+    "cost to install rain barrel",
+    "rainwater collection budget",
+    "diy rain barrel cost",
+    "budget for rain barrel kit",
+    "rain barrel parts cost",
+    "How much to set up a rain barrel system?",
+    "Budget for rain barrel and downspout diverter",
+    "rain barrel setup costs?",
+    "what's the cost to install a rain barrel?",
+    "I want to collect rainwater, what's the budget for a barrel setup?",
+    "price for a rain barrel installation"
+   ],
+   "title": "Rain Barrel Setup Budget",
+   "html": "<div class=\"card\">\n  <h4>Rain Barrel Setup Budget</h4>\n  <p class=\"t-small muted\">Collect rainwater for the garden with a basic barrel and diverter.</p>\n  <div class=\"between\"><span>55-gallon barrel</span><b>$60</b></div>\n  <div class=\"between\"><span>Diverter kit</span><b>$30</b></div>\n  <div class=\"between\"><span>Spigot &amp; fittings</span><b>$15</b></div>\n  <div class=\"between\"><span>Mosquito screen</span><b>$5</b></div>\n  <hr class=\"divider\">\n  <div class=\"between\"><b>Total</b><b>$110</b></div>\n  <p class=\"t-small dim\">Place on a level surface or stand.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "budget for a bat house",
+    "bat house materials cost",
+    "how much to build bat house",
+    "diy bat house budget",
+    "cost of bat box",
+    "bat house project cost",
+    "bat house plans and budget",
+    "How much to build a bat house?",
+    "Budget for DIY bat house materials",
+    "bat house costs?",
+    "what's the cost to make a bat house?",
+    "I want to build a bat house, what's the budget?",
+    "price for a bat house kit or DIY"
+   ],
+   "title": "DIY Bat House Budget",
+   "html": "<div class=\"card\">\n  <h4>DIY Bat House Budget</h4>\n  <p class=\"t-small muted\">Build a nursery bat house to invite natural mosquito control.</p>\n  <div class=\"between\"><span>Plywood (1/2-inch)</span><b>$20</b></div>\n  <div class=\"between\"><span>Exterior screws</span><b>$5</b></div>\n  <div class=\"between\"><span>Caulk</span><b>$5</b></div>\n  <div class=\"between\"><span>Paint (dark)</span><b>$10</b></div>\n  <hr class=\"divider\">\n  <div class=\"between\"><b>Total</b><b>$40</b></div>\n  <p class=\"t-small dim\">Mount at least 12 feet high, facing south.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "Budget for a tie-dye party with the kids",
+    "how much does a tie dye birthday party cost",
+    "tie dye party budget pls",
+    "I want to host a tie-dye party, what's the damage?",
+    "tie dye party supplies budget",
+    "Cost breakdown for a backyard tie dye party",
+    "help me budget a tie dye party for 8 people"
+   ],
+   "title": "Tie-Dye Party Budget",
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Tie-Dye Party Budget</h4><p class=\"muted t-small\">For 8 people, backyard, no shirts included.</p><div class=\"between\"><span>Dye kit (8 colors)</span><b>$25</b></div><div class=\"between\"><span>Rubber bands &amp; gloves</span><b>$8</b></div><div class=\"between\"><span>White t-shirts (8)</span><b>$32</b></div><div class=\"between\"><span>Plastic tablecloths &amp; bags</span><b>$10</b></div><div class=\"between\"><span>Snacks &amp; drinks</span><b>$20</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$95</b></div><p class=\"dim t-small\">Tip: ask guests to bring a shirt if you want to trim $32.</p></div>"
+  },
+  {
+   "user_requests": [
+    "budget for a DIY bee hotel",
+    "how much to build a bee hotel",
+    "bee hotel project cost",
+    "I want to make a bee hotel, what will it cost?",
+    "DIY bee house budget",
+    "cheap bee hotel supplies budget",
+    "plan a bee hotel build budget"
+   ],
+   "title": "DIY Bee Hotel Budget",
+   "html": "<div class=\"card\"><h4 class=\"card-title\">DIY Bee Hotel Budget</h4><p class=\"muted t-small\">One small hotel for solitary bees.</p><div class=\"between\"><span>Untreated wood block</span><b>$12</b></div><div class=\"between\"><span>Bamboo tubes</span><b>$8</b></div><div class=\"between\"><span>Drill bits (if needed)</span><b>$15</b></div><div class=\"between\"><span>Sandpaper</span><b>$4</b></div><div class=\"between\"><span>Mounting screws</span><b>$3</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$42</b></div><p class=\"dim t-small\">Already have a drill? Skip the bits and save $15.</p></div>"
+  },
+  {
+   "user_requests": [
+    "rain barrel setup budget",
+    "how much for a rain barrel system",
+    "budget for rain barrel",
+    "I want to set up a rain barrel, cost?",
+    "rain barrel parts budget",
+    "DIY rain barrel cost breakdown",
+    "planning a rain barrel budget"
+   ],
+   "title": "Rain Barrel Setup Budget",
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Rain Barrel Setup Budget</h4><p class=\"muted t-small\">One 55-gallon barrel, basic downspout diverter.</p><div class=\"between\"><span>Rain barrel (food-grade)</span><b>$70</b></div><div class=\"between\"><span>Diverter kit</span><b>$25</b></div><div class=\"between\"><span>Faucet &amp; overflow</span><b>$15</b></div><div class=\"between\"><span>Cinder blocks (base)</span><b>$8</b></div><div class=\"between\"><span>Mosquito screen</span><b>$5</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$123</b></div><p class=\"dim t-small\">Check local rules before installing. Some states regulate rain barrels.</p></div>"
+  },
+  {
+   "user_requests": [
+    "DIY bat house budget",
+    "how much to build a bat house",
+    "bat house cost",
+    "I want to put up a bat house, budget?",
+    "bat house kit vs DIY budget",
+    "budget for a bat house project",
+    "plan a bat house build budget"
+   ],
+   "title": "DIY Bat House Budget",
+   "html": "<div class=\"card\"><h4 class=\"card-title\">DIY Bat House Budget</h4><p class=\"muted t-small\">A simple 3-chamber bat house.</p><div class=\"between\"><span>Plywood (exterior grade)</span><b>$20</b></div><div class=\"between\"><span>Wood stain (dark)</span><b>$10</b></div><div class=\"between\"><span>Caulk &amp; screws</span><b>$8</b></div><div class=\"between\"><span>Mounting hardware</span><b>$12</b></div><div class=\"between\"><span>Bat house plans</span><b>$0</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$50</b></div><p class=\"dim t-small\">Free plans online. Mount at least 12 feet high.</p></div>"
+  },
+  {
+   "user_requests": [
+    "skateboard tune-up budget",
+    "how much to tune up a skateboard",
+    "skateboard maintenance cost",
+    "I need to tune my skateboard, what's the cost?",
+    "skateboard parts budget",
+    "budget for skateboard tune up",
+    "plan a skateboard tune-up budget"
+   ],
+   "title": "Skateboard Tune-Up Budget",
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Skateboard Tune-Up Budget</h4><p class=\"muted t-small\">For a standard street setup.</p><div class=\"between\"><span>New bearings</span><b>$20</b></div><div class=\"between\"><span>Bushings</span><b>$8</b></div><div class=\"between\"><span>Grip tape</span><b>$10</b></div><div class=\"between\"><span>Hardware (bolts)</span><b>$5</b></div><div class=\"between\"><span>Tools (if needed)</span><b>$15</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$58</b></div><p class=\"dim t-small\">Borrow a skate tool if you can. Saves $15.</p></div>"
+  },
+  {
+   "user_requests": [
+    "monthly houseplant budget",
+    "how much do houseplants cost per month",
+    "plant budget",
+    "I want to budget for my houseplant habit",
+    "houseplant monthly expenses",
+    "budget for buying houseplants monthly",
+    "plan a monthly houseplant budget"
+   ],
+   "title": "Monthly Houseplant Budget",
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Monthly Houseplant Budget</h4><p class=\"muted t-small\">For a modest indoor collection.</p><div class=\"between\"><span>New plant (1-2)</span><b>$20</b></div><div class=\"between\"><span>Potting soil</span><b>$8</b></div><div class=\"between\"><span>Fertilizer</span><b>$5</b></div><div class=\"between\"><span>Pots (occasional)</span><b>$12</b></div><div class=\"between\"><span>Pest control</span><b>$5</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$50</b></div><p class=\"dim t-small\">Propagate your own to cut the plant cost.</p></div>"
+  },
+  {
+   "title": "Monthly Coffee Gear Budget",
+   "user_requests": [
+    "budget for my coffee setup each month",
+    "how much do i spend on coffee stuff monthly",
+    "coffee gear budget help",
+    "monthly bean + gear costs??",
+    "i wanna track my coffee spend",
+    "home barista monthly budget",
+    "coffee hobbie budget per month"
+   ],
+   "html": "<div class=\"card\"><h4>Monthly Coffee Gear</h4><div class=\"between\"><span>Whole beans (2 bags)</span><b>$34</b></div><div class=\"between\"><span>Filter papers</span><b>$6</b></div><div class=\"between\"><span>Oat milk</span><b>$9</b></div><div class=\"between\"><span>Descale + cleaning tabs</span><b>$5</b></div><div class=\"between\"><span>Replacement gasket (sinking fund)</span><b>$4</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$58</b></div><p class=\"t-small muted\">Grinder burrs are a once-a-year hit. Park ~$8/month aside so it never stings, <regex>user_name</regex>.</p></div>"
+  },
+  {
+   "title": "Monthly Car Wash &amp; Detailing Budget",
+   "user_requests": [
+    "car wash budget",
+    "how much for detailing each month",
+    "monthly car cleaning costs",
+    "budget for keeping my car clean",
+    "wash + wax monthly spend",
+    "car detail budget pls",
+    "what should i budget for car washing"
+   ],
+   "html": "<div class=\"card\"><h4>Monthly Car Wash &amp; Detail</h4><div class=\"between\"><span>Touchless wash (4x)</span><b>$28</b></div><div class=\"between\"><span>Interior vacuum + wipe</span><b>$12</b></div><div class=\"between\"><span>Glass cleaner + microfibre</span><b>$4</b></div><div class=\"between\"><span>Spray wax</span><b>$6</b></div><div class=\"between\"><span>Full detail sinking fund</span><b>$15</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$65</b></div><details class=\"acc\"><summary>Cheaper route</summary><div class=\"body\"><p class=\"t-small\">DIY wash at a self-serve bay runs about $9 a go. Four visits beats a subscription for most people, <regex>user_name</regex>.</p></div></details></div>"
+  },
+  {
+   "title": "Monthly Bird Feeding Budget",
+   "user_requests": [
+    "bird feeder budget",
+    "how much do i spend feeding birds",
+    "monthly seed and suet costs",
+    "budget for my backyard birds",
+    "bird food budget monthly",
+    "feeders + seed monthly spend?",
+    "whats a bird feed budget look like"
+   ],
+   "html": "<div class=\"card\"><h4>Monthly Bird Feeding</h4><div class=\"between\"><span>Black-oil sunflower seed (20 lb)</span><b>$26</b></div><div class=\"between\"><span>Suet cakes (4)</span><b>$8</b></div><div class=\"between\"><span>Nyjer / thistle</span><b>$11</b></div><div class=\"between\"><span>Sugar for hummingbird nectar</span><b>$3</b></div><div class=\"between\"><span>Feeder repair + hooks</span><b>$5</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$53</b></div><p class=\"t-small muted\">Seed prices spike in winter. Buy 40 lb sacks in autumn and you'll shave roughly a third off, <regex>user_name</regex>.</p></div>"
+  },
+  {
+   "title": "Monthly Fitness Class Budget",
+   "user_requests": [
+    "gym class budget",
+    "how much for fitness classes monthly",
+    "budget for workout classes",
+    "monthly studio class costs",
+    "fitness class spend help",
+    "yoga + spin budget",
+    "what do classes cost me each month"
+   ],
+   "html": "<div class=\"card\"><h4>Monthly Fitness Classes</h4><div class=\"between\"><span>Studio membership</span><b>$79</b></div><div class=\"between\"><span>Drop-in spin (2)</span><b>$36</b></div><div class=\"between\"><span>Class booking app fee</span><b>$3</b></div><div class=\"between\"><span>Water bottle + towel service</span><b>$10</b></div><div class=\"between\"><span>Shoes sinking fund</span><b>$12</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$140</b></div><div class=\"meter\"><span style=\"width:70%\"></span></div><p class=\"t-small muted\">At 16 classes a month that's about $8.75 each. Not bad, <regex>user_name</regex>.</p></div>"
+  },
+  {
+   "title": "Monthly Board Game Budget",
+   "user_requests": [
+    "board game budget",
+    "how much on games monthly",
+    "budget for my board game habit",
+    "monthly tabletop spend",
+    "game night budget monthly",
+    "board games + sleeves budget",
+    "what should i set aside for games"
+   ],
+   "html": "<div class=\"card\"><h4>Monthly Board Games</h4><div class=\"between\"><span>One new game (avg)</span><b>$40</b></div><div class=\"between\"><span>Card sleeves</span><b>$9</b></div><div class=\"between\"><span>Insert / organiser</span><b>$12</b></div><div class=\"between\"><span>Snacks for game night</span><b>$14</b></div><div class=\"between\"><span>Convention sinking fund</span><b>$20</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$95</b></div><p class=\"t-small muted\">Shelf of shame growing? Cap new buys at one a month and trade the rest, <regex>user_name</regex>.</p></div>"
+  },
+  {
+   "title": "Monthly Music Lessons Budget",
+   "user_requests": [
+    "music lesson budget",
+    "how much for lessons each month",
+    "budget for guitar lessons",
+    "monthly lesson costs",
+    "piano lesson budget help",
+    "lessons + books monthly spend",
+    "whats my lesson budget"
+   ],
+   "html": "<div class=\"card\"><h4>Monthly Music Lessons</h4><div class=\"between\"><span>Weekly 30-min lesson (4x)</span><b>$120</b></div><div class=\"between\"><span>Method books + sheet music</span><b>$14</b></div><div class=\"between\"><span>Strings / reeds</span><b>$9</b></div><div class=\"between\"><span>Metronome app</span><b>$4</b></div><div class=\"between\"><span>Recital fee sinking fund</span><b>$10</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$157</b></div><div class=\"between\"><span class=\"muted\">Cost per lesson</span><b>~$30</b></div></div>"
+  },
+  {
+   "user_requests": [
+    "monthly budget for my backyard chickens",
+    "how much does it cost to keep chickens each month?",
+    "chicken feed and bedding budget",
+    "I have 6 hens, what should I budget monthly?",
+    "chicken keeping costs per month",
+    "budget for backyard flock",
+    "what do chickens cost me every month"
+   ],
+   "title": "Backyard Chicken Budget",
+   "html": "<div class=\"card\">\n  <h4>Monthly Backyard Chicken Budget</h4>\n  <p class=\"muted t-small\">For a flock of 6 hens. Prices vary by region.</p>\n  <div class=\"between\"><span>Layer feed (50 lb)</span><b>$24</b></div>\n  <div class=\"between\"><span>Bedding (pine shavings)</span><b>$10</b></div>\n  <div class=\"between\"><span>Treats &amp; scratch</span><b>$8</b></div>\n  <div class=\"between\"><span>Oyster shell &amp; grit</span><b>$5</b></div>\n  <div class=\"between\"><span>Supplements (electrolytes, etc.)</span><b>$4</b></div>\n  <div class=\"between\"><span>Coop maintenance &amp; repairs</span><b>$6</b></div>\n  <hr class=\"divider\">\n  <div class=\"between\"><b>Total</b><b>$57</b></div>\n  <p class=\"muted t-small\">One-time costs (coop, feeder, waterer) not included.</p>\n</div>"
+  },
+  {
+   "user_requests": [
+    "budget for a camping trip",
+    "how much for a weekend camping?",
+    "camping gear and site fees budget",
+    "planning a camping trip, what's the cost?",
+    "camping budget for two people",
+    "weekend camping expenses",
+    "what should I budget for camping"
+   ],
+   "title": "Weekend Camping Trip Budget",
+   "html": "<div class=\"card\">\n  <h4>Weekend Camping Trip Budget</h4>\n  <p class=\"muted t-small\">For 2 people, 2 nights at a state park.</p>\n  <div class=\"between\"><span>Campsite fees (2 nights)</span><b>$50</b></div>\n  <div class=\"between\"><span>Firewood</span><b>$15</b></div>\n  <div class=\"between\"><span>Food &amp; drinks</span><b>$60</b></div>\n  <div class=\"between\"><span>Ice</span><b>$5</b></div>\n  <div class=\"between\"><span>Gas (round trip)</span><b>$30</b></div>\n  <div class=\"between\"><span>Park entry fee</span><b>$10</b></div>\n  <hr class=\"divider\">\n  <div class=\"between\"><b>Total</b><b>$170</b></div>\n  <p class=\"muted t-small\">Gear rental not included.</p>\n</div>"
+  },
+  {
+   "user_requests": [
+    "budget for a home coffee setup",
+    "how much to start making espresso at home?",
+    "coffee gear budget",
+    "espresso machine and grinder budget",
+    "home barista setup cost",
+    "what do I need to budget for a coffee station?",
+    "coffee hobby budget"
+   ],
+   "title": "Home Espresso Setup Budget",
+   "html": "<div class=\"card\">\n  <h4>Home Espresso Setup Budget</h4>\n  <p class=\"muted t-small\">One-time gear for a solid starter kit.</p>\n  <div class=\"between\"><span>Espresso machine (entry-level)</span><b>$300</b></div>\n  <div class=\"between\"><span>Burr grinder</span><b>$150</b></div>\n  <div class=\"between\"><span>Scale (0.1g)</span><b>$25</b></div>\n  <div class=\"between\"><span>Tamper &amp; distribution tool</span><b>$40</b></div>\n  <div class=\"between\"><span>Milk pitcher</span><b>$15</b></div>\n  <div class=\"between\"><span>Cleaning supplies</span><b>$20</b></div>\n  <div class=\"between\"><span>Beans (first month)</span><b>$20</b></div>\n  <hr class=\"divider\">\n  <div class=\"between\"><b>Total</b><b>$570</b></div>\n  <p class=\"muted t-small\">Upgrade path: better grinder first.</p>\n</div>"
+  },
+  {
+   "user_requests": [
+    "monthly budget for a dog",
+    "how much does a dog cost per month?",
+    "dog expenses monthly",
+    "budget for my dog",
+    "what to budget for a medium dog",
+    "dog care costs",
+    "monthly dog spending"
+   ],
+   "title": "Monthly Dog Budget",
+   "html": "<div class=\"card\">\n  <h4>Monthly Dog Budget</h4>\n  <p class=\"muted t-small\">For a medium-sized dog, average costs.</p>\n  <div class=\"between\"><span>Food (dry kibble)</span><b>$40</b></div>\n  <div class=\"between\"><span>Treats</span><b>$10</b></div>\n  <div class=\"between\"><span>Vet visit (annual avg.)</span><b>$25</b></div>\n  <div class=\"between\"><span>Flea &amp; tick prevention</span><b>$15</b></div>\n  <div class=\"between\"><span>Heartworm meds</span><b>$10</b></div>\n  <div class=\"between\"><span>Toys &amp; chews</span><b>$10</b></div>\n  <div class=\"between\"><span>Grooming (every other month)</span><b>$15</b></div>\n  <div class=\"between\"><span>Poop bags &amp; supplies</span><b>$5</b></div>\n  <hr class=\"divider\">\n  <div class=\"between\"><b>Total</b><b>$130</b></div>\n  <p class=\"muted t-small\">Emergency vet fund recommended separately.</p>\n</div>"
+  },
+  {
+   "user_requests": [
+    "budget for a home gym",
+    "how much to set up a home gym?",
+    "home gym equipment budget",
+    "starting a home gym cost",
+    "what do I need to spend on a home gym?",
+    "home workout setup budget",
+    "gym in garage budget"
+   ],
+   "title": "Home Gym Setup Budget",
+   "html": "<div class=\"card\">\n  <h4>Home Gym Setup Budget</h4>\n  <p class=\"muted t-small\">Essential equipment for a basic home gym.</p>\n  <div class=\"between\"><span>Adjustable dumbbells</span><b>$200</b></div>\n  <div class=\"between\"><span>Flat bench</span><b>$100</b></div>\n  <div class=\"between\"><span>Resistance bands set</span><b>$20</b></div>\n  <div class=\"between\"><span>Yoga mat</span><b>$25</b></div>\n  <div class=\"between\"><span>Kettlebell (one)</span><b>$40</b></div>\n  <div class=\"between\"><span>Flooring (interlocking mats)</span><b>$50</b></div>\n  <div class=\"between\"><span>Mirror (optional)</span><b>$30</b></div>\n  <hr class=\"divider\">\n  <div class=\"between\"><b>Total</b><b>$465</b></div>\n  <p class=\"muted t-small\">Start with dumbbells and bench.</p>\n</div>"
+  },
+  {
+   "user_requests": [
+    "monthly budget for a cat",
+    "how much does a cat cost monthly?",
+    "cat expenses per month",
+    "budget for my cat",
+    "what to budget for an indoor cat",
+    "cat care costs",
+    "monthly cat spending"
+   ],
+   "title": "Monthly Cat Budget",
+   "html": "<div class=\"card\">\n  <h4>Monthly Cat Budget</h4>\n  <p class=\"muted t-small\">For one indoor cat, average costs.</p>\n  <div class=\"between\"><span>Food (wet + dry)</span><b>$30</b></div>\n  <div class=\"between\"><span>Litter</span><b>$15</b></div>\n  <div class=\"between\"><span>Vet visit (annual avg.)</span><b>$20</b></div>\n  <div class=\"between\"><span>Flea &amp; tick prevention</span><b>$10</b></div>\n  <div class=\"between\"><span>Toys &amp; treats</span><b>$10</b></div>\n  <div class=\"between\"><span>Grooming (occasional)</span><b>$5</b></div>\n  <hr class=\"divider\">\n  <div class=\"between\"><b>Total</b><b>$90</b></div>\n  <p class=\"muted t-small\">Pet insurance not included.</p>\n</div>"
+  },
+  {
+   "title": "Monthly Coffee Gear Budget",
+   "user_requests": [
+    "monthly coffee gear budget",
+    "how much should I spend on coffee stuff each month?",
+    "coffee equipment budget",
+    "I keep buying coffee gadgets, help me budget",
+    "coffee gear monthly spend plan",
+    "budget for coffee beans and equipment",
+    "monthly coffee hobby budget"
+   ],
+   "html": "<div class=\"card\"><h4>Monthly Coffee Gear Budget</h4><div class=\"between\"><span>Beans (2 bags)</span><b>$36</b></div><div class=\"between\"><span>Filters &amp; cleaning</span><b>$12</b></div><div class=\"between\"><span>Gear fund</span><b>$25</b></div><div class=\"between\"><span>Milk &amp; syrups</span><b>$10</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$83</b></div></div>"
+  },
+  {
+   "title": "Monthly Car Wash & Detailing Budget",
+   "user_requests": [
+    "monthly car wash budget",
+    "how much for car detailing each month?",
+    "car cleaning budget",
+    "I want to keep my car clean, budget help",
+    "monthly auto detailing expenses",
+    "budget for car washes and detailing",
+    "car care monthly budget"
+   ],
+   "html": "<div class=\"card\"><h4>Monthly Car Wash &amp; Detailing Budget</h4><div class=\"between\"><span>Car wash (4x)</span><b>$40</b></div><div class=\"between\"><span>Interior detail</span><b>$30</b></div><div class=\"between\"><span>Wax &amp; protectant</span><b>$15</b></div><div class=\"between\"><span>Microfiber &amp; supplies</span><b>$10</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$95</b></div></div>"
+  },
+  {
+   "title": "Monthly Bird Feeding Budget",
+   "user_requests": [
+    "monthly bird feeding budget",
+    "how much do you spend on bird seed?",
+    "bird feeding costs per month",
+    "I feed wild birds, budget help",
+    "monthly bird food budget",
+    "budget for bird seed and feeders",
+    "bird feeding monthly expenses"
+   ],
+   "html": "<div class=\"card\"><h4>Monthly Bird Feeding Budget</h4><div class=\"between\"><span>Seed mix (10 lb)</span><b>$18</b></div><div class=\"between\"><span>Suet cakes (4)</span><b>$8</b></div><div class=\"between\"><span>Nectar &amp; fruit</span><b>$6</b></div><div class=\"between\"><span>Feeder maintenance</span><b>$5</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$37</b></div></div>"
+  },
+  {
+   "title": "Monthly Fitness Class Budget",
+   "user_requests": [
+    "monthly fitness class budget",
+    "how much for gym classes each month?",
+    "fitness class expenses",
+    "I take fitness classes, need a budget",
+    "monthly workout class budget",
+    "budget for yoga and fitness classes",
+    "fitness membership monthly cost"
+   ],
+   "html": "<div class=\"card\"><h4>Monthly Fitness Class Budget</h4><div class=\"between\"><span>Gym membership</span><b>$45</b></div><div class=\"between\"><span>Yoga classes (4)</span><b>$60</b></div><div class=\"between\"><span>Spin class</span><b>$25</b></div><div class=\"between\"><span>Water bottle &amp; towel</span><b>$10</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$140</b></div></div>"
+  },
+  {
+   "title": "Monthly Board Game Budget",
+   "user_requests": [
+    "monthly board game budget",
+    "how much should I spend on board games?",
+    "board game budget",
+    "I buy too many board games, help",
+    "monthly tabletop game budget",
+    "budget for board game purchases",
+    "board game hobby budget"
+   ],
+   "html": "<div class=\"card\"><h4>Monthly Board Game Budget</h4><div class=\"between\"><span>New game (1)</span><b>$40</b></div><div class=\"between\"><span>Expansion</span><b>$20</b></div><div class=\"between\"><span>Sleeves &amp; inserts</span><b>$10</b></div><div class=\"between\"><span>Snacks for game night</span><b>$15</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$85</b></div></div>"
+  },
+  {
+   "title": "Monthly Music Lessons Budget",
+   "user_requests": [
+    "monthly music lessons budget",
+    "how much for music lessons each month?",
+    "music lesson expenses",
+    "I take music lessons, budget help",
+    "monthly instrument lesson budget",
+    "budget for piano and guitar lessons",
+    "music lessons monthly cost"
+   ],
+   "html": "<div class=\"card\"><h4>Monthly Music Lessons Budget</h4><div class=\"between\"><span>Piano lessons (4)</span><b>$120</b></div><div class=\"between\"><span>Guitar lessons (2)</span><b>$60</b></div><div class=\"between\"><span>Sheet music &amp; books</span><b>$15</b></div><div class=\"between\"><span>Instrument upkeep</span><b>$10</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$205</b></div></div>"
+  }
+ ]
+}

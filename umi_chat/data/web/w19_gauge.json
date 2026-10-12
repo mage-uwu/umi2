@@ -1,0 +1,2349 @@
+{
+ "widget": "gauge",
+ "instances": [
+  {
+   "title": "Fuel gauge: how full is the tank",
+   "user_requests": [
+    "Show me a fuel gauge for my car",
+    "how full is my tank gauge widget",
+    "make me a fule gauge 3/4 full",
+    "fuel gauge pls",
+    "I want a gauge showing fuel level",
+    "widget: fuel gauge reading three quarters",
+    "need a quick fuel gauge for the dashboard demo",
+    "fuel level?",
+    "how much petrol left in the car",
+    "am i runnin on fumes",
+    "gas tank status",
+    "car fuel meter",
+    "how many miles till empty"
+   ],
+   "html": "<div class=\"card stack\">\n  <div class=\"row between\">\n    <h3 class=\"card-title\">Fuel level</h3>\n    <span class=\"badge accent\"><i class=\"dot\"></i>3/4 tank</span>\n  </div>\n  <p class=\"muted t-small\">Roughly 38 L left of 50 L. No drama yet, <regex>user_name</regex>.</p>\n  <div class=\"chart\">\n    <svg viewBox=\"0 0 100 58\" role=\"img\" aria-label=\"Fuel gauge at 75 percent\">\n      <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n      <path d=\"M10 50 A40 40 0 0 1 78.3 21.7\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\" stroke-linecap=\"round\"></path>\n      <text class=\"lbl\" x=\"6\" y=\"57\">E</text>\n      <text class=\"lbl\" x=\"46\" y=\"14\">1/2</text>\n      <text class=\"lbl\" x=\"88\" y=\"57\">F</text>\n      <text class=\"lbl in\" x=\"50\" y=\"50\" text-anchor=\"middle\">75%</text>\n    </svg>\n  </div>\n  <details class=\"acc\">\n    <summary>When should I fill up?</summary>\n    <div class=\"body\"><p class=\"t-small\">Under 1/4 tank, or before a long drive. Cheaper stations tend to sit just off the motorway.</p></div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Battery charge gauge",
+   "user_requests": [
+    "battery gauge for my laptop",
+    "show charge level gauge",
+    "how much battery is left widget",
+    "make a gauge of my battery %",
+    "batery gauge 62%",
+    "I need a small battery dial",
+    "gauge that shows battery charge",
+    "how much juice is left",
+    "phone battery %",
+    "is my laptop about to die",
+    "battery meter",
+    "how charged is my device",
+    "show me battery life"
+   ],
+   "html": "<div class=\"card stack\">\n  <div class=\"row between\">\n    <h3 class=\"card-title\">Battery</h3>\n    <span class=\"badge good\"><i class=\"dot\"></i>charging slowly</span>\n  </div>\n  <div class=\"chart\">\n    <svg viewBox=\"0 0 100 58\" role=\"img\" aria-label=\"Battery gauge at 62 percent\">\n      <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line)\" stroke-width=\"10\"></path>\n      <path d=\"M10 50 A40 40 0 0 1 66.4 26.6\" fill=\"none\" stroke=\"var(--good)\" stroke-width=\"10\" stroke-linecap=\"round\"></path>\n      <text class=\"lbl\" x=\"4\" y=\"57\">0</text>\n      <text class=\"lbl\" x=\"86\" y=\"57\">100</text>\n      <text class=\"lbl in\" x=\"50\" y=\"49\" text-anchor=\"middle\">62%</text>\n    </svg>\n  </div>\n  <div class=\"grid two\">\n    <div class=\"stat\"><div class=\"label\">Time left</div><div class=\"value\">4<span class=\"unit\">h 10m</span></div></div>\n    <div class=\"stat\"><div class=\"label\">Cycles</div><div class=\"value\">318<span class=\"unit\">of 1000</span></div></div>\n  </div>\n  <p class=\"muted t-small\">Topping up between 20% and 80% keeps lithium cells happiest.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Match confidence gauge",
+   "user_requests": [
+    "how confident is this answer",
+    "show a confidence gauge",
+    "gauge for cache match confidence",
+    "confidance meter widget",
+    "make a gauge showing 87 percent",
+    "I want a small confidence dial for Umi",
+    "gauge widget: match confidence",
+    "how sure are you",
+    "confidence level?",
+    "rate your certainty",
+    "how certain is this answer",
+    "is that a strong match",
+    "what's the probability you're right"
+   ],
+   "html": "<div class=\"card stack\">\n  <div class=\"row between\">\n    <h3 class=\"card-title\">Match confidence</h3>\n    <span class=\"badge accent\">near miss</span>\n  </div>\n  <div class=\"chart\">\n    <svg viewBox=\"0 0 100 58\" role=\"img\" aria-label=\"Confidence gauge at 87 percent\">\n      <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n      <path d=\"M10 50 A40 40 0 0 1 84.9 27.1\" fill=\"none\" stroke=\"var(--accent-2)\" stroke-width=\"10\" stroke-linecap=\"round\"></path>\n      <text class=\"lbl\" x=\"2\" y=\"57\">0</text>\n      <text class=\"lbl\" x=\"86\" y=\"57\">100</text>\n      <text class=\"lbl in\" x=\"50\" y=\"49\" text-anchor=\"middle\">87%</text>\n    </svg>\n  </div>\n  <blockquote class=\"quote\">\n    <p>Close enough to answer, far enough to double-check.</p>\n    <cite>Umi, on thresholds</cite>\n  </blockquote>\n  <details class=\"acc\">\n    <summary>What happens below 70%?</summary>\n    <div class=\"body\"><p class=\"t-small\">She says so plainly and offers the nearest cached match instead of guessing.</p></div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Study progress gauge",
+   "user_requests": [
+    "gauge of my study progress",
+    "show how far through the course I am",
+    "progres gauge 45 percent",
+    "make a reading progress dial",
+    "I need a gauge for revision progress",
+    "widget: gauge showing half way through",
+    "gauge for my learning streak progress",
+    "how much have i studied",
+    "my study meter",
+    "progress on revision",
+    "am i done with studying yet",
+    "study completion",
+    "how far through my notes am i"
+   ],
+   "html": "<div class=\"card stack\">\n  <div class=\"row between\">\n    <h3 class=\"card-title\">Course progress</h3>\n    <span class=\"badge info\">module 5 of 11</span>\n  </div>\n  <div class=\"chart\">\n    <svg viewBox=\"0 0 100 58\" role=\"img\" aria-label=\"Course progress gauge at 45 percent\">\n      <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line)\" stroke-width=\"10\"></path>\n      <path d=\"M10 50 A40 40 0 0 1 53.6 18.6\" fill=\"none\" stroke=\"var(--info)\" stroke-width=\"10\" stroke-linecap=\"round\"></path>\n      <text class=\"lbl\" x=\"2\" y=\"57\">start</text>\n      <text class=\"lbl\" x=\"80\" y=\"57\">done</text>\n      <text class=\"lbl in\" x=\"50\" y=\"49\" text-anchor=\"middle\">45%</text>\n    </svg>\n  </div>\n  <ul class=\"list t-small\">\n    <li>Four modules left in part one.</li>\n    <li>Last session: 26 minutes, two quizzes.</li>\n  </ul>\n  <p class=\"muted t-small\">Slow is fine, <regex>user_name</regex>. You're past the boring bit.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Daily water intake gauge",
+   "user_requests": [
+    "water intake gauge",
+    "how much water did I drink today widget",
+    "gauge for hydration 1.6 of 2.5 litres",
+    "hydraton gauge pls",
+    "make a daily water dial",
+    "gauge showing water goal progress",
+    "widget: drinking water tracker gauge",
+    "how much water today",
+    "hydration level",
+    "did i drink enough",
+    "water tracker",
+    "my h2o progress",
+    "how many glasses left"
+   ],
+   "html": "<div class=\"card stack\">\n  <div class=\"row between\">\n    <h3 class=\"card-title\">Water today</h3>\n    <span class=\"badge warn\"><i class=\"dot\"></i>0.9 L to go</span>\n  </div>\n  <div class=\"chart\">\n    <svg viewBox=\"0 0 100 58\" role=\"img\" aria-label=\"Water intake gauge at 64 percent of goal\">\n      <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n      <path d=\"M10 50 A40 40 0 0 1 68.3 25.3\" fill=\"none\" stroke=\"var(--info)\" stroke-width=\"10\" stroke-linecap=\"round\"></path>\n      <text class=\"lbl\" x=\"2\" y=\"57\">0 L</text>\n      <text class=\"lbl\" x=\"72\" y=\"57\">2.5 L</text>\n      <text class=\"lbl in\" x=\"50\" y=\"49\" text-anchor=\"middle\">1.6 L</text>\n    </svg>\n  </div>\n  <div class=\"meter\"><span style=\"width:64%\"></span></div>\n  <details class=\"acc\">\n    <summary>How is this counted?</summary>\n    <div class=\"body\"><p class=\"t-small\">One day, midnight to midnight. Tea counts, though brewers argue about it.</p></div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Signal strength gauge",
+   "user_requests": [
+    "wifi signal strength gauge",
+    "show my signal as a dial",
+    "signal gauge widget 3 of 5 bars",
+    "how good is my conection gauge",
+    "make a gauge for network strength",
+    "gauge showing signal quality",
+    "widget: signal strength gauge",
+    "how many bars",
+    "cell reception?",
+    "am i getting signal",
+    "wifi strength meter",
+    "is the connection strong",
+    "show me network bars"
+   ],
+   "html": "<div class=\"card stack\">\n  <div class=\"row between\">\n    <h3 class=\"card-title\">Signal strength</h3>\n    <span class=\"badge warn\"><i class=\"dot\"></i>fair</span>\n  </div>\n  <div class=\"chart\">\n    <svg viewBox=\"0 0 100 58\" role=\"img\" aria-label=\"Signal strength gauge at 60 percent\">\n      <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line)\" stroke-width=\"10\"></path>\n      <path d=\"M10 50 A40 40 0 0 1 65.6 26 Info\" fill=\"none\" stroke=\"var(--warn)\" stroke-width=\"10\" stroke-linecap=\"round\"></path>\n      <text class=\"lbl\" x=\"2\" y=\"57\">weak</text>\n      <text class=\"lbl\" x=\"72\" y=\"57\">strong</text>\n      <text class=\"lbl in\" x=\"50\" y=\"49\" text-anchor=\"middle\">3/5</text>\n    </svg>\n  </div>\n  <ul class=\"list t-small\">\n    <li>2.4 GHz band: solid.</li>\n    <li>5 GHz band: one bar, walls are winning.</li>\n  </ul>\n  <p class=\"muted t-small\">Move one room closer and the gauge will cheer up, <regex>user_name</regex>.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Fridge temperature: chilling nicely",
+   "user_requests": [
+    "how cold is my fridge",
+    "fridge temp gauge",
+    "is my fridge at the right temp",
+    "check fridge temperature",
+    "fridge chill level",
+    "how cold should fridge be",
+    "my fridge thermometer reading",
+    "fridge temp?",
+    "how cold is the refrigerator",
+    "is my food staying cool",
+    "fridge thermometer",
+    "check the fridge temperature",
+    "is the fridge too warm"
+   ],
+   "html": "<div class=\"card\"><h3 class=\"card-title\">Fridge temperature</h3><p class=\"muted\"><regex>user_name</regex>, your fridge is sitting at a cozy 40\u00b0F (4\u00b0C).</p><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 60 25\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path></svg></div><p class=\"muted\"><span class=\"badge good\"><i class=\"dot\"></i> safe zone</span> Keep it between 35\u201340\u00b0F for freshness.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Oven preheat: ready to bake",
+   "user_requests": [
+    "is the oven hot yet",
+    "oven temp gauge",
+    "preheat status",
+    "how hot is my oven",
+    "check oven temperature",
+    "oven ready?",
+    "my oven is preheating",
+    "oven temp?",
+    "has the oven preheated",
+    "can i put the pizza in yet",
+    "preheat status",
+    "is it hot enough to cook",
+    "oven ready check"
+   ],
+   "html": "<div class=\"card\"><h3 class=\"card-title\">Oven preheat</h3><p class=\"muted\"><regex>user_name</regex>, your oven is at 350\u00b0F. Perfect for cookies.</p><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 75 35\" fill=\"none\" stroke=\"var(--good)\" stroke-width=\"10\"></path></svg></div><p class=\"muted\"><span class=\"badge good\"><i class=\"dot\"></i> ready</span> Give it a few more minutes if you want it fully heated.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Car fuel: halfway there",
+   "user_requests": [
+    "how much gas do I have",
+    "fuel gauge",
+    "check fuel level",
+    "is my tank half full",
+    "gas left in car",
+    "fuel status",
+    "how many miles till empty",
+    "gas gauge",
+    "how much fuel in the tank",
+    "petrol level?",
+    "am i low on gas",
+    "fuel indicator",
+    "show my gas tank"
+   ],
+   "html": "<div class=\"card\"><h3 class=\"card-title\">Fuel level</h3><p class=\"muted\"><regex>user_name</regex>, you're at 50%\u2014about 150 miles left.</p><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 50 10\" fill=\"none\" stroke=\"var(--warn)\" stroke-width=\"10\"></path></svg></div><p class=\"muted\"><span class=\"badge warn\"><i class=\"dot\"></i> moderate</span> Might want to fill up soon.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Phone storage: room to spare",
+   "user_requests": [
+    "how much storage is left",
+    "phone storage gauge",
+    "check my phone space",
+    "how full is my phone",
+    "storage left on phone",
+    "do I need to delete stuff",
+    "phone memory status",
+    "storage left?",
+    "how much space on my phone",
+    "gb remaining",
+    "is my phone full",
+    "memory status",
+    "show available storage"
+   ],
+   "html": "<div class=\"card\"><h3 class=\"card-title\">Storage used</h3><p class=\"muted\"><regex>user_name</regex>, your phone is 40% full. Plenty of room for more cat photos.</p><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 45 18\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path></svg></div><p class=\"muted\"><span class=\"badge good\"><i class=\"dot\"></i> healthy</span> No need to clear space yet.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Progress: project deadline",
+   "user_requests": [
+    "how far along am I",
+    "project progress gauge",
+    "check my progress",
+    "am I done yet",
+    "project completion",
+    "how much left to do",
+    "progress on my task",
+    "project status?",
+    "how much of the project is done",
+    "deadline progress",
+    "am i on track",
+    "project completion meter",
+    "how far along is the work"
+   ],
+   "html": "<div class=\"card\"><h3 class=\"card-title\">Project progress</h3><p class=\"muted\"><regex>user_name</regex>, you're 75% done. The finish line is in sight.</p><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 80 20\" fill=\"none\" stroke=\"var(--good)\" stroke-width=\"10\"></path></svg></div><p class=\"muted\"><span class=\"badge good\"><i class=\"dot\"></i> on track</span> Just a little more to go.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Happiness: mood meter",
+   "user_requests": [
+    "how happy am I",
+    "happiness gauge",
+    "check my mood",
+    "am I feeling good",
+    "mood level",
+    "happiness status",
+    "how's my vibe",
+    "mood?",
+    "how am i feeling",
+    "happiness level",
+    "am i in a good mood",
+    "show my mood",
+    "emotional gauge"
+   ],
+   "html": "<div class=\"card\"><h3 class=\"card-title\">Happiness</h3><p class=\"muted\"><regex>user_name</regex>, you're at a solid 80% happy today. That's a good place to be.</p><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 85 30\" fill=\"none\" stroke=\"var(--accent-2)\" stroke-width=\"10\"></path></svg></div><p class=\"muted\"><span class=\"badge accent\"><i class=\"dot\"></i> cheerful</span> Keep doing what you're doing.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how much of my monthly data have I used",
+    "data cap status pls",
+    "am i close to my data limit?",
+    "show me the data gauge",
+    "phone data usage meter",
+    "how many gigs left before i get throttled",
+    "data left?",
+    "data remaining?",
+    "how much internet have i used",
+    "gb left on my plan",
+    "am i almost out of data",
+    "mobile data usage",
+    "check my data allowance"
+   ],
+   "title": "Mobile data: how much left",
+   "html": "<div class=\"card\"><div class=\"row between\"><span class=\"card-title\">Mobile data</span><span class=\"badge accent\"><i class=\"dot\"></i>cached match</span></div><div class=\"chart\"><svg viewBox=\"0 0 100 60\" aria-label=\"Data used: 8.4 of 12 GB\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 72.4 27.6\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path></svg></div><div class=\"row between t-small\"><span><strong>8.4</strong> GB used</span><span class=\"dim\">12 GB cap</span></div><p class=\"muted t-small\">You've got <strong>3.6 GB</strong> left. At your current pace, that lasts until the 24th.</p><p class=\"dim t-small\">Hey <regex>user_name</regex> \u2014 want me to check again after your next download?</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "check my sleep last night",
+    "sleep score gauge",
+    "did i sleep enough?",
+    "how long did i sleep",
+    "sleep quality last nite",
+    "am i well rested?",
+    "sleep stat pls",
+    "how did i sleep",
+    "sleep quality?",
+    "hours slept last night",
+    "was my sleep good",
+    "sleep score",
+    "show my rest"
+   ],
+   "title": "Sleep: last night's rest",
+   "html": "<div class=\"card\"><div class=\"row between\"><span class=\"card-title\">Sleep</span><span class=\"badge good\"><i class=\"dot\"></i>cached match</span></div><div class=\"chart\"><svg viewBox=\"0 0 100 60\" aria-label=\"Sleep score: 78 out of 100\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 78.2 21.4\" fill=\"none\" stroke=\"var(--good)\" stroke-width=\"10\"></path></svg></div><div class=\"row between t-small\"><span><strong>78</strong> / 100</span><span class=\"dim\">7h 12m</span></div><p class=\"muted t-small\">Deep sleep was a bit low. A slightly earlier wind-down tonight could nudge this into the 80s.</p><p class=\"dim t-small\">Morning, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how is my budget looking",
+    "budget gauge",
+    "am i over spending",
+    "monthly budget status",
+    "check my spending meter",
+    "budget left this month",
+    "how much can i still spend",
+    "budget status?",
+    "how much have i spent",
+    "am i over budget",
+    "spending meter",
+    "monthly expenses",
+    "show my budget"
+   ],
+   "title": "Budget: this month's spending",
+   "html": "<div class=\"card\"><div class=\"row between\"><span class=\"card-title\">Budget</span><span class=\"badge warn\"><i class=\"dot\"></i>cached match</span></div><div class=\"chart\"><svg viewBox=\"0 0 100 60\" aria-label=\"Budget used: 650 of 1000\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 88.5 39.4\" fill=\"none\" stroke=\"var(--warn)\" stroke-width=\"10\"></path></svg></div><div class=\"row between t-small\"><span><strong>$650</strong> spent</span><span class=\"dim\">$1,000 budget</span></div><p class=\"muted t-small\">You're at 65%. That leaves <strong>$350</strong> for the next 10 days \u2014 about $35 a day.</p><p class=\"dim t-small\">Still on track, <regex>user_name</regex>. Just watch the coffee runs.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how close am i to my step goal",
+    "steps gauge",
+    "did i hit 10k today",
+    "step count progress",
+    "walking meter",
+    "am i almost at 10,000 steps",
+    "steps left today",
+    "step count?",
+    "how many steps today",
+    "am i close to my goal",
+    "steps walked",
+    "show my step progress",
+    "daily steps meter"
+   ],
+   "title": "Steps: today's count",
+   "html": "<div class=\"card\"><div class=\"row between\"><span class=\"card-title\">Steps</span><span class=\"badge accent\"><i class=\"dot\"></i>cached match</span></div><div class=\"chart\"><svg viewBox=\"0 0 100 60\" aria-label=\"Steps: 7,432 of 10,000\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 71.6 27.1\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path></svg></div><div class=\"row between t-small\"><span><strong>7,432</strong> steps</span><span class=\"dim\">10,000 goal</span></div><p class=\"muted t-small\">A 20-minute walk after dinner should do it. You're closer than you think.</p><p class=\"dim t-small\">Nice pace today, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "are there any tasks due today",
+    "task gauge",
+    "how many tasks left",
+    "to do list progress",
+    "am i almost done with my tasks",
+    "task completion meter",
+    "how many things do i still need to do",
+    "anything on my list for today??",
+    "whats due today",
+    "do i have stuff to do today",
+    "todays task situation",
+    "got any tasks due rn",
+    "what do i gotta get done today"
+   ],
+   "title": "Tasks: today's to-dos",
+   "html": "<div class=\"card\"><div class=\"row between\"><span class=\"card-title\">Tasks</span><span class=\"badge good\"><i class=\"dot\"></i>cached match</span></div><div class=\"chart\"><svg viewBox=\"0 0 100 60\" aria-label=\"Tasks: 3 of 5 done\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 56 14.6\" fill=\"none\" stroke=\"var(--good)\" stroke-width=\"10\"></path></svg></div><div class=\"row between t-small\"><span><strong>3</strong> of 5 done</span><span class=\"dim\">2 remaining</span></div><p class=\"muted t-small\">Two left: the invoice and that email you've been avoiding. Both are quick.</p><p class=\"dim t-small\">You've got this, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how full is my inbox",
+    "email gauge",
+    "unread messages count",
+    "am i behind on email",
+    "inbox zero progress",
+    "how many emails do i have",
+    "unread mail meter",
+    "inbox situation pls",
+    "how many unread u got for me",
+    "emails piling up?",
+    "check my unread count",
+    "is my inbox overflowing lol",
+    "unread mail how bad is it"
+   ],
+   "title": "Inbox: unread emails",
+   "html": "<div class=\"card\"><div class=\"row between\"><span class=\"card-title\">Inbox</span><span class=\"badge warn\"><i class=\"dot\"></i>cached match</span></div><div class=\"chart\"><svg viewBox=\"0 0 100 60\" aria-label=\"Unread: 42 of 100\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 74.5 29.5\" fill=\"none\" stroke=\"var(--warn)\" stroke-width=\"10\"></path></svg></div><div class=\"row between t-small\"><span><strong>42</strong> unread</span><span class=\"dim\">58 read</span></div><p class=\"muted t-small\">That's a lot of newsletters. A 10-minute sweep would clear the noise.</p><p class=\"dim t-small\">Need a hand, <regex>user_name</regex>? I can help sort.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many coins in my piggy bank?",
+    "Coin jar fullness gauge",
+    "piggy bank status",
+    "how full is my coin jar?",
+    "coin count",
+    "show me my savings jar",
+    "coin jar level",
+    "piggy bank status",
+    "is my coin jar getting full",
+    "how stacked is the change jar",
+    "coins level check pls",
+    "much money in the jar?",
+    "how loaded is my piggy bank rn"
+   ],
+   "title": "Coin jar: how full",
+   "html": "<div class=\"card\"><div class=\"card-title\">Coin jar</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 50 10\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path><text x=\"50\" y=\"55\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"8\">$12.40</text></svg></div><p class=\"muted\">Halfway to the $25 goal. Nice.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how full is the washing machine?",
+    "laundry load gauge",
+    "washing machine fullness",
+    "is the washer full?",
+    "laundry status",
+    "check washer load",
+    "how much laundry in the machine?",
+    "can i throw more stuff in the wash",
+    "washer full yet?",
+    "how loaded is the washing machine",
+    "laundry basket how full",
+    "is the machine packed",
+    "how much room left in washer"
+   ],
+   "title": "Laundry: load fullness",
+   "html": "<div class=\"card\"><div class=\"card-title\">Washer load</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 78 22\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path><text x=\"50\" y=\"55\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"8\">70% full</text></svg></div><p class=\"muted\">Enough for a full load. Maybe add that stray sock.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how much birdseed is left?",
+    "bird feeder gauge",
+    "feeder fullness",
+    "is the bird feeder empty?",
+    "birdseed level",
+    "check feeder",
+    "how full is the bird feeder?",
+    "birds still got food?",
+    "feeder empty yet",
+    "do i need to refill birdseed",
+    "how low is the seed in the feeder",
+    "bird feeder status pls",
+    "is the feeder running out"
+   ],
+   "title": "Bird feeder: seed level",
+   "html": "<div class=\"card\"><div class=\"card-title\">Bird feeder</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 50 10\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path><text x=\"50\" y=\"55\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"8\">Half full</text></svg></div><p class=\"muted\">The sparrows are watching. Might want to top it up.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how full is my inbox?",
+    "email backlog gauge",
+    "inbox fullness",
+    "am I drowning in emails?",
+    "unread email level",
+    "check inbox load",
+    "how many unread emails?",
+    "how buried am i in email",
+    "unread load check",
+    "my inbox how crazy is it",
+    "emails how many unread",
+    "is the inbox drowning me",
+    "whats my unread count looking like"
+   ],
+   "title": "Inbox: unread load",
+   "html": "<div class=\"card\"><div class=\"card-title\">Inbox</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 86 34\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path><text x=\"50\" y=\"55\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"8\">87 unread</text></svg></div><p class=\"muted\">Not quite overflowing. A ten-minute sweep could tame it.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how much paint is left?",
+    "paint can gauge",
+    "paint level",
+    "is the paint can empty?",
+    "check paint can",
+    "how full is the paint can?",
+    "paint remaining",
+    "enough paint for another coat?",
+    "paint level pls",
+    "how much is left in the can",
+    "do i need more paint yet",
+    "can still got paint in it?",
+    "paint tin how low"
+   ],
+   "title": "Paint can: remaining",
+   "html": "<div class=\"card\"><div class=\"card-title\">Paint can</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 30 30\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path><text x=\"50\" y=\"55\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"8\">25%</text></svg></div><p class=\"muted\">Enough for touch-ups, not a whole wall. Add it to the list.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how full is the dishwasher?",
+    "dishwasher load gauge",
+    "dishwasher fullness",
+    "is the dishwasher full?",
+    "check dishwasher",
+    "how many dishes?",
+    "dishwasher status",
+    "can i fit more dishes in",
+    "is the dishwasher packed",
+    "how fulls the dishwasher",
+    "room for more in the dishwasher?",
+    "dishes load status",
+    "should i run it yet"
+   ],
+   "title": "Dishwasher: load fullness",
+   "html": "<div class=\"card\"><div class=\"card-title\">Dishwasher</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 78 22\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path><text x=\"50\" y=\"55\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"8\">70% full</text></svg></div><p class=\"muted\">Room for a few more plates. Run it after dinner.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Gym capacity: how busy it is",
+   "user_requests": [
+    "how packed is the gym right now",
+    "gym busyness gauge pls",
+    "is it worth going to the gym now or wait",
+    "show me how full the gym is",
+    "gym occupancy meter",
+    "how crouded is my gym atm",
+    "peak hours thing for my gym",
+    "is the gym rammed rn",
+    "gym busy today?",
+    "how many people at the gym",
+    "worth going to the gym now or nah",
+    "gym crowd level pls",
+    "is it heaving at the gym"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"between\"><h3 class=\"card-title\">Gym capacity</h3><span class=\"badge warn\"><i class=\"dot\"></i>busy-ish</span></div>\n  <p class=\"t-small muted\">Hey <regex>user_name</regex> \u2014 go now if you like the squat rack queue as a personality test.</p>\n  <div class=\"chart\"><svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Gym occupancy 68 of 120\">\n    <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n    <path d=\"M10 50 A40 40 0 0 1 72 26\" fill=\"none\" stroke=\"var(--warn)\" stroke-width=\"10\"></path>\n    <text x=\"50\" y=\"46\" text-anchor=\"middle\" font-size=\"18\" fill=\"var(--ink)\" font-family=\"var(--font)\">68</text>\n    <text x=\"50\" y=\"56\" text-anchor=\"middle\" font-size=\"7\" fill=\"var(--ink-3)\" font-family=\"var(--font)\">of 120 spots</text>\n  </svg></div>\n  <div class=\"grid two\">\n    <div class=\"stat\"><span class=\"label\">Quiet window</span><span class=\"value\">6\u20138<span class=\"unit\">am</span></span></div>\n    <div class=\"stat\"><span class=\"label\">Lockers free</span><span class=\"value\">41</span></div>\n  </div>\n  <details class=\"acc\"><summary>What counts as busy?</summary><div class=\"body\"><p>Under 40 people: stretch out. 40\u201385: normal hum. Over 85: bring patience and a towel.</p></div></details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Cup of tea: brew strength",
+   "user_requests": [
+    "how strong is my tea",
+    "tea brew gauge",
+    "is this mug of tea strong enough",
+    "rate my cuppa strength",
+    "tea steep meter thing",
+    "how dark did i let the tea go",
+    "brew strentgh check",
+    "my tea strong enough yet",
+    "how brewed is my cuppa",
+    "tea strength check pls",
+    "is my tea weak or strong",
+    "how long has this tea been going",
+    "cuppa ready or still watery"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"between\"><h3 class=\"card-title\">Tea strength</h3><span class=\"badge accent\"><i class=\"dot\"></i>steeping</span></div>\n  <p class=\"t-small muted\"><regex>user_name</regex>, this one's tracking a builder's brew \u2014 strong, brave, faintly bitter.</p>\n  <div class=\"chart\"><svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Tea strength 7 of 10\">\n    <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n    <path d=\"M10 50 A40 40 0 0 1 78 22\" fill=\"none\" stroke=\"var(--accent-2)\" stroke-width=\"10\"></path>\n    <text x=\"50\" y=\"46\" text-anchor=\"middle\" font-size=\"18\" fill=\"var(--ink)\" font-family=\"var(--font)\">7</text>\n    <text x=\"50\" y=\"56\" text-anchor=\"middle\" font-size=\"7\" fill=\"var(--ink-3)\" font-family=\"var(--font)\">out of 10</text>\n  </svg></div>\n  <ul class=\"list t-small\">\n    <li>1\u20133 \u2014 faint whisper of a leaf</li>\n    <li>4\u20137 \u2014 the sweet spot</li>\n    <li>8\u201310 \u2014 spoon stands unaided</li>\n  </ul>\n  <details class=\"acc\"><summary>How long left?</summary><div class=\"body\"><p>About 40 seconds before it tips into \"chewy\". Fish it out with the spoon you're already holding.</p></div></details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Air quality: room freshness",
+   "user_requests": [
+    "is my room air stale",
+    "air quality gauge in here",
+    "how fresh is the air in my office",
+    "co2 level meter for my bedroom",
+    "should i open a window",
+    "air freshness score",
+    "breathability of this room pls",
+    "does my room smell stale",
+    "should i open a window",
+    "air in here fresh?",
+    "room air quality pls",
+    "is it stuffy in here",
+    "how fresh is the air in my room"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"between\"><h3 class=\"card-title\">Room air freshness</h3><span class=\"badge warn\"><i class=\"dot\"></i>window time</span></div>\n  <p class=\"t-small muted\">Good morning, <regex>user_name</regex>. This room has hosted one person and two yawns too many.</p>\n  <div class=\"chart\"><svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Air freshness 52 of 100\">\n    <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n    <path d=\"M10 50 A40 40 0 0 1 60 19\" fill=\"none\" stroke=\"var(--warn)\" stroke-width=\"10\"></path>\n    <text x=\"50\" y=\"46\" text-anchor=\"middle\" font-size=\"18\" fill=\"var(--ink)\" font-family=\"var(--font)\">52</text>\n  </svg></div>\n  <div class=\"grid two\">\n    <div class=\"stat\"><span class=\"label\">CO\u2082</span><span class=\"value\">1,140<span class=\"unit\">ppm</span></span></div>\n    <div class=\"stat\"><span class=\"label\">Target</span><span class=\"value\">800<span class=\"unit\">ppm</span></span></div>\n  </div>\n  <details class=\"acc\"><summary>Why does CO\u2082 matter?</summary><div class=\"body\"><p>Above about 1,000 ppm, focus gets foggy and naps feel irresistible. Two minutes with the window open usually drops it below 700.</p></div></details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Bike tyres: pressure check",
+   "user_requests": [
+    "are my bike tyres hard enough",
+    "tyre pressure gauge for my bike",
+    "check my bike tire psi",
+    "squishy front tyre help",
+    "bike tire pump gauge thing",
+    "how much psi is in my tyres rn",
+    "bike tyres need air?",
+    "tyres feel soft?",
+    "do my bike tyres need pumping",
+    "pressure on the bike tyres pls",
+    "are my tyres pumped up enough",
+    "bike tyre status",
+    "should i grab the pump"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"between\"><h3 class=\"card-title\">Bike tyre pressure</h3><span class=\"badge good\"><i class=\"dot\"></i>road-ready</span></div>\n  <p class=\"t-small muted\"><regex>user_name</regex>, your tyres feel like they've had a good breakfast.</p>\n  <div class=\"chart\"><svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Front tyre 78 of 100 psi\">\n    <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n    <path d=\"M10 50 A40 40 0 0 1 82 18\" fill=\"none\" stroke=\"var(--good)\" stroke-width=\"10\"></path>\n    <text x=\"50\" y=\"46\" text-anchor=\"middle\" font-size=\"18\" fill=\"var(--ink)\" font-family=\"var(--font)\">78</text>\n    <text x=\"50\" y=\"56\" text-anchor=\"middle\" font-size=\"7\" fill=\"var(--ink-3)\" font-family=\"var(--font)\">psi front</text>\n  </svg></div>\n  <div class=\"grid two\">\n    <div class=\"stat\"><span class=\"label\">Front</span><span class=\"value\">78<span class=\"unit\">psi</span></span><span class=\"delta down\">\u22124 this week</span></div>\n    <div class=\"stat\"><span class=\"label\">Rear</span><span class=\"value\">82<span class=\"unit\">psi</span></span></div>\n  </div>\n  <details class=\"acc\"><summary>When to top up</summary><div class=\"body\"><p>Check monthly. Tyres lose a few psi on their own, and cold mornings make them read low. Pump to the number printed on the sidewall.</p></div></details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Cookie jar: crumbs remaining",
+   "user_requests": [
+    "how many cookies are left",
+    "cookie jar gauge",
+    "is there anything left in the biscuit tin",
+    "cookie supply status",
+    "how full is my biscuit jar",
+    "cookies remaining pls",
+    "did someone eat all the cookies again",
+    "any cookies left??",
+    "cookie situation pls",
+    "jar empty yet",
+    "how many biccies remain",
+    "did someone eat all my cookies",
+    "cookie jar level check"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"between\"><h3 class=\"card-title\">Cookie jar</h3><span class=\"badge bad\"><i class=\"dot\"></i>critical</span></div>\n  <p class=\"t-small muted\">Bad news, <regex>user_name</regex> \u2014 the jar is running on fumes and crumbs.</p>\n  <div class=\"chart\"><svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Cookie jar 2 of 12 cookies\">\n    <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n    <path d=\"M10 50 A40 40 0 0 1 22 44\" fill=\"none\" stroke=\"var(--bad)\" stroke-width=\"10\"></path>\n    <text x=\"50\" y=\"46\" text-anchor=\"middle\" font-size=\"18\" fill=\"var(--ink)\" font-family=\"var(--font)\">2</text>\n    <text x=\"50\" y=\"56\" text-anchor=\"middle\" font-size=\"7\" fill=\"var(--ink-3)\" font-family=\"var(--font)\">of 12 left</text>\n  </svg></div>\n  <div class=\"callout warn\"><p>Two choc-chip survivors. The oatmeal ones are gone and nobody's admitted it.</p></div>\n  <details class=\"acc\"><summary>Restock maths</summary><div class=\"body\"><p>A batch of 12 lasts about four days in this household. Bake on Sunday, ration on Tuesday.</p></div></details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Wardrobe: hangers used",
+   "user_requests": [
+    "how full is my wardrobe",
+    "closet space gauge",
+    "how many hangers are free",
+    "wardrobe capacity check",
+    "is my closet full yet",
+    "hanger situation in my wardrobe pls",
+    "too many clothes gauge",
+    "closet space left?",
+    "how packed is my wardrobe",
+    "hanger count pls",
+    "can i fit new clothes in",
+    "wardrobe bursting yet",
+    "how many hangers am i using"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"between\"><h3 class=\"card-title\">Wardrobe filling up</h3><span class=\"badge info\"><i class=\"dot\"></i>cosy</span></div>\n  <p class=\"t-small muted\"><regex>user_name</regex>, your closet is at that stage where one more jumper triggers an avalanche.</p>\n  <div class=\"chart\"><svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Wardrobe 43 of 50 hangers used\">\n    <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n    <path d=\"M10 50 A40 40 0 0 1 85 30\" fill=\"none\" stroke=\"var(--info)\" stroke-width=\"10\"></path>\n    <text x=\"50\" y=\"46\" text-anchor=\"middle\" font-size=\"18\" fill=\"var(--ink)\" font-family=\"var(--font)\">43</text>\n    <text x=\"50\" y=\"56\" text-anchor=\"middle\" font-size=\"7\" fill=\"var(--ink-3)\" font-family=\"var(--font)\">of 50 hangers</text>\n  </svg></div>\n  <div class=\"meter\"><span style=\"width:86%\"></span></div>\n  <p class=\"t-small dim\">86% full \u00b7 7 hangers breathing room</p>\n  <details class=\"acc\"><summary>A gentle idea</summary><div class=\"body\"><p>Anything unworn since last winter is living rent-free. One bag to the charity shop buys you a whole season of ease.</p></div></details>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "How much coffee is left in the pot?",
+    "coffee pot level pls",
+    "Is there enough coffee for one more cup?",
+    "show me the coffee gauge",
+    "coffee remaining?",
+    "how full is the coffee pot",
+    "check coffee level",
+    "coffee situation pls",
+    "any joe left in the pot",
+    "do i need to brew another pot",
+    "how much coffee remains",
+    "pot nearly empty?",
+    "coffee level check rn"
+   ],
+   "title": "Coffee pot: how much left",
+   "html": "<div class=\"card\"><div class=\"card-title\">Coffee pot: how much left</div><p class=\"muted\">Morning, <regex>user_name</regex>. Looks like a solid two cups left.</p><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 62 26\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path><text x=\"50\" y=\"48\" text-anchor=\"middle\" font-size=\"16\" fill=\"var(--ink)\" font-weight=\"700\">62%</text></svg></div><div class=\"row between\"><span class=\"t-small dim\">approx. 2 cups</span><span class=\"badge good\"><i class=\"dot\"></i>still warm</span></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "How many plants need watering?",
+    "plant water gauge",
+    "thirsty plants check",
+    "how dry is the soil",
+    "water level for plants",
+    "do my plants need a drink?",
+    "garden moisture gauge",
+    "do my plants need a drink",
+    "are the plants thirsty",
+    "soil dry or wet",
+    "should i water the plants today",
+    "plant moisture check pls",
+    "how parched are my plants"
+   ],
+   "title": "Plant thirst: soil moisture",
+   "html": "<div class=\"card\"><div class=\"card-title\">Plant thirst: soil moisture</div><p class=\"muted\">The soil's a bit dry, <regex>user_name</regex>. Maybe a drink for the ferns.</p><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 35 21\" fill=\"none\" stroke=\"var(--warn)\" stroke-width=\"10\"></path><text x=\"50\" y=\"48\" text-anchor=\"middle\" font-size=\"16\" fill=\"var(--ink)\" font-weight=\"700\">35%</text></svg></div><div class=\"row between\"><span class=\"t-small dim\">moisture level</span><span class=\"badge warn\"><i class=\"dot\"></i>needs water</span></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "How full is the recycling bin?",
+    "recycling bin level",
+    "is the recycling full?",
+    "check recycling capacity",
+    "bin fullness gauge",
+    "recycling status",
+    "how much room in recycling",
+    "recycling bin status",
+    "how much is in the recycling bin",
+    "is the recycling bin full",
+    "recycling bin capacity",
+    "how filled is the recycling bin",
+    "recycling bin fill level"
+   ],
+   "title": "Recycling bin: fill level",
+   "html": "<div class=\"card\"><div class=\"card-title\">Recycling bin: fill level</div><p class=\"muted\">Getting there, <regex>user_name</regex>. About three-quarters full.</p><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 78 34\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path><text x=\"50\" y=\"48\" text-anchor=\"middle\" font-size=\"16\" fill=\"var(--ink)\" font-weight=\"700\">75%</text></svg></div><div class=\"row between\"><span class=\"t-small dim\">fullness</span><span class=\"badge\"><i class=\"dot\"></i>almost full</span></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "How much petrol is in the car?",
+    "car fuel level",
+    "petrol gauge",
+    "is the tank full?",
+    "fuel status",
+    "how far can I drive?",
+    "check fuel",
+    "fuel gauge",
+    "how much gas in the car",
+    "is the car low on fuel",
+    "petrol level in car",
+    "car tank fullness",
+    "how far can i drive before refueling"
+   ],
+   "title": "Car fuel: tank level",
+   "html": "<div class=\"card\"><div class=\"card-title\">Car fuel: tank level</div><p class=\"muted\">You've got about half a tank, <regex>user_name</regex>. Enough for the week.</p><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 50 10\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path><text x=\"50\" y=\"48\" text-anchor=\"middle\" font-size=\"16\" fill=\"var(--ink)\" font-weight=\"700\">50%</text></svg></div><div class=\"row between\"><span class=\"t-small dim\">tank level</span><span class=\"badge good\"><i class=\"dot\"></i>half full</span></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "How full is my inbox?",
+    "email overload gauge",
+    "unread emails count",
+    "inbox status",
+    "how many emails?",
+    "check my inbox",
+    "email backlog",
+    "unread email count",
+    "how many unread messages",
+    "inbox unread",
+    "email inbox status",
+    "how many emails have i not read",
+    "unread mail gauge"
+   ],
+   "title": "Inbox: unread emails",
+   "html": "<div class=\"card\"><div class=\"card-title\">Inbox: unread emails</div><p class=\"muted\">A few unread, <regex>user_name</regex>. Not too bad.</p><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 60 25\" fill=\"none\" stroke=\"var(--info)\" stroke-width=\"10\"></path><text x=\"50\" y=\"48\" text-anchor=\"middle\" font-size=\"16\" fill=\"var(--ink)\" font-weight=\"700\">12</text></svg></div><div class=\"row between\"><span class=\"t-small dim\">unread</span><span class=\"badge info\"><i class=\"dot\"></i>manageable</span></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "How full is the dishwasher?",
+    "dishwasher load gauge",
+    "is the dishwasher full?",
+    "check dishwasher",
+    "dishwasher capacity",
+    "how many dishes?",
+    "dishwasher status",
+    "dishwasher capacity",
+    "is the dishwasher full",
+    "how loaded is the dishwasher",
+    "dishwasher fill level",
+    "how many dishes are in the dishwasher",
+    "dishwasher load status"
+   ],
+   "title": "Dishwasher: load fullness",
+   "html": "<div class=\"card\"><div class=\"card-title\">Dishwasher: load fullness</div><p class=\"muted\">Almost full, <regex>user_name</regex>. One more plate and it's ready to run.</p><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 85 40\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path><text x=\"50\" y=\"48\" text-anchor=\"middle\" font-size=\"16\" fill=\"var(--ink)\" font-weight=\"700\">90%</text></svg></div><div class=\"row between\"><span class=\"t-small dim\">fullness</span><span class=\"badge warn\"><i class=\"dot\"></i>almost full</span></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how full is my compost bin",
+    "compost level check",
+    "is my compost bin full",
+    "compost gauge please",
+    "how much compost do I have",
+    "check my compost bin fullness",
+    "compost bin status",
+    "compost bin status",
+    "how much compost is in the bin",
+    "compost bin level",
+    "is the compost bin full",
+    "compost fill gauge",
+    "how filled is the compost bin"
+   ],
+   "title": "Compost bin: how full",
+   "html": "<div class=\"card\"><div class=\"card-title\">Compost bin</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 58 19\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path></svg></div><p class=\"muted t-small\"><regex>user_name</regex>, your compost bin is 65% full. Time to turn it.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how much paint left in the can",
+    "paint can level",
+    "is my paint can almost empty",
+    "paint remaining gauge",
+    "check paint can fullness",
+    "how full is my paint can",
+    "paint can status",
+    "paint can level",
+    "how much paint is left",
+    "paint remaining",
+    "is the paint can almost empty",
+    "paint quantity left",
+    "how full is the paint can"
+   ],
+   "title": "Paint can: remaining",
+   "html": "<div class=\"card\"><div class=\"card-title\">Paint can</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\" stroke-dasharray=\"0 125.6\" stroke-dashoffset=\"62.8\"></path></svg></div><p class=\"muted t-small\"><regex>user_name</regex>, you have about 25% paint left. Might need a new can soon.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how full is my dishwasher",
+    "dishwasher load level",
+    "is the dishwasher full",
+    "dishwasher fullness gauge",
+    "check dishwasher capacity",
+    "how many dishes in dishwasher",
+    "dishwasher status",
+    "dishwasher capacity",
+    "is the dishwasher full",
+    "how loaded is the dishwasher",
+    "dishwasher fill level",
+    "how many dishes are in the dishwasher",
+    "dishwasher load status"
+   ],
+   "title": "Dishwasher: load fullness",
+   "html": "<div class=\"card\"><div class=\"card-title\">Dishwasher</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\" stroke-dasharray=\"0 125.6\" stroke-dashoffset=\"25.12\"></path></svg></div><p class=\"muted t-small\"><regex>user_name</regex>, your dishwasher is 80% full. One more plate and it's go time.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how much coffee is left in the pot",
+    "coffee pot level",
+    "is the coffee pot empty",
+    "coffee remaining gauge",
+    "check coffee pot fullness",
+    "how full is the coffee pot",
+    "coffee pot status",
+    "coffee pot level",
+    "how much coffee remains",
+    "is there coffee left",
+    "coffee left in pot",
+    "coffee pot gauge",
+    "how full is the coffee pot"
+   ],
+   "title": "Coffee pot: how much left",
+   "html": "<div class=\"card\"><div class=\"card-title\">Coffee pot</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\" stroke-dasharray=\"0 125.6\" stroke-dashoffset=\"62.8\"></path></svg></div><p class=\"muted t-small\"><regex>user_name</regex>, you've got about 25% coffee left. Might be time for a fresh brew.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how thirsty is my plant",
+    "soil moisture level",
+    "does my plant need water",
+    "plant thirst gauge",
+    "check soil moisture",
+    "is my plant thirsty",
+    "plant water status",
+    "soil moisture level",
+    "does my plant need water",
+    "plant moisture gauge",
+    "how dry is the soil",
+    "plant water status",
+    "is my plant thirsty"
+   ],
+   "title": "Plant thirst: soil moisture",
+   "html": "<div class=\"card\"><div class=\"card-title\">Plant thirst</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\" stroke-dasharray=\"0 125.6\" stroke-dashoffset=\"100.48\"></path></svg></div><p class=\"muted t-small\"><regex>user_name</regex>, your plant's soil is 20% moist. It's thirsty\u2014give it a drink.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how full is my recycling bin",
+    "recycling bin level",
+    "is my recycling bin full",
+    "recycling fill gauge",
+    "check recycling bin fullness",
+    "how much recycling do I have",
+    "recycling bin status",
+    "recycling bin status",
+    "how much is in the recycling bin",
+    "is the recycling bin full",
+    "recycling bin capacity",
+    "how filled is the recycling bin",
+    "recycling bin fill level"
+   ],
+   "title": "Recycling bin: fill level",
+   "html": "<div class=\"card\"><div class=\"card-title\">Recycling bin</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\" stroke-dasharray=\"0 125.6\" stroke-dashoffset=\"43.96\"></path></svg></div><p class=\"muted t-small\"><regex>user_name</regex>, your recycling bin is 65% full. Almost time to take it out.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how full is the kettle",
+    "kettle water level gauge",
+    "gauge for kettle fill",
+    "am i good for tea",
+    "kettle gauge please",
+    "show kettle water level",
+    "quick: kettle fullness",
+    "kettle water gauge",
+    "how much water is in the kettle",
+    "is the kettle full",
+    "kettle level",
+    "water in kettle",
+    "kettle fill status"
+   ],
+   "title": "Kettle: water level",
+   "html": "<div class=\"card\"><div class=\"card-title\">Kettle water level</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 62 23\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path></svg></div><p class=\"muted\"><regex>user_name</regex>, about 0.8 L. That's two mugs and a top-up.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "milk left in the fridge",
+    "how much milk is left",
+    "milk gauge",
+    "fridge milk level",
+    "do i need milk",
+    "milk carton gauge",
+    "milk supply check",
+    "milk level",
+    "how much milk is left",
+    "is there milk left",
+    "milk carton gauge",
+    "milk remaining in carton",
+    "how full is the milk"
+   ],
+   "title": "Milk carton: how much left",
+   "html": "<div class=\"card\"><div class=\"card-title\">Milk carton</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 42 17\" fill=\"none\" stroke=\"var(--warn)\" stroke-width=\"10\"></path></svg></div><p class=\"muted\"><regex>user_name</regex>, about a quarter left. Enough for tomorrow's coffee, then add it to the list.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "phone battery gauge",
+    "how much charge",
+    "battery level now",
+    "phone charge left",
+    "battery gauge",
+    "charge left on phone",
+    "phone battery status",
+    "battery level",
+    "how much battery is left",
+    "phone charge status",
+    "battery percentage",
+    "is my phone charged",
+    "phone battery gauge"
+   ],
+   "title": "Phone battery: charge left",
+   "html": "<div class=\"card\"><div class=\"card-title\">Phone battery</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 73 31\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path></svg></div><p class=\"muted\"><regex>user_name</regex>, around 62%. Comfortable until bedtime.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "fuel gauge",
+    "how much petrol left",
+    "tank level",
+    "car fuel gauge",
+    "petrol gauge",
+    "fuel left in car",
+    "how full is the tank",
+    "fuel gauge",
+    "how much gas in the car",
+    "is the car low on fuel",
+    "petrol level in car",
+    "car tank fullness",
+    "how far can i drive before refueling"
+   ],
+   "title": "Car fuel: tank level",
+   "html": "<div class=\"card\"><div class=\"card-title\">Fuel tank</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 55 18\" fill=\"none\" stroke=\"var(--bad)\" stroke-width=\"10\"></path></svg></div><p class=\"muted\"><regex>user_name</regex>, about 20%. Best to fill up before the light starts nagging.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "water intake gauge",
+    "how much water today",
+    "hydration gauge",
+    "water drunk today",
+    "daily water gauge",
+    "water level",
+    "how hydrated am i",
+    "water intake today",
+    "how much water have i drunk",
+    "daily water progress",
+    "water consumption gauge",
+    "hydration level",
+    "how many glasses of water today"
+   ],
+   "title": "Daily water: how much you've had",
+   "html": "<div class=\"card\"><div class=\"card-title\">Water today</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 80 43\" fill=\"none\" stroke=\"var(--info)\" stroke-width=\"10\"></path></svg></div><p class=\"muted\"><regex>user_name</regex>, 1.6 L so far. Top up with a glass before lunch.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "study progress gauge",
+    "how much revision done",
+    "study gauge",
+    "revision progress",
+    "study progress",
+    "how far through the book",
+    "study completion gauge",
+    "revision progress",
+    "how much studying have i done",
+    "study completion",
+    "revision gauge",
+    "how much revision is left",
+    "study progress status"
+   ],
+   "title": "Study progress: revision done",
+   "html": "<div class=\"card\"><div class=\"card-title\">Study progress</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 70 28\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path></svg></div><p class=\"muted\"><regex>user_name</regex>, 55% through the syllabus. Keep this pace and you'll finish with time to spare.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how full is my fuel tank",
+    "check the gas gauge",
+    "petrol level?",
+    "car fuel gauge pls",
+    "am i low on gas",
+    "fuel status",
+    "how much petrol left in tank",
+    "fuel gauge reading",
+    "how much petrol do i have left",
+    "gas tank level pls",
+    "is my car about to run out of gas",
+    "petrol left?",
+    "how empty is my fuel tank"
+   ],
+   "title": "Car fuel: how full is the tank",
+   "html": "<div class=\"card\">\n  <div class=\"card-title\">Fuel gauge</div>\n  <div class=\"chart\">\n    <svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Fuel gauge showing 60 percent\">\n      <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n      <path d=\"M10 50 A40 40 0 0 1 70 30\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path>\n      <text x=\"50\" y=\"45\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"16\" font-family=\"var(--font)\">60%</text>\n    </svg>\n  </div>\n  <p class=\"muted t-small\"><regex>user_name</regex>, you've got about 60% left. Enough for a decent drive.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "battery level?",
+    "how much charge left on phone",
+    "battery percentage",
+    "phone charge status",
+    "is my battery low",
+    "battery gauge",
+    "how full is my battery",
+    "how much juice is left on my phone",
+    "battery percentage",
+    "is my phone about to die",
+    "charge remaining?",
+    "phone batt level",
+    "how many % left on my cell"
+   ],
+   "title": "Phone battery: charge left",
+   "html": "<div class=\"card\">\n  <div class=\"card-title\">Battery</div>\n  <div class=\"chart\">\n    <svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Battery gauge showing 85 percent\">\n      <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n      <path d=\"M10 50 A40 40 0 0 1 78 25\" fill=\"none\" stroke=\"var(--good)\" stroke-width=\"10\"></path>\n      <text x=\"50\" y=\"45\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"16\" font-family=\"var(--font)\">85%</text>\n    </svg>\n  </div>\n  <p class=\"muted t-small\"><regex>user_name</regex>, 85% is plenty. You're good for the day.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "match confidence?",
+    "how sure are you",
+    "confidence level for this answer",
+    "match certainty gauge",
+    "how confident is umi",
+    "confidence meter",
+    "show match confidence",
+    "how confident am i in this match",
+    "match certainty?",
+    "am i sure about this match",
+    "confidence level for match",
+    "how sure am i that this is right",
+    "match confidence score"
+   ],
+   "title": "Match confidence: how sure am I",
+   "html": "<div class=\"card\">\n  <div class=\"card-title\">Match confidence</div>\n  <div class=\"chart\">\n    <svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Confidence gauge showing 72 percent\">\n      <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n      <path d=\"M10 50 A40 40 0 0 1 74 28\" fill=\"none\" stroke=\"var(--info)\" stroke-width=\"10\"></path>\n      <text x=\"50\" y=\"45\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"16\" font-family=\"var(--font)\">72%</text>\n    </svg>\n  </div>\n  <p class=\"muted t-small\"><regex>user_name</regex>, I'm fairly confident\u201472%. Good enough to act on, but keep an eye out.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "study progress?",
+    "how much revision done",
+    "study gauge",
+    "revision progress",
+    "how far through studying",
+    "check study progress",
+    "revision percentage",
+    "how much revision have i done",
+    "study completion?",
+    "am i done with studying",
+    "how far through my revision am i",
+    "revision progress pls",
+    "how much have i studied"
+   ],
+   "title": "Study progress: revision done",
+   "html": "<div class=\"card\">\n  <div class=\"card-title\">Study progress</div>\n  <div class=\"chart\">\n    <svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Study progress gauge showing 45 percent\">\n      <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n      <path d=\"M10 50 A40 40 0 0 1 58 24\" fill=\"none\" stroke=\"var(--accent-2)\" stroke-width=\"10\"></path>\n      <text x=\"50\" y=\"45\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"16\" font-family=\"var(--font)\">45%</text>\n    </svg>\n  </div>\n  <p class=\"muted t-small\"><regex>user_name</regex>, you've covered 45% of the material. Keep going\u2014you're nearly halfway.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "daily water intake?",
+    "how much water today",
+    "water gauge",
+    "hydration level",
+    "water intake status",
+    "check water drank today",
+    "how hydrated am i",
+    "how much water have i drunk today",
+    "hydration level?",
+    "am i hydrated enough",
+    "water intake so far",
+    "how many glasses of water today",
+    "did i drink enough water"
+   ],
+   "title": "Daily water: how much you've had",
+   "html": "<div class=\"card\">\n  <div class=\"card-title\">Daily water</div>\n  <div class=\"chart\">\n    <svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Water intake gauge showing 30 percent\">\n      <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n      <path d=\"M10 50 A40 40 0 0 1 50 20\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path>\n      <text x=\"50\" y=\"45\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"16\" font-family=\"var(--font)\">30%</text>\n    </svg>\n  </div>\n  <p class=\"muted t-small\"><regex>user_name</regex>, you're at 30% of your daily goal. Time for a glass.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "signal strength?",
+    "how strong is my signal",
+    "phone signal bars",
+    "reception gauge",
+    "network signal",
+    "check signal",
+    "how many bars",
+    "how many bars do i have",
+    "cell reception?",
+    "is my signal good",
+    "how strong is my phone signal",
+    "signal bars pls",
+    "do i have service"
+   ],
+   "title": "Signal strength: bars of connection",
+   "html": "<div class=\"card\">\n  <div class=\"card-title\">Signal strength</div>\n  <div class=\"chart\">\n    <svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Signal gauge showing 80 percent\">\n      <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n      <path d=\"M10 50 A40 40 0 0 1 78 22\" fill=\"none\" stroke=\"var(--good)\" stroke-width=\"10\"></path>\n      <text x=\"50\" y=\"45\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"16\" font-family=\"var(--font)\">80%</text>\n    </svg>\n  </div>\n  <p class=\"muted t-small\"><regex>user_name</regex>, strong signal\u201480%. You're well connected.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Cookie jar: how many are left",
+   "user_requests": [
+    "how many cookies are left in the jar?",
+    "cookie jar gauge",
+    "is there any cookies left",
+    "show me the cookie count",
+    "cookies remaining?",
+    "how full is the cookie jar rn",
+    "cookie jar level please",
+    "cookie count in the jar",
+    "are there any cookies left",
+    "how many biscuits remain",
+    "cookie jar status",
+    "did we run out of cookies",
+    "cookies left?"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Cookie jar</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Cookie jar gauge showing 7 of 12 cookies remaining\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 45 19\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\" stroke-linecap=\"round\"></path><circle cx=\"50\" cy=\"50\" r=\"4\" fill=\"var(--accent)\"></circle></svg></div><div class=\"stat\"><span class=\"label\">remaining</span><span class=\"value\">7 <span class=\"unit\">/ 12</span></span></div><p class=\"muted t-small\">About 58% left. Enough for a couple of days if you pace yourself, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Kettle: water level before boiling",
+   "user_requests": [
+    "how much water is in the kettle?",
+    "kettle level",
+    "do I need to refill the kettle for tea?",
+    "kettle water gauge",
+    "how full is the kettle",
+    "kettle check",
+    "water in kettle rn",
+    "how full is the kettle",
+    "kettle water amount",
+    "is there enough water in the kettle",
+    "how much h2o in the kettle",
+    "kettle level pls",
+    "do i need to refill the kettle"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Kettle</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Kettle gauge showing 1.2 of 1.7 litres\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 72 35\" fill=\"none\" stroke=\"var(--info)\" stroke-width=\"10\" stroke-linecap=\"round\"></path><circle cx=\"50\" cy=\"50\" r=\"4\" fill=\"var(--info)\"></circle></svg></div><div class=\"stat\"><span class=\"label\">water</span><span class=\"value\">1.2 <span class=\"unit\">/ 1.7 L</span></span></div><p class=\"muted t-small\">Perfect for two mugs. One more if you're feeling generous.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Bike tyres: pressure check",
+   "user_requests": [
+    "how are my bike tires?",
+    "tire pressure gauge",
+    "check bike tyre psi",
+    "bike tires pressure",
+    "are my tyres pumped?",
+    "bike pressure please",
+    "tyre pressure rn",
+    "are my bike tires pumped up",
+    "tire pressure on my bike",
+    "do my bike tyres need air",
+    "how hard are my bike tires",
+    "bike tyre psi",
+    "check my bike tires pressure"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Bike tyres</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Tyre pressure gauge showing 45 of 65 psi\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 68 30\" fill=\"none\" stroke=\"var(--good)\" stroke-width=\"10\" stroke-linecap=\"round\"></path><circle cx=\"50\" cy=\"50\" r=\"4\" fill=\"var(--good)\"></circle></svg></div><div class=\"stat\"><span class=\"label\">front tyre</span><span class=\"value\">45 <span class=\"unit\">/ 65 psi</span></span></div><p class=\"muted t-small\">A little soft. Top up to 65 for a smoother ride, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Wardrobe: hangers used",
+   "user_requests": [
+    "how many hangers are free?",
+    "wardrobe hanger count",
+    "hangers used?",
+    "show wardrobe usage",
+    "how full is my closet",
+    "hanger gauge",
+    "clothes hangers left",
+    "how many hangers are in use",
+    "hanger count in wardrobe",
+    "are there spare hangers",
+    "wardrobe hanger status",
+    "how many empty hangers do i have",
+    "hangers taken?"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Wardrobe</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Hanger usage gauge showing 18 of 30 used\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 75 28\" fill=\"none\" stroke=\"var(--warn)\" stroke-width=\"10\" stroke-linecap=\"round\"></path><circle cx=\"50\" cy=\"50\" r=\"4\" fill=\"var(--warn)\"></circle></svg></div><div class=\"stat\"><span class=\"label\">hangers used</span><span class=\"value\">18 <span class=\"unit\">/ 30</span></span></div><p class=\"muted t-small\">12 spots left. A good day to donate that shirt you never wear.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Bird feeder: seed level",
+   "user_requests": [
+    "how much seed is in the feeder?",
+    "bird feeder level",
+    "do the birds need more food?",
+    "feeder seed gauge",
+    "bird seed remaining",
+    "how full is the bird feeder",
+    "check feeder please",
+    "how full is the bird feeder",
+    "bird seed remaining?",
+    "do the birds need more food",
+    "feeder seed amount",
+    "is the bird feeder empty",
+    "seed level in feeder"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Bird feeder</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Bird seed gauge showing 200 of 500 grams\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 50 10\" fill=\"none\" stroke=\"var(--accent-2)\" stroke-width=\"10\" stroke-linecap=\"round\"></path><circle cx=\"50\" cy=\"50\" r=\"4\" fill=\"var(--accent-2)\"></circle></svg></div><div class=\"stat\"><span class=\"label\">seed left</span><span class=\"value\">200 <span class=\"unit\">/ 500 g</span></span></div><p class=\"muted t-small\">The sparrows are watching. Might be time for a refill, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Paint can: remaining",
+   "user_requests": [
+    "how much paint is left?",
+    "paint can gauge",
+    "paint level?",
+    "show paint remaining",
+    "can of paint how full",
+    "paint left for touch ups",
+    "paint can status",
+    "how much paint do i have left",
+    "paint can level",
+    "is there enough paint",
+    "remaining paint in the can",
+    "paint left?",
+    "how full is the paint tin"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Paint can</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Paint level gauge showing 2 of 5 litres\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 30 26\" fill=\"none\" stroke=\"var(--bad)\" stroke-width=\"10\" stroke-linecap=\"round\"></path><circle cx=\"50\" cy=\"50\" r=\"4\" fill=\"var(--bad)\"></circle></svg></div><div class=\"stat\"><span class=\"label\">remaining</span><span class=\"value\">2 <span class=\"unit\">/ 5 L</span></span></div><p class=\"muted t-small\">Enough for a touch-up, not a whole wall. Note the colour code before it runs out.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sun cream: how much is left",
+   "user_requests": [
+    "how much sun cream is left",
+    "sunscreen level check",
+    "am I gonna run out ofSPF",
+    "bottle of suncream gauge",
+    "how full is the sun lotion",
+    "sun protection remaining?",
+    "do I need to buy more factor 50",
+    "sunscreen remaining?",
+    "how much sunblock is left",
+    "do i need more sun cream",
+    "sun cream level",
+    "is my sunscreen almost empty",
+    "how full is the sun cream bottle"
+   ],
+   "html": "<div class=\"card\"><div class=\"row between\"><span class=\"card-title\">Sun cream</span><span class=\"badge accent\"><i class=\"dot\"></i>cached</span></div><p class=\"muted t-small\">Roughly a third left. Enough for the weekend, then it's a shop run, <regex>user_name</regex>.</p><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 31 13\" fill=\"none\" stroke=\"var(--warn)\" stroke-width=\"10\"></path></svg></div><div class=\"row between\"><span class=\"dim t-small\">empty</span><span class=\"value\">35<span class=\"unit\">%</span></span><span class=\"dim t-small\">full</span></div><details class=\"acc\"><summary>What that means</summary><div class=\"body\"><p class=\"muted\">About 4 beach days at this rate. Grab a new one before Saturday.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Toilet roll: rolls left",
+   "user_requests": [
+    "how many loo rolls left",
+    "toilet paper supply check",
+    "tp situation?",
+    "gauge for bog roll",
+    "are we nearly out of andrex",
+    "how many rolls in the cupboard",
+    "loo roll count please",
+    "how many toilet rolls do we have",
+    "loo roll count",
+    "are we out of toilet paper",
+    "toilet roll status",
+    "how many rolls left in the bathroom",
+    "tp remaining?"
+   ],
+   "html": "<div class=\"card\"><div class=\"row between\"><span class=\"card-title\">Toilet roll</span><span class=\"badge info\"><i class=\"dot\"></i>cached</span></div><p class=\"muted t-small\">Two rolls left on the shelf, <regex>user_name</regex>. A quiet nudge to add it to the list.</p><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 20 33\" fill=\"none\" stroke=\"var(--bad)\" stroke-width=\"10\"></path></svg></div><div class=\"row between\"><span class=\"dim t-small\">none</span><span class=\"value\">2<span class=\"unit\"> rolls</span></span><span class=\"dim t-small\">full</span></div><details class=\"acc\"><summary>How many days is that?</summary><div class=\"body\"><p class=\"muted\">Roughly 3-4 days for one person. Buy a pack next time you're out.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Jar of coffee beans: how roasted",
+   "user_requests": [
+    "how much coffee is left in the jar",
+    "bean supply level",
+    "am I out of coffee beans",
+    "gauge for my coffee stash",
+    "coffee jar fullness",
+    "how many beans left?",
+    "need to order more coffee?",
+    "coffee bean roast level",
+    "how roasted are my beans",
+    "is my coffee light or dark roast",
+    "roast profile of coffee beans",
+    "bean roast?",
+    "how much have my coffee beans been roasted"
+   ],
+   "html": "<div class=\"card\"><div class=\"row between\"><span class=\"card-title\">Coffee beans</span><span class=\"badge warn\"><i class=\"dot\"></i>cached</span></div><p class=\"muted t-small\">Just over half a jar, <regex>user_name</regex>. That's about 8 strong cups.</p><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 62 21\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path></svg></div><div class=\"row between\"><span class=\"dim t-small\">empty</span><span class=\"value\">55<span class=\"unit\">%</span></span><span class=\"dim t-small\">full</span></div><details class=\"acc\"><summary>Cups remaining</summary><div class=\"body\"><p class=\"muted\">Around 8 double espressos. Enough to get you to the weekend, not past it.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Car windscreen wash: fluid level",
+   "user_requests": [
+    "how much screen wash is left",
+    "windscreen fluid gauge",
+    "washer bottle level",
+    "do I need to top up the washers",
+    "screenwash check",
+    "windscreen washer fluid",
+    "is my screen wash low?",
+    "how much washer fluid is left",
+    "windscreen wash level",
+    "do i need to top up screen wash",
+    "car screen wash remaining",
+    "washer fluid?",
+    "is my windscreen washer empty"
+   ],
+   "html": "<div class=\"card\"><div class=\"row between\"><span class=\"card-title\">Windscreen wash</span><span class=\"badge good\"><i class=\"dot\"></i>cached</span></div><p class=\"muted t-small\">Plenty in there, <regex>user_name</regex>. No top-up needed this week.</p><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 80 16\" fill=\"none\" stroke=\"var(--good)\" stroke-width=\"10\"></path></svg></div><div class=\"row between\"><span class=\"dim t-small\">empty</span><span class=\"value\">80<span class=\"unit\">%</span></span><span class=\"dim t-small\">full</span></div><details class=\"acc\"><summary>When to top up</summary><div class=\"body\"><p class=\"muted\">Check again in a fortnight, or before any long drive.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Phone screen brightness: how bright",
+   "user_requests": [
+    "what's my screen brightness",
+    "brightness level gauge",
+    "how bright is my phone",
+    "screen too dim?",
+    "brightness setting check",
+    "how high is my brightness",
+    "phone screen brightness level",
+    "screen brightness level",
+    "how bright is my phone screen",
+    "what's the brightness on my phone",
+    "display brightness pls",
+    "brighness of my phone",
+    "phone screen lumens"
+   ],
+   "html": "<div class=\"card\"><div class=\"row between\"><span class=\"card-title\">Screen brightness</span><span class=\"badge accent\"><i class=\"dot\"></i>cached</span></div><p class=\"muted t-small\">Currently at 60%, <regex>user_name</regex>. A good middle ground for indoor light.</p><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 68 23\" fill=\"none\" stroke=\"var(--accent-2)\" stroke-width=\"10\"></path></svg></div><div class=\"row between\"><span class=\"dim t-small\">dim</span><span class=\"value\">60<span class=\"unit\">%</span></span><span class=\"dim t-small\">bright</span></div><details class=\"acc\"><summary>Battery note</summary><div class=\"body\"><p class=\"muted\">Dropping it to 40% could add about 20 minutes of screen time.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Rain barrel: how full after the storm",
+   "user_requests": [
+    "how full is the rain barrel",
+    "water butt level",
+    "rain barrel gauge",
+    "how much rainwater have I collected",
+    "butt fullness check",
+    "is my rain barrel full?",
+    "water butt after the rain",
+    "rain barrel fullness",
+    "how much water in the rain barrel",
+    "barrel water level after rain",
+    "check the rain barrel",
+    "is the rain barrel full yet",
+    "rainwater barrel status"
+   ],
+   "html": "<div class=\"card\"><div class=\"row between\"><span class=\"card-title\">Rain barrel</span><span class=\"badge info\"><i class=\"dot\"></i>cached</span></div><p class=\"muted t-small\">Three-quarters full after last night's downpour, <regex>user_name</regex>. The garden will be happy.</p><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 75 19\" fill=\"none\" stroke=\"var(--info)\" stroke-width=\"10\"></path></svg></div><div class=\"row between\"><span class=\"dim t-small\">empty</span><span class=\"value\">75<span class=\"unit\">%</span></span><span class=\"dim t-small\">full</span></div><details class=\"acc\"><summary>How long will it last?</summary><div class=\"body\"><p class=\"muted\">About 8 watering cans for the beds, or a good soak for the tomatoes.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sun cream: how much is left",
+   "user_requests": [
+    "how much sun cream is left",
+    "sunscreen gauge",
+    "am I going to run out of factor 50",
+    "sun cream level pls",
+    "SPF bottle check",
+    "how much suncream left in the bottle",
+    "will i have enough suncream for holiday",
+    "sunscreen remaining",
+    "how much sunscreen do I have",
+    "sun lotion level",
+    "remaining sun cream",
+    "how full is the suncream",
+    "suncr33m left?"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"row between\"><span class=\"card-title\">Sun cream</span><span class=\"badge accent\"><i class=\"dot\"></i>cached</span></div>\n  <div class=\"chart\">\n    <svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Sun cream about 30 percent left\">\n      <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n      <path d=\"M10 50 A40 40 0 0 1 34 22\" fill=\"none\" stroke=\"var(--warn)\" stroke-width=\"10\"></path>\n      <text x=\"50\" y=\"45\" text-anchor=\"middle\" font-size=\"16\" fill=\"var(--ink)\">30%</text>\n    </svg>\n  </div>\n  <p class=\"muted t-small\">About a third of the 200&nbsp;ml tube. Roughly four more beach days, or one over-enthusiastic picnic.</p>\n  <details class=\"acc\">\n    <summary>How I reckon it</summary>\n    <div class=\"body\"><ul class=\"list\"><li>Full tube weighs ~215&nbsp;g; yours is ~65&nbsp;g heavier than empty.</li><li>Two adults, one armful each, burns ~30&nbsp;ml a go.</li></ul></div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Rain barrel: how full after the storm",
+   "user_requests": [
+    "rain barrel level",
+    "how full is the water butt",
+    "did the storm fill the barrel",
+    "water butt gauge",
+    "rain barrel after last night",
+    "how much rainwater have I collected",
+    "butt fullness pls",
+    "rain barrel fullness",
+    "how much water in the rain barrel",
+    "barrel water level after rain",
+    "check the rain barrel",
+    "is the rain barrel full yet",
+    "rainwater barrel status"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"row between\"><span class=\"card-title\">Rain barrel</span><span class=\"badge good\"><i class=\"dot\"></i>refilled</span></div>\n  <div class=\"chart\">\n    <svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Rain barrel 85 percent full\">\n      <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n      <path d=\"M10 50 A40 40 0 0 1 87 41\" fill=\"none\" stroke=\"var(--info)\" stroke-width=\"10\"></path>\n      <text x=\"50\" y=\"45\" text-anchor=\"middle\" font-size=\"16\" fill=\"var(--ink)\">85%</text>\n    </svg>\n  </div>\n  <p class=\"muted t-small\">20&nbsp;mm of rain did the work. That's around 170&nbsp;litres, or nine watering cans for the tomatoes.</p>\n  <details class=\"acc\">\n    <summary>Barrel maths</summary>\n    <div class=\"body\"><ul class=\"list\"><li>Barrel: 200&nbsp;L, roof catchment ~8.5&nbsp;m\u00b2.</li><li>1&nbsp;mm rain \u2248 8.5&nbsp;L collected.</li></ul></div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Toilet roll: rolls left",
+   "user_requests": [
+    "how many toilet rolls left",
+    "loo roll count",
+    "bog roll stock check",
+    "toilet paper gauge",
+    "are we nearly out of loo roll",
+    "toilet roll situation",
+    "how many rolls in the cupboard",
+    "how many rolls of toilet paper",
+    "tp count",
+    "toilet paper remaining",
+    "how many bog rolls left",
+    "loo roll supply",
+    "number of toilet rolls"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"row between\"><span class=\"card-title\">Toilet roll</span><span class=\"badge warn\"><i class=\"dot\"></i>restock soon</span></div>\n  <div class=\"chart\">\n    <svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Two of nine rolls left\">\n      <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n      <path d=\"M10 50 A40 40 0 0 1 26 25\" fill=\"none\" stroke=\"var(--bad)\" stroke-width=\"10\"></path>\n      <text x=\"50\" y=\"45\" text-anchor=\"middle\" font-size=\"16\" fill=\"var(--ink)\">2/9</text>\n    </svg>\n  </div>\n  <p class=\"muted t-small\">Two rolls in the cupboard, one on the holder. At normal pace that's about six days.</p>\n  <details class=\"acc\">\n    <summary>Six days of what?</summary>\n    <div class=\"body\"><p>Household average, four people, ~1 roll every two days. You've got a cushion. Slim, but a cushion.</p></div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Car windscreen wash: fluid level",
+   "user_requests": [
+    "windscreen washer level",
+    "screen wash gauge",
+    "is my washer fluid low",
+    "check washer bottle",
+    "screenwash top up needed?",
+    "windscreen wash fluid level",
+    "washer jet fluid pls",
+    "washer fluid level",
+    "how much windscreen wash in the car",
+    "screen wash status",
+    "windscreen washer fluid",
+    "car window wash level",
+    "check washer fluid"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"row between\"><span class=\"card-title\">Windscreen wash</span><span class=\"badge info\"><i class=\"dot\"></i>topped up Tue</span></div>\n  <div class=\"chart\">\n    <svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Windscreen wash 60 percent full\">\n      <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n      <path d=\"M10 50 A40 40 0 0 1 62 17\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path>\n      <text x=\"50\" y=\"45\" text-anchor=\"middle\" font-size=\"16\" fill=\"var(--ink)\">60%</text>\n    </svg>\n  </div>\n  <p class=\"muted t-small\">Roughly 3&nbsp;litres of a 5&nbsp;L bottle. Plenty for a muddy motorway run.</p>\n  <details class=\"acc\">\n    <summary>Winter note</summary>\n    <div class=\"body\"><p>Add a splash of concentrate before the frost. Plain water freezes and the pump hates it.</p></div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Phone screen brightness: how bright",
+   "user_requests": [
+    "screen brightness gauge",
+    "how bright is my phone",
+    "brightness level",
+    "is my screen cranked up",
+    "phone brightness check",
+    "why is my screen so dim",
+    "brightness pls",
+    "screen brightness level",
+    "how bright is my phone screen",
+    "what's the brightness on my phone",
+    "display brightness pls",
+    "brighness of my phone",
+    "phone screen lumens"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"row between\"><span class=\"card-title\">Screen brightness</span><span class=\"badge accent\"><i class=\"dot\"></i>auto</span></div>\n  <div class=\"chart\">\n    <svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Screen brightness 70 percent\">\n      <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n      <path d=\"M10 50 A40 40 0 0 1 74 21\" fill=\"none\" stroke=\"var(--accent-2)\" stroke-width=\"10\"></path>\n      <text x=\"50\" y=\"45\" text-anchor=\"middle\" font-size=\"16\" fill=\"var(--ink)\">70%</text>\n    </svg>\n  </div>\n  <p class=\"muted t-small\">Sitting at 70%. Bright enough for the bus, dim enough that your battery doesn't sulk.</p>\n  <details class=\"acc\">\n    <summary>Battery trade-off</summary>\n    <div class=\"body\"><ul class=\"list\"><li>Below 40%: saves about an hour of screen time.</li><li>Above 90%: hit you back with heat on long scrolls.</li></ul></div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Jar of coffee beans: how roasted",
+   "user_requests": [
+    "how roasted are my coffee beans",
+    "bean roast level",
+    "coffee roast gauge",
+    "are my beans light or dark",
+    "roast profile of the jar",
+    "what roast are these beans",
+    "coffee bean check",
+    "coffee bean roast level",
+    "how dark are my beans",
+    "roast of the coffee beans",
+    "bean roast profile",
+    "how roasted is my coffee",
+    "coffee roast degree"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"row between\"><span class=\"card-title\">Coffee beans</span><span class=\"badge warn\"><i class=\"dot\"></i>medium-dark</span></div>\n  <div class=\"chart\">\n    <svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Roast level 72 percent toward dark\">\n      <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n      <path d=\"M10 50 A40 40 0 0 1 76 22\" fill=\"none\" stroke=\"var(--good)\" stroke-width=\"10\"></path>\n      <text x=\"50\" y=\"45\" text-anchor=\"middle\" font-size=\"14\" fill=\"var(--ink)\">Med-dark</text>\n    </svg>\n  </div>\n  <p class=\"muted t-small\">Oily sheen, chocolate in the cup. Good for espresso, fine in a moka, a bit loud for filter.</p>\n  <details class=\"acc\">\n    <summary>Reading your beans</summary>\n    <div class=\"body\"><ul class=\"list\"><li>Pale, dry, grassy \u2192 light.</li><li>Even brown, matte \u2192 medium.</li><li>Shiny, dark, smoky \u2192 dark roast.</li></ul></div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how full is my coffee maker right now",
+    "coffee pot level please",
+    "how much coffee is left in the pot",
+    "check the coffee carafe",
+    "coffee remaining?",
+    "coffe pot how much left",
+    "is there enough coffee for another cup",
+    "how much coffee is left in the pot",
+    "coffee pot level",
+    "remaining coffee",
+    "how full is the coffee pot",
+    "coffee left in carafe",
+    "check coffee pot"
+   ],
+   "title": "Coffee pot: how much left",
+   "html": "<div class=\"card\"><h3 class=\"card-title\">Coffee pot</h3><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 50 12\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path><text x=\"50\" y=\"50\" text-anchor=\"middle\" class=\"lbl\" font-size=\"14\" fill=\"var(--ink)\">60%</text></svg></div><p class=\"muted\">Enough for two more cups, <regex>user_name</regex>. Maybe brew a fresh batch soon.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "phone battery level",
+    "how much charge is left on my phone",
+    "battery percentage",
+    "phone charge status",
+    "batery left?",
+    "how much juice does my phone have",
+    "check phone battery",
+    "battery percentage",
+    "how much battery is left",
+    "phone charge level",
+    "what's my battery at",
+    "battery remaining on phone",
+    "juice left on phone"
+   ],
+   "title": "Phone battery: charge left",
+   "html": "<div class=\"card\"><h3 class=\"card-title\">Phone battery</h3><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 32 24\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path><text x=\"50\" y=\"50\" text-anchor=\"middle\" class=\"lbl\" font-size=\"14\" fill=\"var(--ink)\">20%</text></svg></div><p class=\"muted\">Time to find a charger, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how much gas is in the car",
+    "fuel gauge reading",
+    "car fuel level",
+    "petrol remaining",
+    "how full is the tank",
+    "gas left?",
+    "check car fuel",
+    "how much petrol is in the car",
+    "fuel gauge",
+    "gas tank level",
+    "how full is my tank",
+    "remaining fuel in car",
+    "petrol level"
+   ],
+   "title": "Car fuel: tank level",
+   "html": "<div class=\"card\"><h3 class=\"card-title\">Car fuel</h3><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 65 21\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path><text x=\"50\" y=\"50\" text-anchor=\"middle\" class=\"lbl\" font-size=\"14\" fill=\"var(--ink)\">45%</text></svg></div><p class=\"muted\">About half a tank, <regex>user_name</regex>. Plenty for the week.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how much water have I had today",
+    "daily water intake",
+    "hydration progress",
+    "water consumed so far",
+    "water lvl?",
+    "how much h2o today",
+    "check my water intake",
+    "water intake today",
+    "how much water did I drink today",
+    "my water consumption",
+    "daily hydration",
+    "how many glasses of water today",
+    "water tracker"
+   ],
+   "title": "Daily water: how much you've had",
+   "html": "<div class=\"card\"><h3 class=\"card-title\">Daily water</h3><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 80 26\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path><text x=\"50\" y=\"50\" text-anchor=\"middle\" class=\"lbl\" font-size=\"14\" fill=\"var(--ink)\">70%</text></svg></div><p class=\"muted\">You've had about 1.4 litres, <regex>user_name</regex>. Keep sipping.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how much revision have I done",
+    "study progress",
+    "revision percentage",
+    "how far through my study plan",
+    "study done?",
+    "how much have I studied",
+    "check study progress",
+    "how much studying have I done",
+    "revision progress",
+    "study tracker",
+    "how much have I revised",
+    "revision percentage",
+    "study hours so far"
+   ],
+   "title": "Study progress: revision done",
+   "html": "<div class=\"card\"><h3 class=\"card-title\">Study progress</h3><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 45 11\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path><text x=\"50\" y=\"50\" text-anchor=\"middle\" class=\"lbl\" font-size=\"14\" fill=\"var(--ink)\">85%</text></svg></div><p class=\"muted\">Almost there, <regex>user_name</regex>. Just one more topic to review.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many toilet rolls are left",
+    "toilet paper stock",
+    "rolls remaining",
+    "tp level",
+    "toilet roll count",
+    "how much loo roll left",
+    "check toilet rolls",
+    "how many rolls of toilet paper",
+    "tp count",
+    "toilet paper remaining",
+    "how many bog rolls left",
+    "loo roll supply",
+    "number of toilet rolls"
+   ],
+   "title": "Toilet roll: rolls left",
+   "html": "<div class=\"card\"><h3 class=\"card-title\">Toilet roll</h3><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 45 11\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path><text x=\"50\" y=\"50\" text-anchor=\"middle\" class=\"lbl\" font-size=\"14\" fill=\"var(--ink)\">2 rolls</text></svg></div><p class=\"muted\">Two rolls left, <regex>user_name</regex>. Might be time to restock.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Library book: due date pressure",
+   "user_requests": [
+    "how many days until my library book is due",
+    "library book due date",
+    "show me the pressure on my library book",
+    "how long left on my library loan",
+    "is my library book about to be overdue",
+    "days until i have to return this book",
+    "library book due",
+    "library book due date",
+    "when is my library book due",
+    "how long until library book is due",
+    "library return deadline",
+    "book due back",
+    "days left on library book"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Library book: due date pressure</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 65 22\" fill=\"none\" stroke=\"var(--warn)\" stroke-width=\"10\"></path></svg></div><div class=\"row between\"><span class=\"muted\"><regex>user_name</regex>, 4 days left</span><span class=\"badge warn\"><i class=\"dot\"></i>due soon</span></div><p class=\"t-small\">Return by Friday to avoid a fine. You've renewed twice already.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Phone storage: gigabytes used",
+   "user_requests": [
+    "how much phone storage is left",
+    "phone storage full?",
+    "check my phone storage",
+    "how many gigs free on my phone",
+    "phone storage",
+    "storage space left on my phone",
+    "is my phone storage almost full",
+    "how much storage is used on my phone",
+    "phone storage usage",
+    "gigabytes left on phone",
+    "storage space left",
+    "phone memory used",
+    "how full is my phone storage"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Phone storage: gigabytes used</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 85 40\" fill=\"none\" stroke=\"var(--bad)\" stroke-width=\"10\"></path></svg></div><div class=\"row between\"><span class=\"muted\"><regex>user_name</regex>, 54 of 64 GB used</span><span class=\"badge bad\"><i class=\"dot\"></i>nearly full</span></div><p class=\"t-small\">Photos are the biggest offender. Time for a clear-out?</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Houseplant: leaf droop",
+   "user_requests": [
+    "is my houseplant drooping",
+    "houseplant health check",
+    "how droopy is my plant",
+    "check my plant leaves",
+    "plant looking sad",
+    "how much does my houseplant need water",
+    "houseplant droop level",
+    "why are my plant leaves hanging down",
+    "check if my pothos is sad",
+    "is my plant wilting",
+    "do my leaves look droopy",
+    "houseplant droop check",
+    "how sad is my plant"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Houseplant: leaf droop</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 40 15\" fill=\"none\" stroke=\"var(--good)\" stroke-width=\"10\"></path></svg></div><div class=\"row between\"><span class=\"muted\"><regex>user_name</regex>, leaves are perky</span><span class=\"badge good\"><i class=\"dot\"></i>happy plant</span></div><p class=\"t-small\">No water needed today. Check again in three days.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Oven: preheat progress",
+   "user_requests": [
+    "is the oven preheated yet",
+    "oven temperature progress",
+    "how hot is the oven",
+    "check oven preheat",
+    "oven ready?",
+    "how much longer for the oven to preheat",
+    "oven temp gauge",
+    "how far along is the oven",
+    "has the oven reached temp",
+    "oven preheat status",
+    "is the oven hot enough yet",
+    "how much longer till oven is ready",
+    "preheat progress please"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Oven: preheat progress</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 75 32\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path></svg></div><div class=\"row between\"><span class=\"muted\"><regex>user_name</regex>, 180\u00b0C of 220\u00b0C</span><span class=\"badge accent\"><i class=\"dot\"></i>heating</span></div><p class=\"t-small\">Almost there. Give it two more minutes.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Bank account: balance health",
+   "user_requests": [
+    "how healthy is my bank balance",
+    "check my account balance",
+    "bank balance gauge",
+    "am i low on money",
+    "how much money do i have left",
+    "bank account status",
+    "balance check",
+    "am I broke",
+    "how is my money situation",
+    "check my account health",
+    "is my balance okay",
+    "how's my bank balance looking",
+    "bank account fitness"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Bank account: balance health</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 50 14\" fill=\"none\" stroke=\"var(--good)\" stroke-width=\"10\"></path></svg></div><div class=\"row between\"><span class=\"muted\"><regex>user_name</regex>, \u00a31,240 remaining</span><span class=\"badge good\"><i class=\"dot\"></i>comfortable</span></div><p class=\"t-small\">That's about three weeks of average spending. No action needed.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Water filter: cartridge life",
+   "user_requests": [
+    "how much life is left in my water filter",
+    "water filter cartridge status",
+    "check filter life",
+    "is my water filter due for a change",
+    "water filter gauge",
+    "remaining filter life",
+    "when to change water filter",
+    "when should I change my filter",
+    "filter life remaining",
+    "is my water filter due",
+    "how much filter left",
+    "water filter wear",
+    "how used up is my filter"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Water filter: cartridge life</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 55 17\" fill=\"none\" stroke=\"var(--info)\" stroke-width=\"10\"></path></svg></div><div class=\"row between\"><span class=\"muted\"><regex>user_name</regex>, 60% life left</span><span class=\"badge info\"><i class=\"dot\"></i>good for now</span></div><p class=\"t-small\">Order a replacement in two weeks, before it runs dry.</p></div>",
+   "augmented": true
+  },
+  {
+   "html": "<div class=\"card\"><div class=\"card-title\">Bath: how hot</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Bath temperature gauge at 41 degrees Celsius\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 78 22\" fill=\"none\" stroke=\"var(--warn)\" stroke-width=\"10\"></path><text class=\"lbl\" x=\"50\" y=\"46\" text-anchor=\"middle\">41\u00b0C</text><text class=\"lbl in\" x=\"50\" y=\"58\" text-anchor=\"middle\">warm, not lobster</text></svg></div><div class=\"row between\"><span class=\"badge warn\"><i class=\"dot\"></i>a bit toasty</span><span class=\"dim t-small\">target 38\u201340\u00b0C</span></div><details class=\"acc\"><summary>How to nudge it</summary><div class=\"body\"><ul class=\"list\"><li>Cold tap, 30 seconds, swirl with your hand.</li><li>Check again before you get in.</li></ul></div></details><p class=\"muted t-small\">Run it a touch cooler than feels right \u2014 your skin adjusts in a minute, <regex>user_name</regex>.</p></div>",
+   "title": "Bath water: how hot",
+   "user_requests": [
+    "how hot is my bath",
+    "bath temp check?",
+    "is the water too hot to get in",
+    "bath thermometer reading pls",
+    "gauge my bath heat",
+    "check bath water temperature",
+    "is it too hot for a soak",
+    "is my bath too hot",
+    "bath temp check",
+    "how warm is the tub",
+    "what's the bath temperature",
+    "is the bath scalding",
+    "bath water heat level"
+   ],
+   "augmented": true
+  },
+  {
+   "html": "<div class=\"card\"><div class=\"card-title\">Laundry basket: how full</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Laundry basket gauge at 70 percent full\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 82 15\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path><text class=\"lbl\" x=\"50\" y=\"46\" text-anchor=\"middle\">70%</text><text class=\"lbl in\" x=\"50\" y=\"58\" text-anchor=\"middle\">one load waiting</text></svg></div><div class=\"row between\"><span class=\"badge accent\"><i class=\"dot\"></i>wash day</span><span class=\"dim t-small\">full at 100%</span></div><details class=\"acc\"><summary>What's in there</summary><div class=\"body\"><ul class=\"list\"><li>Two towels, four shirts, socks of unknown origin.</li><li>Whites are outnumbered \u2014 split them.</li></ul></div></details><p class=\"muted t-small\">Enough for one cycle, <regex>user_name</regex>. Any fuller and the door sulks.</p></div>",
+   "title": "Laundry basket: how full",
+   "user_requests": [
+    "how full is the laundry basket",
+    "laundry level check",
+    "is there enough for a wash",
+    "basket fill gauge",
+    "how much washing have i got piled up",
+    "laundry basket fullness",
+    "is it wash day yet",
+    "do I need to do laundry",
+    "laundry load size",
+    "how many clothes in the basket",
+    "is the hamper full",
+    "laundry basket capacity",
+    "how piled up is my laundry"
+   ],
+   "augmented": true
+  },
+  {
+   "html": "<div class=\"card\"><div class=\"card-title\">E-reader: battery left</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"E-reader battery gauge at 18 percent\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 30 38\" fill=\"none\" stroke=\"var(--bad)\" stroke-width=\"10\"></path><text class=\"lbl\" x=\"50\" y=\"46\" text-anchor=\"middle\">18%</text><text class=\"lbl in\" x=\"50\" y=\"58\" text-anchor=\"middle\">about 20 pages left</text></svg></div><div class=\"row between\"><span class=\"badge bad\"><i class=\"dot\"></i>charge soon</span><span class=\"dim t-small\">lasts ~2 hrs reading</span></div><details class=\"acc\"><summary>Tips for tonight</summary><div class=\"body\"><ul class=\"list\"><li>Plug in now \u2014 it charges fully in 90 min.</li><li>Turn off the front light to squeeze a few more pages.</li></ul></div></details><p class=\"muted t-small\">You're mid-chapter, <regex>user_name</regex>. Don't let it die on a cliffhanger.</p></div>",
+   "title": "E-reader: battery left",
+   "user_requests": [
+    "how much battery on my kindle",
+    "ereader charge check",
+    "is my kindle about to die",
+    "reader battery gauge",
+    "how many pages left before it dies",
+    "kindle battery level pls",
+    "battery on the ereader?",
+    "kindle battery status",
+    "how much charge on my ereader",
+    "is my kindle about to die",
+    "e-reader power remaining",
+    "battery level on kindle",
+    "how full is my kindle battery"
+   ],
+   "augmented": true
+  },
+  {
+   "html": "<div class=\"card\"><div class=\"card-title\">Sourdough starter: rise</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Sourdough starter gauge at 85 percent risen\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 88 32\" fill=\"none\" stroke=\"var(--good)\" stroke-width=\"10\"></path><text class=\"lbl\" x=\"50\" y=\"46\" text-anchor=\"middle\">85%</text><text class=\"lbl in\" x=\"50\" y=\"58\" text-anchor=\"middle\">doubled, domed</text></svg></div><div class=\"row between\"><span class=\"badge good\"><i class=\"dot\"></i>ready to bake</span><span class=\"dim t-small\">peak at ~100%</span></div><details class=\"acc\"><summary>How to tell it's peaked</summary><div class=\"body\"><ul class=\"list\"><li>Domed top, slight jiggle, smell is tangy not sour-sharp.</li><li>Bake within the hour or it'll fall back.</li></ul></div></details><p class=\"muted t-small\">Nice rise, <regex>user_name</regex>. The jar's proud of you.</p></div>",
+   "title": "Sourdough starter: rise",
+   "user_requests": [
+    "how risen is my sourdough starter",
+    "starter gauge check",
+    "is my starter ready to bake",
+    "sourdough rise level",
+    "how much has the starter grown",
+    "starter peaked yet?",
+    "check my dough starter rise",
+    "how much has my starter grown",
+    "is my sourdough ready",
+    "starter rise check",
+    "how bubbly is my starter",
+    "sourdough starter height",
+    "has my starter doubled"
+   ],
+   "augmented": true
+  },
+  {
+   "html": "<div class=\"card\"><div class=\"card-title\">Torch: battery charge</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Torch battery gauge at 60 percent\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 72 22\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path><text class=\"lbl\" x=\"50\" y=\"46\" text-anchor=\"middle\">60%</text><text class=\"lbl in\" x=\"50\" y=\"58\" text-anchor=\"middle\">bright mode ok</text></svg></div><div class=\"row between\"><span class=\"badge accent\"><i class=\"dot\"></i>good to go</span><span class=\"dim t-small\">dims below 20%</span></div><details class=\"acc\"><summary>Before you head out</summary><div class=\"body\"><ul class=\"list\"><li>Spare batteries are in the drawer by the door.</li><li>Cold drains it faster \u2014 keep it in a pocket, not a bag.</li></ul></div></details><p class=\"muted t-small\">Plenty for the walk, <regex>user_name</regex>. Don't blind the dog.</p></div>",
+   "title": "Torch: battery charge",
+   "user_requests": [
+    "how much battery in my torch",
+    "torch charge level",
+    "is my flashlight charged",
+    "torch battery gauge",
+    "will my torch last the walk",
+    "check torch power",
+    "flashlight battery pls",
+    "flashlight battery level",
+    "is my torch charged",
+    "how much power in my flashlight",
+    "torch charge status",
+    "will my torch die soon",
+    "torch battery remaining"
+   ],
+   "augmented": true
+  },
+  {
+   "html": "<div class=\"card\"><div class=\"card-title\">Watering can: how full</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Watering can gauge at 45 percent full\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 48 12\" fill=\"none\" stroke=\"var(--info)\" stroke-width=\"10\"></path><text class=\"lbl\" x=\"50\" y=\"46\" text-anchor=\"middle\">45%</text><text class=\"lbl in\" x=\"50\" y=\"58\" text-anchor=\"middle\">~3 plants left</text></svg></div><div class=\"row between\"><span class=\"badge info\"><i class=\"dot\"></i>half full</span><span class=\"dim t-small\">top up for the ferns</span></div><details class=\"acc\"><summary>Where to pour first</summary><div class=\"body\"><ul class=\"list\"><li>Thirstiest first: the fern, then the basil.</li><li>Save a splash for the windowsill spider plant.</li></ul></div></details><p class=\"muted t-small\">Enough for a quick round, <regex>user_name</regex>. Refill before the big pots.</p></div>",
+   "title": "Watering can: how full",
+   "user_requests": [
+    "how full is my watering can",
+    "watering can level",
+    "can i water all the plants with this",
+    "watering can gauge",
+    "how much water left in the can",
+    "check the watering can",
+    "is the can full enough",
+    "is my watering can empty",
+    "how much water in the can",
+    "watering can level",
+    "do I need to refill the watering can",
+    "watering can fill status",
+    "how full is my can"
+   ],
+   "augmented": true
+  },
+  {
+   "title": "Camera battery: charge left",
+   "user_requests": [
+    "how much juice does my camera have",
+    "camera battery level?",
+    "is my camera ready for a shoot",
+    "battery left on the DSLR",
+    "camera charge status",
+    "do I need to charge my camera?",
+    "how full is the camera battery",
+    "how charged is my camera",
+    "camera battery status",
+    "will my camera die soon",
+    "camera power left",
+    "battery level on my camera",
+    "how much charge in my camera"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Camera battery</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 58 20\" fill=\"none\" stroke=\"var(--good)\" stroke-width=\"10\"></path></svg></div><div class=\"row between\"><span class=\"muted\">Charge left</span><span class=\"value\">72<span class=\"unit\">%</span></span></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Watering can: how full",
+   "user_requests": [
+    "how full is the watering can",
+    "watering can level",
+    "do I need to refill the watering can?",
+    "water left in the can",
+    "check watering can",
+    "is the watering can empty",
+    "how much water in the can",
+    "is my watering can empty",
+    "how much water in the can",
+    "watering can level",
+    "do I need to refill the watering can",
+    "watering can fill status",
+    "how full is my can"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Watering can</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 34 18\" fill=\"none\" stroke=\"var(--warn)\" stroke-width=\"10\"></path></svg></div><div class=\"row between\"><span class=\"muted\">Water level</span><span class=\"value\">35<span class=\"unit\">%</span></span></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Car windscreen wash: fluid level",
+   "user_requests": [
+    "windscreen wash level",
+    "how much screen wash is left",
+    "do I need to top up the washer fluid?",
+    "car screenwash check",
+    "washer fluid low?",
+    "how full is the windscreen washer",
+    "screen wash status",
+    "do I need to top up my washer fluid",
+    "windscreen washer level",
+    "how much screen wash left",
+    "car washer fluid status",
+    "is my windscreen wash empty",
+    "washer fluid check"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Windscreen wash</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 34 18\" fill=\"none\" stroke=\"var(--bad)\" stroke-width=\"10\"></path></svg></div><div class=\"row between\"><span class=\"muted\">Fluid level</span><span class=\"value\">15<span class=\"unit\">%</span></span></div><div class=\"callout bad\">Almost empty \u2014 top up before your next drive.</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Match confidence: how sure",
+   "user_requests": [
+    "how sure are you about this answer?",
+    "confidence level for this match",
+    "how certain is this?",
+    "match confidence score",
+    "is this a strong match?",
+    "how well does this match my question?",
+    "confidence meter",
+    "how confident are you",
+    "what's your certainty level",
+    "how certain is this answer",
+    "confidence score",
+    "are you sure about that",
+    "how reliable is this match"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Match confidence</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 82 35\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path></svg></div><div class=\"row between\"><span class=\"muted\">Confidence</span><span class=\"value\">88<span class=\"unit\">%</span></span></div><div class=\"badge accent\"><i class=\"dot\"></i> Strong match</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "E-reader battery: charge left",
+   "user_requests": [
+    "e-reader battery remaining",
+    "how much charge on my kindle",
+    "is my e-reader charged?",
+    "battery level for e-reader",
+    "e-reader charge status",
+    "do I need to charge my e-reader?",
+    "how full is the e-reader battery",
+    "how much battery does my ereader have",
+    "is my ereader charged",
+    "ereader charge level",
+    "will my ereader run out",
+    "battery left on ereader",
+    "ereader power status"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">E-reader battery</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 42 14\" fill=\"none\" stroke=\"var(--good)\" stroke-width=\"10\"></path></svg></div><div class=\"row between\"><span class=\"muted\">Charge left</span><span class=\"value\">45<span class=\"unit\">%</span></span></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Phone storage: gigabytes used",
+   "user_requests": [
+    "how much storage is left on my phone",
+    "phone storage check",
+    "am I running out of space?",
+    "gigabytes used on phone",
+    "storage full?",
+    "how much phone storage is free",
+    "phone memory status",
+    "how much space is left on my phone",
+    "phone memory usage",
+    "is my phone full",
+    "storage used on my phone",
+    "how many gigs have I used",
+    "phone storage check"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Phone storage</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 82 35\" fill=\"none\" stroke=\"var(--warn)\" stroke-width=\"10\"></path></svg></div><div class=\"row between\"><span class=\"muted\">Used</span><span class=\"value\">92<span class=\"unit\">GB</span></span><span class=\"dim\">of 128 GB</span></div><div class=\"callout warn\">Nearing capacity \u2014 consider clearing old media.</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Shower: water temperature",
+   "user_requests": [
+    "how hot is the shower?",
+    "check shower temp",
+    "is the shower water warm enough?",
+    "shower temperature gauge",
+    "how warm is the shower right now?",
+    "shower too cold?",
+    "water temp in shower",
+    "whats the temp of the water in the shower",
+    "shower too cold?",
+    "check shower heat pls",
+    "is the shower water warm rn",
+    "how many degrees is the shower",
+    "shower temp? quick"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Shower temperature</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 70 28\" fill=\"none\" stroke=\"var(--warn)\" stroke-width=\"10\"></path></svg></div><p class=\"muted\">Comfortably warm, <regex>user_name</regex>. Not scalding, not tepid. Perfect for a quick rinse.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Noise level: how loud",
+   "user_requests": [
+    "how loud is it?",
+    "noise level check",
+    "is it too noisy here?",
+    "noise gauge",
+    "how much noise is there?",
+    "is the volume okay?",
+    "noise meter reading",
+    "how noisy is it in here",
+    "db meter reading",
+    "is it loud in the room",
+    "whats the volume like",
+    "noise lvl?",
+    "can you tell me how loud things are"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Noise level</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 55 17\" fill=\"none\" stroke=\"var(--good)\" stroke-width=\"10\"></path></svg></div><p class=\"muted\">Quiet hum, <regex>user_name</regex>. About the level of a soft conversation. Easy on the ears.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Fan speed: how fast",
+   "user_requests": [
+    "fan speed?",
+    "how fast is the fan going?",
+    "check fan setting",
+    "fan speed gauge",
+    "what's the fan speed?",
+    "is the fan on high?",
+    "fan speed level",
+    "what speed is the fan on",
+    "how fast is the fan spinning",
+    "fan rpm?",
+    "is the fan on high",
+    "check fan setting",
+    "how quick is the fan going"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Fan speed</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 45 15\" fill=\"none\" stroke=\"var(--info)\" stroke-width=\"10\"></path></svg></div><p class=\"muted\">Medium setting, <regex>user_name</regex>. A steady breeze that keeps the air moving without blowing papers off the desk.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Money saved: monthly goal",
+   "user_requests": [
+    "how much have I saved this month?",
+    "savings progress",
+    "am I on track with savings?",
+    "monthly savings gauge",
+    "how's my savings goal?",
+    "savings meter",
+    "check savings",
+    "how much have i put away this month",
+    "monthly savings progress",
+    "am i on track with savings",
+    "how much money saved so far",
+    "savings goal status",
+    "how much left to save this month"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Savings goal</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 65 22\" fill=\"none\" stroke=\"var(--good)\" stroke-width=\"10\"></path></svg></div><p class=\"muted\"><regex>user_name</regex>, you've tucked away 68% of your goal. A little more and you'll hit it with room to spare.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Guitar strings: how fresh",
+   "user_requests": [
+    "how old are my guitar strings?",
+    "string condition",
+    "are my guitar strings still good?",
+    "string freshness gauge",
+    "should I change my strings?",
+    "guitar string wear",
+    "string life meter",
+    "are my guitar strings new",
+    "how worn are my strings",
+    "string freshness?",
+    "do i need to change guitar strings",
+    "how long since i changed strings",
+    "guitar string condition"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Guitar string freshness</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 30 26\" fill=\"none\" stroke=\"var(--bad)\" stroke-width=\"10\"></path></svg></div><p class=\"muted\"><regex>user_name</regex>, these strings have seen better days. Time for a fresh set\u2014your fingertips will thank you.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Habit streak: days in a row",
+   "user_requests": [
+    "how many days in a row?",
+    "streak count",
+    "am I still on my streak?",
+    "habit streak gauge",
+    "check my streak",
+    "how long have I kept this up?",
+    "streak progress",
+    "whats my streak",
+    "how many consecutive days",
+    "streak count?",
+    "am i still on a streak",
+    "how many days in a row have i done it",
+    "check my habit streak"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Habit streak</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 85 40\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path></svg></div><p class=\"muted\">14 days strong, <regex>user_name</regex>. Momentum looks good on you.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Wi-Fi: signal bars",
+   "user_requests": [
+    "How strong is my Wi-Fi?",
+    "wifi signal bars",
+    "Is the Wi-Fi good in here?",
+    "how many bars am I getting",
+    "WiFi strength check",
+    "show me the wifi bars",
+    "signal strength for wifi",
+    "how many bars of wifi",
+    "wifi signal strength",
+    "is my wifi strong",
+    "wifi bars?",
+    "how good is the wifi signal",
+    "check wifi signal"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Wi-Fi signal</div><p class=\"muted t-small\">Living room router, 2.4 GHz band.</p><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 80 22\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path></svg></div><div class=\"row between\"><span class=\"dim t-small\">Weak</span><span class=\"badge accent\">4/5 bars</span><span class=\"dim t-small\">Strong</span></div><p class=\"t-small\"><regex>user_name</regex>, you're in good shape. Streaming should be smooth from the couch.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Fridge: how cold",
+   "user_requests": [
+    "is the fridge cold enough",
+    "fridge temp gauge",
+    "how cold is the fridge",
+    "check fridge temperature",
+    "my fridge temperature",
+    "fridge cold level",
+    "is my fridge too warm",
+    "whats the temp in the fridge",
+    "is the fridge cold",
+    "fridge temperature?",
+    "how chilly is the fridge",
+    "check fridge temp",
+    "is my fridge cold enough"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Fridge temperature</div><p class=\"muted t-small\">Measured on the middle shelf.</p><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 60 45\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path></svg></div><div class=\"row between\"><span class=\"dim t-small\">Warm</span><span class=\"badge good\">3.2\u00b0C</span><span class=\"dim t-small\">Cold</span></div><p class=\"t-small\"><regex>user_name</regex>, that's right in the safe zone. Milk will be happy.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Tyre tread: depth left",
+   "user_requests": [
+    "how much tread is left",
+    "tyre tread depth",
+    "are my tyres still good",
+    "check tread wear",
+    "front tyre tread",
+    "tread gauge please",
+    "how worn are my tyres",
+    "how much tread on my tyres",
+    "tyre depth?",
+    "are my tyres worn",
+    "check tyre tread",
+    "how many mm of tread left",
+    "tyre condition"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Front tyre tread</div><p class=\"muted t-small\">Measured at the centre groove.</p><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--good)\" stroke-width=\"10\"></path></svg></div><div class=\"row between\"><span class=\"dim t-small\">Worn</span><span class=\"badge good\">8 mm</span><span class=\"dim t-small\">New</span></div><p class=\"t-small\"><regex>user_name</regex>, nearly new. Plenty of grip left for rainy days.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Progress bar: game level",
+   "user_requests": [
+    "how far through this level am I",
+    "game progress",
+    "level completion",
+    "progress in the game",
+    "how much of the level is done",
+    "show level progress",
+    "am I near the end of the level",
+    "how far am i in the level",
+    "level progress?",
+    "what percent of the level is done",
+    "am i near the end of the level",
+    "game progress bar",
+    "how much left in this level"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Level progress</div><p class=\"muted t-small\">World 3, level 4.</p><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 57 42\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path></svg></div><div class=\"row between\"><span class=\"dim t-small\">Start</span><span class=\"badge accent\">60%</span><span class=\"dim t-small\">Finish</span></div><p class=\"t-small\"><regex>user_name</regex>, you're past halfway. A few more jumps and it's done.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Blender: how full",
+   "user_requests": [
+    "how full is the blender",
+    "blender capacity used",
+    "blender fill level",
+    "is the blender too full",
+    "how much is in the blender",
+    "blender jug level",
+    "check blender fullness",
+    "how much is in the blender",
+    "blender capacity?",
+    "is the blender full",
+    "check blender level",
+    "how full is the blender jug",
+    "blender fill level"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Blender jug</div><p class=\"muted t-small\">Pulse speed: medium.</p><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 70 20\" fill=\"none\" stroke=\"var(--warn)\" stroke-width=\"10\"></path></svg></div><div class=\"row between\"><span class=\"dim t-small\">Empty</span><span class=\"badge warn\">85% full</span><span class=\"dim t-small\">Full</span></div><p class=\"t-small\"><regex>user_name</regex>, that's a lot of smoothie. Maybe pour a glass before blending.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Umbrella: rain chance",
+   "user_requests": [
+    "will it rain today",
+    "rain probability",
+    "chance of rain",
+    "do I need an umbrella",
+    "rain forecast",
+    "how likely is rain",
+    "is it going to rain later",
+    "whats the chance of rain",
+    "do i need an umbrella",
+    "rain probability?",
+    "will it rain later",
+    "is it going to rain today",
+    "precipitation chance"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Chance of rain</div><p class=\"muted t-small\">Next 6 hours, your area.</p><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 30 25\" fill=\"none\" stroke=\"var(--info)\" stroke-width=\"10\"></path></svg></div><div class=\"row between\"><span class=\"dim t-small\">Dry</span><span class=\"badge info\">20%</span><span class=\"dim t-small\">Wet</span></div><p class=\"t-small\"><regex>user_name</regex>, probably fine. A light jacket might be enough.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Gym water bottle: how much is left",
+   "user_requests": [
+    "how full is my water bottle at the gym",
+    "bottle level check",
+    "how much water is left in my bottle",
+    "i keep forgetting to drink, whats left in my bottle",
+    "water bottle gauge",
+    "show me bottle fill level",
+    "how much left in my gym bottle",
+    "how much water is left in my bottle",
+    "bottle level at the gym",
+    "is my gym bottle empty",
+    "check water bottle",
+    "how full is my bottle",
+    "water remaining in gym bottle"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"card-title\">Gym bottle</div>\n  <div class=\"row between\">\n    <span class=\"muted\">750 ml flask</span>\n    <span class=\"badge accent\"><i class=\"dot\"></i>a bit left</span>\n  </div>\n  <div class=\"chart\">\n    <svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Bottle about 30 percent full\">\n      <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n      <path d=\"M10 50 A40 40 0 0 1 38 20\" fill=\"none\" stroke=\"var(--warn)\" stroke-width=\"10\"></path>\n      <text x=\"50\" y=\"44\" text-anchor=\"middle\" class=\"lbl\">230 ml</text>\n    </svg>\n  </div>\n  <p class=\"t-small muted\"><regex>user_name</regex>, that's two good gulps. Refill before the last set, not after.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Kettle: how full before boiling",
+   "user_requests": [
+    "how much water is in the kettle",
+    "kettle level",
+    "is there enough for two cups",
+    "kettle fill gauge",
+    "how full is the kettle rn",
+    "check kettle water",
+    "enough water in kettle for tea",
+    "how much water in the kettle",
+    "kettle level?",
+    "is the kettle full enough",
+    "check kettle water",
+    "how full is the kettle",
+    "kettle fill before boiling"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"card-title\">Kettle</div>\n  <div class=\"row between\">\n    <span class=\"muted\">1.7 L capacity</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>plenty</span>\n  </div>\n  <div class=\"chart\">\n    <svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Kettle roughly 70 percent full\">\n      <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n      <path d=\"M10 50 A40 40 0 0 1 78 24\" fill=\"none\" stroke=\"var(--good)\" stroke-width=\"10\"></path>\n      <text x=\"50\" y=\"44\" text-anchor=\"middle\" class=\"lbl\">1.2 L</text>\n    </svg>\n  </div>\n  <p class=\"t-small muted\"><regex>user_name</regex>, that's four mugs. Boil once, pour twice, save the rest.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Sourdough starter: how lively",
+   "user_requests": [
+    "how active is my sourdough starter",
+    "starter rise gauge",
+    "is my starter ready to bake",
+    "sourdough activity level",
+    "my starters rise",
+    "check starter bubbles",
+    "ready to bake bread?",
+    "is my sourdough starter active",
+    "how bubbly is my starter",
+    "starter activity?",
+    "check sourdough starter",
+    "how lively is my starter",
+    "is my starter ready to bake"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"card-title\">Sourdough starter</div>\n  <div class=\"row between\">\n    <span class=\"muted\">fed 5 h ago</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>peak soon</span>\n  </div>\n  <div class=\"chart\">\n    <svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Starter nearly doubled\">\n      <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n      <path d=\"M10 50 A40 40 0 0 1 86 38\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path>\n      <text x=\"50\" y=\"44\" text-anchor=\"middle\" class=\"lbl\">+88%</text>\n    </svg>\n  </div>\n  <p class=\"t-small muted\"><regex>user_name</regex>, nearly doubled and domed. Give it twenty minutes, then bake.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Torch: how much light left",
+   "user_requests": [
+    "torch battery level",
+    "how much charge in my torch",
+    "is my torch about to die",
+    "torch power gauge",
+    "flashlight battery check",
+    "how long will my torch last",
+    "torch charge",
+    "how much battery left in the torch",
+    "torch brightness?",
+    "is my torch dim",
+    "check torch battery",
+    "how much light is left in the torch",
+    "torch power level"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"card-title\">Torch</div>\n  <div class=\"row between\">\n    <span class=\"muted\">3x AA, fresh last month</span>\n    <span class=\"badge warn\"><i class=\"dot\"></i>getting dim</span>\n  </div>\n  <div class=\"chart\">\n    <svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Torch about 40 percent power\">\n      <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n      <path d=\"M10 50 A40 40 0 0 1 48 16\" fill=\"none\" stroke=\"var(--warn)\" stroke-width=\"10\"></path>\n      <text x=\"50\" y=\"44\" text-anchor=\"middle\" class=\"lbl\">40%</text>\n    </svg>\n  </div>\n  <p class=\"t-small muted\"><regex>user_name</regex>, that's maybe two more evenings. Swap the cells while the shops are open.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Camera battery: shots left",
+   "user_requests": [
+    "camera battery left",
+    "how many shots can i take",
+    "is my camera charged",
+    "camera battery gauge",
+    "battery on my dslr",
+    "how much charge left on camera",
+    "camera power check"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"card-title\">Camera</div>\n  <div class=\"row between\">\n    <span class=\"muted\">LP-E17 pack</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>shoot on</span>\n  </div>\n  <div class=\"chart\">\n    <svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Camera battery about 85 percent\">\n      <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n      <path d=\"M10 50 A40 40 0 0 1 89 42\" fill=\"none\" stroke=\"var(--good)\" stroke-width=\"10\"></path>\n      <text x=\"50\" y=\"44\" text-anchor=\"middle\" class=\"lbl\">85%</text>\n    </svg>\n  </div>\n  <p class=\"t-small muted\"><regex>user_name</regex>, roughly 600 frames. Take the spare battery anyway, just in case.</p>\n</div>"
+  },
+  {
+   "title": "Oven: preheat progress",
+   "user_requests": [
+    "how hot is the oven",
+    "oven preheat gauge",
+    "is the oven ready",
+    "how long till oven hits temp",
+    "oven temp check",
+    "preheat done yet",
+    "ready to put pizza in?"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"card-title\">Oven preheat</div>\n  <div class=\"row between\">\n    <span class=\"muted\">target 220\u00b0C</span>\n    <span class=\"badge warn\"><i class=\"dot\"></i>almost there</span>\n  </div>\n  <div class=\"chart\">\n    <svg viewBox=\"0 0 100 60\" role=\"img\" aria-label=\"Oven at about 180 degrees of 220\">\n      <path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path>\n      <path d=\"M10 50 A40 40 0 0 1 80 20\" fill=\"none\" stroke=\"var(--warn)\" stroke-width=\"10\"></path>\n      <text x=\"50\" y=\"44\" text-anchor=\"middle\" class=\"lbl\">180\u00b0C</text>\n    </svg>\n  </div>\n  <p class=\"t-small muted\"><regex>user_name</regex>, one more minute. Get the tray ready now and you'll lose nothing.</p>\n</div>"
+  },
+  {
+   "title": "Air quality: how fresh is it?",
+   "user_requests": [
+    "how's the air in here",
+    "air quality gauge",
+    "is the air fresh?",
+    "check air quality innit",
+    "air freshness meter",
+    "how clean is the air rn",
+    "pollution level outside?"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"card\"><div class=\"card-title\">Air quality: how fresh is it?</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\" aria-label=\"Air quality gauge\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 62 22\" fill=\"none\" stroke=\"var(--good)\" stroke-width=\"10\"></path><text x=\"50\" y=\"48\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"14\" font-family=\"var(--font)\">72</text></svg></div><p class=\"muted t-small\">Good. Windows open for a bit longer would be even better.</p><p class=\"muted\">Let me know if you want a reminder to check again later, <regex>user_name</regex>.</p></div></div>"
+  },
+  {
+   "title": "Milk freshness: how many days left?",
+   "user_requests": [
+    "how fresh is the milk",
+    "milk expiry gauge",
+    "is the milk still ok",
+    "milk days left?",
+    "check milk date",
+    "milk freshness meter",
+    "how long till milk goes off"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"card\"><div class=\"card-title\">Milk freshness: how many days left?</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\" aria-label=\"Milk freshness gauge\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 30 30\" fill=\"none\" stroke=\"var(--warn)\" stroke-width=\"10\"></path><text x=\"50\" y=\"48\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"14\" font-family=\"var(--font)\">3</text></svg></div><p class=\"muted t-small\">Three days left. Time for a sniff test, just in case.</p><p class=\"muted\">Want me to add it to the shopping list, <regex>user_name</regex>?</p></div></div>"
+  },
+  {
+   "title": "Bike lock strength: how secure?",
+   "user_requests": [
+    "how secure is my bike lock",
+    "lock security gauge",
+    "bike lock rating",
+    "security level of lock",
+    "is my lock strong enough",
+    "lock strength meter",
+    "how safe is the lock"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"card\"><div class=\"card-title\">Bike lock strength: how secure?</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\" aria-label=\"Bike lock security gauge\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 72 31\" fill=\"none\" stroke=\"var(--info)\" stroke-width=\"10\"></path><text x=\"50\" y=\"48\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"14\" font-family=\"var(--font)\">8</text></svg></div><p class=\"muted t-small\">Solid. Not Fort Knox, but enough for a quick stop.</p><p class=\"muted\">Park it somewhere busy anyway, <regex>user_name</regex>.</p></div></div>"
+  },
+  {
+   "title": "Study focus: how deep in the zone?",
+   "user_requests": [
+    "how focused am i",
+    "focus gauge",
+    "am i in the zone",
+    "focus level?",
+    "how deep is my focus",
+    "concentration meter",
+    "how well am i concentrating"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"card\"><div class=\"card-title\">Study focus: how deep in the zone?</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\" aria-label=\"Study focus gauge\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 80 40\" fill=\"none\" stroke=\"var(--accent-2)\" stroke-width=\"10\"></path><text x=\"50\" y=\"48\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"14\" font-family=\"var(--font)\">65</text></svg></div><p class=\"muted t-small\">Good. A short break now might push it higher.</p><p class=\"muted\">You've got this, <regex>user_name</regex>.</p></div></div>"
+  },
+  {
+   "title": "Sleep debt: how tired are you?",
+   "user_requests": [
+    "how tired am i",
+    "sleep debt gauge",
+    "am i sleep deprived?",
+    "tiredness level",
+    "how much sleep do i need",
+    "sleep meter",
+    "how knackered am i"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"card\"><div class=\"card-title\">Sleep debt: how tired are you?</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\" aria-label=\"Sleep debt gauge\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 40 25\" fill=\"none\" stroke=\"var(--bad)\" stroke-width=\"10\"></path><text x=\"50\" y=\"48\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"14\" font-family=\"var(--font)\">4</text></svg></div><p class=\"muted t-small\">Four hours short. An early night would help.</p><p class=\"muted\">Naps count too, <regex>user_name</regex>.</p></div></div>"
+  },
+  {
+   "title": "Garden soil moisture: how damp?",
+   "user_requests": [
+    "how wet is the soil",
+    "soil moisture gauge",
+    "is the garden too dry?",
+    "soil dampness?",
+    "check soil moisture",
+    "moisture meter for garden",
+    "how dry is the soil"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"card\"><div class=\"card-title\">Garden soil moisture: how damp?</div><div class=\"chart\"><svg viewBox=\"0 0 100 60\" aria-label=\"Soil moisture gauge\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 55 20\" fill=\"none\" stroke=\"var(--good)\" stroke-width=\"10\"></path><text x=\"50\" y=\"48\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"14\" font-family=\"var(--font)\">55%</text></svg></div><p class=\"muted t-small\">Just right. The tomatoes will be pleased.</p><p class=\"muted\">Check again in a couple of days, <regex>user_name</regex>.</p></div></div>"
+  }
+ ]
+}

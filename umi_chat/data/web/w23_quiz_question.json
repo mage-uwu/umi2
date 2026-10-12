@@ -1,0 +1,2349 @@
+{
+ "widget": "quiz_question",
+ "instances": [
+  {
+   "title": "Kitchen knife skills quiz",
+   "user_requests": [
+    "quiz me on knife skills",
+    "give me a cooking quiz about knives",
+    "I want to test my kitchen knife knowledge",
+    "knife skillz quiz pls",
+    "can u quiz me on basic knife techniques",
+    "throw a quick quiz at me about cutting stuff",
+    "make a quiz on kitchen knives",
+    "test my chopping knowledge",
+    "knife quiz pls",
+    "how good am i with kitchen knives?",
+    "give me a knife-skills quiz",
+    "quiz me about slicing and dicing",
+    "knfe skills quiz"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\"><regex>user_name</regex>, what's the safest way to hold a knife when walking across the kitchen?</div><details><summary>A) Point it outward like a sword</summary></details><details><summary>B) Blade down, close to your side</summary><div class=\"answer\">Correct. Blade down, close to your leg, no dramatic flourishes.</div></details><details><summary>C) Hold it by the blade</summary></details><details><summary>D) Toss it to the counter</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Weather basics quiz",
+   "user_requests": [
+    "quiz me on weather",
+    "I need a quiz about clouds and rain",
+    "test my weather knowledge",
+    "weather quiz quick",
+    "can u quiz me on basic meteorology",
+    "give me a weather quiz",
+    "how well do I know weather stuff? quiz me",
+    "test me on weather stuff",
+    "quiz on clouds and rain",
+    "wether quiz",
+    "what do i know about weather?",
+    "quiz me on fronts and storms",
+    "weather trivia please"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\"><regex>user_name</regex>, what causes thunder?</div><details><summary>A) Clouds bumping together</summary></details><details><summary>B) Rapid expansion of air heated by lightning</summary><div class=\"answer\">Correct. Lightning heats the air, it expands fast, and that shockwave is thunder.</div></details><details><summary>C) The sun reflecting off rain</summary></details><details><summary>D) Wind whistling through trees</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Email etiquette quiz",
+   "user_requests": [
+    "quiz me on email etiquette",
+    "I want to test my email manners",
+    "give me a quiz about professional emails",
+    "email etiquite quiz",
+    "can u quiz me on writing emails",
+    "throw a quiz at me about email do's and don'ts",
+    "quiz: email basics",
+    "test me on professional emails",
+    "email manners quiz",
+    "how well do i write emails?",
+    "quiz me on email do's and don'ts",
+    "inbox etiquette quiz",
+    "email quizz"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\"><regex>user_name</regex>, when is it okay to use \"Reply All\"?</div><details><summary>A) Always, so everyone stays in the loop</summary></details><details><summary>B) Only when everyone needs the information</summary><div class=\"answer\">Correct. Otherwise you're just adding noise to inboxes.</div></details><details><summary>C) Never</summary></details><details><summary>D) When you want to look important</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic car maintenance quiz",
+   "user_requests": [
+    "quiz me on car maintenance",
+    "I need a quiz about taking care of my car",
+    "test my car knowledge",
+    "car maint quiz",
+    "can u quiz me on basic car stuff",
+    "give me a quick car quiz",
+    "how much do I know about cars? quiz me",
+    "test me on car upkeep",
+    "car care quiz",
+    "quiz me on oil changes and tires",
+    "how much do i know about maintaining a car?",
+    "auto maintenance quiz",
+    "car matinence quiz"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\"><regex>user_name</regex>, how often should you check your tire pressure?</div><details><summary>A) Once a year</summary></details><details><summary>B) Monthly and before long trips</summary><div class=\"answer\">Correct. Tires lose pressure over time, and it's an easy safety win.</div></details><details><summary>C) Only when a tire looks flat</summary></details><details><summary>D) Never, it's overrated</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Chess rules quiz",
+   "user_requests": [
+    "quiz me on chess",
+    "I want to test my chess knowledge",
+    "give me a quiz about chess rules",
+    "chess quiz quick",
+    "can u quiz me on chess basics",
+    "throw a quiz at me about the game of kings",
+    "quiz: chess",
+    "test me on chess rules",
+    "chess quiz",
+    "how well do i know chess?",
+    "quiz me on en passant and castling",
+    "chess basics quiz",
+    "chess ruls quiz"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\"><regex>user_name</regex>, which piece can jump over other pieces?</div><details><summary>A) The rook</summary></details><details><summary>B) The knight</summary><div class=\"answer\">Correct. The knight is the only piece that can leap over others.</div></details><details><summary>C) The bishop</summary></details><details><summary>D) The queen</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Coffee brewing quiz",
+   "user_requests": [
+    "quiz me on coffee",
+    "I need a quiz about brewing coffee",
+    "test my coffee knowledge",
+    "coffee quiz plz",
+    "can u quiz me on coffee stuff",
+    "give me a coffee quiz",
+    "how well do I know coffee? quiz me",
+    "test me on coffee making",
+    "coffee quiz",
+    "quiz me on espresso and pour over",
+    "how good is my coffee knowledge?",
+    "brewing quiz",
+    "coffe brewing quiz"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\"><regex>user_name</regex>, what's the ideal water temperature for brewing coffee?</div><details><summary>A) Boiling (212\u00b0F)</summary></details><details><summary>B) Just off the boil, around 200\u00b0F</summary><div class=\"answer\">Correct. Boiling water can scorch the grounds and make it bitter.</div></details><details><summary>C) Room temperature</summary></details><details><summary>D) Cold</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "quiz me on bike safety basics",
+    "test my knowledge on cycling rules",
+    "do I know how to ride safe on roads?",
+    "bike safety quiz pls",
+    "quick quiz about bicycle safety",
+    "check my bike smarts",
+    "cycling safety self-assessment",
+    "test me on cycling safety",
+    "bike quiz",
+    "quiz me on helmets and hand signals",
+    "how safe am i on a bike?",
+    "bicycle safety quiz",
+    "bike safty quiz"
+   ],
+   "title": "Bike safety quiz",
+   "html": "<div class=\"card\"><div class=\"card-title\">Bike safety quiz</div><div class=\"quiz\"><div class=\"q\">You're riding at dusk. What's the smartest move?</div><details><summary>A) Trust your reflexes</summary></details><details><summary>B) Wear reflective gear and use lights</summary><div class=\"answer\">Correct. See and be seen. Lights and reflectors cut crash risk at dusk more than any other single step.</div></details><details><summary>C) Ride on the sidewalk</summary></details></div><div class=\"quiz\"><div class=\"q\">Approaching a stop sign with no other cars, you should\u2026</div><details><summary>A) Slow, look, and roll through</summary></details><details><summary>B) Come to a full stop</summary><div class=\"answer\">Correct. It's the law almost everywhere, and it gives you time to spot a hidden car or pedestrian.</div></details><details><summary>C) Wave and go</summary></details></div><div class=\"quiz\"><div class=\"q\">How should you signal a right turn?</div><details><summary>A) Point right arm straight out</summary></details><details><summary>B) Bend left arm up at 90\u00b0</summary><div class=\"answer\">Correct. The bent-left-arm signal is the standard for right turns.</div></details><details><summary>C) Just look over your shoulder</summary></details></div><p class=\"t-small muted\">Hey <regex>user_name</regex>, these are the big three. Ride like you're invisible, but act like you're seen.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "test me on first aid basics",
+    "first aid quiz",
+    "what should I know for basic first aid?",
+    "quiz me on emergency care",
+    "do a quick first aid quiz",
+    "check my first aid knowledge",
+    "first aid self test",
+    "test me on emergency first aid",
+    "first aid quiz",
+    "quiz me on CPR and bandages",
+    "how much do i know about first aid?",
+    "basic first aid quiz",
+    "first aide quiz"
+   ],
+   "title": "First aid basics quiz",
+   "html": "<div class=\"card\"><div class=\"card-title\">First aid basics quiz</div><div class=\"quiz\"><div class=\"q\">Someone is choking and can't speak. What do you do first?</div><details><summary>A) Give water</summary></details><details><summary>B) Five back blows</summary><div class=\"answer\">Correct. Five back blows between the shoulder blades, then five abdominal thrusts if needed. Call emergency services if it doesn't clear.</div></details><details><summary>C) Lay them down</summary></details></div><div class=\"quiz\"><div class=\"q\">For a minor burn, the best immediate treatment is\u2026</div><details><summary>A) Butter</summary></details><details><summary>B) Ice</summary></details><details><summary>C) Cool running water for 20 minutes</summary><div class=\"answer\">Correct. Cool water reduces damage and pain. Skip ice, butter, and toothpaste.</div></details></div><div class=\"quiz\"><div class=\"q\">How do you check if someone is responsive?</div><details><summary>A) Shake them hard</summary></details><details><summary>B) Tap and shout</summary><div class=\"answer\">Correct. Tap their shoulders and ask loudly, \"Are you okay?\" If no response, call for help and check breathing.</div></details><details><summary>C) Splash water on their face</summary></details></div><p class=\"t-small muted\"><regex>user_name</regex>, these basics buy time until professionals arrive. Worth knowing cold.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "quiz me on home fire safety",
+    "fire safety quiz",
+    "do I know how to prevent home fires?",
+    "quick quiz on fire safety",
+    "test my fire safety knowledge",
+    "home fire prevention quiz",
+    "fire safety self check",
+    "test me on fire safety at home",
+    "fire safety quiz",
+    "quiz me on extinguishers and escape plans",
+    "how fire-safe is my house?",
+    "home fire quiz",
+    "home fire safty quiz"
+   ],
+   "title": "Home fire safety quiz",
+   "html": "<div class=\"card\"><div class=\"card-title\">Home fire safety quiz</div><div class=\"quiz\"><div class=\"q\">How often should you test smoke alarms?</div><details><summary>A) Once a year</summary></details><details><summary>B) Once a month</summary><div class=\"answer\">Correct. Monthly tests catch dead batteries before they matter. Replace the units every 10 years.</div></details><details><summary>C) Only when they chirp</summary></details></div><div class=\"quiz\"><div class=\"q\">A pan of oil catches fire. You should\u2026</div><details><summary>A) Throw water on it</summary></details><details><summary>B) Slide a lid over it and turn off the heat</summary><div class=\"answer\">Correct. Smother it. Water makes oil fires explode.</div></details><details><summary>C) Carry it outside</summary></details></div><div class=\"quiz\"><div class=\"q\">Where's the safest place for a space heater?</div><details><summary>A) Next to curtains</summary></details><details><summary>B) On a flat, clear surface 3 feet from anything flammable</summary><div class=\"answer\">Correct. Give it space. Never leave it running unattended or while you sleep.</div></details><details><summary>C) Under a desk</summary></details></div><p class=\"t-small muted\">Nice one, <regex>user_name</regex>. A few minutes now saves a lot of panic later.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "quiz me on personal finance basics",
+    "money basics quiz",
+    "do I know how to budget?",
+    "quick quiz on budgeting",
+    "test my finance knowledge",
+    "personal finance self test",
+    "quiz me on saving money",
+    "test me on budgeting and saving",
+    "money basics quiz",
+    "quiz me on personal finance",
+    "how good am i with money?",
+    "finance 101 quiz",
+    "personal finance quizz"
+   ],
+   "title": "Personal finance basics quiz",
+   "html": "<div class=\"card\"><div class=\"card-title\">Personal finance basics quiz</div><div class=\"quiz\"><div class=\"q\">What's the 50/30/20 rule?</div><details><summary>A) A tax formula</summary></details><details><summary>B) 50% needs, 30% wants, 20% savings</summary><div class=\"answer\">Correct. A simple budget split. Adjust the numbers to fit your life, but keep savings in the mix.</div></details><details><summary>C) A credit score range</summary></details></div><div class=\"quiz\"><div class=\"q\">An emergency fund should cover\u2026</div><details><summary>A) One month of expenses</summary></details><details><summary>B) Three to six months</summary><div class=\"answer\">Correct. Three to six months of essential expenses is the usual target. Start with one month if that feels far off.</div></details><details><summary>C) A year of income</summary></details></div><div class=\"quiz\"><div class=\"q\">Which debt usually costs the most to carry?</div><details><summary>A) Mortgage</summary></details><details><summary>B) Student loans</summary></details><details><summary>C) Credit card</summary><div class=\"answer\">Correct. Credit cards typically have the highest interest. Pay those down first.</div></details></div><p class=\"t-small muted\"><regex>user_name</regex>, small habits beat big intentions. Automate a transfer and forget it.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "quiz me on plant care",
+    "houseplant quiz",
+    "do I know how to keep plants alive?",
+    "quick quiz on plant care",
+    "test my plant knowledge",
+    "houseplant care self test",
+    "quiz me on watering plants",
+    "test me on houseplants",
+    "plant quiz",
+    "quiz me on watering and light",
+    "how good am i with plants?",
+    "houseplant quiz",
+    "house plant care quizz"
+   ],
+   "title": "Houseplant care quiz",
+   "html": "<div class=\"card\"><div class=\"card-title\">Houseplant care quiz</div><div class=\"quiz\"><div class=\"q\">How do you know when to water most houseplants?</div><details><summary>A) Every Sunday</summary></details><details><summary>B) When the top inch of soil is dry</summary><div class=\"answer\">Correct. Stick a finger in. Most plants hate soggy roots more than they hate a dry spell.</div></details><details><summary>C) When leaves droop</summary></details></div><div class=\"quiz\"><div class=\"q\">A plant leaning toward the window means\u2026</div><details><summary>A) It's dying</summary></details><details><summary>B) It needs more light</summary><div class=\"answer\">Correct. Rotate it a quarter turn each week so it grows evenly.</div></details><details><summary>C) It's thirsty</summary></details></div><div class=\"quiz\"><div class=\"q\">Yellow leaves on a pothos usually signal\u2026</div><details><summary>A) Too much water</summary><div class=\"answer\">Correct. Overwatering is the usual suspect. Let the soil dry out between drinks.</div></details><details><summary>B) Too little water</summary></details><details><summary>C) Old age</summary></details></div><p class=\"t-small muted\"><regex>user_name</regex>, plants are forgiving once you learn their rhythm. Less fuss, more watching.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "quiz me on internet safety",
+    "online safety quiz",
+    "do I know how to stay safe online?",
+    "quick quiz on phishing",
+    "test my internet safety smarts",
+    "cyber safety self test",
+    "quiz me on password safety",
+    "test me on online safety",
+    "internet security quiz",
+    "quiz me on passwords and phishing",
+    "how safe am i online?",
+    "cyber safety quiz",
+    "internet safty quiz"
+   ],
+   "title": "Internet safety quiz",
+   "html": "<div class=\"card\"><div class=\"card-title\">Internet safety quiz</div><div class=\"quiz\"><div class=\"q\">An email says your account is locked and asks you to click a link. What do you do?</div><details><summary>A) Click and log in quickly</summary></details><details><summary>B) Ignore the link and go to the site directly</summary><div class=\"answer\">Correct. Type the address yourself or use a bookmark. Legit companies don't mind.</div></details><details><summary>C) Reply asking if it's real</summary></details></div><div class=\"quiz\"><div class=\"q\">The strongest password is\u2026</div><details><summary>A) Your pet's name plus 1</summary></details><details><summary>B) A long passphrase like \"blue-canoe-sings-loud\"</summary><div class=\"answer\">Correct. Length beats complexity. Even better: use a password manager and unique passwords everywhere.</div></details><details><summary>C) Your birthday</summary></details></div><div class=\"quiz\"><div class=\"q\">What does HTTPS in the address bar mean?</div><details><summary>A) The site is trustworthy</summary></details><details><summary>B) The connection is encrypted</summary><div class=\"answer\">Correct. It encrypts your traffic, but a scam site can still have HTTPS. Check the domain, not just the lock.</div></details><details><summary>C) The site is government-approved</summary></details></div><p class=\"t-small muted\"><regex>user_name</regex>, a little suspicion goes a long way online.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Bread baking quiz",
+   "user_requests": [
+    "quiz me on bread baking basics",
+    "how well do i know sourdough?",
+    "test my bread knowledge <regex>user_name</regex>",
+    "bread quiz pls",
+    "i want to check my baking iq",
+    "quick bread baking questions",
+    "sourdough starter quiz for beginners",
+    "test me on bread making",
+    "baking quiz",
+    "quiz me on yeast and kneading",
+    "how good am i at baking bread?",
+    "bread quiz",
+    "bread baking quizz"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Bread baking quiz</div><p class=\"muted\">A few questions to see if you're proofing like a pro.</p><div class=\"quiz\"><div class=\"q\">1. What does a sourdough starter need to stay active?</div><details><summary>A) Regular feeding with flour and water</summary><div class=\"answer\">Correct. Feed it regularly and keep it warm.</div></details><details><summary>B) Direct sunlight</summary></details><details><summary>C) A sealed jar in the fridge forever</summary></details></div><div class=\"divider\"></div><div class=\"quiz\"><div class=\"q\">2. What is autolyse?</div><details><summary>A) Letting dough rise twice</summary></details><details><summary>B) Resting flour and water before adding salt and yeast</summary><div class=\"answer\">Correct. It hydrates the flour and builds gluten.</div></details><details><summary>C) Baking at high heat</summary></details></div><div class=\"divider\"></div><div class=\"quiz\"><div class=\"q\">3. How do you know bread is fully baked?</div><details><summary>A) It sounds hollow when tapped</summary><div class=\"answer\">Correct. Internal temp around 200\u0006210\t\u0000F if you have a thermometer.</div></details><details><summary>B) The crust is golden</summary></details><details><summary>C) It has risen</summary></details></div><p class=\"t-small dim\">Score yourself. No pressure, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Photography exposure quiz",
+   "user_requests": [
+    "quiz me on camera exposure",
+    "how do i know if i understand aperture?",
+    "photography exposure test",
+    "exposure triangle quiz <regex>user_name</regex>",
+    "check my camera skills",
+    "basic photo quiz",
+    "aperture shutter iso quiz",
+    "test me on camera settings",
+    "exposure quiz",
+    "quiz me on aperture and shutter speed",
+    "how well do i understand exposure?",
+    "photography quiz",
+    "photography exposur quiz"
+   ],
+   "html": "<div class=\"card flat\"><div class=\"card-title\">Photography exposure quiz</div><p class=\"muted\">Three quick checks on the exposure triangle.</p><div class=\"quiz\"><div class=\"q\">1. What does a lower f-stop number do?</div><details><summary>A) Lets in more light and blurs the background</summary><div class=\"answer\">Correct. Lower f-stop, wider aperture, more light, shallower depth of field.</div></details><details><summary>B) Lets in less light</summary></details><details><summary>C) Freezes motion</summary></details></div><div class=\"divider\"></div><div class=\"quiz\"><div class=\"q\">2. Which setting freezes fast action?</div><details><summary>A) A slow shutter speed</summary></details><details><summary>B) A fast shutter speed</summary><div class=\"answer\">Correct. Fast shutter stops motion.</div></details><details><summary>C) A low ISO</summary></details></div><div class=\"divider\"></div><div class=\"quiz\"><div class=\"q\">3. When would you raise ISO?</div><details><summary>A) In bright sunlight</summary></details><details><summary>B) In low light when you can't use a slower shutter</summary><div class=\"answer\">Correct. Raising ISO brightens the image but adds noise.</div></details><details><summary>C) To blur the background</summary></details></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Public speaking quiz",
+   "user_requests": [
+    "quiz me on public speaking",
+    "how do i get better at presentations?",
+    "public speaking tips quiz",
+    "test my speech skills",
+    "speaking quiz <regex>user_name</regex>",
+    "presentation basics quiz",
+    "help me prepare for a talk",
+    "test me on speaking skills",
+    "public speaking quiz",
+    "quiz me on speeches and stage fright",
+    "how good am i at public speaking?",
+    "speaking quiz",
+    "public speakng quiz"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Public speaking quiz</div><p class=\"muted\">See if your talk is ready for the room.</p><div class=\"quiz\"><div class=\"q\">1. What's the best way to start a speech?</div><details><summary>A) A long introduction of yourself</summary></details><details><summary>B) A clear hook that connects with the audience</summary><div class=\"answer\">Correct. Grab attention early.</div></details><details><summary>C) An apology for being nervous</summary></details></div><div class=\"divider\"></div><div class=\"quiz\"><div class=\"q\">2. How should you handle a mistake while speaking?</div><details><summary>A) Stop and apologize</summary></details><details><summary>B) Keep going smoothly</summary><div class=\"answer\">Correct. Most people won't notice.</div></details><details><summary>C) Start over</summary></details></div><div class=\"divider\"></div><div class=\"quiz\"><div class=\"q\">3. What keeps an audience engaged?</div><details><summary>A) Eye contact and vocal variety</summary><div class=\"answer\">Correct. It's about connection, not perfection.</div></details><details><summary>B) Reading directly from notes</summary></details><details><summary>C) Speaking very fast</summary></details></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Wine tasting basics quiz",
+   "user_requests": [
+    "quiz me on wine tasting",
+    "wine 101 quiz",
+    "do i know my wines?",
+    "wine tasting test <regex>user_name</regex>",
+    "basic wine quiz",
+    "wine appreciation quiz",
+    "how to taste wine quiz",
+    "test me on wine tasting",
+    "wine quiz",
+    "quiz me on tannins and aromas",
+    "how good is my wine knowledge?",
+    "wine basics quiz",
+    "wine tasteing quiz"
+   ],
+   "html": "<div class=\"card flat\"><div class=\"card-title\">Wine tasting basics quiz</div><p class=\"muted\">Three sips of knowledge.</p><div class=\"quiz\"><div class=\"q\">1. What are the three main steps of wine tasting?</div><details><summary>A) Look, smell, taste</summary><div class=\"answer\">Correct. Appearance, aroma, palate.</div></details><details><summary>B) Swirl, gulp, repeat</summary></details><details><summary>C) Open, pour, drink</summary></details></div><div class=\"divider\"></div><div class=\"quiz\"><div class=\"q\">2. What does tannin feel like?</div><details><summary>A) Sweetness</summary></details><details><summary>B) A drying sensation on your gums</summary><div class=\"answer\">Correct. Tannins create that grippy feel.</div></details><details><summary>C) Bubbles</summary></details></div><div class=\"divider\"></div><div class=\"quiz\"><div class=\"q\">3. Why swirl wine?</div><details><summary>A) To make it look fancy</summary></details><details><summary>B) To release aromas</summary><div class=\"answer\">Correct. Swirling aerates the wine and opens up the nose.</div></details><details><summary>C) To cool it down</summary></details></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Laundry care quiz",
+   "user_requests": [
+    "quiz me on laundry symbols",
+    "laundry quiz",
+    "how to do laundry properly quiz",
+    "test my laundry knowledge",
+    "laundry care quiz <regex>user_name</regex>",
+    "clothing care quiz",
+    "what do laundry tags mean quiz",
+    "quiz me on washing labels pls",
+    "can u test me on laundry tag symbols?",
+    "i keep shrinking my sweaters lol quiz me on laundry stuff",
+    "laundry care quiz!!",
+    "help me learn what the icons on clothes tags mean, quiz me",
+    "do u know laundry symbols? test me on em"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Laundry care quiz</div><p class=\"muted\">Stop shrinking your favorite sweater.</p><div class=\"quiz\"><div class=\"q\">1. What does a triangle on a care label mean?</div><details><summary>A) Bleach instructions</summary><div class=\"answer\">Correct. An empty triangle means bleach is okay; crossed out means no bleach.</div></details><details><summary>B) Ironing temperature</summary></details><details><summary>C) Dry cleaning</summary></details></div><div class=\"divider\"></div><div class=\"quiz\"><div class=\"q\">2. When should you use cold water?</div><details><summary>A) For most everyday loads</summary><div class=\"answer\">Correct. Cold water saves energy and protects colors.</div></details><details><summary>B) Only for whites</summary></details><details><summary>C) Never</summary></details></div><div class=\"divider\"></div><div class=\"quiz\"><div class=\"q\">3. What should you do before washing a new colored shirt?</div><details><summary>A) Wash it with whites</summary></details><details><summary>B) Wash it separately or with similar colors</summary><div class=\"answer\">Correct. New dyes can bleed.</div></details><details><summary>C) Soak it in bleach</summary></details></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Time management quiz",
+   "user_requests": [
+    "quiz me on time management",
+    "productivity quiz",
+    "how good am i at managing time?",
+    "time management test <regex>user_name</regex>",
+    "quick productivity check",
+    "time management basics quiz",
+    "help me get organized quiz",
+    "test me on productivity/time mgmt",
+    "quiz me on getting stuff done on time",
+    "i procrastinate way too much, quiz me on time management",
+    "time mgmt quiz plz",
+    "can you quiz me about managing my schedule better?",
+    "quiz me on pomodoro n time stuff"
+   ],
+   "html": "<div class=\"card flat\"><div class=\"card-title\">Time management quiz</div><p class=\"muted\">A quick check on your productivity habits.</p><div class=\"quiz\"><div class=\"q\">1. What is the pomodoro technique?</div><details><summary>A) Working in focused 25-minute blocks with short breaks</summary><div class=\"answer\">Correct. It's about short bursts and real breaks.</div></details><details><summary>B) Multitasking for an hour</summary></details><details><summary>C) Working until you drop</summary></details></div><div class=\"divider\"></div><div class=\"quiz\"><div class=\"q\">2. Why is a to-do list helpful?</div><details><summary>A) It clears mental clutter and prioritizes tasks</summary><div class=\"answer\">Correct. Writing things down frees up your brain.</div></details><details><summary>B) It looks productive</summary></details><details><summary>C) It replaces actual work</summary></details></div><div class=\"divider\"></div><div class=\"quiz\"><div class=\"q\">3. What's the best way to handle a big project?</div><details><summary>A) Break it into smaller steps</summary><div class=\"answer\">Correct. Small wins build momentum.</div></details><details><summary>B) Wait until the last minute</summary></details><details><summary>C) Do it all at once</summary></details></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Photography composition quiz",
+   "user_requests": [
+    "test my photography composition",
+    "photo composition quiz",
+    "how well do i know composition rules",
+    "learning photography composition",
+    "photo framing quiz",
+    "composition for photographers",
+    "do i know rule of thirds",
+    "quiz me on rule of thirds n composition",
+    "composition in photos quiz?",
+    "my pics are always boring, quiz me on photo composition",
+    "test my knowledge of framing a shot",
+    "quiz me: photography composition",
+    "hey can u quiz me on how to compose a good photo"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">Which composition technique places the main subject slightly off-center, often at a third of the frame?</div><details><summary>A) Symmetry</summary></details><details><summary>B) Rule of thirds</summary><div class=\"answer\">Correct. <regex>user_name</regex>, the rule of thirds is a classic starting point for dynamic framing.</div></details><details><summary>C) Leading lines</summary></details><details><summary>D) Golden ratio</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Cooking pasta quiz",
+   "user_requests": [
+    "pasta cooking quiz",
+    "how to cook pasta right",
+    "test my pasta knowledge",
+    "pasta doneness quiz",
+    "al dente quiz",
+    "cooking pasta perfectly",
+    "pasta water salt",
+    "quiz me on making pasta right",
+    "how do i get pasta al dente? quiz me",
+    "pasta quiz pls",
+    "test me on cooking spaghetti n stuff",
+    "quiz me abt pasta cooking",
+    "i always overcook pasta, quiz me on it"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">What does 'al dente' mean for pasta?</div><details><summary>A) Cooked until very soft</summary></details><details><summary>B) Firm to the bite</summary><div class=\"answer\">Correct. <regex>user_name</regex>, al dente means the pasta still has a slight resistance when you bite it.</div></details><details><summary>C) Slightly undercooked and crunchy</summary></details><details><summary>D) Cooked in cold water</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Public transport basics quiz",
+   "user_requests": [
+    "public transport quiz",
+    "how to ride the bus",
+    "test my transit knowledge",
+    "bus and train basics",
+    "using public transport",
+    "transit etiquette quiz",
+    "do i know how to take the bus",
+    "quiz me on taking the bus n train",
+    "public transit quiz?",
+    "i never know which ticket to buy, quiz me on public transport",
+    "test me on metro/bus basics",
+    "quiz me on riding public transport",
+    "public transport basics quiz plz"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">What should you do before boarding a bus or train?</div><details><summary>A) Stand right at the curb</summary></details><details><summary>B) Have your ticket or pass ready</summary><div class=\"answer\">Correct. <regex>user_name</regex>, having your fare ready keeps the line moving and the driver happy.</div></details><details><summary>C) Push to the front</summary></details><details><summary>D) Wait inside the station</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic sewing quiz",
+   "user_requests": [
+    "sewing basics quiz",
+    "how to sew a button",
+    "test my sewing skills",
+    "sewing for beginners",
+    "hand sewing quiz",
+    "mending clothes quiz",
+    "do i know how to thread a needle",
+    "quiz me on sewing for beginners",
+    "i just got a sewing machine, quiz me on basics",
+    "sewing quiz!!",
+    "test me on stitches n threading a needle",
+    "quiz me on basic sewing skills",
+    "can u quiz me abt sewing stuff"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">What's the first step when sewing on a button?</div><details><summary>A) Thread the needle and knot the end</summary><div class=\"answer\">Correct. <regex>user_name</regex>, threading and knotting the thread anchors your work.</div></details><details><summary>B) Push the needle through the fabric</summary></details><details><summary>C) Cut a long piece of thread</summary></details><details><summary>D) Choose a button</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Gardening tools quiz",
+   "user_requests": [
+    "gardening tools quiz",
+    "what tool for what job",
+    "test my garden tool knowledge",
+    "basic gardening tools",
+    "garden tool quiz",
+    "which tool to use in garden",
+    "do i know my gardening tools",
+    "quiz me on garden tools",
+    "which tools do i need for gardening? quiz me",
+    "gardening quiz pls",
+    "test me on spades trowels n stuff",
+    "quiz me abt gardening equipment",
+    "i'm new to gardening, quiz me on the tools"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">Which tool is best for turning over soil in a small garden bed?</div><details><summary>A) Pruning shears</summary></details><details><summary>B) Hand trowel</summary><div class=\"answer\">Correct. <regex>user_name</regex>, a hand trowel is perfect for small-scale soil turning and planting.</div></details><details><summary>C) Watering can</summary></details><details><summary>D) Leaf rake</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Swimming pool safety quiz",
+   "user_requests": [
+    "pool safety quiz",
+    "swimming safety basics",
+    "test my pool safety",
+    "pool rules quiz",
+    "how to stay safe in pool",
+    "swimming safety quiz",
+    "do i know pool safety",
+    "quiz me on pool rules n safety",
+    "swimming safety quiz?",
+    "i'm lifeguarding soon, quiz me on pool safety",
+    "test me on water safety at pools",
+    "quiz me: pool safety",
+    "quiz me on staying safe in the pool"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">What should you always do before swimming in a pool?</div><details><summary>A) Check the water temperature</summary></details><details><summary>B) Make sure a lifeguard or adult is watching</summary><div class=\"answer\">Correct. <regex>user_name</regex>, never swim alone\u2014always have someone keeping an eye out.</div></details><details><summary>C) Dive in headfirst</summary></details><details><summary>D) Run around the pool deck</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic knots and hitches quiz",
+   "user_requests": [
+    "I need to learn some knots for camping, can you quiz me?",
+    "quiz me on knots pls, i keep forgetting which is which",
+    "Can you test my knot knowledge? I want to make sure I know the basics for the outdoors.",
+    "knot quiz time! hit me with some questions",
+    "I'm teaching a scout group next week and need a refresher on knots. Quiz me?",
+    "whats the best knot for tying a tarp? quiz me on knots and i'll find out",
+    "Basic knots and hitches quiz for a beginner like me.",
+    "quiz me on tying knots",
+    "knot quiz pls",
+    "i wanna learn knots for scouts, quiz me",
+    "test me on hitches n knots",
+    "quiz me on knot tying basics",
+    "can u quiz me abt different knots?"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">Which knot is best for tying a rope to a post or tree?</div><details><summary>A) Bowline</summary></details><details><summary>B) Clove hitch</summary><div class=\"answer\">Correct. A clove hitch grips a post or tree and is easy to adjust, making it ideal for starting or finishing lashings. The bowline creates a fixed loop, not a post attachment.</div></details><details><summary>C) Figure-eight</summary></details><details><summary>D) Reef knot</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic map reading quiz",
+   "user_requests": [
+    "I get lost easily, can you quiz me on map reading?",
+    "quiz me on maps and compass stuff",
+    "Can you test me on basic map skills? I want to be more confident hiking.",
+    "map reading quiz pls",
+    "I'm planning a hike and need to brush up on maps. Got a quiz?",
+    "what does a map scale mean again? quiz me on map reading",
+    "Basic map reading quiz for hiking prep.",
+    "quiz me on reading maps",
+    "map reading quiz?",
+    "i suck at directions, quiz me on maps",
+    "test me on compass n map stuff",
+    "quiz me on maps n navigation",
+    "quiz me plz on how to read a map"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">On a topographic map, what do closely spaced contour lines indicate?</div><details><summary>A) A gentle slope</summary></details><details><summary>B) A steep slope</summary><div class=\"answer\">Correct. Closely spaced contour lines mean the elevation changes quickly over a short distance, so the terrain is steep. Widely spaced lines indicate a gentle slope.</div></details><details><summary>C) A flat area</summary></details><details><summary>D) A river</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic bicycle repair quiz",
+   "user_requests": [
+    "my bike chain keeps falling off, quiz me on bike repair",
+    "Can you quiz me on fixing a flat tire?",
+    "bike repair quiz pls, i'm useless with tools",
+    "I want to learn basic bike maintenance. Quiz me?",
+    "quiz me on bike stuff, like how to fix a puncture",
+    "what tools do i need for a flat? quiz me on bike repair",
+    "Basic bicycle repair quiz for a newbie.",
+    "quiz me on fixing my bike",
+    "bike repair quiz pls",
+    "my tire keeps going flat, quiz me on bike repair",
+    "test me on bicycle maintenance",
+    "quiz me on bike fixing basics",
+    "can u quiz me abt repairing a bicycle?"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">What is the first step when fixing a flat tire on a bicycle?</div><details><summary>A) Remove the wheel from the bike</summary><div class=\"answer\">Correct. You need to remove the wheel to access the tube. Then use tire levers to pry the tire off, find the puncture, patch or replace the tube, and reassemble.</div></details><details><summary>B) Inflate the tire to check for leaks</summary></details><details><summary>C) Use tire levers to remove the tire</summary></details><details><summary>D) Patch the tube without removing the wheel</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic photography lighting quiz",
+   "user_requests": [
+    "quiz me on lighting for photos, i always get it wrong",
+    "Can you test me on photography lighting?",
+    "photography lighting quiz pls",
+    "I'm learning photography and need help with lighting. Quiz me?",
+    "whats the golden hour? quiz me on photo lighting",
+    "quiz me on light direction and stuff for photos",
+    "Basic photography lighting quiz for beginners.",
+    "quiz me on photo lighting",
+    "lighting quiz pls",
+    "my photos are too dark, quiz me on lighting",
+    "test me on natural vs flash lighting",
+    "quiz me on light for photography",
+    "quiz me abt lighting in pics"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">What is the \"golden hour\" in photography?</div><details><summary>A) The time just after sunrise and before sunset</summary><div class=\"answer\">Correct. The golden hour refers to the short period after sunrise or before sunset when the sun is low, creating soft, warm light that is flattering for portraits and landscapes.</div></details><details><summary>B) The middle of the day when the sun is brightest</summary></details><details><summary>C) The hour when you should avoid taking photos</summary></details><details><summary>D) The time when shadows are harshest</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic hiking safety quiz",
+   "user_requests": [
+    "quiz me on hiking safety, i'm going on a trail soon",
+    "Can you quiz me on what to bring hiking?",
+    "hiking safety quiz pls, i'm a beginner",
+    "I want to make sure I'm safe on my first hike. Quiz me?",
+    "what should i do if i get lost? quiz me on hiking safety",
+    "quiz me on hiking safety basics",
+    "Basic hiking safety quiz for a new hiker.",
+    "quiz me on trail safety",
+    "hiking safety quiz?",
+    "i'm doing a big hike soon, quiz me on safety",
+    "test me on hiking prep n safety",
+    "quiz me: hiking safety",
+    "quiz me plz on staying safe on trails"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">What should you do if you get lost while hiking?</div><details><summary>A) Keep walking to find a familiar landmark</summary></details><details><summary>B) Stop, stay calm, and stay put</summary><div class=\"answer\">Correct. Stopping and staying put makes it easier for rescuers to find you. If you must move, leave markers. Always carry a map, compass, and whistle.</div></details><details><summary>C) Call for help immediately</summary></details><details><summary>D) Climb a tree to get a better view</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic cooking rice quiz",
+   "user_requests": [
+    "how do i cook rice without it turning mushy? quiz me",
+    "quiz me on cooking rice, i always mess it up",
+    "Can you quiz me on rice cooking?",
+    "rice cooking quiz pls",
+    "I'm trying to improve my rice game. Quiz me?",
+    "whats the water to rice ratio? quiz me on cooking rice",
+    "Basic cooking rice quiz for beginners.",
+    "quiz me on cooking rice",
+    "rice quiz pls",
+    "my rice is always sticky, quiz me on making it",
+    "test me on rice to water ratios",
+    "quiz me on how to cook rice",
+    "can u quiz me abt rice cooking?"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">What is the general water-to-rice ratio for cooking long-grain white rice on the stovetop?</div><details><summary>A) 1 cup water to 1 cup rice</summary></details><details><summary>B) 2 cups water to 1 cup rice</summary><div class=\"answer\">Correct. A 2:1 ratio of water to rice is standard for long-grain white rice. Bring to a boil, then simmer covered for about 15 minutes. Let it rest before fluffing.</div></details><details><summary>C) 3 cups water to 1 cup rice</summary></details><details><summary>D) 1.5 cups water to 1 cup rice</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sleep hygiene quiz",
+   "user_requests": [
+    "quiz me on sleep hygiene",
+    "how do I sleep better? quiz pls",
+    "sleep habits quiz",
+    "test my sleep knowledge",
+    "sleep hygiene self assessment",
+    "what do you know about sleep? quiz me",
+    "quiz on good sleep habits",
+    "quiz me on sleeping better",
+    "sleep quiz pls",
+    "i can't fall asleep, quiz me on sleep hygiene",
+    "test me on good sleep habits",
+    "quiz me on getting better rest",
+    "quiz me abt sleep stuff"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Sleep hygiene quiz</div><div class=\"quiz\"><div class=\"q\">1. How long before bed should you stop drinking caffeine?</div><details><summary>A) 1 hour</summary></details><details><summary>B) 3 hours</summary></details><details><summary>C) 6 hours</summary><div class=\"answer\">Correct. Caffeine has a half-life of about 5\u20136 hours, so a 3pm coffee can still be active at bedtime.</div></details></div><div class=\"quiz\"><div class=\"q\">2. What room temperature is best for sleep?</div><details><summary>A) 60\u201367\u00b0F (15\u201319\u00b0C)</summary><div class=\"answer\">Correct. Your core temperature needs to drop slightly to initiate sleep.</div></details><details><summary>B) 70\u201375\u00b0F (21\u201324\u00b0C)</summary></details><details><summary>C) Doesn't matter</summary></details></div><div class=\"callout info\"><p class=\"t-small\">Quick wins: consistent wake time, dark cool room, no screens 1 hour before bed. <regex>user_name</regex>, which one will you try first?</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Budgeting methods quiz",
+   "user_requests": [
+    "quiz on budgeting",
+    "what's the best budgeting method? quiz",
+    "budgeting 101 quiz",
+    "test my budgeting knowledge",
+    "quiz me on 50/30/20 rule",
+    "budgeting styles quiz",
+    "how well do I know budgeting? quiz",
+    "quiz me on saving money",
+    "budget quiz pls",
+    "i spend too much, quiz me on budgeting",
+    "test me on budgeting techniques",
+    "quiz me on money management",
+    "can u quiz me abt how to budget?"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Budgeting methods quiz</div><div class=\"quiz\"><div class=\"q\">1. In the 50/30/20 rule, what does the 30% cover?</div><details><summary>A) Savings</summary></details><details><summary>B) Wants</summary><div class=\"answer\">Correct. 50% needs, 30% wants, 20% savings/debt.</div></details><details><summary>C) Debt repayment</summary></details></div><div class=\"quiz\"><div class=\"q\">2. Which method gives every dollar a job before the month starts?</div><details><summary>A) Zero-based budgeting</summary><div class=\"answer\">Correct. Zero-based means income minus outflows equals zero\u2014nothing unassigned.</div></details><details><summary>B) Pay-yourself-first</summary></details><details><summary>C) Envelope system</summary></details></div><div class=\"callout good\"><p class=\"t-small\">No single method is perfect. <regex>user_name</regex>, the best budget is the one you'll actually check twice a month.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Composting quiz",
+   "user_requests": [
+    "composting quiz",
+    "quiz me on compost",
+    "what can I compost? quiz",
+    "composting basics quiz",
+    "test my compost knowledge",
+    "how to compost quiz",
+    "quiz on kitchen scraps",
+    "quiz on compost",
+    "compostin quiz",
+    "test my compost knowledge",
+    "how well do i know composting",
+    "compost trivia",
+    "quick compost quiz"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Composting quiz</div><div class=\"quiz\"><div class=\"q\">1. Which of these is a \"green\" (nitrogen-rich) compost material?</div><details><summary>A) Dry leaves</summary></details><details><summary>B) Coffee grounds</summary><div class=\"answer\">Correct. Coffee grounds are greens. Dry leaves are browns (carbon-rich).</div></details><details><summary>C) Cardboard</summary></details></div><div class=\"quiz\"><div class=\"q\">2. What's the ideal ratio of browns to greens?</div><details><summary>A) 1:1</summary></details><details><summary>B) 3:1</summary></details><details><summary>C) 2:1 to 3:1 browns to greens</summary><div class=\"answer\">Correct. Roughly 2\u20133 parts browns to 1 part greens keeps it from getting stinky.</div></details></div><div class=\"callout warn\"><p class=\"t-small\">Skip meat, dairy, and oily foods unless you've got a hot pile. <regex>user_name</regex>, they attract critters.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Digital declutter quiz",
+   "user_requests": [
+    "digital declutter quiz",
+    "how to clean up my phone? quiz",
+    "quiz on digital organization",
+    "test my digital hygiene",
+    "decluttering apps quiz",
+    "digital minimalism quiz",
+    "quiz me on inbox zero",
+    "quiz on digital decluttering",
+    "digital decluter quiz",
+    "test my digital declutter knowledge",
+    "how well do i know digital decluttering",
+    "digital declutter trivia",
+    "quick digital declutter quiz"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Digital declutter quiz</div><div class=\"quiz\"><div class=\"q\">1. What's the first step to decluttering your phone?</div><details><summary>A) Delete all social media</summary></details><details><summary>B) Audit your home screen</summary><div class=\"answer\">Correct. See what's actually there before you decide what to cut.</div></details><details><summary>C) Buy more storage</summary></details></div><div class=\"quiz\"><div class=\"q\">2. What does \"inbox zero\" really mean?</div><details><summary>A) Every email is deleted</summary></details><details><summary>B) No unread emails</summary></details><details><summary>C) Every email has a next action or is archived</summary><div class=\"answer\">Correct. It's about decisions, not deletion.</div></details></div><div class=\"callout info\"><p class=\"t-small\"><regex>user_name</regex>, try the 20-minute rule: set a timer, delete what you haven't opened in a year, stop when it rings.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Bicycle gear shifting quiz",
+   "user_requests": [
+    "bike gears quiz",
+    "how to shift gears on a bike quiz",
+    "quiz me on bicycle gearing",
+    "cycling gears quiz",
+    "test my bike shifting knowledge",
+    "bike gear basics quiz",
+    "quiz on when to shift",
+    "quiz on bike gears",
+    "bicycle gear shiftin quiz",
+    "test my bike gear knowledge",
+    "how well do i know shifting gears",
+    "bike gear trivia",
+    "quick bike gear quiz"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Bicycle gear shifting quiz</div><div class=\"quiz\"><div class=\"q\">1. When should you shift to an easier gear?</div><details><summary>A) Before the hill, while pedaling lightly</summary><div class=\"answer\">Correct. Shifting under load can drop your chain or damage components.</div></details><details><summary>B) Halfway up the hill</summary></details><details><summary>C) Only when standing</summary></details></div><div class=\"quiz\"><div class=\"q\">2. What does the front derailleur do?</div><details><summary>A) Big jumps between chainrings</summary><div class=\"answer\">Correct. Front = big changes, rear = fine-tuning.</div></details><details><summary>B) Fine-tuning cadence</summary></details><details><summary>C) Braking</summary></details></div><div class=\"callout good\"><p class=\"t-small\">Aim for 80\u201390 RPM. <regex>user_name</regex>, if your knees hurt, you're probably grinding too hard a gear.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic plumbing fixes quiz",
+   "user_requests": [
+    "plumbing quiz",
+    "how to fix a leaky faucet? quiz",
+    "quiz me on plumbing basics",
+    "home plumbing quiz",
+    "test my plumbing knowledge",
+    "plumbing 101 quiz",
+    "quiz on unclogging drains",
+    "quiz on plumbing repairs",
+    "plumbin quiz",
+    "test my plumbing knowledge",
+    "how well do i know fixing plumbing",
+    "plumbing trivia",
+    "quick plumbing quiz"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Basic plumbing fixes quiz</div><div class=\"quiz\"><div class=\"q\">1. What's the first thing to do before fixing a leaky faucet?</div><details><summary>A) Turn off the water supply</summary><div class=\"answer\">Correct. Always shut off the valve under the sink or the main.</div></details><details><summary>B) Grab a wrench</summary></details><details><summary>C) Call a plumber</summary></details></div><div class=\"quiz\"><div class=\"q\">2. What's safe to pour down a slow drain?</div><details><summary>A) Boiling water</summary><div class=\"answer\">Correct. It melts grease and is gentle on pipes. Avoid chemical drain cleaners\u2014they can damage older pipes.</div></details><details><summary>B) Bleach</summary></details><details><summary>C) Drano</summary></details></div><div class=\"callout warn\"><p class=\"t-small\">Know where your main shut-off valve is. <regex>user_name</regex>, that knowledge saves thousands in water damage.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic email phishing quiz",
+   "user_requests": [
+    "how to spot phishing emails quiz",
+    "phishing quiz",
+    "test your phishing knowledge",
+    "can you make a quiz about spotting scam emails?",
+    "phishing awareness quiz",
+    "quiz me on email scams",
+    "phishing email spotting quiz",
+    "quiz on phishing",
+    "email phishin quiz",
+    "test my phishing knowledge",
+    "how well do i know spotting phishing",
+    "phishing trivia",
+    "quick phishing quiz"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">Which of these is a red flag in an email?</div><details><summary>A) A familiar sender name</summary><div class=\"answer\">Incorrect. Sender names can be faked.</div></details><details><summary>B) Urgent language demanding immediate action</summary><div class=\"answer\">Correct. Urgency is a common phishing tactic.</div></details><details><summary>C) A professional logo</summary><div class=\"answer\">Incorrect. Logos are easy to copy.</div></details><details><summary>D) A link to a known website</summary><div class=\"answer\">Incorrect. Check the actual URL, not just the text.</div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic password security quiz",
+   "user_requests": [
+    "quiz about strong passwords",
+    "password security quiz",
+    "how to make a strong password quiz",
+    "test your password knowledge",
+    "quiz me on password safety",
+    "common password mistakes quiz",
+    "password strength quiz",
+    "quiz on password safety",
+    "password securty quiz",
+    "test my password knowledge",
+    "how well do i know strong passwords",
+    "password trivia",
+    "quick password quiz"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">What makes a password strong?</div><details><summary>A) Using your pet's name</summary><div class=\"answer\">Incorrect. Easy to guess or find on social media.</div></details><details><summary>B) A long passphrase with random words</summary><div class=\"answer\">Correct. Length and unpredictability matter most.</div></details><details><summary>C) Replacing letters with numbers (e.g., p@ssw0rd)</summary><div class=\"answer\">Incorrect. Hackers know these tricks.</div></details><details><summary>D) Using the same password everywhere</summary><div class=\"answer\">Incorrect. One breach exposes all accounts.</div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic nutrition label quiz",
+   "user_requests": [
+    "how to read nutrition labels quiz",
+    "nutrition label quiz",
+    "quiz about food labels",
+    "test your nutrition label knowledge",
+    "reading food labels quiz",
+    "what to look for on nutrition labels quiz",
+    "nutrition facts quiz",
+    "quiz on reading nutrition labels",
+    "nutrition lable quiz",
+    "test my nutrition label knowledge",
+    "how well do i know nutrition facts",
+    "nutrition label trivia",
+    "quick nutrition label quiz"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">What does 'serving size' on a nutrition label mean?</div><details><summary>A) The amount you should eat in one sitting</summary><div class=\"answer\">Incorrect. It's a reference amount, not a recommendation.</div></details><details><summary>B) The amount used to calculate the nutrition facts</summary><div class=\"answer\">Correct. All values on the label refer to this amount.</div></details><details><summary>C) The total weight of the package</summary><div class=\"answer\">Incorrect. That's the net weight.</div></details><details><summary>D) The number of servings in the package</summary><div class=\"answer\">Incorrect. That's a separate line.</div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic first aid for burns quiz",
+   "user_requests": [
+    "burn first aid quiz",
+    "what to do for a burn quiz",
+    "quiz on treating burns",
+    "first aid burn treatment quiz",
+    "how to treat a burn quiz",
+    "burn care quiz",
+    "minor burn first aid quiz",
+    "quiz on burn first aid",
+    "first aid burn quiz",
+    "test my burn treatment knowledge",
+    "how well do i know treating burns",
+    "burn first aid trivia",
+    "quick burn quiz"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">What is the first step for a minor burn?</div><details><summary>A) Apply butter or oil</summary><div class=\"answer\">Incorrect. This traps heat and can cause infection.</div></details><details><summary>B) Cool the burn with running water</summary><div class=\"answer\">Correct. Cool water for 10-20 minutes reduces damage.</div></details><details><summary>C) Pop any blisters</summary><div class=\"answer\">Incorrect. Blisters protect against infection.</div></details><details><summary>D) Cover with a thick bandage immediately</summary><div class=\"answer\">Incorrect. Cool first, then cover loosely.</div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic bike helmet safety quiz",
+   "user_requests": [
+    "bike helmet safety quiz",
+    "how to wear a bike helmet quiz",
+    "helmet fit quiz",
+    "quiz about bike helmets",
+    "bicycle helmet safety quiz",
+    "test your helmet knowledge",
+    "bike helmet rules quiz",
+    "quiz on bike helmet safety",
+    "bike helmet saftey quiz",
+    "test my helmet safety knowledge",
+    "how well do i know bike helmets",
+    "helmet safety trivia",
+    "quick bike helmet quiz"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">How should a bike helmet fit?</div><details><summary>A) Loose enough to move freely</summary><div class=\"answer\">Incorrect. It should be snug and stable.</div></details><details><summary>B) Snug, with the front covering the forehead</summary><div class=\"answer\">Correct. It should sit level and not rock.</div></details><details><summary>C) Tilted back to show your forehead</summary><div class=\"answer\">Incorrect. This leaves the front of your head unprotected.</div></details><details><summary>D) Tight enough to leave marks</summary><div class=\"answer\">Incorrect. It should be comfortable, not painful.</div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic electrical safety quiz",
+   "user_requests": [
+    "electrical safety quiz",
+    "home electrical safety quiz",
+    "quiz about electricity safety",
+    "electrical hazards quiz",
+    "test your electrical safety knowledge",
+    "electrical safety tips quiz",
+    "basic electrical safety quiz",
+    "quiz on electrical hazards",
+    "electrical saftey quiz",
+    "test my electrical safety knowledge",
+    "how well do i know electrical safety",
+    "electrical safety trivia",
+    "quick electrical quiz"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">What should you do before working on an electrical circuit?</div><details><summary>A) Turn off the light switch</summary><div class=\"answer\">Incorrect. The switch may not cut all power.</div></details><details><summary>B) Turn off the breaker and test for power</summary><div class=\"answer\">Correct. Always verify the circuit is dead.</div></details><details><summary>C) Wear rubber gloves</summary><div class=\"answer\">Incorrect. Gloves alone aren't enough.</div></details><details><summary>D) Work quickly to avoid shock</summary><div class=\"answer\">Incorrect. Never rush electrical work.</div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Tea basics quiz",
+   "user_requests": [
+    "quick quiz on tea brewing",
+    "test me on tea",
+    "i want to learn about tea, quiz me",
+    "tea steeping quiz pls",
+    "how well do i know tea? quiz",
+    "tea quiz",
+    "keep mis-steeping my tea, give me a quiz to fix that",
+    "quiz on tea",
+    "tea bascis quiz",
+    "test my tea knowledge",
+    "how well do i know tea",
+    "tea trivia",
+    "quick tea quiz"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Tea basics quiz for <regex>user_name</regex></div><div class=\"quiz\"><div class=\"q\">What water temperature is best for green tea?</div><details><summary>A) 100\u00b0C/212\u00b0F</summary><div class=\"answer\">Too hot. That scorches green leaves and makes them bitter.</div></details><details><summary>B) 70\u201380\u00b0C/158\u2013176\u00b0F</summary><div class=\"answer\">Correct. Green tea likes it gentle. Let the kettle rest a minute after boiling.</div></details><details><summary>C) 60\u00b0C/140\u00b0F</summary><div class=\"answer\">A bit low. That's closer to a delicate white tea. Green tea sits in the middle.</div></details></div><div class=\"quiz\"><div class=\"q\">How long should you steep black tea?</div><details><summary>A) 1 minute</summary><div class=\"answer\">Too short. You'll get a weak, watery cup.</div></details><details><summary>B) 3\u20135 minutes</summary><div class=\"answer\">Correct. That's the sweet spot for a robust black tea.</div></details><details><summary>C) 10 minutes</summary><div class=\"answer\">Way too long. That's where the bitterness creeps in.</div></details></div><p class=\"muted\">Two down. Your tea game is getting stronger.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "DIY wall painting quiz",
+   "user_requests": [
+    "quiz me on painting a wall",
+    "wall painting tips quiz",
+    "how to paint a room quiz",
+    "painting quiz",
+    "i want to paint my room, test my knowledge",
+    "diy painting quiz",
+    "quick wall paint quiz",
+    "quiz on wall painting",
+    "diy wall paintin quiz",
+    "test my wall painting knowledge",
+    "how well do i know painting walls",
+    "wall painting trivia",
+    "quick wall painting quiz"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">DIY wall painting quiz for <regex>user_name</regex></div><div class=\"quiz\"><div class=\"q\">What should you do before painting a wall?</div><details><summary>A) Just start painting</summary><div class=\"answer\">Not quite. Prep is half the job. Clean, patch, and tape first.</div></details><details><summary>B) Clean, patch holes, and tape edges</summary><div class=\"answer\">Correct. A smooth surface makes the paint look professional.</div></details><details><summary>C) Only tape the edges</summary><div class=\"answer\">Close, but you also need to clean and patch. Paint won't hide lumps.</div></details></div><div class=\"quiz\"><div class=\"q\">How many coats of paint are usually needed?</div><details><summary>A) One thick coat</summary><div class=\"answer\">A single thick coat often looks uneven and can drip.</div></details><details><summary>B) Two thin coats</summary><div class=\"answer\">Correct. Two thin coats give better coverage and a smoother finish.</div></details><details><summary>C) Five coats</summary><div class=\"answer\">Overkill. Unless you're covering a very dark color, two is plenty.</div></details></div><p class=\"muted\">Now grab a roller. You've got this.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic nutrition label quiz",
+   "user_requests": [
+    "nutrition label quiz",
+    "quiz me on reading food labels",
+    "how to read nutrition facts quiz",
+    "food label quiz",
+    "test my nutrition label skills",
+    "quick quiz on nutrition labels",
+    "i want to understand food labels better, quiz",
+    "quiz on reading nutrition labels",
+    "nutrition lable quiz",
+    "test my nutrition label knowledge",
+    "how well do i know nutrition facts",
+    "nutrition label trivia",
+    "quick nutrition label quiz"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Nutrition label quiz for <regex>user_name</regex></div><div class=\"quiz\"><div class=\"q\">What does 'serving size' mean on a nutrition label?</div><details><summary>A) The amount you should eat</summary><div class=\"answer\">It's a reference amount, not a recommendation. You might eat more or less.</div></details><details><summary>B) The amount used to calculate the nutrition numbers</summary><div class=\"answer\">Correct. All the numbers on the label are based on this serving size.</div></details><details><summary>C) The total weight of the package</summary><div class=\"answer\">No, that's the net weight. Serving size is a standardized amount for comparison.</div></details></div><div class=\"quiz\"><div class=\"q\">If a label says '5% Daily Value' for a nutrient, is that high or low?</div><details><summary>A) High</summary><div class=\"answer\">Actually, 5% or less is considered low.</div></details><details><summary>B) Low</summary><div class=\"answer\">Correct. 5% DV or less is low; 20% DV or more is high.</div></details><details><summary>C) Neither, it's average</summary><div class=\"answer\">The %DV is a guide: 5% is low, 20% is high.</div></details></div><p class=\"muted\">Now you can size up a snack in seconds.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Tire pressure quiz",
+   "user_requests": [
+    "tire pressure quiz",
+    "quiz me on tire maintenance",
+    "how often should i check tire pressure quiz",
+    "car tire quiz",
+    "test my tire knowledge",
+    "quick tire pressure quiz",
+    "i want to learn about tire pressure, quiz",
+    "quiz on tire pressure",
+    "tire presure quiz",
+    "test my tire pressure knowledge",
+    "how well do i know tire pressure",
+    "tire pressure trivia",
+    "quick tire quiz"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Tire pressure quiz for <regex>user_name</regex></div><div class=\"quiz\"><div class=\"q\">How often should you check tire pressure?</div><details><summary>A) Once a year</summary><div class=\"answer\">Too infrequent. Tires can lose pressure gradually, affecting safety and fuel economy.</div></details><details><summary>B) Once a month</summary><div class=\"answer\">Correct. Monthly checks keep you safe and save fuel.</div></details><details><summary>C) Only when a tire looks flat</summary><div class=\"answer\">By then it's already too low. Check regularly, not just when it's obvious.</div></details></div><div class=\"quiz\"><div class=\"q\">Where do you find the recommended tire pressure for your car?</div><details><summary>A) On the tire sidewall</summary><div class=\"answer\">That's the maximum pressure, not the recommended one.</div></details><details><summary>B) In the owner's manual or driver's door jamb</summary><div class=\"answer\">Correct. That's the manufacturer's recommendation for your specific car.</div></details><details><summary>C) Guess based on tire size</summary><div class=\"answer\">Guessing is risky. Always check the manual or door jamb sticker.</div></details></div><p class=\"muted\">A quick check now saves a blowout later.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic pasta cooking quiz",
+   "user_requests": [
+    "pasta cooking quiz",
+    "quiz me on cooking pasta",
+    "how to cook pasta quiz",
+    "pasta quiz",
+    "test my pasta skills",
+    "quick pasta quiz",
+    "i keep overcooking pasta, quiz me",
+    "quiz on cooking pasta",
+    "pasta cookin quiz",
+    "test my pasta knowledge",
+    "how well do i know cooking pasta",
+    "pasta trivia",
+    "quick pasta quiz"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Pasta cooking quiz for <regex>user_name</regex></div><div class=\"quiz\"><div class=\"q\">How much salt should you add to pasta water?</div><details><summary>A) None</summary><div class=\"answer\">Unsalted water makes bland pasta. Salt is your friend.</div></details><details><summary>B) A generous handful</summary><div class=\"answer\">Correct. It should taste like seasoned soup. That's the only chance to flavor the pasta itself.</div></details><details><summary>C) A pinch</summary><div class=\"answer\">A pinch is too little for a big pot. Be bold.</div></details></div><div class=\"quiz\"><div class=\"q\">Should you add oil to the pasta water?</div><details><summary>A) Yes, to prevent sticking</summary><div class=\"answer\">Oil just floats and makes the pasta slippery, so sauce won't cling.</div></details><summary></summary><details><summary>B) No</summary><div class=\"answer\">Correct. Stir the pasta for the first minute; that's all you need.</div></details><details><summary>C) Only for long pasta</summary><div class=\"answer\">Still no. Stirring is the real fix.</div></details></div><p class=\"muted\">Now go make a perfect bowl.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic bike brake check quiz",
+   "user_requests": [
+    "bike brake quiz",
+    "quiz me on bike brakes",
+    "how to check bike brakes quiz",
+    "bicycle brake quiz",
+    "test my bike brake knowledge",
+    "quick bike brake quiz",
+    "i want to make sure my brakes are safe, quiz",
+    "quiz on bike brakes",
+    "bike brake chek quiz",
+    "test my bike brake knowledge",
+    "how well do i know checking brakes",
+    "bike brake trivia",
+    "quick brake quiz"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Bike brake check quiz for <regex>user_name</regex></div><div class=\"quiz\"><div class=\"q\">How much gap should there be between brake pads and the rim?</div><details><summary>A) 1\u20132 mm</summary><div class=\"answer\">Correct. That's about the thickness of a nickel. Enough to spin freely but close enough to grab.</div></details><details><summary>B) 5 mm</summary><div class=\"answer\">Too wide. You'll have to pull the lever too far before braking.</div></details><details><summary>C) No gap, pads touching</summary><div class=\"answer\">That creates drag and wears pads fast. You need a small gap.</div></details></div><div class=\"quiz\"><div class=\"q\">What should you check on brake cables?</div><details><summary>A) For fraying and tension</summary><div class=\"answer\">Correct. Frayed cables can snap; loose ones mean weak braking.</div></details><details><summary>B) Only the color</summary><div class=\"answer\">Color won't stop you. Check for wear and proper tension.</div></details><details><summary>C) Nothing, they're maintenance-free</summary><div class=\"answer\">No cable is truly maintenance-free. A quick squeeze tells you a lot.</div></details></div><p class=\"muted\">Safe brakes make every ride better.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic knot tying quiz",
+   "user_requests": [
+    "quiz me on knot tying",
+    "basic knot quiz",
+    "learn knots quiz",
+    "knot tieing quiz for beginners",
+    "check my knot knowledge",
+    "rope knot quiz",
+    "test me on knots",
+    "test my knot knowledge",
+    "knot quiz",
+    "show me knot questions",
+    "knots pop quiz",
+    "can u quiz me on knots?",
+    "knot-tying test plz"
+   ],
+   "html": "<div class=\"quiz umi-page\"><div class=\"q\">Which knot is best for securing a line to a post and is easy to untie?</div><details><summary>A) Figure-eight knot</summary></details><details><summary>B) Clove hitch</summary><div class=\"answer\">Yep. A clove hitch grips a post or rail, and it comes apart quickly when you're done. Just don't trust it for heavy loads that shift.</div></details><details><summary>C) Bowline</summary></details><details><summary>D) Square knot</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic fire starting quiz",
+   "user_requests": [
+    "how to start a fire quiz",
+    "campfire quiz",
+    "test me on fire starting",
+    "basic fire lighting quiz",
+    "fire starting for beginners quiz",
+    "quiz me on campfires",
+    "learn fire starting",
+    "fire starting quiz me",
+    "test me on fire making",
+    "fire quiz",
+    "how do i start a fire quiz",
+    "firestarting pop quiz",
+    "quiz on fire lighting"
+   ],
+   "html": "<div class=\"quiz umi-page\"><div class=\"q\">What's the most important thing to gather before you strike a match?</div><details><summary>A) Dry tinder, kindling, and fuel</summary><div class=\"answer\">Right. Collect everything in three sizes so you're not scrambling once the flame catches. Damp wood is the usual party crasher.</div></details><details><summary>B) A big log</summary></details><details><summary>C) A lighter</summary></details><details><summary>D) Water to put it out</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic wilderness shelter quiz",
+   "user_requests": [
+    "shelter building quiz",
+    "wilderness shelter quiz",
+    "quiz me on emergency shelters",
+    "how to build a survival shelter quiz",
+    "test me on shelters",
+    "basic shelter quiz",
+    "learn shelter building",
+    "quiz me on shelters",
+    "wilderness shelter test",
+    "shelter quiz",
+    "test my shelter building knowledge",
+    "shelters pop quiz",
+    "can u quiz me on making shelters?"
+   ],
+   "html": "<div class=\"quiz umi-page\"><div class=\"q\">If you're lost and night is coming, what should you prioritise first?</div><details><summary>A) Finding food</summary></details><details><summary>B) Building or finding shelter</summary><div class=\"answer\">Correct. Shelter protects you from wind, rain, and heat loss. You can go a while without food, but a cold, wet night is rough.</div></details><details><summary>C) Starting a signal fire</summary></details><details><summary>D) Walking to the nearest road</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic water purification quiz",
+   "user_requests": [
+    "water purification quiz",
+    "how to purify water quiz",
+    "test me on water safety",
+    "basic water treatment quiz",
+    "quiz me on purifying water",
+    "clean water quiz",
+    "learn water purification",
+    "test me on water purification",
+    "purify water quiz",
+    "water cleaning quiz",
+    "quiz on purifying water",
+    "water purification pop quiz",
+    "can I get a water purification quiz"
+   ],
+   "html": "<div class=\"quiz umi-page\"><div class=\"q\">Which method kills most pathogens in water without added chemicals?</div><details><summary>A) Straining through cloth</summary></details><details><summary>B) Boiling for at least one minute</summary><div class=\"answer\">Yep. A rolling boil for one minute does the job at most elevations. Let it cool, then drink. Cloudy water? Filter it first.</div></details><details><summary>C) Adding a pinch of salt</summary></details><details><summary>D) Leaving it in the sun all day</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic compass navigation quiz",
+   "user_requests": [
+    "compass quiz",
+    "how to use a compass quiz",
+    "test me on compass skills",
+    "basic navigation quiz",
+    "quiz me on compasses",
+    "compass reading quiz",
+    "learn compass navigation",
+    "test my compass skills",
+    "navigation quiz",
+    "compass quiz me",
+    "quiz on compass use",
+    "compass navigation test",
+    "can u quiz me on compasses"
+   ],
+   "html": "<div class=\"quiz umi-page\"><div class=\"q\">What does the red end of a compass needle point to?</div><details><summary>A) Magnetic north</summary><div class=\"answer\">Correct. The red end swings toward magnetic north, which is close to but not exactly true north. Good enough for most everyday roaming.</div></details><details><summary>B) True north</summary></details><details><summary>C) The nearest road</summary></details><details><summary>D) The sun's position at noon</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic emergency preparedness quiz",
+   "user_requests": [
+    "emergency preparedness quiz",
+    "what to do in an emergency quiz",
+    "test me on emergency prep",
+    "basic disaster readiness quiz",
+    "quiz me on emergencies",
+    "emergency kit quiz",
+    "learn emergency preparedness",
+    "test my emergency prep",
+    "emergency quiz",
+    "preparedness quiz",
+    "quiz me on emergencies",
+    "emergency readiness test",
+    "can I take an emergency preparedness quiz"
+   ],
+   "html": "<div class=\"quiz umi-page\"><div class=\"q\">How much water should you store per person per day in an emergency kit?</div><details><summary>A) One cup</summary></details><details><summary>B) One gallon</summary><div class=\"answer\">Yep. One gallon per person per day covers drinking and basic hygiene. Store a three-day supply at minimum, more if you have pets.</div></details><details><summary>C) Two quarts</summary></details><details><summary>D) Half a gallon</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic knot tying quiz",
+   "user_requests": [
+    "how do i tie a knot",
+    "basic knot quiz",
+    "learn knots for camping",
+    "which knot should i use",
+    "knot tying practice",
+    "essential knots everyone should know",
+    "knots 101",
+    "test my knot knowledge",
+    "knot quiz",
+    "show me knot questions",
+    "knots pop quiz",
+    "can u quiz me on knots?",
+    "knot-tying test plz"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">Which knot is best for tying two ropes of different thicknesses together?</div><details><summary>A) Square knot</summary></details><details><summary>B) Sheet bend</summary><div class=\"answer\">Correct. The sheet bend (or becket bend) holds well even when the ropes differ in size. The square knot can slip under load.</div></details><details><summary>C) Bowline</summary></details><details><summary>D) Figure-eight knot</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic compass navigation quiz",
+   "user_requests": [
+    "how to use a compass",
+    "compass basics quiz",
+    "map and compass skills",
+    "navigating with a compass",
+    "what do compass degrees mean",
+    "learn compass reading",
+    "orienteering compass help",
+    "test my compass skills",
+    "navigation quiz",
+    "compass quiz me",
+    "quiz on compass use",
+    "compass navigation test",
+    "can u quiz me on compasses"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">On a compass, what does the red end of the magnetic needle point toward?</div><details><summary>A) True north</summary></details><details><summary>B) Magnetic north</summary><div class=\"answer\">Correct. The red needle points to magnetic north. True north differs by declination, which you adjust for on a map.</div></details><details><summary>C) South</summary></details><details><summary>D) The nearest road</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic water purification quiz",
+   "user_requests": [
+    "how to purify water outdoors",
+    "water purification quiz",
+    "safe drinking water in the wild",
+    "backcountry water treatment",
+    "boiling vs filtering water",
+    "water purification methods",
+    "clean water while hiking",
+    "test me on water purification",
+    "purify water quiz",
+    "water cleaning quiz",
+    "quiz on purifying water",
+    "water purification pop quiz",
+    "can I get a water purification quiz"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">Which method kills the widest range of pathogens in water?</div><details><summary>A) Boiling</summary><div class=\"answer\">Correct. Bringing water to a rolling boil for at least one minute (three at high altitude) kills bacteria, viruses, and parasites. Filters may miss viruses.</div></details><details><summary>B) UV light</summary></details><details><summary>C) Chemical tablets</summary></details><details><summary>D) Cloth straining</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic wilderness shelter quiz",
+   "user_requests": [
+    "how to build a survival shelter",
+    "wilderness shelter quiz",
+    "emergency shelter building",
+    "staying warm outdoors",
+    "shelter basics for camping",
+    "build a debris hut",
+    "survival shelter tips",
+    "quiz me on shelters",
+    "wilderness shelter test",
+    "shelter quiz",
+    "test my shelter building knowledge",
+    "shelters pop quiz",
+    "can u quiz me on making shelters?"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">What is the main purpose of a debris hut's thick layer of leaves and branches?</div><details><summary>A) Camouflage</summary></details><details><summary>B) Insulation</summary><div class=\"answer\">Correct. The debris traps air, providing insulation to keep you warm. A shelter that blocks wind but lacks insulation can still leave you dangerously cold.</div></details><details><summary>C) Structural support</summary></details><details><summary>D) Waterproofing</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic emergency preparedness quiz",
+   "user_requests": [
+    "emergency preparedness quiz",
+    "what to do in an emergency",
+    "disaster readiness basics",
+    "how to prepare for emergencies",
+    "emergency kit essentials",
+    "being ready for anything",
+    "prepper quiz for beginners",
+    "test my emergency prep",
+    "emergency quiz",
+    "preparedness quiz",
+    "quiz me on emergencies",
+    "emergency readiness test",
+    "can I take an emergency preparedness quiz"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">How much water should you store per person per day in an emergency kit?</div><details><summary>A) Half a gallon</summary></details><details><summary>B) One gallon</summary><div class=\"answer\">Correct. FEMA recommends at least one gallon per person per day for drinking and sanitation, for a minimum of three days.</div></details><details><summary>C) Two gallons</summary></details><details><summary>D) Five gallons</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic fire starting quiz",
+   "user_requests": [
+    "how to start a fire without matches",
+    "fire starting quiz",
+    "survival fire making",
+    "best fire starters",
+    "campfire starting tips",
+    "fire building basics",
+    "light a fire in the rain",
+    "fire starting quiz me",
+    "test me on fire making",
+    "fire quiz",
+    "how do i start a fire quiz",
+    "firestarting pop quiz",
+    "quiz on fire lighting"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">What is the best tinder material for starting a fire in wet conditions?</div><details><summary>A) Dry leaves</summary></details><details><summary>B) Birch bark</summary><div class=\"answer\">Correct. Birch bark contains oils that resist water and ignite easily, even when damp. Dry leaves are often soggy in wet weather.</div></details><details><summary>C) Pine needles</summary></details><details><summary>D) Grass</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic Spanish phrases quiz",
+   "user_requests": [
+    "quiz me on basic spanish",
+    "spanish phrases quiz pls",
+    "test my spanish vocab",
+    "easy spanish quiz?",
+    "hola! quiz me",
+    "basic spanish greetings test",
+    "quiero un quiz de espanol",
+    "test my spanish",
+    "spanish quiz",
+    "quiz on spanish phrases",
+    "spanish phrases test",
+    "can u quiz me on spanish",
+    "spanish pop quiz"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"card\"><div class=\"card-title\">Basic Spanish phrases</div><p class=\"muted\">Let's see how you do, <regex>user_name</regex>. Tap an option to reveal the answer.</p><div class=\"quiz\"><div class=\"q\">How do you say \"Good morning\"?</div><details><summary>A) Buenas noches</summary></details><details><summary>B) Buenos d\u00edas</summary><div class=\"answer\">Correct! <em>Buenos d\u00edas</em> is used before noon. <em>Buenas noches</em> means good evening or good night.</div></details><details><summary>C) Buenas tardes</summary></details></div><div class=\"quiz\"><div class=\"q\">Which phrase means \"Thank you\"?</div><details><summary>A) Por favor</summary></details><details><summary>B) De nada</summary></details><details><summary>C) Gracias</summary><div class=\"answer\">Right. <em>Gracias</em> = thank you. <em>De nada</em> is \"you're welcome,\" and <em>por favor</em> is \"please.\"</div></details></div><div class=\"callout info\">Fun fact: <em>Buenos d\u00edas</em> is literally \"good days\" \u2014 plural, even for one day.</div></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic car tire changing quiz",
+   "user_requests": [
+    "how to change a tire quiz",
+    "tire change quiz",
+    "flat tire test",
+    "car emergency quiz",
+    "changing tire quiz pls",
+    "quiz me on tire changing",
+    "tire change safety quiz",
+    "test me on changing tires",
+    "tire changing quiz",
+    "quiz on tire change",
+    "how to change a tire quiz me",
+    "tire changing test",
+    "can u quiz me on tires"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"card\"><div class=\"card-title\">Changing a flat tire</div><p class=\"muted\">Ready, <regex>user_name</regex>? Pick the best answer.</p><div class=\"quiz\"><div class=\"q\">What should you do first when you get a flat?</div><details><summary>A) Jack up the car</summary></details><details><summary>B) Loosen the lug nuts slightly</summary><div class=\"answer\">Correct. Loosen them a quarter-turn while the tire is still on the ground \u2014 it's much harder once it's in the air.</div></details><details><summary>C) Call a tow truck</summary></details></div><div class=\"quiz\"><div class=\"q\">Where is the safest place to put the jack?</div><details><summary>A) Under the bumper</summary></details><details><summary>B) On the pinch weld or jack point</summary><div class=\"answer\">Right. Check your manual for the exact jack points \u2014 usually a reinforced seam or notch.</div></details><details><summary>C) Under the door</summary></details></div><div class=\"callout warn\">Never crawl under a car supported only by a jack. Use jack stands.</div></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic food safety quiz",
+   "user_requests": [
+    "food safety quiz",
+    "safe food handling test",
+    "kitchen safety quiz",
+    "quiz me on food safety",
+    "food storage quiz",
+    "basic food hygiene quiz",
+    "leftovers safety quiz",
+    "test my food safety knowledge",
+    "food safety test",
+    "quiz me on food safety",
+    "food safety pop quiz",
+    "can I get a food safety quiz",
+    "food safety quiz pls"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"card\"><div class=\"card-title\">Food safety basics</div><p class=\"muted\">Let's check your kitchen instincts, <regex>user_name</regex>. Tap to reveal.</p><div class=\"quiz\"><div class=\"q\">How long can cooked leftovers sit out at room temperature?</div><details><summary>A) 2 hours</summary><div class=\"answer\">Correct. The \"danger zone\" is 40\u2013140\u00b0F (4\u201360\u00b0C), and bacteria multiply fast. Two hours is the max \u2014 one hour if it's above 90\u00b0F.</div></details><details><summary>B) 4 hours</summary></details><details><summary>C) Until they smell bad</summary></details></div><div class=\"quiz\"><div class=\"q\">What's the best way to thaw frozen meat?</div><details><summary>A) On the counter</summary></details><details><summary>B) In the fridge</summary><div class=\"answer\">Right. Fridge thawing is slow but safe. For speed, use cold water or the microwave \u2014 then cook immediately.</div></details><details><summary>C) In hot water</summary></details></div><div class=\"callout good\">Handy rule: keep hot food hot (above 140\u00b0F) and cold food cold (below 40\u00b0F).</div></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic cloud types quiz",
+   "user_requests": [
+    "cloud quiz",
+    "types of clouds test",
+    "weather clouds quiz",
+    "cloud identification quiz",
+    "quiz me on clouds",
+    "basic meteorology quiz",
+    "cloud spotting quiz",
+    "test me on clouds",
+    "cloud types quiz",
+    "quiz on cloud types",
+    "clouds pop quiz",
+    "can u quiz me on cloud types",
+    "cloud identification quiz"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"card\"><div class=\"card-title\">Cloud types</div><p class=\"muted\">Look up, <regex>user_name</regex>. What are those fluffy things? Tap to check.</p><div class=\"quiz\"><div class=\"q\">Which cloud is the classic fluffy white cotton ball?</div><details><summary>A) Stratus</summary></details><details><summary>B) Cumulus</summary><div class=\"answer\">Correct. Cumulus means \"heap\" in Latin \u2014 fair-weather clouds with flat bottoms.</div></details><details><summary>C) Cirrus</summary></details></div><div class=\"quiz\"><div class=\"q\">Which cloud brings steady rain?</div><details><summary>A) Nimbostratus</summary><div class=\"answer\">Right. <em>Nimbus</em> = rain, so nimbostratus is a thick, grey rain cloud.</div></details><details><summary>B) Cirrocumulus</summary></details><details><summary>C) Altocumulus</summary></details></div><div class=\"callout info\">High wispy clouds? That's cirrus \u2014 ice crystals way up high.</div></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic guitar chords quiz",
+   "user_requests": [
+    "guitar chords quiz",
+    "learn guitar chords test",
+    "beginner guitar quiz",
+    "quiz me on guitar chords",
+    "guitar chord shapes quiz",
+    "basic guitar knowledge quiz",
+    "guitar quiz pls",
+    "quiz me on guitar chords",
+    "test my guitar chord knowledge",
+    "basic guitar chords trivia",
+    "can u quiz me on chords for guitar",
+    "i wanna practice guitar chords quiz",
+    "guitar chord quiz pls"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"card\"><div class=\"card-title\">Basic guitar chords</div><p class=\"muted\">Strum along, <regex>user_name</regex>. Which chord is which?</p><div class=\"quiz\"><div class=\"q\">Which chord is played with three fingers on the 2nd fret?</div><details><summary>A) C major</summary></details><details><summary>B) G major</summary></details><details><summary>C) A major</summary><div class=\"answer\">Correct. A major uses fingers on the 2nd fret of the D, G, and B strings.</div></details></div><div class=\"quiz\"><div class=\"q\">What does a capo do?</div><details><summary>A) Changes the key without retuning</summary><div class=\"answer\">Right. A capo clamps the strings and raises the pitch, letting you play open chords in different keys.</div></details><details><summary>B) Makes the strings louder</summary></details><details><summary>C) Keeps the guitar in tune</summary></details></div><div class=\"callout good\">Practice tip: switch between G, C, and D until your fingers remember the shapes.</div></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic pool water care quiz",
+   "user_requests": [
+    "pool water quiz",
+    "pool chemistry test",
+    "swimming pool care quiz",
+    "quiz me on pool water",
+    "pool maintenance quiz",
+    "pool pH quiz",
+    "pool water balance quiz",
+    "quiz me on pool water",
+    "test my pool chemistry knowledge",
+    "pool care quiz",
+    "how do i keep pool water balanced quiz",
+    "quiz me on chlorine and ph for pools",
+    "swimming pool water quiz pls"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"card\"><div class=\"card-title\">Pool water care</div><p class=\"muted\">Dive in, <regex>user_name</regex>. Test your pool chemistry know-how.</p><div class=\"quiz\"><div class=\"q\">What's the ideal pH range for pool water?</div><details><summary>A) 6.0\u20136.5</summary></details><details><summary>B) 7.2\u20137.8</summary><div class=\"answer\">Correct. Slightly alkaline is comfortable for skin and keeps chlorine working.</div></details><details><summary>C) 8.0\u20138.5</summary></details></div><div class=\"quiz\"><div class=\"q\">What does free chlorine do?</div><details><summary>A) Sanitises the water</summary><div class=\"answer\">Right. Free chlorine is the active form that kills bacteria and algae.</div></details><details><summary>B) Raises pH</summary></details><details><summary>C) Clears cloudy water</summary></details></div><div class=\"callout info\">Test strips are cheap and quick \u2014 check pH and chlorine twice a week.</div></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "give me a basic coffee brewing quiz",
+    "quiz me on coffee brewing methods",
+    "coffee quiz",
+    "test my coffee knowledge",
+    "how do you make pour over coffee? quiz me",
+    "coffee brewing quiz please",
+    "do u know a coffee quiz",
+    "coffee brewing quiz",
+    "quiz me on brewing coffee",
+    "test me on coffee basics",
+    "how well do i know coffee brewing",
+    "pour over and french press quiz",
+    "coffee makin quiz"
+   ],
+   "title": "Coffee brewing basics quiz",
+   "html": "<div class=\"quiz\"><div class=\"q\">What grind size works best for a French press?</div><details><summary>A) Fine, like espresso</summary></details><details><summary>B) Coarse, like sea salt</summary><div class=\"answer\">Correct. Coarse grounds keep the mesh filter from clogging and give a clean, full-bodied cup.</div></details><details><summary>C) Medium, like drip</summary></details><details><summary>D) Powder-fine</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "basic knife skills quiz",
+    "quiz me on kitchen knife cuts",
+    "knife skills quiz",
+    "test my knife knowledge",
+    "what's a julienne? quiz",
+    "kitchen knife quiz",
+    "knife cut quiz please",
+    "quiz me on knife skills",
+    "test my knife handling knowledge",
+    "kitchen knife quiz",
+    "how good am i at chopping quiz",
+    "quiz on knife cuts and grip",
+    "knife skillz quiz lol"
+   ],
+   "title": "Basic knife skills quiz",
+   "html": "<div class=\"quiz\"><div class=\"q\">What is a julienne cut?</div><details><summary>A) Thin, matchstick-shaped strips</summary><div class=\"answer\">Correct. Julienne means thin strips, roughly 2 mm by 2 mm by 5 cm. Great for stir-fries and garnishes.</div></details><details><summary>B) Small cubes</summary></details><details><summary>C) Diagonal slices</summary></details><details><summary>D) Rough chop</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "basic weather quiz",
+    "quiz me on clouds and weather",
+    "weather quiz",
+    "test my weather knowledge",
+    "what cloud brings rain? quiz",
+    "basic meteorology quiz",
+    "weather quiz please",
+    "quiz me on weather",
+    "test my weather knowledge",
+    "weather trivia quiz",
+    "how well do i know weather basics",
+    "quiz me on clouds and fronts and stuff",
+    "weather quiz pls"
+   ],
+   "title": "Basic weather quiz",
+   "html": "<div class=\"quiz\"><div class=\"q\">Which cloud type is most associated with steady rain?</div><details><summary>A) Cumulus</summary></details><details><summary>B) Stratus</summary><div class=\"answer\">Correct. Nimbostratus clouds are thick, grey layers that produce continuous rain or snow.</div></details><details><summary>C) Cirrus</summary></details><details><summary>D) Altocumulus</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "basic car maintenance quiz",
+    "quiz me on car upkeep",
+    "car maintenance quiz",
+    "test my car care knowledge",
+    "how often change oil? quiz",
+    "car upkeep quiz",
+    "auto maintenance quiz please",
+    "quiz me on car maintenance",
+    "test my car care knowledge",
+    "car upkeep quiz",
+    "how much do i know about maintaining a car",
+    "quiz on oil changes and tire pressure",
+    "car maintenance trivia"
+   ],
+   "title": "Basic car maintenance quiz",
+   "html": "<div class=\"quiz\"><div class=\"q\">How often should you typically check your engine oil level?</div><details><summary>A) Once a year</summary></details><details><summary>B) Every time you fill up with fuel</summary><div class=\"answer\">Correct. Checking at each fill-up catches slow leaks and consumption early, before damage occurs.</div></details><details><summary>C) Only when the oil light comes on</summary></details><details><summary>D) Every 30,000 miles</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "basic chess quiz",
+    "quiz me on chess openings",
+    "chess quiz",
+    "test my chess knowledge",
+    "what's the best first move? quiz",
+    "chess basics quiz",
+    "chess quiz please",
+    "quiz me on chess",
+    "test my chess knowledge",
+    "chess rules quiz",
+    "how well do i know chess openings and pieces",
+    "quiz me on chess basics pls",
+    "chess quiz for beginners"
+   ],
+   "title": "Chess basics quiz",
+   "html": "<div class=\"quiz\"><div class=\"q\">What is the most common first move for White in chess?</div><details><summary>A) 1. e4</summary><div class=\"answer\">Correct. 1. e4 is the most popular opening move, controlling the center and opening lines for the bishop and queen.</div></details><details><summary>B) 1. d4</summary></details><details><summary>C) 1. Nf3</summary></details><details><summary>D) 1. c4</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "basic yoga quiz",
+    "quiz me on yoga poses",
+    "yoga quiz",
+    "test my yoga knowledge",
+    "what's downward dog? quiz",
+    "yoga basics quiz",
+    "yoga quiz please",
+    "quiz me on yoga",
+    "test my yoga knowledge",
+    "yoga poses quiz",
+    "how well do i know yoga basics",
+    "quiz me on yoga breathing and poses",
+    "yoga quiz pls"
+   ],
+   "title": "Yoga basics quiz",
+   "html": "<div class=\"quiz\"><div class=\"q\">What is the primary benefit of Downward-Facing Dog pose?</div><details><summary>A) Builds arm strength only</summary></details><details><summary>B) Stretches the entire back body and calms the mind</summary><div class=\"answer\">Correct. Downward Dog stretches the hamstrings, calves, and spine while encouraging deep breathing and relaxation.</div></details><details><summary>C) Improves balance only</summary></details><details><summary>D) Strengthens the core only</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "test my knowledge of coffee roasting",
+    "coffee roasting quiz",
+    "how much do I know about roasting beans?",
+    "quiz me on coffee roasting basics",
+    "roasting coffee at home quiz",
+    "coffee roast levels quiz",
+    "bean roasting trivia",
+    "quiz me on roasting coffee",
+    "test my coffee roasting knowledge",
+    "coffee roast levels quiz",
+    "how much do i know about roasting beans",
+    "quiz me on first crack and roast profiles",
+    "coffee roasting trivia"
+   ],
+   "title": "Coffee roasting basics quiz",
+   "html": "<div class=\"card\"><div class=\"card-title\">Coffee roasting basics</div><div class=\"quiz\"><div class=\"q\">1. What happens during first crack?</div><details><summary>A) Beans turn green</summary></details><details><summary>B) Moisture escapes and beans expand</summary><div class=\"answer\">Correct. Steam pressure builds and the bean structure fractures, making a popping sound.</div></details><details><summary>C) Oils appear on the surface</summary></details><details><summary>D) Caffeine is removed</summary></details></div><div class=\"quiz\"><div class=\"q\">2. Which roast level is typically lightest?</div><details><summary>A) City</summary><div class=\"answer\">Correct. City roast is stopped right after first crack, before second crack.</div></details><details><summary>B) Full City</summary></details><details><summary>C) Vienna</summary></details><details><summary>D) French</summary></details></div><div class=\"quiz\"><div class=\"q\">3. What is a common sign of a dark roast?</div><details><summary>A) Dry, matte surface</summary></details><details><summary>B) Oily, shiny surface</summary><div class=\"answer\">Correct. Oils migrate to the surface as roasting continues.</div></details><details><summary>C) Green color</summary></details><details><summary>D) No aroma</summary></details></div><p class=\"muted t-small\">Roast levels are a spectrum. Taste as you go, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "quiz me on bread baking",
+    "bread baking quiz",
+    "test my bread knowledge",
+    "how well do I know bread baking?",
+    "bread baking basics quiz",
+    "sourdough starter quiz",
+    "bread trivia",
+    "quiz me on baking bread",
+    "test my bread baking knowledge",
+    "bread making quiz",
+    "how well do i know yeast and dough",
+    "quiz me on sourdough and kneading",
+    "bread baking trivia pls"
+   ],
+   "title": "Bread baking basics quiz",
+   "html": "<div class=\"card\"><div class=\"card-title\">Bread baking basics</div><div class=\"quiz\"><div class=\"q\">1. What does kneading develop?</div><details><summary>A) Flavor only</summary></details><details><summary>B) Gluten structure</summary><div class=\"answer\">Correct. Kneading aligns gluten proteins for elasticity.</div></details><details><summary>C) Color</summary></details><details><summary>D) Yeast count</summary></details></div><div class=\"quiz\"><div class=\"q\">2. What is a poolish?</div><details><summary>A) A type of flour</summary></details><details><summary>B) A pre-ferment</summary><div class=\"answer\">Correct. A wet pre-ferment that adds flavor and extensibility.</div></details><details><summary>C) A baking stone</summary></details><details><summary>D) A scoring tool</summary></details></div><div class=\"quiz\"><div class=\"q\">3. Why score the top of a loaf?</div><details><summary>A) To make it pretty</summary></details><details><summary>B) To control expansion</summary><div class=\"answer\">Correct. Scoring gives the dough a place to open during oven spring.</div></details><details><summary>C) To add seeds</summary></details><details><summary>D) To cool faster</summary></details></div><p class=\"muted t-small\">Baking is forgiving, <regex>user_name</regex>. Keep notes.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "photography exposure quiz",
+    "quiz on camera exposure",
+    "test my exposure triangle",
+    "how does exposure work quiz",
+    "aperture shutter ISO quiz",
+    "exposure basics quiz",
+    "camera settings quiz",
+    "quiz me on camera exposure",
+    "test my photography exposure knowledge",
+    "aperture shutter iso quiz",
+    "how well do i know exposure triangle",
+    "quiz me on f stops and shutter speed",
+    "photo exposure quiz pls"
+   ],
+   "title": "Camera exposure quiz",
+   "html": "<div class=\"card\"><div class=\"card-title\">Camera exposure</div><div class=\"quiz\"><div class=\"q\">1. What does a lower f-number mean?</div><details><summary>A) Smaller aperture</summary></details><details><summary>B) Wider aperture</summary><div class=\"answer\">Correct. Smaller f-number = larger opening = more light.</div></details><details><summary>C) Faster shutter</summary></details><details><summary>D) Lower ISO</summary></details></div><div class=\"quiz\"><div class=\"q\">2. What does ISO control?</div><details><summary>A) Focus distance</summary></details><details><summary>B) Sensitivity to light</summary><div class=\"answer\">Correct. Higher ISO brightens but adds noise.</div></details><details><summary>C) Color temperature</summary></details><details><summary>D) Depth of field</summary></details></div><div class=\"quiz\"><div class=\"q\">3. Which shutter speed freezes motion best?</div><details><summary>A) 1/30s</summary></details><details><summary>B) 1/1000s</summary><div class=\"answer\">Correct. Faster shutter stops action.</div></details><details><summary>C) 1/4s</summary></details><details><summary>D) 1s</summary></details></div><p class=\"muted t-small\">Exposure is a balance, <regex>user_name</regex>. Adjust one, compensate another.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "quiz me on knots",
+    "basic knot tying quiz",
+    "knot knowledge test",
+    "how to tie knots quiz",
+    "essential knots quiz",
+    "knots for camping quiz",
+    "rope knot quiz",
+    "quiz me on essential knots",
+    "test my knot tying knowledge",
+    "knot tying quiz",
+    "how many knots do i know quiz",
+    "quiz me on bowline and clove hitch",
+    "knots trivia"
+   ],
+   "title": "Essential knots quiz",
+   "html": "<div class=\"card\"><div class=\"card-title\">Essential knots</div><div class=\"quiz\"><div class=\"q\">1. Which knot is best for tying two ropes together?</div><details><summary>A) Bowline</summary></details><details><summary>B) Sheet bend</summary><div class=\"answer\">Correct. The sheet bend joins two ropes securely.</div></details><details><summary>C) Clove hitch</summary></details><details><summary>D) Figure eight</summary></details></div><div class=\"quiz\"><div class=\"q\">2. What is the bowline used for?</div><details><summary>A) A fixed loop</summary><div class=\"answer\">Correct. It creates a loop that won't slip under load.</div></details><details><summary>B) Joining two ropes</summary></details><details><summary>C) Shortening a rope</summary></details><details><summary>D) Decorating</summary></details></div><div class=\"quiz\"><div class=\"q\">3. Which knot tightens under load but is easy to untie?</div><details><summary>A) Clove hitch</summary><div class=\"answer\">Correct. It grips and releases easily.</div></details><details><summary>B) Reef knot</summary></details><details><summary>C) Overhand</summary></details><details><summary>D) Alpine butterfly</summary></details></div><p class=\"muted t-small\">Practice a few, <regex>user_name</regex>. Your hands will remember.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "quiz on cloud types",
+    "cloud identification quiz",
+    "what cloud is that quiz",
+    "weather clouds quiz",
+    "cloud spotting quiz",
+    "basic cloud types quiz",
+    "meteorology clouds quiz",
+    "quiz me on clouds",
+    "test my cloud knowledge",
+    "cloud spotting quiz",
+    "how well do i know cloud types",
+    "quiz me on cumulus and cirrus",
+    "cloud id quiz pls"
+   ],
+   "title": "Cloud identification quiz",
+   "html": "<div class=\"card\"><div class=\"card-title\">Cloud identification</div><div class=\"quiz\"><div class=\"q\">1. Which cloud is puffy and white with a flat base?</div><details><summary>A) Cirrus</summary></details><details><summary>B) Cumulus</summary><div class=\"answer\">Correct. Cumulus are the classic fair-weather clouds.</div></details><details><summary>C) Stratus</summary></details><details><summary>D) Nimbus</summary></details></div><div class=\"quiz\"><div class=\"q\">2. What does 'nimbus' mean?</div><details><summary>A) High altitude</summary></details><details><summary>B) Rain-bearing</summary><div class=\"answer\">Correct. Nimbostratus brings steady rain.</div></details><details><summary>C) Thin and wispy</summary></details><details><summary>D) Dark color</summary></details></div><div class=\"quiz\"><div class=\"q\">3. Which cloud is thin, wispy, and high up?</div><details><summary>A) Cirrus</summary><div class=\"answer\">Correct. Cirrus clouds are made of ice crystals.</div></details><details><summary>B) Cumulonimbus</summary></details><details><summary>C) Stratocumulus</summary></details><details><summary>D) Altostratus</summary></details></div><p class=\"muted t-small\">Look up, <regex>user_name</regex>. The sky is a daily forecast.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "quiz me on wine tasting",
+    "wine tasting quiz",
+    "wine knowledge test",
+    "how to taste wine quiz",
+    "wine basics quiz",
+    "wine aroma quiz",
+    "wine tasting terms quiz",
+    "quiz me on tasting wine",
+    "test my wine knowledge",
+    "wine tasting quiz",
+    "how well do i know wine basics",
+    "quiz me on tannins and acidity",
+    "wine trivia pls"
+   ],
+   "title": "Wine tasting basics quiz",
+   "html": "<div class=\"card\"><div class=\"card-title\">Wine tasting basics</div><div class=\"quiz\"><div class=\"q\">1. What does 'terroir' refer to?</div><details><summary>A) Grape variety</summary></details><details><summary>B) Environmental factors</summary><div class=\"answer\">Correct. Soil, climate, and terrain shape the wine.</div></details><details><summary>C) Bottle age</summary></details><details><summary>D) Alcohol content</summary></details></div><div class=\"quiz\"><div class=\"q\">2. Why swirl wine in the glass?</div><details><summary>A) To mix sediments</summary></details><details><summary>B) To release aromas</summary><div class=\"answer\">Correct. Swirling increases surface area for volatiles.</div></details><details><summary>C) To cool it</summary></details><details><summary>D) To remove tannins</summary></details></div><div class=\"quiz\"><div class=\"q\">3. What are tannins?</div><details><summary>A) Sugars</summary></details><details><summary>B) Compounds that cause astringency</summary><div class=\"answer\">Correct. Tannins come from skins, seeds, and oak.</div></details><details><summary>C) Acids</summary></details><details><summary>D) Alcohols</summary></details></div><p class=\"muted t-small\">Taste and trust your palate, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic bike chain care quiz",
+   "user_requests": [
+    "quiz me on looking after a bike chain",
+    "how much do u know about chain lube lol",
+    "bike chain maintenance quiz please",
+    "test me on chain wear and cleaning",
+    "i keep snapping chains, quiz me",
+    "chain care basics quiz",
+    "wanna check my bike chain knowledge",
+    "quiz me on bike chain care",
+    "test my bike chain knowledge",
+    "bicycle chain maintenance quiz",
+    "how do i lube a chain quiz",
+    "quiz me on chain cleaning and wear",
+    "bike chain quiz pls"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">Ready, <regex>user_name</regex>? One question on keeping a bike chain happy.</div><details><summary>A) A chain should run bone dry to avoid dirt sticking</summary></details><details><summary>B) Wipe off old lube, apply fresh, then wipe the excess</summary><div class=\"answer\">Correct. Clean first, lube lightly, wipe again. Excess lube is just a dirt magnet waiting to happen.</div></details><details><summary>C) Any oil from the kitchen works fine</summary></details><details><summary>D) Chains never need attention until they snap</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic bicycle inner tube repair quiz",
+   "user_requests": [
+    "quiz on fixing a punctured tube",
+    "how do i patch a flat? quiz me",
+    "inner tube repair quiz",
+    "test my flat tyre skills",
+    "bike tube patching quiz pls",
+    "i got a flat today, quiz me on fixes",
+    "puncture repair basics quiz",
+    "quiz me on fixing a flat",
+    "test my inner tube repair knowledge",
+    "bike tube patch quiz",
+    "how well do i know tire repair",
+    "quiz me on punctures and patches",
+    "inner tube quiz pls"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">Flat tyre, <regex>user_name</regex>? Let's see if you'd get home.</div><details><summary>A) Glue the patch straight onto a dusty tube</summary></details><details><summary>B) Rough up the area, wait for glue to go tacky, then press the patch on</summary><div class=\"answer\">Correct. Scuff, glue, wait until it's dry to the touch, then press firmly and hold. Dust is the enemy of a good bond.</div></details><details><summary>C) Skip the glue, the patch sticks on its own</summary></details><details><summary>D) Inflate hard immediately to set the patch</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic shoe care quiz",
+   "user_requests": [
+    "quiz me on looking after my shoes",
+    "how should i clean leather boots? quiz",
+    "shoe care basics quiz",
+    "test me on sneaker upkeep",
+    "my boots are wrecked, quiz me",
+    "shoe maintenance quiz please",
+    "what do u know about shoe care",
+    "test me on keeping sneakers lookin fresh",
+    "shoe maintenance trivia pls",
+    "gimme a quiz about takin care of my kicks",
+    "how much do i know bout shoe polish n stuff? quiz me",
+    "quiz me on shoe care basics",
+    "wanna see if i know how 2 clean leather boots quiz"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">Nice shoes, <regex>user_name</regex>. Let's keep them that way.</div><details><summary>A) Dry wet leather shoes on a radiator for speed</summary></details><details><summary>B) Air dry away from direct heat, then condition</summary><div class=\"answer\">Correct. Heat cracks leather. Stuff them with newspaper, let them dry slowly, then feed the leather.</div></details><details><summary>C) Wash leather in the machine on cold</summary></details><details><summary>D) Never clean them, it wears them out</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic refrigerator food storage quiz",
+   "user_requests": [
+    "quiz on fridge storage",
+    "where should things go in the fridge? quiz me",
+    "food storage quiz pls",
+    "test me on keeping food fresh",
+    "my veg keeps dying, quiz me",
+    "fridge organisation quiz",
+    "wanna quiz on cold storage basics",
+    "test my knowledge on whats safe 2 put in the fridge",
+    "fridge food storage quiz plz",
+    "quiz me on how long stuff lasts in the fridge",
+    "do i know how 2 store leftovers? quiz me",
+    "quiz: keeping food cold the right way",
+    "check my fridge storage smarts"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">Quick one, <regex>user_name</regex>: which shelf keeps food safest?</div><details><summary>A) Raw meat on the top shelf, for easy reach</summary></details><details><summary>B) Raw meat on the bottom shelf, in a sealed container</summary><div class=\"answer\">Correct. Bottom shelf means any drips can't rain onto ready-to-eat food below. The door is the warmest spot, so keep milk out of it.</div></details><details><summary>C) Everything in the door, it's handiest</summary></details><details><summary>D) Eggs belong in the freezer</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic window cleaning quiz",
+   "user_requests": [
+    "quiz me on washing windows",
+    "how to get streak free glass? quiz",
+    "window cleaning quiz",
+    "test my glass cleaning skills",
+    "windows look awful, quiz me",
+    "streak-free window quiz pls",
+    "quiz on cleaning glass",
+    "quiz me about getting streaks off glass",
+    "window washing trivia",
+    "test me on squeegee technique n window stuff",
+    "how good am i at cleaning windows? quiz",
+    "quiz me on window cleanin basics",
+    "wanna quiz on washing windows without streaks"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">Squeaky clean, <regex>user_name</regex>? Let's check your technique.</div><details><summary>A) Scrub in circles in full sun, then let it dry</summary></details><details><summary>B) Wash, squeegee in overlapping strokes, wipe the blade between passes</summary><div class=\"answer\">Correct. Work out of direct sun, pull the squeegee in a top-to-bottom zigzag, and dry the blade each time. Streaks come from dirty blades and midday heat.</div></details><details><summary>C) Newspaper and spit, always</summary></details><details><summary>D) More soap means fewer streaks</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic houseplant watering quiz",
+   "user_requests": [
+    "quiz me on watering plants",
+    "how often should i water? quiz",
+    "houseplant care quiz",
+    "test me on plant basics",
+    "my fern is sad, quiz me",
+    "indoor plant watering quiz pls",
+    "quiz on keeping plants alive",
+    "test me on how often 2 water plants",
+    "plant watering quiz pls",
+    "do i overwater my plants? quiz me",
+    "quiz me on keeping houseplants alive w/ water",
+    "plant hydration trivia",
+    "quiz: watering indoor plants right"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">Plant parent check, <regex>user_name</regex>. When do you water?</div><details><summary>A) On a strict weekly schedule come what may</summary></details><details><summary>B) When the top few centimetres of soil feel dry to your finger</summary><div class=\"answer\">Correct. Stick a finger in, not a calendar. Light, season and pot size all change the answer, and soggy roots kill more plants than thirst.</div></details><details><summary>C) A little every single day</summary></details><details><summary>D) Only when the leaves go brown and crispy</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "Quiz me on washing machine basics",
+    "basic laundry quiz",
+    "how do I sort clothes for washing?",
+    "laundry symbols test",
+    "I keep ruining my sweaters in the wash",
+    "teach me laundry basics",
+    "what temp should I wash whites",
+    "test me on laundry do's and donts",
+    "quiz me bout washer settings n detergent",
+    "laundry basics quiz plz",
+    "do i know how 2 do laundry? quiz",
+    "quiz on sorting clothes n washing",
+    "gimme a laundry know-how test"
+   ],
+   "title": "Basic laundry quiz",
+   "html": "<div class=\"quiz\"><div class=\"q\">Washing whites with hot water is best for:</div><details><summary>A) Keeping colors bright</summary></details><details><summary>B) Removing stains and sanitizing</summary><div class=\"answer\">Correct. Hot water helps lift stains and kill germs, but can fade colors and shrink some fabrics.</div></details><details><summary>C) Saving energy</summary></details></div><p class=\"muted\">Next time you sort, check the care label first. It knows more than we do.</p>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "test my knowledge on plant propagation",
+    "how to propagate pothos",
+    "plant cutting quiz",
+    "I want to make more houseplants for free",
+    "propagation basics",
+    "can you quiz me on taking cuttings",
+    "best way to root a cutting in water",
+    "quiz me on making new plants from cuttings",
+    "propagation trivia pls",
+    "test my skills on cloning plants",
+    "how do i grow plants from other plants? quiz me",
+    "quiz: propagating houseplants",
+    "wanna test on rooting cuttings n stuff"
+   ],
+   "title": "Basic plant propagation quiz",
+   "html": "<div class=\"quiz\"><div class=\"q\">When rooting a pothos cutting in water, where should the leaf node be?</div><details><summary>A) Above the water line</summary></details><details><summary>B) Submerged in the water</summary><div class=\"answer\">Correct. The node (where roots emerge) must be underwater. Leaves above the water line prevent rot.</div></details><details><summary>C) Doesn't matter</summary></details></div><p class=\"muted\">Change the water weekly. Roots like fresh oxygen.</p>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how do I tie a tie?",
+    "quiz me on tie knots",
+    "basic necktie knot quiz",
+    "what's the easiest tie knot for beginners",
+    "tie tying test",
+    "I have an interview and can't tie a tie",
+    "four-in-hand vs windsor",
+    "test me on tying a windsor knot",
+    "tie knot quiz plz",
+    "quiz me on necktie knots",
+    "how well do i know tying ties? quiz",
+    "quiz bout tie knots for work",
+    "wanna learn tie knots quiz me"
+   ],
+   "title": "Basic necktie knot quiz",
+   "html": "<div class=\"quiz\"><div class=\"q\">Which tie knot is generally the simplest and most versatile?</div><details><summary>A) Windsor</summary></details><details><summary>B) Four-in-hand</summary><div class=\"answer\">Correct. The four-in-hand is slim, easy, and works with most collars and ties.</div></details><details><summary>C) Pratt</summary></details></div><p class=\"muted\">If you can tie your shoes, you can tie a four-in-hand. Give it a try.</p>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how to change a flat tire on my bike",
+    "quiz me on fixing a bike puncture",
+    "bike tube repair test",
+    "I got a flat, what do I do?",
+    "bicycle tire patch quiz",
+    "basic bike tire repair",
+    "help me fix a flat",
+    "test me on fixing a punctured bike tube",
+    "bike flat tire quiz plz",
+    "quiz me on patching tires on a bicycle",
+    "do i know how 2 fix a flat? quiz",
+    "quiz: bike tire repair basics",
+    "wanna quiz on changing inner tubes"
+   ],
+   "title": "Basic bike tire repair quiz",
+   "html": "<div class=\"quiz\"><div class=\"q\">Before patching a punctured inner tube, what should you do first?</div><details><summary>A) Inflate it to find the leak</summary><div class=\"answer\">Correct. A little air helps you hear or feel the escaping air and locate the hole.</div></details><details><summary>B) Glue the patch immediately</summary></details><details><summary>C) Throw it away</summary></details></div><p class=\"muted\">Rough up the area, apply glue, wait a minute, then press the patch. Patience pays.</p>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "quiz me on coffee grind size",
+    "what grind for French press",
+    "coffee brewing grind test",
+    "I'm new to coffee, help",
+    "how fine should I grind for espresso",
+    "coffee grind basics",
+    "grind size quiz",
+    "test me on grind settings for espresso vs french press",
+    "coffee grind quiz plz",
+    "quiz me bout coarse vs fine grounds",
+    "do i know my coffee grind sizes? quiz",
+    "quiz: grind size for brewing methods",
+    "wanna test on coffee grinding basics"
+   ],
+   "title": "Basic coffee grind size quiz",
+   "html": "<div class=\"quiz\"><div class=\"q\">Which brewing method needs the coarsest grind?</div><details><summary>A) Espresso</summary></details><details><summary>B) French press</summary><div class=\"answer\">Correct. French press uses a coarse grind so the metal filter can catch the grounds.</div></details><details><summary>C) Drip</summary></details></div><p class=\"muted\">Grind fresh if you can. It makes a bigger difference than you'd think.</p>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how do I check my car's oil?",
+    "quiz me on car fluids",
+    "basic car fluid check",
+    "I don't know how to check oil",
+    "car maintenance fluids test",
+    "oil check quiz",
+    "what fluids should I check in my car",
+    "test me on checking coolant n brake fluid",
+    "car fluids quiz plz",
+    "quiz me on under the hood fluid checks",
+    "do i know how 2 check my oil n stuff? quiz",
+    "quiz: car maintenance fluids",
+    "wanna quiz on dipsticks n reservoirs"
+   ],
+   "title": "Basic car fluid check quiz",
+   "html": "<div class=\"quiz\"><div class=\"q\">When checking engine oil with the dipstick, the engine should be:</div><details><summary>A) Running</summary></details><details><summary>B) Off and cool</summary><div class=\"answer\">Correct. Turn off the engine, wait a few minutes, then check. Hot oil can burn you.</div></details><details><summary>C) Hot but off</summary></details></div><p class=\"muted\">Wipe, dip, wipe, dip again. The second reading is the honest one.</p>",
+   "augmented": true
+  },
+  {
+   "title": "Basic smoke alarm care quiz",
+   "user_requests": [
+    "quiz me on smoke alarms",
+    "how should i look after my smoke detector",
+    "smoke alarm maintenance quiz pls",
+    "test my knowledge on smoke detectors",
+    "do i need to clean my smoke alarm? quiz",
+    "fire alarm upkeep quiz",
+    "quick quiz on keeping smoke alarms working",
+    "test me on testing n cleaning smoke detectors",
+    "smoke alarm quiz plz",
+    "quiz me on smoke detector maintenance",
+    "do i know how 2 care for smoke alarms? quiz",
+    "quiz: fire alarm upkeep basics",
+    "wanna test on changing alarm batteries"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"stack\"><p class=\"muted t-small\">Alright <regex>user_name</regex>, four questions on keeping that little circle on the ceiling alive.</p><div class=\"quiz\"><div class=\"q\">1. How often should you press the test button?</div><details><summary>A) Once a year</summary></details><details><summary>B) Once a month</summary><div class=\"answer\">Correct. Monthly press, yearly deep clean, replace the unit every 10 years.</div></details><details><summary>C) Only when it chirps</summary></details></div><div class=\"quiz\"><div class=\"q\">2. The alarm chirps every 30-60 seconds. What does that mean?</div><details><summary>A) It is broken, buy a new one</summary></details><details><summary>B) Low battery warning</summary><div class=\"answer\">Correct. Swap the battery now, do not wait for a full beep.</div></details><details><summary>C) Dust in the sensor</summary></details></div><div class=\"quiz\"><div class=\"q\">3. Best way to clean it?</div><details><summary>A) Vacuum the vents, wipe the case</summary><div class=\"answer\">Correct. Soft brush or vacuum nozzle, never water or spray cleaner inside.</div></details><details><summary>B) Run it under the tap</summary></details><details><summary>C) Blow into the sensor hole</summary></details></div><div class=\"quiz\"><div class=\"q\">4. Where does it belong?</div><details><summary>A) Near the kitchen stove</summary></details><details><summary>B) On the ceiling, away from vents and windows</summary><div class=\"answer\">Correct. Keep it at least 3 m from cooking fumes and out of dead-air corners.</div></details><details><summary>C) In the basement only</summary></details></div><p class=\"muted t-small\">Nice. One press of a button is a small thing that buys you a lot.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic dishwashing by hand quiz",
+   "user_requests": [
+    "quiz me on washing dishes by hand",
+    "hand dishwashing quiz",
+    "how do i wash dishes properly quiz",
+    "test me on dish soap and sponges",
+    "dishwashing basics quiz please",
+    "am i washing dishes wrong quiz",
+    "quick quiz hand washing dishes",
+    "test me on hand washing pots n pans",
+    "dishwashing quiz plz",
+    "quiz me bout washing dishes without a machine",
+    "do i know how 2 wash dishes by hand? quiz",
+    "quiz: sink dishwashing basics",
+    "wanna test my dish soap skills quiz"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"stack\"><p class=\"muted t-small\">Hey <regex>user_name</regex>. Three questions on the sink end of things.</p><div class=\"quiz\"><div class=\"q\">1. What order should you wash in?</div><details><summary>A) Whatever is closest</summary></details><details><summary>B) Cleanest first: glasses, then plates, then pots</summary><div class=\"answer\">Correct. Grease travels downward, so keep the light stuff out of the way first.</div></details><details><summary>C) Pots first, they need the hottest water</summary></details></div><div class=\"quiz\"><div class=\"q\">2. Best water temperature for hand washing?</div><details><summary>A) Cold, to save energy</summary></details><details><summary>B) As hot as your hands can stand</summary><div class=\"answer\">Correct. Around 45-50 degrees C loosens grease without scalding you.</div></details><details><summary>C) Lukewarm is fine</summary></details></div><div class=\"quiz\"><div class=\"q\">3. Sponge looking sad and smelling odd. What now?</div><details><summary>A) Keep using it, it still works</summary></details><details><summary>B) Replace it, or microwave a damp one for one minute</summary><div class=\"answer\">Correct. A damp sponge in the microwave for 60 seconds is a decent reset. Replace weekly anyway.</div></details><details><summary>C) Rinse it in cold water</summary></details></div><p class=\"muted t-small\">Good. Your glasses will thank you.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic charcoal grilling quiz",
+   "user_requests": [
+    "quiz me on charcoal grilling",
+    "charcoal bbq quiz",
+    "how do i light charcoal properly quiz",
+    "test my bbq knowledge",
+    "grilling with charcoal basics quiz",
+    "am i grilling wrong? quiz",
+    "quick quiz on charcoal grill setup",
+    "test me on lighting a charcoal grill",
+    "charcoal bbq quiz plz",
+    "quiz me on grilling with charcoal",
+    "do i know how 2 use a charcoal grill? quiz",
+    "quiz: charcoal grilling basics",
+    "wanna test on bbq coals n vents"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"stack\"><p class=\"muted t-small\">Evening, <regex>user_name</regex>. Four quick ones on the kettle grill.</p><div class=\"quiz\"><div class=\"q\">1. How full should a chimney starter be?</div><details><summary>A) Packed to the rim</summary></details><details><summary>B) About three-quarters full</summary><div class=\"answer\">Correct. A full chimney is a lot of heat. Three-quarters is plenty for a family cook.</div></details><details><summary>C) One small handful</summary></details></div><div class=\"quiz\"><div class=\"q\">2. When are the coals ready?</div><details><summary>A) When flames appear</summary></details><details><summary>B) When they are grey with ash and glowing underneath</summary><div class=\"answer\">Correct. Flames mean it is still too hot and still burning off lighter fluid.</div></details><details><summary>C) Twenty seconds after lighting</summary></details></div><div class=\"quiz\"><div class=\"q\">3. Two-zone setup: what is it for?</div><details><summary>A) Direct heat on one side, no coals on the other</summary><div class=\"answer\">Correct. Sear over the coals, finish on the cool side. It is also your escape hatch for flare-ups.</div></details><details><summary>B) Two piles, one at each end</summary></details><details><summary>C) Coals under a water pan</summary></details></div><div class=\"quiz\"><div class=\"q\">4. How do you tame a flare-up?</div><details><summary>A) Close the lid and the vents</summary><div class=\"answer\">Correct. Starve it of air. Move food to the cool zone and let it settle.</div></details><details><summary>B) Squirt water on the coals</summary></details><details><summary>C) Spread the coals out</summary></details></div><p class=\"muted t-small\">Good luck out there. Smoke is a feature, not a bug.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic clothing stain removal quiz",
+   "user_requests": [
+    "quiz me on stain removal",
+    "how do i get stains out of clothes quiz",
+    "stain removal basics quiz",
+    "test me on laundry stains",
+    "blood and grease stain quiz",
+    "quick quiz removing stains from shirts",
+    "am i treating stains wrong quiz",
+    "test me on getting out grass n wine stains",
+    "stain removal quiz plz",
+    "quiz me on treating stains on clothes",
+    "do i know how 2 remove stains? quiz",
+    "quiz: stain fighting basics",
+    "wanna test on blood n grease stain tricks"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"stack\"><p class=\"muted t-small\">Hi <regex>user_name</regex>. Four stains, four answers. Blot first, always.</p><div class=\"quiz\"><div class=\"q\">1. First move when coffee hits your shirt?</div><details><summary>A) Rub it in with soap</summary></details><details><summary>B) Blot from the back with cold water</summary><div class=\"answer\">Correct. Rubbing spreads the stain and pushes it into the fibres.</div></details><details><summary>C) Reach for hot water</summary></details></div><div class=\"quiz\"><div class=\"q\">2. Blood stain, fresh. Water temperature?</div><details><summary>A) Cold</summary><div class=\"answer\">Correct. Hot water sets the protein. Cold water and a little soap, then wash as normal.</div></details><details><summary>B) Hot</summary></details><details><summary>C) Boiling</summary></details></div><div class=\"quiz\"><div class=\"q\">3. Grease mark on a cotton shirt. What helps most?</div><details><summary>A) Dish soap worked in with your fingers</summary><div class=\"answer\">Correct. A drop of dish soap, gentle rub, then wash. Baking soda on top helps for tough spots.</div></details><details><summary>B) More oil</summary></details><details><summary>C) Hairspray</summary></details></div><div class=\"quiz\"><div class=\"q\">4. Grass stain, stubborn. What do you reach for?</div><details><summary>A) White vinegar or an enzyme detergent</summary><div class=\"answer\">Correct. Soak 15 minutes, then wash on the warmest setting the label allows.</div></details><details><summary>B) Bleach on everything</summary></details><details><summary>C) Just hope it fades</summary></details></div><p class=\"muted t-small\">Good. Now go rescue that shirt.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic resume layout quiz",
+   "user_requests": [
+    "quiz me on resumes",
+    "how should a resume look quiz",
+    "resume formatting quiz",
+    "test my cv knowledge",
+    "one page resume quiz please",
+    "quick quiz on resume basics",
+    "what makes a bad resume quiz",
+    "test me on formatting a resume",
+    "resume layout quiz plz",
+    "quiz me on resume sections n order",
+    "do i know how 2 structure a resume? quiz",
+    "quiz: resume design basics",
+    "wanna test on cv layout stuff"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"stack\"><p class=\"muted t-small\">Right <regex>user_name</regex>, three questions on the document that gets you the interview.</p><div class=\"quiz\"><div class=\"q\">1. Best length for most people with under 10 years experience?</div><details><summary>A) One page</summary><div class=\"answer\">Correct. One page unless you have real depth to show. Two pages is fine later, not now.</div></details><details><summary>B) Three pages minimum</summary></details><details><summary>C) As long as it needs to be</summary></details></div><div class=\"quiz\"><div class=\"q\">2. Which bullet is stronger?</div><details><summary>A) \"Responsible for social media\"</summary></details><details><summary>B) \"Grew newsletter from 400 to 2,100 subscribers in six months\"</summary><div class=\"answer\">Correct. Numbers, verbs, outcomes. Vague duties tell a recruiter nothing.</div></details><details><summary>C) \"Team player with great attitude\"</summary></details></div><div class=\"quiz\"><div class=\"q\">3. What should be the very top line?</div><details><summary>A) Objective statement</summary></details><details><summary>B) Your name, phone, email, one link</summary><div class=\"answer\">Correct. Make it easy to contact you in the first two seconds.</div></details><details><summary>C) A photo</summary></details></div><p class=\"muted t-small\">Nice. One page, one focus, one clear ask.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic time blocking quiz",
+   "user_requests": [
+    "quiz me on time blocking",
+    "how do i time block my day quiz",
+    "time management quiz",
+    "test me on calendar blocking",
+    "planning my day quiz please",
+    "quick quiz time blocking basics",
+    "am i scheduling my day wrong quiz",
+    "test me on scheduling my day in blocks",
+    "time blocking quiz plz",
+    "quiz me on time blocking method",
+    "do i know how 2 time block? quiz",
+    "quiz: calendar blocking basics",
+    "wanna test on productivity time blocks"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"stack\"><p class=\"muted t-small\">Alright <regex>user_name</regex>. Four on making the calendar do the work.</p><div class=\"quiz\"><div class=\"q\">1. Start with what on the day's list?</div><details><summary>A) The easiest thing</summary></details><details><summary>B) The one thing that matters most if nothing else gets done</summary><div class=\"answer\">Correct. Block it first, protect it hardest, schedule around it.</div></details><details><summary>C) Whatever email is asking for</summary></details></div><div class=\"quiz\"><div class=\"q\">2. How long should a focus block usually be?</div><details><summary>A) 30 minutes max</summary></details><details><summary>B) 60-90 minutes, with a real break after</summary><div class=\"answer\">Correct. Deep work has a rhythm. Ninety minutes then a walk beats four hours of drift.</div></details><details><summary>C) As long as the day allows</summary></details></div><div class=\"quiz\"><div class=\"q\">3. What goes in a buffer block?</div><details><summary>A) Nothing, that is the point</summary><div class=\"answer\">Correct. Twenty minutes of white space catches the overruns and the surprise call.</div></details><details><summary>B) Low-priority emails</summary></details><details><summary>C) Meetings that got cancelled</summary></details></div><div class=\"quiz\"><div class=\"q\">4. Someone asks for a slot in your focus block. Best reply?</div><details><summary>A) Yes, always say yes</summary></details><details><summary>B) Offer two other slots instead</summary><div class=\"answer\">Correct. Protect the block, be generous with the alternatives.</div></details><details><summary>C) Ignore it and hope</summary></details></div><p class=\"muted t-small\">Good. Your calendar is a promise to yourself. Keep it.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic watercolor wash quiz",
+   "user_requests": [
+    "basic watercolor washes quiz",
+    "quiz me on watercolor flat wash technique",
+    "watercolor painting beginner wash questions",
+    "how do you do a watercolor wash",
+    "watercolour wash quiz",
+    "quick quiz on watercolour washes",
+    "basic watercolor wash quiz",
+    "help me practice flat and graded watercolor washes",
+    "watercolour wash technique test pls",
+    "i wanna get better at painting washes w/ watercolors",
+    "test my knowledge on wet-on-wet vs wet-on-dry washes",
+    "watercolor wash drill questions",
+    "can u quiz me about laying down an even wash in watercolour?"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">What's the purpose of a light watercolor wash as a base layer?</div><details><summary>A) To create texture and detail</summary></details><details><summary>B) To block out large areas of light colour and guide later layers</summary><div class=\"answer\">Correct. A flat wash sets the tone and covers big shapes; detail comes later with dry brush or glazing.</div></details><details><summary>C) To mix all pigments at once</summary></details><details><summary>D) To seal the paper so it won't buckle</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic houseplant light needs quiz",
+   "user_requests": [
+    "houseplant light quiz",
+    "how much light does my plant need quiz",
+    "quiz on indoor plant lighting",
+    "plant light basics test",
+    "indoor plant sun needs quiz",
+    "basic houseplant light quiz",
+    "quick plant light quiz",
+    "how much light does my pothos actually need? quiz me",
+    "test me on low light vs bright indirect for indoor plants",
+    "wanna check if i know which plants hate direct sun",
+    "houseplant lighting questions plz",
+    "quiz: full sun, partial shade, or indirect for my monstera?",
+    "i keep killing plants w/ wrong light\u2014quiz me"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">Your ZZ plant gets bright, direct afternoon sun and its leaves are curling. What does it likely need?</div><details><summary>A) More water</summary></details><details><summary>B) Less intense, indirect light</summary><div class=\"answer\">Correct. ZZ plants prefer medium to low indirect light; direct sun can scorch and curl leaves.</div></details><details><summary>C) A bigger pot</summary></details><details><summary>D) Fertilizer</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic fabric stain removal quiz",
+   "user_requests": [
+    "fabric stain removal quiz",
+    "how to get stains out of clothes quiz",
+    "stain removal basics test",
+    "quiz me on stain removal",
+    "clothing stain quiz",
+    "basic stain removal quiz",
+    "quick stain removal questions",
+    "how do i get red wine out of a shirt? test me",
+    "quiz me on blood, grease, and coffee stains on clothes",
+    "stain removal practice questions for laundry",
+    "test my stain-fighting knowledge pls",
+    "what removes ink from cotton? quiz",
+    "help me learn how to treat stains on different fabrics"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">You spilled red wine on a white cotton shirt. What should you blot with first?</div><details><summary>A) Hot water and soap</summary></details><details><summary>B) A clean, dry cloth to absorb as much as possible</summary><div class=\"answer\">Correct. Blotting lifts the liquid; rubbing or hot water can set the stain and spread it.</div></details><details><summary>C) Hairspray</summary></details><details><summary>D) Bleach directly on the stain</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic fire extinguisher use quiz",
+   "user_requests": [
+    "fire extinguisher quiz",
+    "how to use a fire extinguisher quiz",
+    "PASS technique quiz",
+    "fire safety extinguisher test",
+    "basic fire extinguisher quiz",
+    "quiz on fire extinguisher use",
+    "quick fire extinguisher quiz",
+    "PASS vs sweep method\u2014quiz me",
+    "test me on when not to use a fire extinguisher",
+    "fire safety extinguisher questions plz",
+    "quiz me on class A B C D K fires",
+    "how do i use an extinguisher? drill me",
+    "i need a refresher on extinguisher basics, quiz me"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">What does the acronym PASS stand for when using a fire extinguisher?</div><details><summary>A) Pull, Aim, Squeeze, Sweep</summary><div class=\"answer\">Correct. Pull the pin, aim at the base, squeeze the handle, sweep side to side.</div></details><details><summary>B) Push, Aim, Spray, Stop</summary></details><details><summary>C) Point, Alert, Spray, Secure</summary></details><details><summary>D) Prepare, Act, Spray, Stay</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic kitchen knife sharpening quiz",
+   "user_requests": [
+    "knife sharpening quiz",
+    "how to sharpen a kitchen knife quiz",
+    "knife sharpening basics test",
+    "quiz me on sharpening knives",
+    "sharpening angle quiz",
+    "basic knife sharpening quiz",
+    "quick knife sharpening quiz",
+    "whetstone vs honing rod\u2014quiz me",
+    "test my knowledge on sharpening angles for kitchen knives",
+    "how do i know when a knife is dull? quiz",
+    "knife maintenance questions pls",
+    "quiz me on burr removal and stropping",
+    "i wanna learn to sharpen my chef's knife\u2014test me"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">When sharpening a Western-style kitchen knife on a whetstone, what angle should you aim for?</div><details><summary>A) 5 degrees</summary></details><details><summary>B) 15 to 20 degrees per side</summary><div class=\"answer\">Correct. Most Western knives are ground at about 15\u201320\u00b0 per side; thinner angles for Japanese knives.</div></details><details><summary>C) 45 degrees</summary></details><details><summary>D) 90 degrees</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic vitamin D quiz",
+   "user_requests": [
+    "vitamin D quiz",
+    "basic vitamin D facts quiz",
+    "how much vitamin D quiz",
+    "vitamin D sunlight quiz",
+    "quiz on vitamin D",
+    "basic vitamin d quiz",
+    "quick vitamin D quiz",
+    "how much D do i actually need? quiz me",
+    "test me on sunlight, supplements, and vitamin D deficiency",
+    "vit D facts quiz plz",
+    "quiz me on IU vs mcg for vitamin D",
+    "is my vitamin D knowledge solid? test me",
+    "questions about vitamin D sources and daily needs"
+   ],
+   "html": "<div class=\"quiz\"><div class=\"q\">What is the main way most people get vitamin D?</div><details><summary>A) Eating leafy greens</summary></details><details><summary>B) Sun exposure on skin</summary><div class=\"answer\">Correct. UVB rays trigger vitamin D synthesis in skin; diet and supplements fill the gaps.</div></details><details><summary>C) Drinking milk</summary></details><details><summary>D) Breathing fresh air</summary></details></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "quiz me on basic tea steeping",
+    "what temp for green tea again?",
+    "test my tea knowledge",
+    "tea quiz pls",
+    "i keep burning my green tea help",
+    "basic tea brewing questions",
+    "how much tea per cup? quick quiz",
+    "what temp for green tea? quiz me",
+    "test me on steeping times for black, oolong, and herbal teas",
+    "tea brewing questions pls",
+    "quiz me on how long to steep loose leaf",
+    "gongfu vs western brewing\u2014test me",
+    "i wanna nail my tea game, quiz me"
+   ],
+   "title": "Basic tea steeping quiz",
+   "html": "<div class=\"card\"><div class=\"card-title\">Tea steeping basics</div><div class=\"quiz\"><div class=\"q\">What water temperature is best for green tea?</div><details><summary>A) Rolling boil, 100&deg;C</summary></details><details><summary>B) 70&ndash;80&deg;C</summary><div class=\"answer\">Correct. Boiling water scalds green leaves and brings out bitterness. Let the kettle rest a minute or two after boiling.</div></details><details><summary>C) 40&deg;C</summary></details><details><summary>D) It doesn't matter</summary></details></div><div class=\"quiz\"><div class=\"q\">How much loose tea for a standard 250 ml cup?</div><details><summary>A) 1 teaspoon</summary><div class=\"answer\">Correct. About 2&ndash;3 grams. Adjust to taste, but start there.</div></details><details><summary>B) 1 tablespoon</summary></details><details><summary>C) A pinch</summary></details><details><summary>D) Fill the cup halfway</summary></details></div><div class=\"quiz\"><div class=\"q\">Black tea usually steeps for how long?</div><details><summary>A) 30 seconds</summary></details><details><summary>B) 3&ndash;5 minutes</summary><div class=\"answer\">Correct. Over-steeping makes it tannic. Set a timer if you tend to forget.</div></details><details><summary>C) 10 minutes</summary></details><details><summary>D) Until it looks dark enough</summary></details></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "i need to clean my windows",
+    "window cleaning quiz",
+    "how do i get streak free glass?",
+    "quick window washing test",
+    "whats the best way to clean windows",
+    "test me on window cleaning",
+    "streaky windows driving me nuts",
+    "streaks on glass\u2014quiz me on fixing that",
+    "test me on squeegee technique and cleaning solutions",
+    "how do i clean windows without lint? quiz",
+    "window washing questions plz",
+    "quiz me on inside vs outside window cleaning",
+    "best way to get spotless windows? test me"
+   ],
+   "title": "Basic window cleaning quiz",
+   "html": "<div class=\"card\"><div class=\"card-title\">Window cleaning basics</div><div class=\"quiz\"><div class=\"q\">What's the best time to clean windows?</div><details><summary>A) Direct hot sunlight</summary></details><details><summary>B) Overcast or shaded time</summary><div class=\"answer\">Correct. Sun dries the glass too fast and leaves streaks. Pick a cloudy day or the shady side of the house.</div></details><details><summary>C) Right after rain</summary></details><details><summary>D) Any time, it doesn't matter</summary></details></div><div class=\"quiz\"><div class=\"q\">Which tool leaves the fewest streaks?</div><details><summary>A) Paper towels</summary></details><details><summary>B) A squeegee</summary><div class=\"answer\">Correct. A squeegee with a clean rubber blade pulls water off in one pass. Wipe the blade between strokes.</div></details><details><summary>C) An old T-shirt</summary></details><details><summary>D) Newspaper</summary></details></div><div class=\"quiz\"><div class=\"q\">How much dish soap in your bucket?</div><details><summary>A) A few drops</summary><div class=\"answer\">Correct. Just enough to break surface tension. Too much soap leaves a film that streaks.</div></details><details><summary>B) A big squeeze</summary></details><details><summary>C) Half a cup</summary></details><details><summary>D) None, just water</summary></details></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how do i sharpen my kitchen knives?",
+    "knife sharpening quiz",
+    "test me on knife sharpening",
+    "my knives are dull",
+    "quick quiz on sharpening knives",
+    "what angle for kitchen knife",
+    "knife maintenance quiz pls",
+    "whetstone vs honing rod\u2014quiz me",
+    "test my knowledge on sharpening angles for kitchen knives",
+    "how do i know when a knife is dull? quiz",
+    "knife maintenance questions pls",
+    "quiz me on burr removal and stropping",
+    "i wanna learn to sharpen my chef's knife\u2014test me"
+   ],
+   "title": "Basic kitchen knife sharpening quiz",
+   "html": "<div class=\"card\"><div class=\"card-title\">Knife sharpening basics</div><div class=\"quiz\"><div class=\"q\">What angle do most Western kitchen knives use?</div><details><summary>A) 10 degrees per side</summary></details><details><summary>B) 15&ndash;20 degrees per side</summary><div class=\"answer\">Correct. Japanese knives are often sharper (10&ndash;15&deg;), but 15&ndash;20&deg; is the standard for European-style blades.</div></details><details><summary>C) 45 degrees per side</summary></details><details><summary>D) 5 degrees per side</summary></details></div><div class=\"quiz\"><div class=\"q\">How often should you hone a knife?</div><details><summary>A) Once a year</summary></details><details><summary>B) Every few uses</summary><div class=\"answer\">Correct. Honing realigns the edge. Sharpening removes metal and is needed less often.</div></details><details><summary>C) Only when it's visibly dull</summary></details><details><summary>D) Never</summary></details></div><div class=\"quiz\"><div class=\"q\">What does a whetstone grit number mean?</div><details><summary>A) Higher number = coarser</summary></details><details><summary>B) Higher number = finer</summary><div class=\"answer\">Correct. 1000 grit is medium, 6000+ is polishing. Start coarse if the edge is damaged, then refine.</div></details><details><summary>C) It's the stone's weight</summary></details><details><summary>D) It's the brand's model number</summary></details></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "quiz on vitamin d",
+    "how much vitamin d do i need?",
+    "vitamin d basics test",
+    "sun and vitamin d quiz",
+    "am i getting enough vitamin d?",
+    "quick vitamin d questions",
+    "test my vitamin d knowledge",
+    "how much D do i actually need? quiz me",
+    "test me on sunlight, supplements, and vitamin D deficiency",
+    "vit D facts quiz plz",
+    "quiz me on IU vs mcg for vitamin D",
+    "is my vitamin D knowledge solid? test me",
+    "questions about vitamin D sources and daily needs"
+   ],
+   "title": "Basic vitamin D quiz",
+   "html": "<div class=\"card\"><div class=\"card-title\">Vitamin D basics</div><div class=\"quiz\"><div class=\"q\">What's the main way your body gets vitamin D?</div><details><summary>A) From leafy greens</summary></details><details><summary>B) Sunlight on skin</summary><div class=\"answer\">Correct. UVB rays trigger vitamin D synthesis. Food and supplements help when sun is scarce.</div></details><details><summary>C) From drinking water</summary></details><details><summary>D) From sleep</summary></details></div><div class=\"quiz\"><div class=\"q\">Which food is naturally high in vitamin D?</div><details><summary>A) Oranges</summary></details><details><summary>B) Fatty fish like salmon</summary><div class=\"answer\">Correct. Salmon, mackerel, and sardines are good sources. Egg yolks and fortified milk also contribute.</div></details><details><summary>C) Brown rice</summary></details><details><summary>D) Apples</summary></details></div><div class=\"quiz\"><div class=\"q\">Why is vitamin D important?</div><details><summary>A) It helps absorb calcium for bones</summary><div class=\"answer\">Correct. It also supports muscles, nerves, and the immune system. Deficiency is common in low-sun climates.</div></details><details><summary>B) It gives you energy directly</summary></details><details><summary>C) It builds muscle without exercise</summary></details><details><summary>D) It replaces sleep</summary></details></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how do i take care of my shoes?",
+    "shoe care quiz",
+    "test me on shoe maintenance",
+    "leather shoe care tips",
+    "quick quiz on shoes",
+    "how to clean sneakers",
+    "shoe care basics pls",
+    "how do i stop my leather boots from cracking? quiz me",
+    "test me on cleaning suede vs leather shoes",
+    "sneaker care questions pls",
+    "quiz me on polishing and waterproofing shoes",
+    "how often should i condition my shoes? test me",
+    "i wanna make my shoes last\u2014quiz me"
+   ],
+   "title": "Basic shoe care quiz",
+   "html": "<div class=\"card\"><div class=\"card-title\">Shoe care basics</div><div class=\"quiz\"><div class=\"q\">What's the best way to dry wet leather shoes?</div><details><summary>A) On a radiator</summary></details><details><summary>B) Air dry at room temp with newspaper inside</summary><div class=\"answer\">Correct. Heat cracks leather. Stuff with newspaper to absorb moisture and hold shape.</div></details><details><summary>C) In the dryer</summary></details><details><summary>D) With a hair dryer</summary></details></div><div class=\"quiz\"><div class=\"q\">How often should you condition leather shoes?</div><details><summary>A) Every day</summary></details><details><summary>B) Every few months, or when dry</summary><div class=\"answer\">Correct. Conditioning keeps leather supple. Over-conditioning can soften it too much.</div></details><details><summary>C) Once a year</summary></details><details><summary>D) Never</summary></details></div><div class=\"quiz\"><div class=\"q\">Can you machine wash most sneakers?</div><details><summary>A) Yes, always</summary></details><details><summary>B) Only if the label says so</summary><div class=\"answer\">Correct. Many sneakers warp or separate in the wash. Hand wash with mild soap is safer.</div></details><details><summary>C) No, never</summary></details><details><summary>D) Only in cold water</summary></details></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "quiz on fabric stain removal",
+    "how do i get stains out of clothes?",
+    "stain removal basics test",
+    "wine stain help",
+    "quick stain removal quiz",
+    "test my stain fighting skills",
+    "grease stain on shirt",
+    "how do i get red wine out of a shirt? test me",
+    "quiz me on blood, grease, and coffee stains on clothes",
+    "stain removal practice questions for laundry",
+    "test my stain-fighting knowledge pls",
+    "what removes ink from cotton? quiz",
+    "help me learn how to treat stains on different fabrics"
+   ],
+   "title": "Basic fabric stain removal quiz",
+   "html": "<div class=\"card\"><div class=\"card-title\">Fabric stain removal basics</div><div class=\"quiz\"><div class=\"q\">What's the first thing to do with a fresh stain?</div><details><summary>A) Rub it in vigorously</summary></details><details><summary>B) Blot gently with a clean cloth</summary><div class=\"answer\">Correct. Blotting lifts the stain. Rubbing pushes it deeper into fibers.</div></details><details><summary>C) Apply heat immediately</summary></details><details><summary>D) Let it dry first</summary></details></div><div class=\"quiz\"><div class=\"q\">Which stain should you treat with cold water, not hot?</div><details><summary>A) Grease</summary></details><details><summary>B) Blood</summary><div class=\"answer\">Correct. Hot water sets blood stains. Cold water keeps the protein from coagulating.</div></details><details><summary>C) Coffee</summary></details><details><summary>D) Mud</summary></details></div><div class=\"quiz\"><div class=\"q\">For grease stains, what works as a pre-treatment?</div><details><summary>A) Dish soap</summary><div class=\"answer\">Correct. A drop of grease-cutting dish soap breaks down oil before washing.</div></details><details><summary>B) Hot water alone</summary></details><details><summary>C) Hairspray</summary></details><details><summary>D) Vinegar</summary></details></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic first aid quiz",
+   "user_requests": [
+    "quiz me on basic first aid",
+    "first aid basics test",
+    "how do i know if i'm doing cpr right quiz",
+    "basic first aid questions pls",
+    "test my first aid knowledge",
+    "first aid for cuts and burns quiz",
+    "quick first aid quiz for beginners",
+    "what do i do for a minor burn? quiz me",
+    "test me on CPR basics and the recovery position",
+    "first aid questions for cuts, sprains, and choking",
+    "quiz me on when to call 911 vs treat at home",
+    "basic emergency response\u2014test me",
+    "i need a first aid refresher, quiz me"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Basic first aid quiz</div><p class=\"muted t-small\">Three questions, <regex>user_name</regex>. Tap an option to see the why.</p><div class=\"quiz\"><div class=\"q\">1. A minor cut is bleeding. First move?</div><details><summary>A) Press clean gauze on it and elevate</summary><div class=\"answer\">Correct. Steady direct pressure with a clean cloth for 5\u201310 minutes stops most small bleeds. Raise the area above heart level if you can.</div></details><details><summary>B) Rinse it under warm running water</summary><div class=\"answer\">Not first. That's for cleaning the wound once bleeding slows \u2014 pressure comes before rinsing.</div></details><details><summary>C) Blow on it</summary><div class=\"answer\">Nope. That just adds bacteria. Keep it clean.</div></details></div><div class=\"quiz\"><div class=\"q\">2. Someone small swallows a burn on their hand from a hot pan. Do you pop the blister?</div><details><summary>A) Yes, then cover it</summary><div class=\"answer\">No. Popping opens the door to infection. Leave it be.</div></details><details><summary>B) No \u2014 cool with room-temp water, loosely cover</summary><div class=\"answer\">Correct. Run cool (not icy) water for 10\u201320 minutes, then wrap loosely. Skip the butter.</div></details><details><summary>C) Butter. Definitely butter.</summary><div class=\"answer\">Kitchen legend. Butter traps heat and adds bacteria \u2014 skip it.</div></details></div><div class=\"quiz\"><div class=\"q\">3. An adult collapses and isn't breathing. Chest compressions start at what rate?</div><details><summary>A) Around 100\u2013120 per minute</summary><div class=\"answer\">Correct. That's the speed of \"Stayin' Alive\" if it helps you find the beat.</div></details><details><summary>B) As fast as possible</summary><div class=\"answer\">Slower than you'd think. Fast and shallow won't move blood. Aim for the steady 100\u2013120.</div></details><details><summary>C) One per second</summary><div class=\"answer\">Close \u2014 a hair fast, but decent. The 100\u2013120 range is the target.</div></details></div><div class=\"callout info t-small\"><strong>Bonus honesty:</strong> this is a refresher, not a certification. Take the real course when you can.</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic pet care quiz",
+   "user_requests": [
+    "quiz me on taking care of a dog",
+    "basic pet care trivia",
+    "cat care basics quiz",
+    "how much should i know about pets quiz",
+    "quick dog and cat care test",
+    "pet owner knowledge check",
+    "quiz: basics of pet ownership",
+    "how often should i walk my dog? quiz me",
+    "test me on cat litter, feeding, and vet visits",
+    "pet ownership questions pls",
+    "quiz me on grooming and dental care for pets",
+    "new puppy checklist\u2014test me",
+    "i wanna be a better pet owner, quiz me"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Basic pet care quiz</div><p class=\"muted t-small\">Four questions. Nice work showing up for the animals, <regex>user_name</regex>.</p><div class=\"quiz\"><div class=\"q\">1. Chocolate and dogs \u2014 safe?</div><details><summary>A) A little is fine, it's a treat</summary><div class=\"answer\">No. Even small amounts can bother a dog. Keep chocolate, grapes, onions, and xylitol well out of reach.</div></details><details><summary>B) Never; several common foods are toxic</summary><div class=\"answer\">Correct. Chocolate, grapes/raisins, onion, garlic, and the sweetener xylitol all cause trouble. Know your list.</div></details></div><div class=\"quiz\"><div class=\"q\">2. Cats and water bowls \u2014 how often should you freshen it?</div><details><summary>A) Every day, ideally twice</summary><div class=\"answer\">Correct. Cats are picky about stale water and many drink too little. Clean bowls and daily refills help prevent urinary issues.</div></details><details><summary>B) Whenever they seem thirsty</summary><div class=\"answer\">Too late by the time they act thirsty. Keep it fresh daily.</div></details></div><div class=\"quiz\"><div class=\"q\">3. Best spot for a new dog to sleep on night one?</div><details><summary>A) Your bed</summary><div class=\"answer\">Your call, but it sets a precedent fast. Fine if you're committed to it forever.</div></details><details><summary>B) A quiet crate or bed near your room</summary><div class=\"answer\">Correct. Close enough to smell and hear you, but a place of their own. Cuts first-night stress both ways.</div></details></div><div class=\"quiz\"><div class=\"q\">4. A cat stops eating for two days. Wait it out?</div><details><summary>A) Yes, cats fast naturally</summary><div class=\"answer\">No \u2014 this is the one to take seriously. Cats can develop serious liver problems after just a couple of days without food. Call your vet.</div></details><details><summary>B) No, call the vet</summary><div class=\"answer\">Correct. Two days without eating in a cat is a real red flag, not a phase.</div></details></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic reading nutrition labels quiz",
+   "user_requests": [
+    "how do i read a nutrition label quiz",
+    "nutrition label basics test",
+    "quiz me on food labels",
+    "what should i look for on a food label",
+    "nutrition facts panel quiz",
+    "label reading quiz for beginners",
+    "help me learn serving sizes quiz",
+    "how do i spot added sugar on a label? quiz me",
+    "test me on serving size, %DV, and daily values",
+    "nutrition facts panel questions pls",
+    "quiz me on reading ingredients vs nutrition facts",
+    "how do i compare two cereals? test me",
+    "i wanna shop smarter\u2014quiz me on labels"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Basic reading nutrition labels quiz</div><p class=\"muted t-small\">The label's a tiny cheat sheet once you know where to look, <regex>user_name</regex>.</p><div class=\"quiz\"><div class=\"q\">1. A bottle says 2 servings. You drink the whole thing. How many calories did you get?</div><details><summary>A) Whatever the label says</summary><div class=\"answer\">Careful \u2014 that number is per serving, not per bottle. Double it.</div></details><details><summary>B) Double the labeled calories</summary><div class=\"answer\">Correct. Serving sizes trip almost everyone up. Check how many servings are in the container first.</div></details></div><div class=\"quiz\"><div class=\"q\">2. Ingredient list \u2014 what's the order mean?</div><details><summary>A) Alphabetical</summary><div class=\"answer\">Nope. It's by weight, always.</div></details><details><summary>B) Heaviest ingredient first</summary><div class=\"answer\">Correct. The earlier an ingredient sits, the more of it there is by weight. Sugar hiding in slot three? That's a lot of sugar.</div></details></div><div class=\"quiz\"><div class=\"q\">3. \"Added sugars\" vs \"total sugars\" \u2014 difference?</div><details><summary>A) None, same thing</summary><div class=\"answer\">There's a real gap. Total includes what's naturally there \u2014 like the lactose in milk \u2014 while added is what got stirred in during processing.</div></details><details><summary>B) Added is the sneaky part; total includes natural</summary><div class=\"answer\">Correct. For a juice, total sugars include the fruit's own; added sugars tell you what the factory put in.</div></details></div><div class=\"quiz\"><div class=\"q\">4. Healthiest move on the % Daily Value column?</div><details><summary>A) Low for sodium, high for fiber</summary><div class=\"answer\">Correct. 5% or less is low, 20% or more is high. You want the fiber, calcium, and iron numbers up; sodium, saturated fat, and added sugar down.</div></details><details><summary>B) High for everything</summary><div class=\"answer\">Not quite. For sodium, saturated fat, and added sugar you actually want those percentages low.</div></details></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic budgeting quiz",
+   "user_requests": [
+    "teach me budgeting basics quiz",
+    "money budgeting quiz",
+    "how to make a budget test",
+    "budgeting for beginners quiz",
+    "quiz me on saving money basics",
+    "personal finance starter quiz",
+    "basic budget questions",
+    "50/30/20 rule\u2014quiz me",
+    "test me on needs vs wants and emergency funds",
+    "how do i track my spending? quiz",
+    "budgeting questions for beginners plz",
+    "quiz me on saving, debt, and fixed vs variable costs",
+    "i need to get my finances together\u2014test me"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Basic budgeting quiz</div><p class=\"muted t-small\">No spreadsheet required to pass, <regex>user_name</regex>. Just the ideas.</p><div class=\"quiz\"><div class=\"q\">1. First step when you sit down to make a budget?</div><details><summary>A) Pick a spending goal</summary><div class=\"answer\">Tempting, but you're guessing. Find out what's actually happening first.</div></details><details><summary>B) Track what you actually spend for a month</summary><div class=\"answer\">Correct. Can't plan a route without knowing where you stand. A month of real numbers beats any estimate.</div></details></div><div class=\"quiz\"><div class=\"q\">2. The 50/30/20 rule splits take-home pay into\u2026</div><details><summary>A) Needs, wants, savings</summary><div class=\"answer\">Correct. 50% needs, 30% wants, 20% savings and debt payoff. A starting frame, not a law.</div></details><details><summary>B) Rent, food, fun</summary><div class=\"answer\">That's more granular than the rule intends. The 50/30/20 buckets are needs, wants, savings.</div></details></div><div class=\"quiz\"><div class=\"q\">3. Your emergency fund goal is usually\u2026</div><details><summary>A) One month of rent</summary><div class=\"answer\">That's a start, but thin. Most guides suggest more.</div></details><details><summary>B) Three to six months of expenses</summary><div class=\"answer\">Correct. Start with $500\u2013$1,000 if six months feels far off. Something beats nothing.</div></details></div><div class=\"quiz\"><div class=\"q\">4. An automated transfer to savings on payday is\u2026</div><details><summary>A) A great way to save without willpower</summary><div class=\"answer\">Correct. Pay yourself first. What you don't see, you don't spend.</div></details><details><summary>B) Pointless, you'll move it back</summary><div class=\"answer\">Only if you set it too high. An amount you won't miss works fine \u2014 even $20.</div></details></div><div class=\"callout info t-small\"><strong>Honesty label:</strong> this is a 101 refresher, not personalized financial advice.</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Basic safe driving quiz",
+   "user_requests": [
+    "safe driving quiz",
+    "road safety basics test",
+    "driving rules quiz for beginners",
+    "how well do i know road safety",
+    "car safety quiz",
+    "quiz me on defensive driving",
+    "basic traffic safety questions"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Basic safe driving quiz</div><p class=\"muted t-small\">Short and useful, <regex>user_name</regex>. Tap a choice to see why.</p><div class=\"quiz\"><div class=\"q\">1. Tailgating. The three-second rule is\u2026</div><details><summary>A) The minimum following distance in good conditions</summary><div class=\"answer\">Correct. Pick a fixed point the car ahead passes, count three seconds. In rain or at night, double it.</div></details><details><summary>B) Only for highway driving</summary><div class=\"answer\">It applies everywhere. Dense city traffic is exactly when it matters most.</div></details><details><summary>C) Three car lengths exactly</summary><div class=\"answer\">Eyeballing car lengths fails at speed. Time, not distance, is the reliable measure.</div></details></div><div class=\"quiz\"><div class=\"q\">2. Your phone buzzes. Safest handling?</div><details><summary>A) Glance at it quickly at the light</summary><div class=\"answer\">Even a two-second glance at speed is a long, blind stretch of road. Not worth it.</div></details><details><summary>B) Let it wait, or pull over to check</summary><div class=\"answer\">Correct. Nothing on a screen outranks the road. If it's urgent, pull into a lot.</div></details><details><summary>C) Keep it in your lap to peek</summary><div class=\"answer\">Research keeps showing lap peeks are as bad as full-on texting. Put it out of reach.</div></details></div><div class=\"quiz\"><div class=\"q\">3. The first sign tires need air?</div><details><summary>A) They look low</summary><div class=\"answer\">Looks lie. A tire can lose a lot of pressure and look fine.</div></details><details><summary>B) Your dashboard pressure light, or a monthly gauge check</summary><div class=\"answer\">Correct. Check cold once a month with a gauge \u2014 under-inflated tires hurt mileage and safety.</div></details></div><div class=\"callout good t-small\"><strong>Small habit, big payoff:</strong> adjust your mirrors before you shift into drive, every time.</div></div>"
+  },
+  {
+   "title": "Basic composting quiz",
+   "user_requests": [
+    "compost basics quiz",
+    "how to start composting test",
+    "quiz me on composting",
+    "kitchen scrap composting quiz",
+    "beginner compost questions",
+    "what can i compost quiz",
+    "composting do's and don'ts quiz"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Basic composting quiz</div><p class=\"muted t-small\">Good microorganisms, bad smell. Let's sort it out, <regex>user_name</regex>.</p><div class=\"quiz\"><div class=\"q\">1. The two ingredients a pile needs are usually called\u2026</div><details><summary>A) Wet and dry</summary><div class=\"answer\">Close on vibes, off on names. The pair is greens and browns.</div></details><details><summary>B) Greens and browns</summary><div class=\"answer\">Correct. Greens (kitchen scraps, grass) are nitrogen; browns (leaves, cardboard) are carbon. Aim for roughly one part greens to two or three parts browns.</div></details></div><div class=\"quiz\"><div class=\"q\">2. Which of these belongs in the pile?</div><details><summary>A) Coffee grounds and banana peels</summary><div class=\"answer\">Correct. Both are classic greens \u2014 coffee grounds, veggie scraps, eggshells (although shells are more neutral, they're fine).</div></details><details><summary>B) Meat, bones, and dairy</summary><div class=\"answer\">Skip these in a home pile. They smell, attract animals, and slow things down. Great for industrial compost, not your backyard.</div></details><details><summary>C) Weeds, always</summary><div class=\"answer\">Risky. Weed seeds often survive a cool home pile and reseed your garden. Best left out.</div></details></div><div class=\"quiz\"><div class=\"q\">3. The pile smells like rot. Likely fix?</div><details><summary>A) Add more greens and water</summary><div class=\"answer\">Wrong direction. Too much green or wet is usually the cause.</div></details><details><summary>B) Add browns and turn it</summary><div class=\"answer\">Correct. Sour smell means too wet or too much nitrogen. Brown material soaks up extra moisture, and turning adds air.</div></details></div><div class=\"callout warn t-small\"><strong>Heads up:</strong> a pile should smell earthy, not terrible. Bad smell is a signal, not a sentence.</div></div>"
+  },
+  {
+   "user_requests": [
+    "quiz me on basic camping knots",
+    "basic camping knots quiz",
+    "test my knowledge of camping knots",
+    "knot quiz for camping",
+    "how well do i know camping knots?",
+    "quick quiz: camping knots",
+    "I want a quiz about knots for camping"
+   ],
+   "title": "Basic camping knots quiz",
+   "html": "<div class=\"quiz\">\n  <div class=\"q\">Which knot is best for tying two ropes of different thickness together?</div>\n  <details><summary>A) Square knot</summary><div class=\"answer\">Not ideal\u2014it can slip with different diameters.</div></details>\n  <details><summary>B) Sheet bend</summary><div class=\"answer\">Correct. The sheet bend (or becket bend) holds securely even when rope sizes differ.</div></details>\n  <details><summary>C) Bowline</summary><div class=\"answer\">The bowline makes a fixed loop, not a join.</div></details>\n  <details><summary>D) Clove hitch</summary><div class=\"answer\">A clove hitch attaches a rope to a post, not to another rope.</div></details>\n</div>"
+  },
+  {
+   "user_requests": [
+    "quiz me on basic first aid",
+    "basic first aid quiz",
+    "test my first aid knowledge",
+    "first aid quiz",
+    "how good am I at first aid?",
+    "quick first aid quiz",
+    "I need a quiz on first aid basics"
+   ],
+   "title": "Basic first aid quiz",
+   "html": "<div class=\"quiz\">\n  <div class=\"q\">What is the first thing you should do when you encounter someone who is unresponsive?</div>\n  <details><summary>A) Check for a pulse</summary><div class=\"answer\">Checking for a pulse is not the first step\u2014call for help and check breathing.</div></details>\n  <details><summary>B) Call for emergency help</summary><div class=\"answer\">Correct. Call emergency services or ask someone else to call while you assess the situation.</div></details>\n  <details><summary>C) Start CPR immediately</summary><div class=\"answer\">CPR is crucial, but only after checking responsiveness and breathing.</div></details>\n  <details><summary>D) Give rescue breaths</summary><div class=\"answer\">Rescue breaths come after assessing the airway and breathing.</div></details>\n</div>"
+  },
+  {
+   "user_requests": [
+    "quiz me on pet care",
+    "basic pet care quiz",
+    "test my pet care knowledge",
+    "pet care quiz",
+    "how well do I know pet care?",
+    "quick pet care quiz",
+    "I want a quiz about pet care"
+   ],
+   "title": "Basic pet care quiz",
+   "html": "<div class=\"quiz\">\n  <div class=\"q\">How often should you generally feed an adult dog?</div>\n  <details><summary>A) Once a day</summary><div class=\"answer\">Once daily can work for some dogs, but most do better with two meals.</div></details>\n  <details><summary>B) Twice a day</summary><div class=\"answer\">Correct. Most adult dogs thrive on two measured meals per day.</div></details>\n  <details><summary>C) Three times a day</summary><div class=\"answer\">Puppies often need three meals, but adults usually need two.</div></details>\n  <details><summary>D) Free feeding</summary><div class=\"answer\">Free feeding can lead to obesity and makes it hard to monitor appetite.</div></details>\n</div>"
+  },
+  {
+   "user_requests": [
+    "quiz me on reading nutrition labels",
+    "basic nutrition label quiz",
+    "test my nutrition label knowledge",
+    "nutrition label quiz",
+    "how well can I read nutrition labels?",
+    "quick quiz on nutrition labels",
+    "I need a quiz about nutrition labels"
+   ],
+   "title": "Basic nutrition label quiz",
+   "html": "<div class=\"quiz\">\n  <div class=\"q\">On a nutrition label, what does %DV stand for?</div>\n  <details><summary>A) Percent Daily Value</summary><div class=\"answer\">Correct. It shows how much a nutrient in a serving contributes to a daily diet.</div></details>\n  <details><summary>B) Percent Dietary Volume</summary><div class=\"answer\">Not quite\u2014volume isn't part of it.</div></details>\n  <details><summary>C) Portion Daily Value</summary><div class=\"answer\">Portion isn't the term used.</div></details>\n  <details><summary>D) Product Density Value</summary><div class=\"answer\">Density isn't what's measured here.</div></details>\n</div>"
+  },
+  {
+   "user_requests": [
+    "quiz me on budgeting",
+    "basic budgeting quiz",
+    "test my budgeting knowledge",
+    "budgeting quiz",
+    "how good am I at budgeting?",
+    "quick budgeting quiz",
+    "I want a quiz on budgeting basics"
+   ],
+   "title": "Basic budgeting quiz",
+   "html": "<div class=\"quiz\">\n  <div class=\"q\">In the 50/30/20 rule, what does the 20% represent?</div>\n  <details><summary>A) Needs</summary><div class=\"answer\">Needs take 50%.</div></details>\n  <details><summary>B) Wants</summary><div class=\"answer\">Wants get 30%.</div></details>\n  <details><summary>C) Savings and debt repayment</summary><div class=\"answer\">Correct. The 20% is for savings and paying down debt.</div></details>\n  <details><summary>D) Fun money</summary><div class=\"answer\">Fun money is part of the 30% wants.</div></details>\n</div>"
+  },
+  {
+   "user_requests": [
+    "quiz me on safe driving",
+    "basic safe driving quiz",
+    "test my safe driving knowledge",
+    "safe driving quiz",
+    "how safe a driver am I?",
+    "quick safe driving quiz",
+    "I need a quiz about safe driving"
+   ],
+   "title": "Basic safe driving quiz",
+   "html": "<div class=\"quiz\">\n  <div class=\"q\">What is the recommended following distance in good conditions?</div>\n  <details><summary>A) One second</summary><div class=\"answer\">Too close\u2014one second is not enough.</div></details>\n  <details><summary>B) Two seconds</summary><div class=\"answer\">Better, but three seconds is safer.</div></details>\n  <details><summary>C) Three seconds</summary><div class=\"answer\">Correct. The three-second rule gives you time to react.</div></details>\n  <details><summary>D) Five seconds</summary><div class=\"answer\">Five seconds is good in poor conditions, but three is the minimum in good ones.</div></details>\n</div>"
+  }
+ ]
+}

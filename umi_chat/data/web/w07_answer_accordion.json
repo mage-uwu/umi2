@@ -1,0 +1,245 @@
+{
+ "widget": "answer_accordion",
+ "instances": [
+  {
+   "title": "Classic accordion, accent tick",
+   "user_requests": [
+    "can you show me the answer in a collapsible thing",
+    "wrap it in an accordion pls",
+    "i want the reply tucked away, click to open",
+    "show the answer folded up so i can decide",
+    "put the answer in one of those expandy boxes",
+    "hide the answer behind a tap, thx",
+    "answer in a dropdown accordian please",
+    "pls make the reply foldable",
+    "I want it collapsed by default",
+    "put the answer behind a click",
+    "hide the details until I tap",
+    "can it be a hidden section I open?",
+    "just give me a expander for the result"
+   ],
+   "html": "<details class=\"acc\"><summary><span class=\"badge accent\"><i class=\"dot\"></i>cached match</span> Answer for <regex>user_name</regex></summary><div class=\"body\"><p>{{answer}}</p></div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Recessed panel with svg chevron",
+   "user_requests": [
+    "give me the long answer but collapse it",
+    "long reply, keep it tidy in an accordion",
+    "show me this one folded, it's a biggie",
+    "can u put the whole answer inside a toggle",
+    "i'd like the full reply, hidden until i click",
+    "collapse the answer for me please",
+    "answer but make it expandble",
+    "show long version in a drop-down",
+    "can you recess the answer with a little arrow",
+    "I need the full text but tucked away",
+    "put the long explanation in a collapsible area with a chevron",
+    "why not hide the long answer behind an arrow toggle",
+    "collapse the long reply w/ a svg arrow pls"
+   ],
+   "html": "<details class=\"acc\"><summary style=\"gap:var(--s-3)\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" aria-hidden=\"true\"><path d=\"M6 3.5 10.5 8 6 12.5\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg> The full answer for <regex>user_name</regex></summary><div class=\"body\"><div class=\"callout info\"><p>{{answer}}</p></div></div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Titled card accordion",
+   "user_requests": [
+    "show the answer with a little heading on it",
+    "i want a titled accordion with the reply inside",
+    "put a label on top and fold the answer under it",
+    "answer in a card thing that opens",
+    "can you title this and keep it collapsed",
+    "reply inside a titled expander plz",
+    "give it a name then hide the answer until i tap",
+    "put a header on the answer and make it collapsible",
+    "I want the answer inside a card with a title that opens",
+    "can you add a small title above the folded answer",
+    "show the reply in a titled box that I can expand",
+    "give it a heading and let me collapse it",
+    "answer in a card w/ title that I click to see"
+   ],
+   "html": "<details class=\"card\"><summary><strong class=\"card-title\">Answer for <regex>user_name</regex></strong></summary><div class=\"body stack\"><p class=\"muted t-small\">Tap to read the reply.</p><p>{{answer}}</p></div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Honest near-miss framing",
+   "user_requests": [
+    "tell me if its not a perfect match but show it anyway",
+    "show the answer but be honest if its a near miss",
+    "i want the reply with a caveat, collapsed",
+    "answer in an accordion, mention if it's cached",
+    "fold the answer and label how sure you are",
+    "put the answer up with a confidence badge",
+    "show it folded and tell me if it's a near miss",
+    "if it's not exact just say so then show it",
+    "show even if its a close guess",
+    "be upfront if it dont match but still give it",
+    "put the almost-answer in a fold with a disclaimer",
+    "tell me its a near miss, then reveal it",
+    "even if its not perfect just show it collapsed w/ a note"
+   ],
+   "html": "<details class=\"acc\"><summary><span class=\"badge warn\"><i class=\"dot\"></i>near miss</span> Best answer for <regex>user_name</regex></summary><div class=\"body stack\"><p class=\"dim t-small\">Not a perfect match, but close enough to be useful.</p><p>{{answer}}</p></div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Numbered steps accordion",
+   "user_requests": [
+    "if the answer has steps can you fold it",
+    "put the step by step answer in an accordion",
+    "show me the walkthrough, collapsed at first",
+    "answer as steps inside a toggle pls",
+    "i want a folded answer i can open and follow",
+    "collapse this how-to answer for me",
+    "step answer, hidden till i click",
+    "if there are steps can you put them in a fold",
+    "show steps in a collapsible list",
+    "I want the process hidden until I click",
+    "fold the step-by-step instructions",
+    "put the numbered steps inside an accordion",
+    "can u collapse the steps w/ numbers?"
+   ],
+   "html": "<details class=\"acc\"><summary>Steps for <regex>user_name</regex></summary><div class=\"body\"><ol class=\"list\"><li>{{answer}}</li></ol></div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Quote-flavored open with aside",
+   "user_requests": [
+    "drop the answer in a collapsible with a note",
+    "i'd like the reply folded, maybe a small aside",
+    "show the answer but add a lil sidebar note",
+    "accordion the answer and keep it friendly",
+    "hide the answer but keep a short hello visible",
+    "fold the answer, keep a line for me up top",
+    "answer folded away with a nod to me first",
+    "open with the quote and a side note in a fold",
+    "put the quote first then a collapsible aside",
+    "start with that quote and a little note that folds",
+    "show the answer as a quote with a closed sidenote",
+    "quote it and add a collapsible remark",
+    "can the quote be open and the aside be collapsed?"
+   ],
+   "html": "<details class=\"acc\" open><summary>Hey <regex>user_name</regex>, here's your answer</summary><div class=\"body stack\"><blockquote class=\"quote\"><p class=\"dim t-small\">tucked away, but never far.</p></blockquote><p>{{answer}}</p></div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Soft-sided drawer with inline svg plusmark",
+   "user_requests": [
+    "can you tuck the reply in a drawer so my screen stays tidy <regex>user_name</regex>",
+    "hide it but keep it reachable pls",
+    "show the long version behind a tap, <regex>user_name</regex>",
+    "fold that answer away, i'll peek when ready",
+    "put it in one of those slidey things",
+    "tuck anser away plz",
+    "make the reply collapsible like a little drawer <regex>user_name</regex>",
+    "tuck the reply in a drawer w/ a + sign pls <regex>user_name</regex>",
+    "can you hide the answer in a soft drawer with a plus icon",
+    "put it in a drawer so my screen is clean <regex>user_name</regex>",
+    "I want a plusmark to open the drawer for the answer",
+    "fold the reply in a rounded drawer w/ a plus",
+    "make a tidy drawer w/ inline svg plus for the response <regex>user_name</regex>"
+   ],
+   "html": "<details class=\"acc\"><summary><svg viewBox=\"0 0 16 16\" width=\"14\" height=\"14\" aria-hidden=\"true\" style=\"vertical-align:middle;margin-right:var(--s-1)\"><rect x=\"2\" y=\"7\" width=\"12\" height=\"2\" rx=\"1\" fill=\"currentColor\"/><rect x=\"7\" y=\"2\" width=\"2\" height=\"12\" rx=\"1\" fill=\"currentColor\"/></svg>Answer drawer for <regex>user_name</regex></summary><div class=\"body\">{{answer}}</div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Pill-toggle accordion with badge label",
+   "user_requests": [
+    "can u show it with a pill style thingy",
+    "i want a nice label on the toggle <regex>user_name</regex>",
+    "badge it as 'answer' and let me open <regex>user_name</regex>",
+    "pill toggle pls, cleaner",
+    "give the summary a little tag look",
+    "balloon it but with a tag",
+    "wrap the reply in a pill toggle with a badge <regex>user_name</regex>",
+    "show it with a pill toggle and a badge",
+    "can u put a little badge on the pill that opens the answer",
+    "I want a pill-shaped switch with a label badge to reveal it",
+    "use a pill button w/ badge to collapse the reply",
+    "make the answer open with a pill toggle w/ a badge saying 'answer'",
+    "pill style toggle with badge label pls"
+   ],
+   "html": "<details class=\"acc\" style=\"--acc-accent:var(--accent-2)\"><summary style=\"display:flex;align-items:center;gap:var(--s-2)\"><span class=\"badge accent\">answer</span><span>Toggle for <regex>user_name</regex></span></summary><div class=\"body\">{{answer}}</div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Recessed inset drawer with hairline top",
+   "user_requests": [
+    "push the reply into a recessed panel <regex>user_name</regex>",
+    "make it look slightly inset before opening",
+    "can the closed state feel sunken?",
+    "inset drawer pls",
+    "give me a subtle recessed accordion",
+    "sunken look but openable",
+    "recessed version of the accordion with a hairline <regex>user_name</regex>",
+    "put the reply in a sunken drawer with a thin top line",
+    "can you inset the answer in a drawer w/ hairline border on top",
+    "I want a recessed drawer that has a hairline top border",
+    "show it in an inset panel with a fine top rule",
+    "make a recessed drawer w/ a hairline above it for the answer",
+    "push the answer into a inset drawer w/ hairline top <regex>user_name</regex>"
+   ],
+   "html": "<details class=\"acc\" style=\"background:var(--bg-alt);border-radius:var(--r-sm);border:1px solid var(--line-2);border-top:0\"><summary style=\"border-top:1px solid var(--line);border-radius:var(--r-sm) var(--r-sm) 0 0\">Recessed answer for <regex>user_name</regex></summary><div class=\"body\">{{answer}}</div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Progress-hedged accordion with meter framing",
+   "user_requests": [
+    "how confident is this answer? show it with a bar",
+    "i want a confidence bar next to the toggle <regex>user_name</regex>",
+    "meter it so i know it's not a full match",
+    "bar me up <regex>user_name</regex>",
+    "show cache coverage then the answer",
+    "add a little meter, cheers",
+    "open the reply with a coverage meter <regex>user_name</regex>",
+    "show confidence with a progress meter and collapse it",
+    "how sure are you? put it behind a meter bar",
+    "I want a confidence bar and the answer hidden until clicked",
+    "put the answer in a fold with a progress meter for certainty",
+    "can you show a meter and then the answer collapsed",
+    "confidence level with a bar and the reply in an accordion"
+   ],
+   "html": "<details class=\"acc\"><summary><span class=\"row between\" style=\"align-items:center\"><span>Answer with coverage check <regex>user_name</regex></span><span class=\"muted t-small\">72%</span></span><span class=\"meter\" style=\"margin-top:var(--s-1)\"><span style=\"width:72%\"></span></span></summary><div class=\"body\">{{answer}}</div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Two-column tabbed accordion with details.tab",
+   "user_requests": [
+    "can u do a tab-like reveal for the reply?",
+    "tab style but no js pls <regex>user_name</regex>",
+    "give me two little tabs, answer in one",
+    "tabs without scripts, that possible?",
+    "tabbed accordion pls <regex>user_name</regex>",
+    "make it a tab panel with the reply",
+    "two tabs, one holds the answer <regex>user_name</regex>",
+    "can you do tabs for the answer in two columns?",
+    "I want a tabbed reveal with two columns",
+    "show the reply in a tabbed accordion with two cols",
+    "make it a tab-like fold with two columns",
+    "tabbed layout with two columns for the answer",
+    "can u do a two-column accordion with tabs?"
+   ],
+   "html": "<div class=\"grid two\" style=\"gap:var(--s-3)\"><details class=\"tab\"><summary>tab a for <regex>user_name</regex></summary><div class=\"body\">{{answer}}</div></details><details class=\"tab\"><summary>tab b</summary><div class=\"body\">Nothing here yet\u2014tab a has the goods.</div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Quote-forward accordion with inline aside",
+   "user_requests": [
+    "start with that quote and then the answer <regex>user_name</regex>",
+    "quote first, reply behind a tap",
+    "put the 'as you once said' bit up top <regex>user_name</regex>",
+    "quote it then hide the answer",
+    "show the quote and tuck the rest",
+    "you said it before, quote then answer",
+    "quote-flavored open then collapse the reply <regex>user_name</regex>",
+    "start with the quote and then a collapsible aside",
+    "put the quote first and an inline side note that folds",
+    "I want the quote forward and the aside collapsible",
+    "show the quote and then hide the aside in a fold",
+    "quote first, then an expandable sidenote",
+    "can the quote be upfront and the aside be collapsible?"
+   ],
+   "html": "<details class=\"acc\"><summary>Quote first, answer for <regex>user_name</regex></summary><div class=\"body\"><blockquote class=\"quote\">\u201cKeep it kind, keep it short.\u201d <cite>\u2014 <regex>user_name</regex></cite></blockquote><p>{{answer}}</p></div></details>",
+   "augmented": true
+  }
+ ]
+}

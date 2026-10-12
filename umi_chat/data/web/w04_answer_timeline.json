@@ -1,0 +1,245 @@
+{
+ "widget": "answer_timeline",
+ "instances": [
+  {
+   "title": "Now entry with pulse icon",
+   "user_requests": [
+    "can you show that on a timeline",
+    "put this as a timeline entry pls",
+    "timeline it for me",
+    "I want to see this as a timeline thing",
+    "show my answer on a timeline",
+    "wen did this happen, timeline style",
+    "wrap it in a timeline for me <regex>user_name</regex>",
+    "put that on a timeline pls",
+    "can u timeline this answer",
+    "show it as a timeline w/ a pulsing dot",
+    "i need a timeline for this",
+    "turn this into a timeline view",
+    "timeline this real quick"
+   ],
+   "html": "<ul class=\"timeline\"><li><span class=\"when\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 14 14\" fill=\"none\" aria-hidden=\"true\" style=\"vertical-align:-2px;margin-right:var(--s-1);color:var(--accent);\"><circle cx=\"7\" cy=\"7\" r=\"5\" fill=\"currentColor\" opacity=\".25\"/><circle cx=\"7\" cy=\"7\" r=\"2.5\" fill=\"currentColor\"/></svg>now</span><p>{{answer}}</p></li></ul>",
+   "augmented": true
+  },
+  {
+   "title": "Recessed panel timeline with label",
+   "user_requests": [
+    "can you put this in a timeline card",
+    "show as timeline panel",
+    "timeline card plz",
+    "I'd like this reply in a timeline format",
+    "give me the timeline view",
+    "make a timeline entry outta this",
+    "timeline widget, thanks <regex>user_name</regex>",
+    "make a timeline card for this",
+    "put this answer in a recessed timeline panel",
+    "can you show it as a timeline in a labeled card",
+    "timeline card with a label plz",
+    "wrap this in a timeline card",
+    "show a timeline in a card with a label"
+   ],
+   "html": "<div class=\"card flat\" style=\"background:var(--bg-alt)\"><ul class=\"timeline\"><li><span class=\"when\">just now</span><p>{{answer}}</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Compact timeline with accent bar",
+   "user_requests": [
+    "slim timeline for this?",
+    "show this as a small timeline",
+    "compact timeline entry please",
+    "I want a concise timeline thing",
+    "tiny timeline view",
+    "minimal timeline for the answer",
+    "timeline it, keep it short <regex>user_name</regex>",
+    "slim timeline w/ accent bar?",
+    "can u make a compact timeline with a colored bar",
+    "give me a short timeline with an accent strip",
+    "timeline but slim and with an accent bar",
+    "compact timeline + accent bar please",
+    "show this as a tight timeline with a side accent"
+   ],
+   "html": "<div style=\"border-left:3px solid var(--accent);padding-left:var(--s-3);\"><ul class=\"timeline\" style=\"margin:0;padding:0;list-style:none;\"><li><span class=\"when t-small dim\">now</span><p style=\"margin:var(--s-1) 0 0;\">{{answer}}</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Timeline with history dots",
+   "user_requests": [
+    "timeline w/ some history?",
+    "show this along a timeline with dots",
+    "timeline entry plus past points",
+    "I want to see it in context of a timeline",
+    "timeline with little markers",
+    "give me a dotted timeline view",
+    "timeline dot view pls <regex>user_name</regex>",
+    "timeline w/ history dots plz",
+    "can u add history dots to a timeline for this",
+    "show the answer as a timeline with dots for history",
+    "i want a timeline that has history dots",
+    "timeline with little history dots",
+    "put history dots on a timeline for this"
+   ],
+   "html": "<ul class=\"timeline\" style=\"position:relative;padding-left:var(--s-4);list-style:none;\"><li style=\"position:relative;margin-bottom:var(--s-2);\"><span style=\"position:absolute;left:calc(-1 * var(--s-4));top:5px;width:10px;height:10px;border-radius:var(--r-pill);background:var(--accent);\"></span><span class=\"when\">earlier</span></li><li style=\"position:relative;\"><span style=\"position:absolute;left:calc(-1 * var(--s-4));top:5px;width:10px;height:10px;border-radius:var(--r-pill);background:var(--accent-2);\"></span><span class=\"when\">now</span><p>{{answer}}</p></li></ul>",
+   "augmented": true
+  },
+  {
+   "title": "Timeline inside details accordion",
+   "user_requests": [
+    "put this in a timeline that I can expand",
+    "timeline with toggle plz",
+    "collapsible timeline for the answer",
+    "I want a timeline I can open/close",
+    "show as expandable timeline",
+    "timeline accordion style",
+    "timeline details view <regex>user_name</regex>",
+    "timeline in an expandable details thing",
+    "can u put this in a timeline inside a collapsible accordion",
+    "show a timeline that i can expand",
+    "put the answer in a timeline within an accordion",
+    "timeline inside a details accordion pls",
+    "i need an expandable timeline in an accordion"
+   ],
+   "html": "<details class=\"acc\"><summary>timeline <span class=\"badge accent\" style=\"margin-left:var(--s-2);\">now</span></summary><div class=\"body\"><ul class=\"timeline\"><li><span class=\"when\">now</span><p>{{answer}}</p></li></ul></div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Inline timeline with meter confidence",
+   "user_requests": [
+    "timeline with a confidence meter?",
+    "show this timeline + how sure you are",
+    "timeline entry with match meter",
+    "I want timeline and a progress bar",
+    "timeline plus confidence pls",
+    "give me timeline view with a meter",
+    "timeline & meter for this <regex>user_name</regex>",
+    "timeline w/ a confidence meter inline",
+    "can u show a timeline with an inline meter for confidence",
+    "give me a timeline and a confidence meter together",
+    "inline timeline + confidence meter?",
+    "show a timeline with a meter showing confidence",
+    "timeline with confidence meter built in"
+   ],
+   "html": "<div class=\"card\"><ul class=\"timeline\"><li><span class=\"when\">now</span><p>{{answer}}</p></li></ul><div class=\"meter\" style=\"margin-top:var(--s-3);\"><span style=\"width:88%\"></span></div><p class=\"t-small dim\" style=\"margin-top:var(--s-1);\">cached match confidence</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "can you put that answer on a lil timeline for me",
+    "show the reply like a timeline entry pls",
+    "timeline-ify this answer",
+    "i want the answer to show up as one point in time, kind of",
+    "put my reply on a timeline",
+    "Show the response as a timeline node",
+    "yo can u wrap that answer in a timeline thing?",
+    "timeline with left connector and a soft glow plz",
+    "can u make a timeline that has a left connector and glows softly",
+    "show this as a timeline with a left line and soft glow",
+    "timeline w/ left connector + soft glow",
+    "give me a timeline with a left connector and a gentle glow",
+    "put a soft glow on a left-connector timeline for this"
+   ],
+   "title": "Timeline with left connector and soft glow",
+   "html": "<div class=\"umi-page\"><div class=\"card\" style=\"--accent:var(--accent-2);\"><div class=\"row between\" style=\"align-items:center;gap:var(--s-3);\"><span class=\"badge accent\"><i class=\"dot\"></i>cached match</span><span class=\"dim t-small\">just now</span></div><ul class=\"timeline\" style=\"margin-top:var(--s-4);\"><li style=\"position:relative;\"><span class=\"when\" style=\"font-weight:600;color:var(--accent);\">now</span><p style=\"margin-top:var(--s-2);\">{{answer}}</p></li></ul><p class=\"dim t-small\" style=\"margin-top:var(--s-3);\">For <regex>user_name</regex> \u2014 hope this lands.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "show the answer like a little dashboard history",
+    "put this reply in a tiny timeline card",
+    "I want the answer in a mini timeline with a label",
+    "wrap that answer in a timeline card, small version",
+    "Can you show my reply as a compact timeline entry?",
+    "timeline card for this answer pls",
+    "reply but make it look like a timeline chip",
+    "little card with a timeline chip and soft shadow",
+    "can u show a compact card with a timeline chip and a soft shadow",
+    "give me a small card with a timeline chip and gentle shadow",
+    "compact card + timeline chip + soft shadow pls",
+    "show this as a compact card with a timeline chip and soft shadow",
+    "make a small card with a timeline chip and a soft shadow"
+   ],
+   "title": "Compact card with timeline chip and soft shadow",
+   "html": "<div class=\"umi-page\"><div class=\"card flat\" style=\"padding:var(--s-3);\"><div class=\"row\" style=\"gap:var(--s-2);align-items:center;\"><span class=\"badge info\">reply</span><span class=\"dim t-small\">cached</span></div><ul class=\"timeline\" style=\"margin-top:var(--s-3);\"><li><span class=\"when\" style=\"color:var(--ink-3);\">now</span><p style=\"margin-top:var(--s-2);\">{{answer}}</p></li></ul><p class=\"dim t-small\" style=\"margin-top:var(--s-2);\"><regex>user_name</regex>, here it is.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "give me the answer as a timeline with an icon",
+    "show reply with a little clock icon",
+    "timeline entry with an icon please",
+    "can u put that answer in a timeline with a marker icon",
+    "I want the response to show up with a clock icon on a timeline",
+    "icon timeline for this reply",
+    "show the answer in a timeline with a time icon",
+    "timeline w/ a clock icon and a muted note",
+    "can u add an inline clock icon and a muted note to a timeline",
+    "show a timeline with a little clock icon and a quiet note",
+    "give me a timeline with clock icon and muted note",
+    "timeline with inline clock + muted note?",
+    "put a clock icon and a muted note on a timeline"
+   ],
+   "title": "Timeline with inline clock icon and muted note",
+   "html": "<div class=\"umi-page\"><div class=\"card\" style=\"border-left:3px solid var(--accent);\"><div class=\"row\" style=\"gap:var(--s-2);align-items:center;\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" aria-hidden=\"true\"><circle cx=\"8\" cy=\"8\" r=\"6.5\" stroke=\"currentColor\" stroke-width=\"1.5\"/><path d=\"M8 4.5v3.5l2 1.5\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\"/></svg><span class=\"badge\">timestamped</span></div><ul class=\"timeline\" style=\"margin-top:var(--s-3);\"><li><span class=\"when\" style=\"color:var(--ink-3);\">now</span><p style=\"margin-top:var(--s-2);\">{{answer}}</p></li></ul><p class=\"dim t-small\" style=\"margin-top:var(--s-2);\"><regex>user_name</regex> \u2014 from the cache.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "show this answer as a timeline with a dot marker",
+    "put the reply in a timeline with history dots",
+    "I want a timeline view of the answer with a dot",
+    "timeline with a circle marker for this response",
+    "can you show the answer like a point on a timeline?",
+    "dot timeline for the reply",
+    "reply but show it as a timeline dot",
+    "timeline with an accent dot and stacked meta plz",
+    "can u show a timeline with a dot marker and meta stacked",
+    "give me a timeline with an accent dot and stacked metadata",
+    "timeline + accent dot + stacked meta",
+    "show this as a timeline with an accent dot and meta below",
+    "timeline with a colored dot and stacked meta"
+   ],
+   "title": "Timeline with accent dot and stacked meta",
+   "html": "<div class=\"umi-page\"><div class=\"card flat\" style=\"border-left:4px solid var(--accent-2);\"><div class=\"row\" style=\"gap:var(--s-3);align-items:flex-start;\"><span style=\"width:10px;height:10px;border-radius:50%;background:var(--accent-2);margin-top:6px;\"></span><div style=\"flex:1;\"><ul class=\"timeline\" style=\"margin:0;\"><li style=\"list-style:none;\"><span class=\"when\" style=\"color:var(--accent-2);font-weight:600;\">now</span><p style=\"margin-top:var(--s-2);\">{{answer}}</p></li></ul></div></div><p class=\"dim t-small\" style=\"margin-top:var(--s-2);\">For <regex>user_name</regex>.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "show the answer in a timeline inside an accordion",
+    "put the reply in a collapsible timeline",
+    "I want the answer to be in a timeline that I can expand",
+    "timeline accordion for the answer",
+    "can you make a timeline with details for this reply?",
+    "reply as an expandable timeline",
+    "show answer in a foldable timeline",
+    "collapsible timeline w/ expandable history",
+    "can u make a timeline that collapses and has expandable history",
+    "show a collapsible timeline with history i can expand",
+    "give me a timeline that collapses and expands history",
+    "collapsible timeline + expandable history pls",
+    "timeline that collapses with expandable history"
+   ],
+   "title": "Collapsible timeline with expandable history",
+   "html": "<div class=\"umi-page\"><div class=\"card\"><details class=\"acc\"><summary style=\"font-weight:600;\">show timeline</summary><div class=\"body\"><ul class=\"timeline\"><li><span class=\"when\">now</span><p>{{answer}}</p></li></ul></div></details><p class=\"dim t-small\" style=\"margin-top:var(--s-2);\">For <regex>user_name</regex> \u2014 tap to expand.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "give me a timeline with a meter for confidence",
+    "show the answer as a timeline with a confidence bar",
+    "I want the reply in a timeline with a progress meter",
+    "timeline and a confidence meter for the answer",
+    "can you add a confidence meter to the timeline reply?",
+    "meter timeline for this answer",
+    "reply in timeline with match confidence",
+    "timeline w/ an inline meter and accent label",
+    "can u show a timeline with a meter and a colored label",
+    "give me a timeline with an inline meter and an accent label",
+    "timeline + inline meter + accent label?",
+    "show this as a timeline with a meter and an accent label",
+    "put an inline meter and accent label on a timeline"
+   ],
+   "title": "Timeline with inline meter and accent label",
+   "html": "<div class=\"umi-page\"><div class=\"card\"><div class=\"row between\" style=\"align-items:center;\"><span class=\"badge good\">cached match</span><span class=\"dim t-small\">confidence</span></div><div class=\"meter\" style=\"margin-top:var(--s-2);\"><div class=\"progress\"><span style=\"width:88%;\"></span></div></div><ul class=\"timeline\" style=\"margin-top:var(--s-3);\"><li><span class=\"when\" style=\"color:var(--accent);font-weight:600;\">now</span><p style=\"margin-top:var(--s-2);\">{{answer}}</p></li></ul><p class=\"dim t-small\" style=\"margin-top:var(--s-2);\">For <regex>user_name</regex> \u2014 88% sure.</p></div></div>",
+   "augmented": true
+  }
+ ]
+}

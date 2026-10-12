@@ -1,0 +1,245 @@
+{
+ "widget": "answer_plain",
+ "instances": [
+  {
+   "title": "Quiet page with a whisper line",
+   "user_requests": [
+    "just give it to me straight",
+    "plain answer pls",
+    "no extas, just the reply",
+    "can u show the answer without any fuss",
+    "I want the simple version",
+    "drop the answer here",
+    "plain and simple answer 4 me",
+    "no fluff, just the answer",
+    "straight to the point buddy",
+    "tell me plain and simple",
+    "gimme the raw answer no extras",
+    "can u just say it",
+    "ok wat is it"
+   ],
+   "html": "<div class=\"umi-page\"><p class=\"muted t-small\">Here you go, <regex>user_name</regex>.</p><p>{{answer}}</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Accent bar page",
+   "user_requests": [
+    "gimme the answer wiv a bit of colour",
+    "show reply but make it pop",
+    "can I get the answer w/ accent",
+    "answer but pretty pls",
+    "I like a lil colour on the side",
+    "put a stripe on it",
+    "spice up the plain answer",
+    "show me with a lil style",
+    "put a colored strip on it",
+    "answer but make it pop with a bar",
+    "can u add a side accent thingy",
+    "i want the answer w/ a fun line",
+    "gimme the ans wiv a highlight bar"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"row\" style=\"gap: var(--s-3); align-items: stretch;\"><div style=\"width: 4px; background: var(--accent); border-radius: var(--r-pill);\"></div><div class=\"stack\" style=\"flex: 1;\"><p class=\"muted t-small\">For <regex>user_name</regex></p><p>{{answer}}</p></div></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Badge says cached",
+   "user_requests": [
+    "is this cached? show it",
+    "answer but tell me if it's cached",
+    "cached reply please",
+    "I like knowing when you already know",
+    "show answer + cache badge",
+    "give me the answer with a lil status",
+    "cached match? let's see",
+    "did u cache this? show me",
+    "is it from cache? put a badge",
+    "answer with a cached tag plz",
+    "show me if its cached n the answer",
+    "cache status + the answer",
+    "tell me if u cached it already"
+   ],
+   "html": "<div class=\"umi-page\"><p><span class=\"badge accent\"><i class=\"dot\"></i> cached match</span></p><p>{{answer}}</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Quote-style answer",
+   "user_requests": [
+    "put it in a quote block",
+    "treat my answer like words of wisdom",
+    "can you quote it back to me",
+    "I want the reply framed",
+    "wrap it in a quote pls",
+    "fancy version of the answer",
+    "answer as a quote",
+    "make it look like a quote",
+    "answer in quote marks pls",
+    "put it in quotations",
+    "show the answer as a quote",
+    "can u quote it for me",
+    "answer like someone said it"
+   ],
+   "html": "<div class=\"umi-page\"><blockquote class=\"quote\"><p>{{answer}}</p><cite>\u2014 umi, for <regex>user_name</regex></cite></blockquote></div>",
+   "augmented": true
+  },
+  {
+   "title": "Card with icon",
+   "user_requests": [
+    "answer in a card pls",
+    "give me the reply in a nice box",
+    "can u put the answer in a panel",
+    "box it up for me",
+    "answer but with a card",
+    "panel + answer",
+    "fancy card answer",
+    "put it on a card with a little pic",
+    "answer inside a card with icon",
+    "show card w/ icon plz",
+    "gimme a card answer with some icon",
+    "can u make it a card n add an icon",
+    "answer on a card wiv a symbol"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"card\"><div class=\"row\" style=\"align-items: center; gap: var(--s-3);\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"color: var(--accent);\"><circle cx=\"12\" cy=\"12\" r=\"10\"></circle><path d=\"M12 16v-4\"></path><path d=\"M12 8h.01\"></path></svg><span class=\"who\"><regex>user_name</regex></span></div><p>{{answer}}</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Answer in an accordion",
+   "user_requests": [
+    "can I hide the answer until I tap",
+    "answer in an accordion pls",
+    "I want to reveal it myself",
+    "collapsible answer",
+    "put it behind a tap",
+    "accordion answer for me",
+    "answer but let me open it",
+    "hide the answer until i click",
+    "can u collapse the answer",
+    "put it in a expandable thing",
+    "answer in a accordion pls",
+    "don't show it until i tap",
+    "make the answer hidden till i open it"
+   ],
+   "html": "<div class=\"umi-page\"><details class=\"acc\"><summary>Tap for your answer, <regex>user_name</regex>.</summary><div class=\"body\"><p>{{answer}}</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sticky note with a pin",
+   "user_requests": [
+    "gimme the answer like a sticky note pls",
+    "can it look like a lil sticky note w the pin?? lol",
+    "show me like a pinned note its cute",
+    "I want the reply styled like a sticky note <regex>user_name</regex>",
+    "put the answer on a sticky note plz",
+    "answer but make it sticky-note vibes",
+    "render this like a little pinned note thanks",
+    "answer like a pinned note",
+    "show it on a sticky with a pushpin",
+    "gimme a sticky note wiv a pin",
+    "make it a post-it with pin",
+    "can u do a pin note answer",
+    "answer on a sticky w/ a pin plz"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"card flat\" style=\"position:relative;transform:rotate(-.4deg);border-left:3px solid var(--accent);border-radius:var(--r-xs);background:var(--accent-soft);padding:var(--s-6) var(--s-5) var(--s-5);box-shadow:var(--shadow);\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" style=\"position:absolute;top:-9px;left:50%;transform:translateX(-50%);color:var(--accent)\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M12 3 8 9h8z\"/><circle cx=\"12\" cy=\"10\" r=\"2.2\" fill=\"currentColor\"/></svg><p class=\"muted t-small\" style=\"margin:0 0 var(--s-2);letter-spacing:.06em;text-transform:uppercase;color:var(--accent)\">noted</p><p style=\"margin:0;font-size:var(--t-5);line-height:1.5\">{{answer}}</p><p class=\"dim t-small\" style=\"margin:var(--s-4) 0 0;text-align:right\">\u2014 umi, for <regex>user_name</regex></p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Terminal-style answer",
+   "user_requests": [
+    "can u put it in a terminal look",
+    "answer like a console output lol",
+    "i want the reply as if typed in a shell prompt",
+    "show me in terminal style pls <regex>user_name</regex>",
+    "make it look like a terminal window",
+    "gimme a command-line answer",
+    "style the reply as a terminal output",
+    "put it in a command line look",
+    "answer like a terminal window",
+    "show me terminal style omg",
+    "can u make it look like console output",
+    "gimme a cmd prompt answer",
+    "answer wiv a terminal vibe"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"card flat\" style=\"font-family:var(--mono);background:var(--bg-alt);border:1px solid var(--line-2);border-radius:var(--r-s);padding:var(--s-4);\"><div class=\"row\" style=\"gap:var(--s-1);margin-bottom:var(--s-3)\"><span style=\"width:10px;height:10px;border-radius:50%;background:var(--bad)\"></span><span style=\"width:10px;height:10px;border-radius:50%;background:var(--warn)\"></span><span style=\"width:10px;height:10px;border-radius:50%;background:var(--good)\"></span></div><p class=\"t-small\" style=\"margin:0 0 var(--s-2);color:var(--ink-3)\">umi@cache:~$ answer --for <regex>user_name</regex></p><p style=\"margin:0;font-size:var(--t-4);line-height:1.6;color:var(--ink)\">{{answer}}</p><p class=\"t-small\" style=\"margin:var(--s-3) 0 0;color:var(--ink-3)\">\u2713 cached match</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Postcard from the cache",
+   "user_requests": [
+    "make it a postcard from umi",
+    "can the answer look like a postcard <regex>user_name</regex>?",
+    "send it like a lil postcard vibes",
+    "i want a postcard styled reply",
+    "render answer as a postcard pls",
+    "postcard format for the answer plz",
+    "show reply like a vintage postcard",
+    "make it a cached postcard plz",
+    "answer like a postcard from cache",
+    "can u do a postcard wiv cached stamp",
+    "show postcard from umi cache",
+    "gimme the answer as a postcard from cache",
+    "postcard style but say cached"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"card\" style=\"border:2px dashed var(--line-2);border-radius:var(--r-s);padding:var(--s-5);position:relative\"><svg viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" style=\"position:absolute;top:var(--s-3);right:var(--s-3);color:var(--accent)\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M20 8l-8-5-8 5v8l8 5 8-5z\"/><path fill=\"var(--panel)\" d=\"M12 4l6 3.75v8.5L12 20l-6-3.75v-8.5z\" opacity=\".4\"/></svg><p class=\"muted t-small\" style=\"margin:0 0 var(--s-2);letter-spacing:.18em;text-transform:uppercase\">postcard</p><p style=\"margin:0;font-size:var(--t-4);line-height:1.6\">{{answer}}</p><p class=\"dim t-small\" style=\"margin:var(--s-4) 0 0;text-align:right\">wish you were here, <regex>user_name</regex></p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Answer with a checklist tick",
+   "user_requests": [
+    "show answer with a tick mark like its done",
+    "can u make it look like a completed task",
+    "reply with a checkmark pls",
+    "i want the answer wrapped in a done checkbox <regex>user_name</regex>",
+    "put a green tick next to the reply",
+    "answer as a checked item",
+    "display like task complete \u2705",
+    "add a checkmark to the answer",
+    "show answer with a done tick",
+    "put a tick next to it",
+    "answer with a check plz",
+    "can u tick the answer like its finished",
+    "gimme answer wiv a checklist mark"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"card flat\" style=\"display:flex;gap:var(--s-4);align-items:flex-start;padding:var(--s-5);border-radius:var(--r-s);background:var(--good-soft);border:1px solid var(--line-2)\"><span style=\"display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--good);color:var(--panel);flex:0 0 auto\"><svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" aria-hidden=\"true\"><path fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M5 12l5 5 9-9\"/></svg></span><div><p class=\"t-small\" style=\"margin:0 0 var(--s-1);color:var(--good);font-weight:600\">done \u2014 <regex>user_name</regex></p><p style=\"margin:0;font-size:var(--t-4);line-height:1.5\">{{answer}}</p></div></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Answer on a torn paper strip",
+   "user_requests": [
+    "give it like a torn paper look",
+    "can the reply be on shredded paper <regex>user_name</regex>?",
+    "torn note vibes plz",
+    "render as a ripped paper snippet",
+    "answer on a scrap of paper",
+    "make it look like a torn piece of note",
+    "paper scrap style for the answer",
+    "make it look like ripped paper",
+    "answer on a torn strip pls",
+    "show it on a torn piece of paper",
+    "can u do a torn paper effect",
+    "gimme the answer like its on a scrap",
+    "answer wiv a torn edge"
+   ],
+   "html": "<div class=\"umi-page\"><div style=\"position:relative;padding:var(--s-5) var(--s-4);background:var(--panel-2);border-radius:var(--r-xs);box-shadow:var(--shadow);\"><div style=\"position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(to bottom right, transparent 50%, var(--panel) 50%);background-size:8px 8px;\"></div><div style=\"position:absolute;bottom:0;left:0;right:0;height:6px;background:linear-gradient(to top right, transparent 50%, var(--panel) 50%);background-size:8px 8px;\"></div><p class=\"dim t-small\" style=\"margin:0 0 var(--s-2);font-style:italic\">\u2014 tore this out for you, <regex>user_name</regex></p><p style=\"margin:0;font-size:var(--t-4);line-height:1.6\">{{answer}}</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Answer in a speech bubble from Umi",
+   "user_requests": [
+    "make it a speech bubble from umi",
+    "can the answer be in a chat bubble <regex>user_name</regex>?",
+    "reply as if umi is speaking it",
+    "speech bubble style pls",
+    "answer like a spoken bubble",
+    "i want it in a bubble with a tail",
+    "show as a talk bubble from umi",
+    "show it as umi saying it",
+    "speech bubble wiv umi plz",
+    "can umi say the answer in a bubble",
+    "make umi talk in a bubble",
+    "answer from umi as a speech thing",
+    "put the answer in umis speech bubble"
+   ],
+   "html": "<div class=\"umi-page\"><div style=\"position:relative;display:inline-block;max-width:100%\"><div class=\"card flat\" style=\"border-radius:var(--r-l);padding:var(--s-4) var(--s-5);background:var(--panel-2);border:1px solid var(--line-2);position:relative\"><p style=\"margin:0;font-size:var(--t-4);line-height:1.5\">{{answer}}</p></div><div style=\"position:absolute;left:24px;bottom:-10px;width:0;height:0;border-left:12px solid transparent;border-right:0 solid transparent;border-top:12px solid var(--line-2);\"></div><div style=\"position:absolute;left:25px;bottom:-8px;width:0;height:0;border-left:11px solid transparent;border-right:0 solid transparent;border-top:11px solid var(--panel-2);\"></div></div><p class=\"dim t-small\" style=\"margin:var(--s-5) 0 0\"><regex>user_name</regex>, umi says:</p></div>",
+   "augmented": true
+  }
+ ]
+}

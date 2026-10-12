@@ -1,0 +1,2349 @@
+{
+ "widget": "progress_bar",
+ "instances": [
+  {
+   "title": "Sourdough Starter Activity",
+   "user_requests": [
+    "How's my sourdough starter doing?",
+    "sourdough progress",
+    "show me starter rise progress bar",
+    "how active is my starter today",
+    "need a visual for my sourdough feeding",
+    "starter bubble-o-meter pls",
+    "how far along is my sourdough batch",
+    "is my starter bubbly and active?",
+    "how's the sourdough starter looking today?",
+    "sourdough starter status",
+    "did my starter rise after feeding?",
+    "show me my starter's progress",
+    "starter activity check"
+   ],
+   "html": "<div class=\"stack\"><div class=\"row between\"><span class=\"who\">Sourdough starter</span><span class=\"badge good\"><i class=\"dot\"></i>Peak in ~4h</span></div><div class=\"meter\"><div class=\"top\"><b>Rise activity</b><span>68%</span></div><div class=\"progress\"><span style=\"width:68%\"></span></div></div><p class=\"t-small muted\">Last fed: 7h ago. Looking bubbly and proud, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Coffee Brew Extraction",
+   "user_requests": [
+    "how's my pour-over going?",
+    "coffee extraction progress",
+    "track my brew bar",
+    "am I done brewing yet",
+    "show extraction status for today's coffee",
+    "pour over progress plz",
+    "how much coffee is left in the brew",
+    "how's the extraction on my coffee?",
+    "coffee brew progress?",
+    "is my espresso pulling right?",
+    "check my pour over extraction",
+    "how's my coffee coming along?",
+    "brew extraction status"
+   ],
+   "html": "<div class=\"stack\"><div class=\"row between\"><span class=\"who\">Pour-over</span><span class=\"badge accent\">Good</span></div><div class=\"meter\"><div class=\"top\"><b>Extraction</b><span>74%</span></div><div class=\"progress\"><span style=\"width:74%\"></span></div></div><p class=\"t-small muted\">Beans: Ethiopia Kochere. Water: 205\u00b0F. You're doing great, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Houseplant Watering",
+   "user_requests": [
+    "when should I water my monstera",
+    "plant water progress",
+    "how dry is the soil",
+    "houseplant hydration meter",
+    "check my plant's water level",
+    "monstera watering bar",
+    "is it time to water the plants again",
+    "does my monstera need water?",
+    "when do i water the plants?",
+    "houseplant watering check",
+    "are my plants thirsty?",
+    "plant water schedule",
+    "how's my watering schedule?"
+   ],
+   "html": "<div class=\"stack\"><div class=\"row between\"><span class=\"who\">Monstera</span><span class=\"badge info\">Check in 2d</span></div><div class=\"meter\"><div class=\"top\"><b>Soil moisture</b><span>55%</span></div><div class=\"progress\"><span style=\"width:55%\"></span></div></div><p class=\"t-small muted\">Leaves look happy. You've got a couple more days, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Monthly Budget Goal",
+   "user_requests": [
+    "how am I doing on my budget?",
+    "monthly spending progress",
+    "track my budget bar",
+    "am I over budget yet",
+    "show spending vs goal",
+    "budget progress pls",
+    "how much money is left for this month",
+    "am i on track with my budget?",
+    "how's my monthly spending?",
+    "budget progress this month",
+    "did i stick to my budget?",
+    "check my budget goal",
+    "monthly budget status"
+   ],
+   "html": "<div class=\"stack\"><div class=\"row between\"><span class=\"who\">March budget</span><span class=\"badge good\">On track</span></div><div class=\"meter\"><div class=\"top\"><b>Spent</b><span>82%</span></div><div class=\"progress\"><span style=\"width:82%\"></span></div></div><p class=\"t-small muted\">You've spent $1,230 of $1,500, <regex>user_name</regex>. Still room for fun.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Learning Spanish Streak",
+   "user_requests": [
+    "how's my Spanish streak?",
+    "language learning progress",
+    "track my daily streak bar",
+    "am I about to lose my streak",
+    "show my Spanish practice progress",
+    "streak meter pls",
+    "how many days have I practiced Spanish",
+    "how many days in a row for Spanish?",
+    "Spanish streak status",
+    "did i practice Spanish today?",
+    "my Spanish learning streak",
+    "how long is my Spanish streak?",
+    "Spanish streak check"
+   ],
+   "html": "<div class=\"stack\"><div class=\"row between\"><span class=\"who\">Spanish streak</span><span class=\"badge warn\"><i class=\"dot\"></i>1 day left</span></div><div class=\"meter\"><div class=\"top\"><b>Today's practice</b><span>40%</span></div><div class=\"progress\"><span style=\"width:40%\"></span></div></div><p class=\"t-small muted\">Just 6 more minutes to keep your streak, <regex>user_name</regex>. \u00a1Vamos!</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Novel Editing Draft",
+   "user_requests": [
+    "how's the novel going?",
+    "book editing progress",
+    "track my manuscript bar",
+    "am I almost done editing",
+    "show editing progress for my novel",
+    "manuscript progress plz",
+    "how many chapters are edited so far",
+    "how's my novel editing coming?",
+    "novel draft progress",
+    "how much have i edited?",
+    "novel editing status",
+    "am i done with the draft?",
+    "editing progress on my book"
+   ],
+   "html": "<div class=\"stack\"><div class=\"row between\"><span class=\"who\">Novel draft</span><span class=\"badge accent\">Second pass</span></div><div class=\"meter\"><div class=\"top\"><b>Edited</b><span>61%</span></div><div class=\"progress\"><span style=\"width:61%\"></span></div></div><p class=\"t-small muted\">13 of 21 chapters polished. That ending is getting close, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Inbox Zero Progress",
+   "user_requests": [
+    "how far along am I on inbox zero",
+    "show my email clearing progress",
+    "inbox zero bar pls",
+    "progress on emptying my inbox?",
+    "can u track inbox zero for me",
+    "i wanna see how much of my inbox is left",
+    "unread emails remaining tracker",
+    "how many emails left?",
+    "inbox zero status",
+    "am i close to inbox zero?",
+    "check my inbox progress",
+    "email inbox status",
+    "how's my inbox looking?"
+   ],
+   "html": "<div class=\"card\">\n<h3 class=\"card-title\">Inbox Zero</h3>\n<p class=\"t-small muted\">Hey <regex>user_name</regex>, 37 of 214 emails triaged. Slow and steady wins the inbox.</p>\n<div class=\"meter\">\n<div class=\"top\"><b>Triaged</b><span>17%</span></div>\n<div class=\"progress\"><span style=\"width:17%\"></span></div>\n</div>\n<details class=\"acc\">\n<summary>How the count works</summary>\n<div class=\"body\"><ul class=\"list\">\n<li>Archived, replied, or filed counts as done.</li>\n<li>Starred mail stays in the pile.</li>\n<li>Progress updates each pass.</li>\n</ul></div>\n</details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Hydration Checkpoint",
+   "user_requests": [
+    "how much water today",
+    "water intake tracker",
+    "am i hydrated enough",
+    "show my water progress",
+    "h2o log pls",
+    "daily hydration bar",
+    "tracking my glasses of water",
+    "how much water have i had?",
+    "hydration status",
+    "am i hydrated?",
+    "water intake today",
+    "check my hydration",
+    "how's my water consumption?"
+   ],
+   "html": "<div class=\"card flat\">\n<h3 class=\"card-title\">Water Today</h3>\n<p class=\"t-small muted\">Nice work <regex>user_name</regex>. 5 of 8 glasses down. Two more before dinner and you're golden.</p>\n<div class=\"meter\">\n<div class=\"top\"><b>Hydration</b><span>62%</span></div>\n<div class=\"progress\"><span style=\"width:62%\"></span></div>\n</div>\n<div class=\"row between t-small dim\"><span>0</span><span>8 glasses</span></div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Couch to 5K Weeks",
+   "user_requests": [
+    "couch to 5k progress",
+    "how many weeks of c25k done",
+    "running plan tracker",
+    "where am i in my 5k training",
+    "show c25k weeks complete",
+    "jog plan progress bar",
+    "am i almost at 5k yet",
+    "where am i in couch to 5k?",
+    "c25k progress",
+    "how's my running program?",
+    "couch to 5k status",
+    "what week of c25k am i on?",
+    "running progress"
+   ],
+   "html": "<div class=\"card\">\n<h3 class=\"card-title\">Couch to 5K</h3>\n<p class=\"t-small muted\"><regex>user_name</regex>, you're on week 6 of 9. The run-walk ratio is finally tipping your way.</p>\n<div class=\"meter\">\n<div class=\"top\"><b>Plan complete</b><span>67%</span></div>\n<div class=\"progress\"><span style=\"width:67%\"></span></div>\n</div>\n<div class=\"callout info\"><p class=\"t-small\">Week 6 means steady 22-minute runs. Bring water.</p></div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Song Learning Progress",
+   "user_requests": [
+    "how much of the song have i learned",
+    "guitar song progress",
+    "practicing that riff tracker",
+    "song learned percent",
+    "show my guitar practice progress",
+    "how close am i to playing it all",
+    "learned the whole tune yet",
+    "how's my song learning going?",
+    "song progress",
+    "have i learned the whole song?",
+    "music practice progress",
+    "how much of the song do i know?",
+    "song learning status"
+   ],
+   "html": "<div class=\"card flat\">\n<h3 class=\"card-title\">Learning \"Blackbird\"</h3>\n<p class=\"t-small muted\">You can play 42 of 60 bars clean, <regex>user_name</regex>. The turnaround still bites.</p>\n<div class=\"meter\">\n<div class=\"top\"><b>Bars mastered</b><span>70%</span></div>\n<div class=\"progress\"><span style=\"width:70%\"></span></div>\n</div>\n<blockquote class=\"quote\"><p class=\"t-small\">Practice the tricky four bars slowly first.</p></blockquote>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Photo Backup Coverage",
+   "user_requests": [
+    "how many photos backed up",
+    "photo backup progress",
+    "is my library safe yet",
+    "cloud backup percent",
+    "show backup status",
+    "photos uploaded tracker",
+    "backup coverage bar",
+    "are all my photos backed up?",
+    "photo backup status",
+    "how's my photo backup?",
+    "backup progress for photos",
+    "check photo backup",
+    "how many photos are backed up?"
+   ],
+   "html": "<div class=\"card\">\n<h3 class=\"card-title\">Photo Backup</h3>\n<p class=\"t-small muted\"><regex>user_name</regex>, 8,240 of 10,000 photos are safe in the cloud. The last batch is uploading now.</p>\n<div class=\"meter\">\n<div class=\"top\"><b>Backed up</b><span>82%</span></div>\n<div class=\"progress\"><span style=\"width:82%\"></span></div>\n</div>\n<div class=\"row\"><span class=\"badge info\"><i class=\"dot\"></i>1,760 left</span></div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Japanese Kanji Learned",
+   "user_requests": [
+    "kanji progress",
+    "how many kanji do i know",
+    "japanese study tracker",
+    "n5 kanji count",
+    "show my kanji learning bar",
+    "how far into the kanji list am i",
+    "kanji mastered so far",
+    "how many kanji do i know?",
+    "kanji learning status",
+    "japanese kanji progress",
+    "how's my kanji study?",
+    "kanji count",
+    "check kanji progress"
+   ],
+   "html": "<div class=\"card flat\">\n<h3 class=\"card-title\">Kanji Learned</h3>\n<p class=\"t-small muted\">Solid pace, <regex>user_name</regex>. 110 of 300 N5 kanji locked in. Repetition is your friend.</p>\n<div class=\"meter\">\n<div class=\"top\"><b>N5 kanji</b><span>37%</span></div>\n<div class=\"progress\"><span style=\"width:37%\"></span></div>\n</div>\n<div class=\"grid two\">\n<div class=\"stat\"><span class=\"label\">Learned</span><span class=\"value\">110</span></div>\n<div class=\"stat\"><span class=\"label\">Remaining</span><span class=\"value\">190</span></div>\n</div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Yard Compost Pile Heat",
+   "user_requests": [
+    "how hot is my compost pile",
+    "compost progress",
+    "is my pile cooking yet",
+    "check my compost temp milestone",
+    "track compost heat level",
+    "how close is my compost to finished",
+    "compost pile status",
+    "is my compost pile hot?",
+    "compost temperature",
+    "how's the compost doing?",
+    "compost heat status",
+    "check compost pile",
+    "is my compost cooking?"
+   ],
+   "html": "<div class=\"card stack\">\n  <div class=\"row between\">\n    <h3 class=\"card-title\">Compost Pile Heat</h3>\n    <span class=\"badge good\"><i class=\"dot\"></i>cached</span>\n  </div>\n  <p class=\"muted t-small\">Hi <regex>user_name</regex> \u2014 your pile is cooking, just not scorching. Turn it once and you're golden.</p>\n  <div class=\"meter\">\n    <div class=\"row between\"><b>Heat reached</b><span class=\"muted\">126\u00b0F of 160\u00b0F</span></div>\n    <div class=\"progress\"><span style=\"width:79%\"></span></div>\n  </div>\n  <svg class=\"chart\" viewBox=\"0 0 300 90\" role=\"img\" aria-label=\"Pile temperature over six weeks\">\n    <line class=\"axis\" x1=\"0\" y1=\"76\" x2=\"300\" y2=\"76\"></line>\n    <rect class=\"bar\" x=\"14\" y=\"58\" width=\"26\" height=\"18\"></rect>\n    <rect class=\"bar\" x=\"58\" y=\"40\" width=\"26\" height=\"36\"></rect>\n    <rect class=\"bar alt\" x=\"102\" y=\"26\" width=\"26\" height=\"50\"></rect>\n    <rect class=\"bar\" x=\"146\" y=\"34\" width=\"26\" height=\"42\"></rect>\n    <rect class=\"bar\" x=\"190\" y=\"46\" width=\"26\" height=\"30\"></rect>\n    <rect class=\"bar alt\" x=\"234\" y=\"30\" width=\"26\" height=\"46\"></rect>\n    <text class=\"lbl\" x=\"14\" y=\"88\">W1</text>\n    <text class=\"lbl\" x=\"102\" y=\"88\">W3</text>\n    <text class=\"lbl\" x=\"234\" y=\"88\">W6</text>\n    <line class=\"guide\" x1=\"0\" y1=\"22\" x2=\"300\" y2=\"22\"></line>\n    <text class=\"lbl in\" x=\"240\" y=\"18\">target 140\u00b0F</text>\n  </svg>\n  <details class=\"acc\">\n    <summary>What to add this week</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Two handfuls of shredded cardboard for carbon.</li>\n        <li>One bucket of grass clippings \u2014 go easy, they run hot.</li>\n        <li>Turn every three days while it's above 120\u00b0F.</li>\n      </ul>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Savings Emergency Fund",
+   "user_requests": [
+    "am i close to my emergency fund goal",
+    "check my savings buffer progress",
+    "how's my rainy day fund doing",
+    "emergency fund tracker",
+    "my safety net savings status",
+    "how much left to 6 months expenses",
+    "rainy day fund check",
+    "how's my emergency fund?",
+    "emergency savings progress",
+    "am i close to my savings goal?",
+    "emergency fund status",
+    "check my savings",
+    "how much in emergency fund?"
+   ],
+   "html": "<div class=\"card stack\">\n  <div class=\"row between\">\n    <h3 class=\"card-title\">Savings Emergency Fund</h3>\n    <span class=\"badge info\">cached match</span>\n  </div>\n  <p class=\"t-small muted\">Nice pace, <regex>user_name</regex>. You're past the half-year mark \u2014 the boring kind of progress that actually works.</p>\n  <div class=\"grid two\">\n    <div class=\"stat\"><div class=\"label\">Saved</div><div class=\"value\">$8,400</div></div>\n    <div class=\"stat\"><div class=\"label\">Months covered</div><div class=\"value\">3.6<span class=\"unit\"> of 6</span></div><div class=\"delta down\">+0.3 vs last month</div></div>\n  </div>\n  <div class=\"meter\">\n    <div class=\"row between\"><b>Buffered</b><span class=\"muted\">60%</span></div>\n    <div class=\"progress\"><span style=\"width:60%\"></span></div>\n  </div>\n  <details class=\"acc\">\n    <summary>What reaches the goal fastest</summary>\n    <div class=\"body\">\n      <ol class=\"list\">\n        <li>Auto-transfer every payday, even a small one.</li>\n        <li>Park the fund in a high-yield account, not checking.</li>\n        <li>Every bonus goes straight to month four.</li>\n      </ol>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Hiking Trail Milestones",
+   "user_requests": [
+    "how many trails have i done",
+    "trail badge progress",
+    "check my hiking log",
+    "am i close to 50 hikes",
+    "hiking goal tracker",
+    "how many hikes left to the badge",
+    "trail count check",
+    "how many hikes have i completed?",
+    "hiking progress",
+    "trail milestones status",
+    "how's my hiking goal?",
+    "check hiking trails",
+    "how many trails left?"
+   ],
+   "html": "<div class=\"card stack\">\n  <div class=\"row between\">\n    <h3 class=\"card-title\">Hiking Trail Milestones</h3>\n    <span class=\"badge good\"><i class=\"dot\"></i>cached</span>\n  </div>\n  <p class=\"muted t-small\">Morning, <regex>user_name</regex>. Thirty-eight trails in \u2014 eight more and the Fifty Peaks badge is yours.</p>\n  <div class=\"grid two\">\n    <div class=\"stat\"><div class=\"label\">Trails logged</div><div class=\"value\">38<span class=\"unit\"> of 50</span></div></div>\n    <div class=\"stat\"><div class=\"label\">Elevation gained</div><div class=\"value\">21.4<span class=\"unit\">k ft</span></div></div>\n  </div>\n  <div class=\"meter\">\n    <div class=\"row between\"><b>Badge progress</b><span class=\"muted\">76%</span></div>\n    <div class=\"progress\"><span style=\"width:76%\"></span></div>\n  </div>\n  <svg class=\"chart\" viewBox=\"0 0 300 80\" role=\"img\" aria-label=\"Trails completed per month\">\n    <line class=\"axis\" x1=\"0\" y1=\"66\" x2=\"300\" y2=\"66\"></line>\n    <rect class=\"bar\" x=\"16\" y=\"46\" width=\"24\" height=\"20\"></rect>\n    <rect class=\"bar\" x=\"62\" y=\"36\" width=\"24\" height=\"30\"></rect>\n    <rect class=\"bar alt\" x=\"108\" y=\"26\" width=\"24\" height=\"40\"></rect>\n    <rect class=\"bar\" x=\"154\" y=\"38\" width=\"24\" height=\"28\"></rect>\n    <rect class=\"bar\" x=\"200\" y=\"20\" width=\"24\" height=\"46\"></rect>\n    <rect class=\"bar alt\" x=\"246\" y=\"30\" width=\"24\" height=\"36\"></rect>\n    <text class=\"lbl\" x=\"16\" y=\"78\">Apr</text>\n    <text class=\"lbl\" x=\"200\" y=\"78\">Aug</text>\n    <text class=\"lbl\" x=\"246\" y=\"78\">Sep</text>\n  </svg>\n  <details class=\"acc\">\n    <summary>Best bets for the last eight</summary>\n    <div class=\"body\"><ul class=\"list\"><li>Two short ridge loops you skipped in spring.</li><li>The river trail \u2014 flat, 4 miles, counts the same.</li></ul></div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Chess Openings Memorised",
+   "user_requests": [
+    "how many chess openings do i know",
+    "opening theory progress",
+    "am i ready for the club game",
+    "chess study tracker",
+    "how much theory have i memorised",
+    "opening repertoire check",
+    "chess prep status",
+    "how many chess openings do i have down?",
+    "chess opening progress",
+    "how's my chess study?",
+    "openings memorized status",
+    "check chess openings",
+    "how many openings do i know?"
+   ],
+   "html": "<div class=\"card stack\">\n  <div class=\"row between\">\n    <h3 class=\"card-title\">Chess Openings Memorised</h3>\n    <span class=\"badge warn\"><i class=\"dot\"></i>near miss</span>\n  </div>\n  <p class=\"muted t-small\"><regex>user_name</regex>, you've drilled 24 lines. Solid \u2014 but the club plays a Sicilian you haven't met yet.</p>\n  <div class=\"meter\">\n    <div class=\"row between\"><b>Repertoire</b><span class=\"muted\">24 of 40 lines</span></div>\n    <div class=\"progress\"><span style=\"width:60%\"></span></div>\n  </div>\n  <div class=\"table-wrap\">\n    <table>\n      <thead><tr><th>Opening</th><th class=\"num\">Depth</th><th>Confidence</th></tr></thead>\n      <tbody>\n        <tr><td>Italian Game</td><td class=\"num\">14 moves</td><td>Strong</td></tr>\n        <tr><td>London System</td><td class=\"num\">12 moves</td><td>Strong</td></tr>\n        <tr><td>Queen's Gambit</td><td class=\"num\">9 moves</td><td>Shaky</td></tr>\n        <tr><td>Sicilian Defence</td><td class=\"num\">\u2014</td><td>Missing</td></tr>\n      </tbody>\n    </table>\n  </div>\n  <details class=\"acc\">\n    <summary>Drill plan for this week</summary>\n    <div class=\"body\"><ol class=\"list\"><li>Ten Sicilian Najdorf traps, light reps.</li><li>Replay last night's Queen's Gambit loss twice.</li></ol></div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Rowing Machine Distance Goal",
+   "user_requests": [
+    "how close am i to 100k meters rowing",
+    "check my rowing log",
+    "rowing distance tracker",
+    "am i near my erg goal",
+    "how many meters left on the rower",
+    "row goal status",
+    "erg distance check",
+    "how far have i rowed toward my goal",
+    "rowing progress?",
+    "am i almost at 100k meters on the rower",
+    "how many meters left to row",
+    "check my rowing distance",
+    "how much rowing have i done so far"
+   ],
+   "html": "<div class=\"card stack\">\n  <div class=\"row between\">\n    <h3 class=\"card-title\">Rowing Machine Distance Goal</h3>\n    <span class=\"badge good\"><i class=\"dot\"></i>cached</span>\n  </div>\n  <p class=\"muted t-small\">Evening, <regex>user_name</regex>. Eighty-two thousand meters in \u2014 18k to go, and you row straighter than my drawings.</p>\n  <div class=\"grid two\">\n    <div class=\"stat\"><div class=\"label\">Total rowed</div><div class=\"value\">82<span class=\"unit\">k m</span></div></div>\n    <div class=\"stat\"><div class=\"label\">Avg / session</div><div class=\"value\">6.8<span class=\"unit\">k m</span></div><div class=\"delta down\">+0.4 this week</div></div>\n  </div>\n  <div class=\"meter\">\n    <div class=\"row between\"><b>Toward 100k</b><span class=\"muted\">82%</span></div>\n    <div class=\"progress\"><span style=\"width:82%\"></span></div>\n  </div>\n  <svg class=\"chart\" viewBox=\"0 0 300 80\" role=\"img\" aria-label=\"Weekly meters rowed\">\n    <line class=\"axis\" x1=\"0\" y1=\"66\" x2=\"300\" y2=\"66\"></line>\n    <path class=\"line\" d=\"M14 54 L64 48 L114 40 L164 34 L214 30 L264 24\"></path>\n    <rect class=\"bar\" x=\"10\" y=\"54\" width=\"8\" height=\"12\"></rect>\n    <rect class=\"bar\" x=\"60\" y=\"48\" width=\"8\" height=\"18\"></rect>\n    <rect class=\"bar alt\" x=\"110\" y=\"40\" width=\"8\" height=\"26\"></rect>\n    <rect class=\"bar\" x=\"160\" y=\"34\" width=\"8\" height=\"32\"></rect>\n    <rect class=\"bar\" x=\"210\" y=\"30\" width=\"8\" height=\"36\"></rect>\n    <rect class=\"bar alt\" x=\"260\" y=\"24\" width=\"8\" height=\"42\"></rect>\n    <text class=\"lbl\" x=\"10\" y=\"78\">W1</text>\n    <text class=\"lbl\" x=\"260\" y=\"78\">W6</text>\n  </svg>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Honey Extraction Jars",
+   "user_requests": [
+    "how much honey have i bottled",
+    "honey harvest progress",
+    "am i close to 20 jars",
+    "extraction tracker",
+    "how many jars left to fill",
+    "honey jar count",
+    "check my honey yield",
+    "how many jars of honey did i fill",
+    "honey bottling progress",
+    "how much honey is left to jar",
+    "have i bottled all the honey",
+    "jars of honey done?",
+    "how many honey jars so far"
+   ],
+   "html": "<div class=\"card stack\">\n  <div class=\"row between\">\n    <h3 class=\"card-title\">Honey Extraction Jars</h3>\n    <span class=\"badge accent\">cached</span>\n  </div>\n  <p class=\"muted t-small\">Hey <regex>user_name</regex> \u2014 fourteen jars filled. Your bees did the hard part; you just spun and smiled.</p>\n  <div class=\"meter\">\n    <div class=\"row between\"><b>Jars bottled</b><span class=\"muted\">14 of 20</span></div>\n    <div class=\"progress\"><span style=\"width:70%\"></span></div>\n  </div>\n  <div class=\"grid two\">\n    <div class=\"stat\"><div class=\"label\">Total weight</div><div class=\"value\">18.2<span class=\"unit\">kg</span></div></div>\n    <div class=\"stat\"><div class=\"label\">Frames uncapped</div><div class=\"value\">6</div></div>\n  </div>\n  <details class=\"acc\">\n    <summary>Storage notes</summary>\n    <div class=\"body\"><ul class=\"list\"><li>Cool, dark cupboard \u2014 honey hates drama and light.</li><li>Label the batch date; last year's is still perfect.</li></ul></div>\n  </details>\n  <details class=\"acc\">\n    <summary>Was it a good season?</summary>\n    <div class=\"body\"><p class=\"t-small\">Eighteen kilos beats your three-year average by 4k. Tell the bees.</p></div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Terrarium Humidity Level",
+   "user_requests": [
+    "how damp is my terrarium",
+    "terrarium humidity bar",
+    "check moisture in closed terrarium",
+    "my moss terrarium misting progress",
+    "humidity tracker for glass jar garden",
+    "how close am i to 80% humidity in the terrarium",
+    "terrarium fog level?",
+    "how humid is my terrarium",
+    "terrarium moisture check",
+    "is my terrarium too dry",
+    "what's the humidity in the terrarium",
+    "how wet is the terrarium",
+    "terrarium dampness level"
+   ],
+   "html": "<div class=\"meter\">\n  <div class=\"top\">\n    <b>Terrarium Humidity</b>\n    <span>68%</span>\n  </div>\n  <div class=\"progress\"><span style=\"width:68%\"></span></div>\n  <p class=\"t-small muted\">Target: 75\u201385% for the moss and ferns. You're close, <regex>user_name</regex>.</p>\n  <details class=\"acc\">\n    <summary>Why it dips</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Lid cracked open during the last feeding</li>\n        <li>Top layer of soil drying under the grow light</li>\n        <li>Warm afternoon \u2014 condensation drops, humidity follows</li>\n      </ul>\n      <div class=\"callout info\">Mist the walls, not the leaves. Close the lid. Check again in the morning.</div>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Guitar Chord Transitions",
+   "user_requests": [
+    "how many chord changes can i do",
+    "guitar chord switch speed",
+    "my one-minute chord change test",
+    "am i getting faster at barre chords",
+    "chord transition practice progress",
+    "guitar practice bar meter",
+    "how close to 60 changes per minute",
+    "how many chord changes have i practiced",
+    "guitar chord switch count",
+    "am i getting faster at chord changes",
+    "how many transitions did i do today",
+    "chord change progress",
+    "how many chord swaps so far"
+   ],
+   "html": "<div class=\"meter\">\n  <div class=\"top\">\n    <b>Chord Changes / Minute</b>\n    <span>42 / 60</span>\n  </div>\n  <div class=\"progress\"><span style=\"width:70%\"></span></div>\n  <p class=\"t-small muted\">You started at 22 last month. The G-to-C hop is still the slow one.</p>\n  <details class=\"acc\">\n    <summary>Where the seconds go</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Fingers lift too high \u2014 keep them a string's width away</li>\n        <li>Eyes jump before the hand does</li>\n        <li>Metronome at 60, but you're rushing the downbeat</li>\n      </ul>\n      <p class=\"t-small dim\">Try 30 seconds clean, then rest. Quality beats panic.</p>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Tax Return Documents Gathered",
+   "user_requests": [
+    "how much of my tax stuff is ready",
+    "tax document checklist progress",
+    "am i missing paperwork for taxes",
+    "tax prep completion bar",
+    "W-2 and receipt collection status",
+    "how close am i to filing taxes",
+    "tax documents gathered?",
+    "how many tax documents do i have",
+    "tax prep progress",
+    "am i missing any tax docs",
+    "how much of my tax paperwork is done",
+    "tax return document count",
+    "have i collected all tax forms"
+   ],
+   "html": "<div class=\"meter\">\n  <div class=\"top\">\n    <b>Tax Documents Gathered</b>\n    <span>9 / 14</span>\n  </div>\n  <div class=\"progress\"><span style=\"width:64%\"></span></div>\n  <p class=\"t-small muted\">Five stragglers left, <regex>user_name</regex>. One of them is that freelance 1099.</p>\n  <details class=\"acc\">\n    <summary>Still missing</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>1099 from the side gig</li>\n        <li>Charity receipts (the email folder)</li>\n        <li>Last year's return, for reference</li>\n        <li>Student loan interest statement</li>\n        <li>Mileage log for the car</li>\n      </ul>\n      <div class=\"callout warn\">The deadline creeps closer every day. It does not jog.</div>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Puzzle Assembly Progress",
+   "user_requests": [
+    "how much of the jigsaw is done",
+    "puzzle piece progress",
+    "1000 piece puzzle completion",
+    "am i close to finishing this puzzle",
+    "jigsaw border done yet",
+    "puzzle progress tracker",
+    "how many pieces left in the puzzle",
+    "how many puzzle pieces have i placed",
+    "jigsaw progress?",
+    "am i almost done with the puzzle",
+    "how much of the puzzle is left",
+    "puzzle completion percentage",
+    "how many pieces are in the puzzle"
+   ],
+   "html": "<div class=\"meter\">\n  <div class=\"top\">\n    <b>Jigsaw Assembly</b>\n    <span>640 / 1000</span>\n  </div>\n  <div class=\"progress\"><span style=\"width:64%\"></span></div>\n  <p class=\"t-small muted\">Border's done, sky's a nightmare. Classic, <regex>user_name</regex>.</p>\n  <details class=\"acc\">\n    <summary>Remaining zones</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Upper sky \u2014 ~200 pieces of identical blue</li>\n        <li>Tree canopy \u2014 ~120 pieces, mostly green</li>\n        <li>Foreground grass \u2014 ~40 pieces, easy wins</li>\n      </ul>\n      <div class=\"callout good\">Grass first. Always grass first. Morale matters.</div>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Bike Commute Days This Month",
+   "user_requests": [
+    "how many days did i bike to work",
+    "bike commute progress",
+    "am i hitting my cycling goal",
+    "days cycled this month bar",
+    "bike to work streak progress",
+    "how close am i to 15 bike commutes",
+    "cycling commute tracker",
+    "how many times did i bike to work this month",
+    "bike commute count",
+    "am i meeting my bike commute goal",
+    "days biked to work?",
+    "how many bike commutes so far",
+    "cycling to work days this month"
+   ],
+   "html": "<div class=\"meter\">\n  <div class=\"top\">\n    <b>Bike Commute Days</b>\n    <span>11 / 15</span>\n  </div>\n  <div class=\"progress\"><span style=\"width:73%\"></span></div>\n  <p class=\"t-small muted\">Four more rides and you've beaten last month, <regex>user_name</regex>.</p>\n  <details class=\"acc\">\n    <summary>Days you drove instead</summary>\n    <div class=\"body\">\n      <ul class=\"timeline\">\n        <li><span class=\"when\">Mon</span> Rain \u2014 fair call</li>\n        <li><span class=\"when\">Wed</span> Overslept \u2014 the bike doesn't judge</li>\n        <li><span class=\"when\">Fri</span> Flat tyre \u2014 fixed by Saturday</li>\n      </ul>\n      <div class=\"callout info\">Weather's clear Tuesday through Thursday. Your legs know the route.</div>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Sketchbook Pages Filled",
+   "user_requests": [
+    "how much of my sketchbook is full",
+    "sketchbook page progress",
+    "drawing practice pages done",
+    "am i close to finishing this sketchbook",
+    "sketchbook completion bar",
+    "pages drawn in my notebook",
+    "how many sketchbook pages left",
+    "how many pages have i drawn in my sketchbook",
+    "sketchbook progress?",
+    "am i almost done with my sketchbook",
+    "how many pages left in my sketchbook",
+    "sketchbook fill level",
+    "how many sketchbook pages completed"
+   ],
+   "html": "<div class=\"meter\">\n  <div class=\"top\">\n    <b>Sketchbook Pages Filled</b>\n    <span>86 / 120</span>\n  </div>\n  <div class=\"progress\"><span style=\"width:72%\"></span></div>\n  <p class=\"t-small muted\">Thirty-four blank pages left. That's a month of daily sketches, <regex>user_name</regex>.</p>\n  <details class=\"acc\">\n    <summary>What's on the pages</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Gesture drawings \u2014 38 pages</li>\n        <li>Hands and feet \u2014 21 pages (brave)</li>\n        <li>Buildings from the window \u2014 15 pages</li>\n        <li>Experiments you'd rather forget \u2014 12 pages</li>\n      </ul>\n      <div class=\"callout good\">The bad pages taught you more than the good ones. Keep going.</div>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Emergency Fund Progress",
+   "user_requests": [
+    "how's my emergency fund coming along",
+    "show me my emergency savings progress",
+    "emergency fund tracker",
+    "how much have i saved for emergencies?",
+    "Em fund status",
+    "am i close to 3 months of expenses saved yet",
+    "progress on rainy day fund",
+    "how much do i have in my emergency fund",
+    "emergency savings status",
+    "am i close to my emergency fund goal",
+    "how is my emergency savings going",
+    "emergency fund amount",
+    "how much left to save for emergencies"
+   ],
+   "html": "<div class=\"meter\">\n  <div class=\"top\"><b>Emergency fund</b><span>42%</span></div>\n  <div class=\"progress\"><span style=\"width:42%\"></span></div>\n</div>\n<p class=\"t-small muted\"><regex>user_name</regex> \u2014 $3,360 of $8,000. At $250/month, you land there in about 19 months.</p>\n<details class=\"acc\">\n  <summary>Where the money sits</summary>\n  <div class=\"body\">\n    <ul class=\"list\">\n      <li>High-yield savings: $2,900</li>\n      <li>Checking buffer: $460</li>\n      <li>Monthly auto-transfer: $250</li>\n    </ul>\n    <p class=\"t-small dim\">One month of expenses is the real win. You passed that a while back.</p>\n  </div>\n</details>",
+   "augmented": true
+  },
+  {
+   "title": "Weekly Reading Goal",
+   "user_requests": [
+    "how many pages have i read this week",
+    "reading goal progress",
+    "am i hitting my reading target?",
+    "pages read tracker",
+    "show reading streak progress",
+    "did i read enough this week",
+    "book pages goal",
+    "how many pages have i read this week",
+    "reading goal progress?",
+    "am i on track with my reading",
+    "how many pages left to read this week",
+    "weekly reading status",
+    "how much have i read this week"
+   ],
+   "html": "<div class=\"meter\">\n  <div class=\"top\"><b>Weekly reading goal</b><span>180 / 300 pages</span></div>\n  <div class=\"progress\"><span style=\"width:60%\"></span></div>\n</div>\n<p class=\"t-small muted\"><regex>user_name</regex>, 120 pages left and three days to go. That's a lazy Sunday afternoon, not a scramble.</p>\n<details class=\"acc\">\n  <summary>By book</summary>\n  <div class=\"body\">\n    <ul class=\"list\">\n      <li><b>Piranesi</b> \u2014 95 pages (nearly done)</li>\n      <li><b>The Overstory</b> \u2014 85 pages</li>\n    </ul>\n  </div>\n</details>",
+   "augmented": true
+  },
+  {
+   "title": "Water Intake Today",
+   "user_requests": [
+    "how much water have i had today",
+    "hydration progress",
+    "water tracker",
+    "am i drinking enough water?",
+    "show my water goal",
+    "how many glasses today",
+    "need to drink more water?",
+    "how many glasses of water today",
+    "water consumption?",
+    "am i drinking enough water",
+    "how much water left to drink",
+    "water intake progress",
+    "how much h2o today"
+   ],
+   "html": "<div class=\"meter\">\n  <div class=\"top\"><b>Water today</b><span>5 of 8 glasses</span></div>\n  <div class=\"progress\"><span style=\"width:62%\"></span></div>\n</div>\n<p class=\"t-small muted\"><regex>user_name</regex>, three glasses left. A tall one now and two before bed and you're set.</p>\n<div class=\"callout info\">\n  Tip: keep a filled bottle on your desk. Half the battle is just seeing it.\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Savings for Vacation",
+   "user_requests": [
+    "vacation fund progress",
+    "how's my trip savings?",
+    "am i saving enough for the holiday?",
+    "travel fund tracker",
+    "trip budget progress",
+    "how much saved for vacation",
+    "vacation money goal",
+    "how much have i saved for vacation",
+    "vacation savings progress",
+    "am i close to my vacation savings goal",
+    "how much left to save for trip",
+    "vacation fund status",
+    "trip savings amount"
+   ],
+   "html": "<div class=\"meter\">\n  <div class=\"top\"><b>Vacation fund</b><span>71%</span></div>\n  <div class=\"progress\"><span style=\"width:71%\"></span></div>\n</div>\n<p class=\"t-small muted\"><regex>user_name</regex>, $1,420 of $2,000 saved. Keep the $160/month pace and you're fully funded by May.</p>\n<details class=\"acc\">\n  <summary>Breakdown</summary>\n  <div class=\"body\">\n    <ul class=\"list\">\n      <li>Flights: $620 (paid)</li>\n      <li>Hotel deposit: $400 (paid)</li>\n      <li>Spending money: $1,000 (saving now)</li>\n    </ul>\n  </div>\n</details>",
+   "augmented": true
+  },
+  {
+   "title": "Meditation Minutes This Month",
+   "user_requests": [
+    "how many minutes have i meditated this month",
+    "meditation tracker",
+    "mindfulness progress",
+    "am i keeping up with meditation?",
+    "show my meditate stats",
+    "monthly meditation goal",
+    "how's my practice going",
+    "how many minutes have i meditated this month",
+    "meditation progress?",
+    "am i hitting my meditation goal",
+    "how much meditation time left",
+    "monthly meditation minutes",
+    "how long have i meditated this month"
+   ],
+   "html": "<div class=\"meter\">\n  <div class=\"top\"><b>Meditation this month</b><span>340 / 600 min</span></div>\n  <div class=\"progress\"><span style=\"width:57%\"></span></div>\n</div>\n<p class=\"t-small muted\"><regex>user_name</regex>, 260 minutes to go. That's 13 sessions of 20 minutes \u2014 very doable.</p>\n<div class=\"callout good\">\n  You've shown up 17 days in a row. That's the streak that counts.\n</div>\n<details class=\"acc\">\n  <summary>Last 7 days</summary>\n  <div class=\"body\">\n    <ul class=\"list\">\n      <li>Mon \u2014 20 min</li>\n      <li>Tue \u2014 15 min</li>\n      <li>Wed \u2014 25 min</li>\n      <li>Thu \u2014 20 min</li>\n      <li>Fri \u2014 10 min</li>\n      <li>Sat \u2014 30 min</li>\n      <li>Sun \u2014 20 min</li>\n    </ul>\n  </div>\n</details>",
+   "augmented": true
+  },
+  {
+   "title": "Language Lessons Completed",
+   "user_requests": [
+    "how many french lessons have i done",
+    "language progress",
+    "french lesson tracker",
+    "am i on track with french?",
+    "show my lessons completed",
+    "how far through the course am i",
+    "french learning progress",
+    "how many language lessons have i finished",
+    "language learning progress",
+    "am i almost done with my language course",
+    "how many lessons left",
+    "language lesson count",
+    "how many lessons have i completed"
+   ],
+   "html": "<div class=\"meter\">\n  <div class=\"top\"><b>French lessons completed</b><span>48 / 100</span></div>\n  <div class=\"progress\"><span style=\"width:48%\"></span></div>\n</div>\n<p class=\"t-small muted\"><regex>user_name</regex>, you're nearly halfway. The next unit covers past tense \u2014 the fun part.</p>\n<details class=\"acc\">\n  <summary>Units finished</summary>\n  <div class=\"body\">\n    <ul class=\"list\">\n      <li>Unit 1 \u2014 Greetings \u2713</li>\n      <li>Unit 2 \u2014 Numbers &amp; time \u2713</li>\n      <li>Unit 3 \u2014 Food &amp; ordering \u2713</li>\n      <li>Unit 4 \u2014 Directions \u2713</li>\n      <li>Unit 5 \u2014 Past tense (in progress)</li>\n    </ul>\n  </div>\n</details>",
+   "augmented": true
+  },
+  {
+   "title": "Sourdough Starter Rise",
+   "user_requests": [
+    "how risen is my sourdough starter",
+    "starter progress bar please",
+    "show my levain activity",
+    "is my starter ready yet",
+    "track sourdough rise percent",
+    "my starter doubling check",
+    "soudough rise tracker",
+    "how much has my sourdough starter risen",
+    "sourdough rise progress",
+    "is my starter ready to bake with",
+    "how high is my sourdough starter",
+    "sourdough starter growth",
+    "how risen is the starter now"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Starter rise</div><p class=\"muted t-small\">Hey <regex>user_name</regex> \u2014 feeding was 4h ago. Peak is usually around the 6h mark.</p><div class=\"meter\"><div class=\"top\"><b>Rise since feed</b><span>64%</span></div><div class=\"progress\"><span style=\"width:64%\"></span></div></div><div class=\"row between t-small\" style=\"margin-top:var(--s-3)\"><span class=\"dim\">Started at 40 g</span><span class=\"muted\">Now ~66 g</span></div><details class=\"acc\" style=\"margin-top:var(--s-4)\"><summary>What the numbers mean</summary><div class=\"body\"><ul class=\"list\"><li>Under 50% \u2014 still sleepy, leave it be.</li><li>60\u201380% \u2014 good lift, dome forming.</li><li>100%+ \u2014 jumping, ready to bake.</li></ul></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Houseplant Watering Cycle",
+   "user_requests": [
+    "how moist is my monstera soil",
+    "plant water level widget",
+    "am i overwatering my ficus",
+    "soil moisture tracker for my plants",
+    "houseplant drink progress",
+    "water reminder bar for pots",
+    "my plant watering percent",
+    "when should i water my houseplants",
+    "houseplant watering progress",
+    "is it time to water my plants",
+    "how dry is my plant soil",
+    "houseplant moisture level",
+    "watering cycle status"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Soil moisture \u2014 Monstera</div><p class=\"muted t-small\"><regex>user_name</regex>, the top two inches dried out overnight. That's the sweet spot.</p><div class=\"meter\"><div class=\"top\"><b>Moisture remaining</b><span>38%</span></div><div class=\"progress\"><span style=\"width:38%\"></span></div></div><div class=\"callout info\" style=\"margin-top:var(--s-4)\"><b>Next check</b><p class=\"t-small\">Wednesday morning. Finger test beats any gadget \u2014 push in, feel for damp.</p></div><details class=\"acc\" style=\"margin-top:var(--s-3)\"><summary>Dry my soil out types</summary><div class=\"body\"><p class=\"t-small\">Pothos and snake plant are happiest near 10\u201320%. Ferns and calathea want 50%+. Same bar, different happy zones.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Weekly Budget Envelope",
+   "user_requests": [
+    "how much of my budget is left",
+    "weekly spend tracker",
+    "am i over budget this month",
+    "show my grocery envelope progress",
+    "budget bar for month",
+    "spending tracker widget",
+    "how much money left in budget",
+    "budget remaining this week",
+    "how much of my weekly spending money is still available",
+    "check my envelope balance",
+    "did i overspend yet",
+    "whats left in the budget",
+    "weekly allowance left"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Groceries \u2014 week 3 of 4</div><p class=\"muted t-small\">Steady, <regex>user_name</regex>. No panic butter yet.</p><div class=\"meter\"><div class=\"top\"><b>Spent of $180</b><span>61%</span></div><div class=\"progress\"><span style=\"width:61%\"></span></div></div><div class=\"grid two\" style=\"margin-top:var(--s-4)\"><div class=\"stat\"><div class=\"label\">Spent</div><div class=\"value\">$110</div></div><div class=\"stat\"><div class=\"label\">Left</div><div class=\"value\">$70</div></div></div><details class=\"acc\" style=\"margin-top:var(--s-3)\"><summary>Keep it under</summary><div class=\"body\"><ul class=\"list\"><li>Two big shops left \u2014 about $35 each.</li><li>The coffee aisle is your quiet villain.</li></ul></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Language Lessons This Week",
+   "user_requests": [
+    "how many spanish lessons this week",
+    "language streak bar",
+    "my duolingo progress this week",
+    "lessons completed tracker",
+    "am i on pace for language goals",
+    "weekly language goal widget",
+    "spanish practice progress",
+    "spanish lesson count this week",
+    "how many language classes have i done",
+    "weekly lesson tracker",
+    "did i hit my language goal",
+    "number of lessons completed this week",
+    "how many french lessons so far"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Spanish this week</div><p class=\"muted t-small\">Nice rhythm, <regex>user_name</regex>. Five down, two to go.</p><div class=\"meter\"><div class=\"top\"><b>Lessons done</b><span>71%</span></div><div class=\"progress\"><span style=\"width:71%\"></span></div></div><ul class=\"list\" style=\"margin-top:var(--s-4)\"><li>Mon \u2014 1 lesson, 12 min</li><li>Tue \u2014 2 lessons, 24 min</li><li>Wed \u2014 2 lessons, 19 min</li><li>Thu \u2014 skipped, we don't talk about it</li></ul><details class=\"acc\" style=\"margin-top:var(--s-3)\"><summary>Two lessons to hit goal</summary><div class=\"body\"><p class=\"t-small\">Weekend is roomy. Two 15-minute blocks and the bar closes out green.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Step Count Today",
+   "user_requests": [
+    "how many steps today",
+    "step tracker bar",
+    "am i hitting 10k steps",
+    "walking progress widget",
+    "steps percent of goal",
+    "my daily step count",
+    "step goal progress",
+    "steps so far today",
+    "my daily step progress",
+    "how many steps have i walked",
+    "step goal progress",
+    "today's step count",
+    "how close am i to 10k steps"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Steps today</div><p class=\"muted t-small\">You're 2,300 away, <regex>user_name</regex>. One decent walk covers that.</p><div class=\"meter\"><div class=\"top\"><b>Of 10,000 goal</b><span>77%</span></div><div class=\"progress\"><span style=\"width:77%\"></span></div></div><div class=\"grid two\" style=\"margin-top:var(--s-4)\"><div class=\"stat\"><div class=\"label\">Steps</div><div class=\"value\">7,700</div></div><div class=\"stat\"><div class=\"label\">To go</div><div class=\"value\">2,300</div></div></div><details class=\"acc\" style=\"margin-top:var(--s-3)\"><summary>Easiest top-up</summary><div class=\"body\"><p class=\"t-small\">Walk to the mailbox and back twice, or pace during one phone call. Both count.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Reading Goal This Week",
+   "user_requests": [
+    "how much have i read this week",
+    "book progress bar",
+    "reading goal widget",
+    "am i gonna finish my book",
+    "pages read tracker",
+    "reading minutes progress",
+    "weekly book goal",
+    "weekly reading progress",
+    "how many pages read this week",
+    "did i reach my reading target",
+    "book goal for the week",
+    "reading tracker",
+    "how much of my book have i read this week"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Reading \u2014 this week</div><p class=\"muted t-small\">Page-turner status: confirmed, <regex>user_name</regex>.</p><div class=\"meter\"><div class=\"top\"><b>Minutes of 210 goal</b><span>83%</span></div><div class=\"progress\"><span style=\"width:83%\"></span></div></div><div class=\"row between t-small\" style=\"margin-top:var(--s-3)\"><span class=\"dim\">4 of 7 days logged</span><span class=\"muted\">35 min to go</span></div><details class=\"acc\" style=\"margin-top:var(--s-4)\"><summary>Best slots for those minutes</summary><div class=\"body\"><ul class=\"list\"><li>Sunday morning \u2014 normally your longest sit.</li><li>Two 15-minute chunks finish the bar.</li></ul></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Rain Barrel Level",
+   "user_requests": [
+    "how full is the rain barrel",
+    "rain barrel level",
+    "show me the water in my rain barrel",
+    "is the barrel full yet",
+    "rain barrell lvl plz",
+    "how much rain water do i have left",
+    "barrel meter",
+    "how much water is in the rain barrel",
+    "rain barrel fullness",
+    "is the rain barrel full yet",
+    "check the rain barrel",
+    "water level in the barrel",
+    "how full is my rain barrel now"
+   ],
+   "html": "<div class=\"card\"><div class=\"row between\"><b class=\"card-title\">Rain Barrel Level</b><span class=\"badge accent\"><i class=\"dot\"></i>live</span></div><p class=\"muted t-small\">Two barrels off the downpipe, 210 L total. Last top-up: Sunday's storm.</p><div class=\"meter\"><div class=\"top\"><b>Usable water</b><span>68%</span></div><div class=\"progress\"><span style=\"width:68%\"></span></div></div><p class=\"dim t-small\">Roughly 143 L left. That's about nine watering cans for the tomatoes, <regex>user_name</regex>.</p><details class=\"acc\"><summary>How it was measured</summary><div class=\"body\"><ul class=\"list\"><li>Float gauge read at 8am</li><li>Bucket test calibrated to litres</li><li>Overflow during the last storm ignored</li></ul></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Laundry Basket Fullness",
+   "user_requests": [
+    "how full is the laundry basket",
+    "laundry basket level",
+    "do i need to do laundry",
+    "laundrey fill %",
+    "how many loads in the basket",
+    "basket fullness please",
+    "is it laundry day",
+    "is the laundry basket full",
+    "how much laundry is piled up",
+    "laundry level",
+    "do i need to do laundry",
+    "how full is the hamper",
+    "laundry basket status"
+   ],
+   "html": "<div class=\"card\"><div class=\"row between\"><b class=\"card-title\">Laundry Basket Fullness</b><span class=\"badge info\">darks only</span></div><p class=\"muted t-small\">Tall basket, roughly one and a half loads before it overflows. Whites are separate.</p><div class=\"meter\"><div class=\"top\"><b>Basket filled</b><span>74%</span></div><div class=\"progress\"><span style=\"width:74%\"></span></div></div><p class=\"dim t-small\">Another hoodie and you're at the brim, <regex>user_name</regex>.</p><div class=\"callout info\"><b>Small win:</b> socks counted twice by mistake last week. This number is honest.</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Spring Cleaning Checklist",
+   "user_requests": [
+    "spring cleaning progress",
+    "how much of the deep clean is done",
+    "cleaning checklist status",
+    "spring cleanin % complete",
+    "whats left to clean",
+    "deep clean tracker",
+    "cleaning list progress",
+    "how much spring cleaning is left",
+    "spring cleaning progress",
+    "checklist completion",
+    "what percentage of spring cleaning is done",
+    "how many cleaning tasks remain",
+    "spring clean status"
+   ],
+   "html": "<div class=\"card\"><b class=\"card-title\">Spring Cleaning Checklist</b><p class=\"muted t-small\">Twelve rooms and awkward corners. Started on the first warm Saturday.</p><div class=\"meter\"><div class=\"top\"><b>Tasks done</b><span>9 of 12</span></div><div class=\"progress\"><span style=\"width:75%\"></span></div></div><ul class=\"list\"><li>Kitchen cupboards \u2014 done</li><li>Windows inside and out \u2014 done</li><li>Under the bed \u2014 not yet</li></ul><details class=\"acc\"><summary>Remaining rooms</summary><div class=\"body\"><p>Spare room, hallway cupboard, and the loft hatch. That's the whole list, <regex>user_name</regex>.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Puzzle Edge Pieces Sorted",
+   "user_requests": [
+    "how many edge pieces sorted",
+    "puzzle edge progress",
+    "edge piece tracker",
+    "puzzel edges done?",
+    "how many border pieces left",
+    "jigsaw edge status",
+    "edge pieces sort %",
+    "edge pieces sorted count",
+    "how many puzzle edges have i sorted",
+    "jigsaw edge progress",
+    "how many edge pieces left to sort",
+    "puzzle sorting status",
+    "edge piece tally"
+   ],
+   "html": "<div class=\"card\"><div class=\"row between\"><b class=\"card-title\">Puzzle Edge Pieces Sorted</b><span class=\"badge good\">1,000-piece</span></div><p class=\"muted t-small\">Straight-edged pieces pulled from the box and lined up on the tray.</p><div class=\"meter\"><div class=\"top\"><b>Edges found</b><span>82%</span></div><div class=\"progress\"><span style=\"width:82%\"></span></div></div><p class=\"dim t-small\">Around 147 of the expected 180. Corners: all four, <regex>user_name</regex>.</p><details class=\"tab\"><summary>Bits still hiding</summary><div class=\"body\"><p>Likely in the sofa gap or the box lid. Check the vacuum bag before you give up.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Bread Proof Time",
+   "user_requests": [
+    "how long has the dough been proofing",
+    "bread proof timer",
+    "proofing progress",
+    "is the dough ready yet",
+    "dough rise time left",
+    "breed proof %",
+    "how much longer for the loaf",
+    "how long has the bread been rising",
+    "dough proofing duration",
+    "is the dough ready",
+    "proofing timer",
+    "how much longer should the dough proof",
+    "bread rise time"
+   ],
+   "html": "<div class=\"card\"><b class=\"card-title\">Bread Proof Time</b><p class=\"muted t-small\">Second rise in the tin, kitchen at about 21\u00b0C. Target: 90 minutes.</p><div class=\"meter\"><div class=\"top\"><b>Proof elapsed</b><span>65 of 90 min</span></div><div class=\"progress\"><span style=\"width:72%\"></span></div></div><p class=\"dim t-small\">Poke test at the 85-minute mark. Slow rise? Give it ten more, <regex>user_name</regex>.</p><div class=\"chart\"><svg viewBox=\"0 0 200 60\" role=\"img\" aria-label=\"Proof time chart\"><line class=\"axis\" x1=\"10\" y1=\"50\" x2=\"190\" y2=\"50\"/><rect class=\"bar\" x=\"20\" y=\"30\" width=\"30\" height=\"20\"/><rect class=\"bar alt\" x=\"70\" y=\"18\" width=\"30\" height=\"32\"/><rect class=\"bar\" x=\"120\" y=\"8\" width=\"30\" height=\"42\"/><text class=\"lbl\" x=\"120\" y=\"70\">now</text></svg></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Journal Entries Written",
+   "user_requests": [
+    "journal progress",
+    "how many journal entries this month",
+    "writing streak for my journal",
+    "journel count",
+    "am i on track with journaling",
+    "journaling tracker",
+    "entries written so far",
+    "how many journal entries this month",
+    "journaling progress",
+    "did i write today",
+    "journal streak",
+    "number of diary entries",
+    "how many times have i journaled"
+   ],
+   "html": "<div class=\"card\"><div class=\"row between\"><b class=\"card-title\">Journal Entries Written</b><span class=\"badge accent\">goal: 20</span></div><p class=\"muted t-small\">Ten minutes with the pen counts. No word minimum, no judgement.</p><div class=\"meter\"><div class=\"top\"><b>This month</b><span>13 of 20</span></div><div class=\"progress\"><span style=\"width:65%\"></span></div></div><p class=\"dim t-small\">Seven to go. Two short entries a week would land it, <regex>user_name</regex>.</p><details class=\"acc\"><summary>Streak detail</summary><div class=\"body\"><ul class=\"list\"><li>Longest gap: four days</li><li>Best week: five entries</li><li>Reward at 20: the good pen</li></ul></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Tea Steeping Strength",
+   "user_requests": [
+    "how strong is my tea steeping?",
+    "track my tea steep progress",
+    "chai steep time bar please",
+    "I want to see how long my green tea has been steeping",
+    "tea strength progress bar",
+    "my tea needs 3 more minutes can you show it",
+    "wat r we at w the steep timer",
+    "how strong is my tea",
+    "tea steep level",
+    "is my tea ready yet",
+    "steeping progress",
+    "how long has the tea been steeping",
+    "tea strength check"
+   ],
+   "html": "<div class=\"meter\"><div class=\"top\"><b>Tea steep strength</b><span>65%</span></div><div class=\"progress\"><span style=\"width:65%\"></span></div><p class=\"t-small muted\"><regex>user_name</regex>, your Assam has 1m 45s left. Strong enough to wake the neighbours.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Plant Repotting Readiness",
+   "user_requests": [
+    "is my monstera ready to repot?",
+    "root-bound check progress",
+    "how close is my pothos to needing a bigger pot?",
+    "repot readiness bar",
+    "my roots are circling the drainage hole, how bad is it?",
+    "show me the repot meter",
+    "repot o'clock yet??",
+    "is my plant ready for a new pot",
+    "repotting status",
+    "should i repot my monstera",
+    "how ready is my plant to be repotted",
+    "plant pot readiness",
+    "repotting progress"
+   ],
+   "html": "<div class=\"meter\"><div class=\"top\"><b>Repotting readiness</b><span>80%</span></div><div class=\"progress\"><span style=\"width:80%\"></span></div><p class=\"t-small muted\"><regex>user_name</regex>, roots are peeking out the bottom. Give it a week, then size up.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Jar of Pasta Sauce Used",
+   "user_requests": [
+    "how much pasta sauce is left?",
+    "sauce jar progress",
+    "track my marinara usage",
+    "is my sauce almost gone?",
+    "pasta sauce level pls",
+    "how many servings left in the jar",
+    "sauce check",
+    "how much pasta sauce is left in the jar",
+    "sauce jar level",
+    "is the pasta sauce almost gone",
+    "remaining pasta sauce",
+    "how much sauce have i used",
+    "pasta sauce status"
+   ],
+   "html": "<div class=\"meter\"><div class=\"top\"><b>Marinara left in jar</b><span>40%</span></div><div class=\"progress\"><span style=\"width:40%\"></span></div><p class=\"t-small muted\"><regex>user_name</regex>, about two more pasta nights. Or one very confident one.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Board Game Painting Progress",
+   "user_requests": [
+    "how many minis have I painted?",
+    "board game mini painting progress",
+    "my warhammer pile of shame meter",
+    "paint progress bar for my board game minis",
+    "how close am I to finishing the set?",
+    "mini painting status",
+    "painted minis count",
+    "how many board game minis painted",
+    "painting progress for board games",
+    "miniature painting status",
+    "how many figures left to paint",
+    "board game mini painting tracker",
+    "painted minis count"
+   ],
+   "html": "<div class=\"meter\"><div class=\"top\"><b>Minis painted</b><span>55%</span></div><div class=\"progress\"><span style=\"width:55%\"></span></div><p class=\"t-small muted\"><regex>user_name</regex>, 22 of 40 done. The goblins are starting to look smug.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sock Drawer Matched Pairs",
+   "user_requests": [
+    "how many socks are matched?",
+    "sock pairing progress",
+    "laundry sock status",
+    "my sock drawer meter",
+    "matched pairs count",
+    "how many orphan socks do I have?",
+    "sock progress pls",
+    "how many pairs of socks are matched",
+    "sock matching progress",
+    "are all my socks paired",
+    "sock drawer status",
+    "matched sock count",
+    "how many socks still need matching"
+   ],
+   "html": "<div class=\"meter\"><div class=\"top\"><b>Matched sock pairs</b><span>75%</span></div><div class=\"progress\"><span style=\"width:75%\"></span></div><p class=\"t-small muted\"><regex>user_name</regex>, 15 pairs reunited, 5 still single. They'll find love eventually.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Kettle Descale Cycle",
+   "user_requests": [
+    "how far through the descale cycle is my kettle?",
+    "kettle descale progress",
+    "is my kettle done descaling?",
+    "descaling timer bar",
+    "kettle cleaning progress",
+    "how much longer for the descale?",
+    "kettle cyle status",
+    "how far along is the kettle descale",
+    "descale cycle progress",
+    "is my kettle done descaling",
+    "kettle descaling status",
+    "how much of the descale cycle is complete",
+    "descale timer"
+   ],
+   "html": "<div class=\"meter\"><div class=\"top\"><b>Kettle descale cycle</b><span>90%</span></div><div class=\"progress\"><span style=\"width:90%\"></span></div><p class=\"t-small muted\"><regex>user_name</regex>, nearly there. Another minute and the kettle's limescale era is over.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Kitchen Sponge Replacement",
+   "user_requests": [
+    "how gross is my kitchen sponge",
+    "kitchen sponge replace timer",
+    "sponge usage progress bar",
+    "when should i toss the sponge",
+    "track how long ive used this sponge",
+    "sponge life remaining please",
+    "my dish sponge has seen things. how much longer",
+    "when should i swap out my sponge",
+    "sponge stink level check",
+    "is my sponge due for a change",
+    "how many days has this sponge been used",
+    "sponge replacement timer",
+    "kitchen sponge freshness meter"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"row between\">\n    <span class=\"card-title\">Kitchen Sponge Replacement</span>\n    <span class=\"badge warn\"><i class=\"dot\"></i>replace soon</span>\n  </div>\n  <p class=\"t-small muted\">Sponges get grim around the 10-day mark. This one is close.</p>\n  <div class=\"meter\" style=\"margin-top:var(--s-4)\">\n    <div class=\"top\"><b>Day 8 of 10</b><span>80%</span></div>\n    <div class=\"progress\"><span style=\"width:80%\"></span></div>\n  </div>\n  <details class=\"acc\" style=\"margin-top:var(--s-4)\">\n    <summary>How to squeeze more life out of it</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Microwave it damp for 60 seconds.</li>\n        <li>Or soak in a splash of bleach and water.</li>\n        <li>Never use it on raw meat juice.</li>\n      </ul>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Toothbrush Head Wear",
+   "user_requests": [
+    "toothbrush head wear tracker",
+    "how worn is my toothbrush",
+    "toothbrush change reminder progress",
+    "is it time to swap the brush head",
+    "track my electric toothbrush head life",
+    "toothbrush bristle check bar",
+    "how many more days on this toothbrush head",
+    "how worn is my toothbrush head",
+    "toothbrush bristle life left",
+    "when to replace toothbrush head",
+    "track toothbrush head usage",
+    "electric toothbrush head wear progress",
+    "toothbrush head change reminder"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"row between\">\n    <span class=\"card-title\">Toothbrush Head Wear</span>\n    <span class=\"badge info\"><i class=\"dot\"></i>on track</span>\n  </div>\n  <p class=\"t-small muted\">Dentists say every 3 months. You're right on schedule, <regex>user_name</regex>.</p>\n  <div class=\"meter\" style=\"margin-top:var(--s-4)\">\n    <div class=\"top\"><b>Week 7 of 12</b><span>58%</span></div>\n    <div class=\"progress\"><span style=\"width:58%\"></span></div>\n  </div>\n  <div class=\"callout info\" style=\"margin-top:var(--s-4)\">\n    <p class=\"t-small\">Frayed bristles mean sooner, even if the calendar says otherwise.</p>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Phone Storage Cleanup",
+   "user_requests": [
+    "phone storage cleanup progress",
+    "how much storage have i freed",
+    "clear out my camera roll tracker",
+    "storage freeing progress bar",
+    "iphone storage cleanup status",
+    "track my photo deleting spree",
+    "how close am i to 5gb freed on my phone",
+    "how full is my phone storage",
+    "storage cleanup progress on phone",
+    "phone memory declutter status",
+    "how much storage have i freed",
+    "iphone storage cleanup tracker",
+    "track my phone storage purge"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"row between\">\n    <span class=\"card-title\">Phone Storage Cleanup</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>almost there</span>\n  </div>\n  <p class=\"t-small muted\">Goal: free 5 GB. Your thumb is doing heroic work.</p>\n  <div class=\"meter\" style=\"margin-top:var(--s-4)\">\n    <div class=\"top\"><b>4.2 GB of 5 GB freed</b><span>84%</span></div>\n    <div class=\"progress\"><span style=\"width:84%\"></span></div>\n  </div>\n  <details class=\"acc\" style=\"margin-top:var(--s-4)\">\n    <summary>Where the last chunk usually hides</summary>\n    <div class=\"body\">\n      <ol class=\"list\">\n        <li>Old voice memos (surprisingly heavy).</li>\n        <li>Downloads folder from 2023.</li>\n        <li>Duplicate screenshots.</li>\n      </ol>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Car Tyre Tread Depth",
+   "user_requests": [
+    "tyre tread depth tracker",
+    "how worn are my car tyres",
+    "tire tread progress bar",
+    "when do i need new tyres",
+    "track my tread wear",
+    "car tyre health check",
+    "am i due for new tires yet",
+    "how much tread is left on my tyres",
+    "tyre depth gauge tracker",
+    "car tyre wear progress",
+    "when to replace tyres based on tread",
+    "tread depth monitoring",
+    "track my tire tread"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"row between\">\n    <span class=\"card-title\">Car Tyre Tread Depth</span>\n    <span class=\"badge warn\"><i class=\"dot\"></i>check soon</span>\n  </div>\n  <p class=\"t-small muted\">Legal limit is 1.6 mm. You've got room, but not forever.</p>\n  <div class=\"meter\" style=\"margin-top:var(--s-4)\">\n    <div class=\"top\"><b>3.2 mm remaining</b><span>40%</span></div>\n    <div class=\"progress\"><span style=\"width:40%\"></span></div>\n  </div>\n  <div class=\"callout warn\" style=\"margin-top:var(--s-4)\">\n    <p class=\"t-small\">The 20p test: pop a coin in the groove. If you can see the whole outer band, book a garage.</p>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Household Chore Streak",
+   "user_requests": [
+    "chore streak tracker",
+    "how many days have i done dishes in a row",
+    "my cleaning streak progress",
+    "track daily chores streak",
+    "am i keeping up with housework",
+    "chore completion bar",
+    "how consistent am i with the washing up",
+    "how many days in a row have i done chores",
+    "chore streak counter",
+    "household task streak progress",
+    "my cleaning streak days",
+    "track chore consistency streak",
+    "daily chore streak tracker"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"row between\">\n    <span class=\"card-title\">Household Chore Streak</span>\n    <span class=\"badge accent\"><i class=\"dot\"></i>12 days strong</span>\n  </div>\n  <p class=\"t-small muted\">Sink's been empty every night this week. Quietly impressive.</p>\n  <div class=\"meter\" style=\"margin-top:var(--s-4)\">\n    <div class=\"top\"><b>12 of 14 day streak</b><span>86%</span></div>\n    <div class=\"progress\"><span style=\"width:86%\"></span></div>\n  </div>\n  <details class=\"acc\" style=\"margin-top:var(--s-4)\">\n    <summary>What counts toward the streak</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Dishes cleared before bed.</li>\n        <li>Counters wiped.</li>\n        <li>Bin out on collection day.</li>\n      </ul>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Puzzle Streak Days",
+   "user_requests": [
+    "wordle streak tracker",
+    "my daily puzzle streak progress",
+    "crossword streak bar",
+    "how long is my puzzle streak",
+    "track my sudoku streak",
+    "puzzle completion streak progress",
+    "how many days in a row have i done the daily puzzle",
+    "how many days in a row have i solved a puzzle",
+    "puzzle streak counter",
+    "wordle streak progress",
+    "my daily puzzle streak",
+    "track puzzle solving streak",
+    "puzzle streak days tracker"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"row between\">\n    <span class=\"card-title\">Puzzle Streak Days</span>\n    <span class=\"badge info\"><i class=\"dot\"></i>steady</span>\n  </div>\n  <p class=\"t-small muted\">Nearly at the nice round number. Don't break it now.</p>\n  <div class=\"meter\" style=\"margin-top:var(--s-4)\">\n    <div class=\"top\"><b>48 of 50 day streak</b><span>96%</span></div>\n    <div class=\"progress\"><span style=\"width:96%\"></span></div>\n  </div>\n  <div class=\"grid two\" style=\"margin-top:var(--s-4)\">\n    <div class=\"stat\">\n      <div class=\"label\">Longest ever</div>\n      <div class=\"value\">132</div>\n    </div>\n    <div class=\"stat\">\n      <div class=\"label\">Missed days</div>\n      <div class=\"value\">2</div>\n    </div>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Wardrobe Declutter Sweep",
+   "user_requests": [
+    "track my closet cleanout progress",
+    "how many items have I cleared from the wardrobe",
+    "closet declutter count widget",
+    "show my wardrobe purge progress",
+    "progress on getting rid of old clothes",
+    "i'm decluttering my wardrobe, keep score",
+    "clothes cull tracker pls",
+    "how much of my wardrobe have i decluttered",
+    "closet cleanout progress",
+    "wardrobe declutter status",
+    "track my clothing purge progress",
+    "how many clothes have i gotten rid of",
+    "wardrobe decluttering tracker"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"between row\">\n    <b class=\"card-title\">Wardrobe Declutter Sweep</b>\n    <span class=\"badge accent\"><i class=\"dot\"></i>day 9</span>\n  </div>\n  <p class=\"muted t-small\">Nice work, <regex>user_name</regex>. Two more hangers and the spare rail is yours again.</p>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Items rehomed</b><span>63 of 90</span></div>\n    <div class=\"progress\"><span style=\"width:70%\"></span></div>\n  </div>\n  <div class=\"grid two\" style=\"margin-top:var(--s-4)\">\n    <div class=\"stat\"><span class=\"label\">Donated</span><span class=\"value\">41</span></div>\n    <div class=\"stat\"><span class=\"label\">Kept</span><span class=\"value\">19</span></div>\n  </div>\n  <details class=\"acc\" style=\"margin-top:var(--s-4)\">\n    <summary>Where the rest went</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>3 to the repair pile</li>\n        <li>2 sold online</li>\n        <li>1 mystery sock, still at large</li>\n      </ul>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Water Filter Cartridge Life",
+   "user_requests": [
+    "how long left on my water filter",
+    "filter cartridge usage tracker",
+    "show filter lifespan",
+    "when do i swap the jug filter",
+    "water filter percentage used",
+    "filter change progress bar",
+    "pitcher filter how much life left",
+    "how much life is left in my water filter",
+    "water filter replacement progress",
+    "filter cartridge usage tracker",
+    "when to change water filter",
+    "water filter life remaining",
+    "track my water filter cartridge"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"between row\">\n    <b class=\"card-title\">Water Filter Cartridge Life</b>\n    <span class=\"badge warn\"><i class=\"dot\"></i>replace soon</span>\n  </div>\n  <p class=\"muted t-small\">Steady sipping, <regex>user_name</regex>. The jug is holding up; the cartridge is doing the heavy lifting.</p>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Lifespan used</b><span>82%</span></div>\n    <div class=\"progress\"><span style=\"width:82%\"></span></div>\n  </div>\n  <div class=\"row\" style=\"margin-top:var(--s-3);gap:var(--s-3);flex-wrap:wrap\">\n    <span class=\"badge info\">~180 L filtered</span>\n    <span class=\"badge\">9 days left</span>\n  </div>\n  <svg class=\"chart\" viewBox=\"0 0 300 60\" role=\"img\" aria-label=\"Filter lifespan bar\">\n    <rect class=\"bar\" x=\"8\" y=\"18\" width=\"284\" height=\"18\" rx=\"9\" fill=\"var(--panel-2)\"/>\n    <rect class=\"bar alt\" x=\"8\" y=\"18\" width=\"233\" height=\"18\" rx=\"9\" fill=\"var(--warn)\"/>\n    <text class=\"lbl\" x=\"8\" y=\"52\">new</text>\n    <text class=\"lbl in\" x=\"292\" y=\"52\" text-anchor=\"end\">swap</text>\n  </svg>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Blanket Knitting Rows",
+   "user_requests": [
+    "how many knitting rows have i done",
+    "blanket scarf knit progress",
+    "track my kntting rows",
+    "row counter for my blanket project",
+    "show my knit project percentage",
+    "knitting row count widget",
+    "how far through this scarf am i",
+    "how many rows have i knitted",
+    "knitting progress tracker for blanket",
+    "blanket rows completed",
+    "track my knitting rows",
+    "how many rows left on my blanket",
+    "knitting row counter for blanket"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"between row\">\n    <b class=\"card-title\">Blanket Knitting Rows</b>\n    <span class=\"badge accent\"><i class=\"dot\"></i>garter</span>\n  </div>\n  <p class=\"muted t-small\">Row 47 and still counting, <regex>user_name</regex>. The cat has been notified and remains unimpressed.</p>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Rows knitted</b><span>47 of 220</span></div>\n    <div class=\"progress\"><span style=\"width:21%\"></span></div>\n  </div>\n  <details class=\"acc\" style=\"margin-top:var(--s-4)\">\n    <summary>Skein ledger</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>2 skeins used</li>\n        <li>9 in the basket</li>\n        <li>1 tangled beyond reason</li>\n      </ul>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Language Deck Reviews Due",
+   "user_requests": [
+    "how many flashcards do i have left today",
+    "anki review progress",
+    "spaced repetition cards due tracker",
+    "show my vocab review queue",
+    "flashcard backlog progress",
+    "review pile progress bar",
+    "how many cards must i review tonight",
+    "how many reviews are due in my language deck",
+    "flashcard reviews left today",
+    "language deck review progress",
+    "track my vocabulary review count",
+    "due cards in language app",
+    "language learning review tracker"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"between row\">\n    <b class=\"card-title\">Language Deck Reviews Due</b>\n    <span class=\"badge good\"><i class=\"dot\"></i>on pace</span>\n  </div>\n  <p class=\"muted t-small\">Sixty down, thirty to go, <regex>user_name</regex>. Your future self is quietly grateful.</p>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Cards reviewed</b><span>60 of 90</span></div>\n    <div class=\"progress\"><span style=\"width:67%\"></span></div>\n  </div>\n  <div class=\"grid two\" style=\"margin-top:var(--s-4)\">\n    <div class=\"stat\"><span class=\"label\">Accuracy</span><span class=\"value\">88<span class=\"unit\">%</span></span></div>\n    <div class=\"stat\"><span class=\"label\">Streak</span><span class=\"value\">24<span class=\"unit\">d</span></span></div>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Surface Disinfecting Round",
+   "user_requests": [
+    "track my cleaning rounds",
+    "how much house cleaning is done",
+    "cleaning checklist progress",
+    "show my disinfecting progress",
+    "how many rooms cleaned today",
+    "tidy up tracker progress bar",
+    "cleaning round percentage",
+    "how many surfaces have i disinfected",
+    "disinfecting round progress",
+    "track my disinfecting tasks",
+    "surface cleaning round status",
+    "disinfection round tracker",
+    "how much of my disinfecting round is done"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"between row\">\n    <b class=\"card-title\">Surface Disinfecting Round</b>\n    <span class=\"badge info\"><i class=\"dot\"></i>in progress</span>\n  </div>\n  <p class=\"muted t-small\">Five rooms done, three to go, <regex>user_name</regex>. The kettle has not moved; some things are eternal.</p>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Rooms wiped</b><span>5 of 8</span></div>\n    <div class=\"progress\"><span style=\"width:63%\"></span></div>\n  </div>\n  <ol class=\"list\" style=\"margin-top:var(--s-4)\">\n    <li>Kitchen counters</li>\n    <li>Bathroom sink</li>\n    <li>Door handles</li>\n    <li class=\"dim\">Hallway shelf - next</li>\n  </ol>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Running Shoe Mileage Clock",
+   "user_requests": [
+    "how many miles on my running shoes",
+    "shoe mileage tracker",
+    "when should i replace my trainers",
+    "running shoe wear progress",
+    "track km on my kicks",
+    "shoe odometer progress bar",
+    "am i near new running shoes",
+    "how many miles have i run in these shoes",
+    "running shoe mileage tracker",
+    "shoe odometer progress",
+    "track my running shoe distance",
+    "how many kms on my running shoes",
+    "running shoe wear progress"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"between row\">\n    <b class=\"card-title\">Running Shoe Mileage Clock</b>\n    <span class=\"badge warn\"><i class=\"dot\"></i>mid-life</span>\n  </div>\n  <p class=\"muted t-small\">Four hundred and eighty kilometres, <regex>user_name</regex>. The tread is honest, even if the shoelaces aren't.</p>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Mileage used</b><span>480 of 800 km</span></div>\n    <div class=\"progress\"><span style=\"width:60%\"></span></div>\n  </div>\n  <div class=\"row\" style=\"margin-top:var(--s-3);gap:var(--s-3);flex-wrap:wrap\">\n    <span class=\"badge\">Outsole: fine</span>\n    <span class=\"badge warn\">Midsole: soft</span>\n  </div>\n  <details class=\"acc\" style=\"margin-top:var(--s-4)\">\n    <summary>Rotation</summary>\n    <div class=\"body\"><p class=\"muted\">Alternating with one other pair roughly every third run.</p></div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Fridge Leftovers Eaten",
+   "user_requests": [
+    "track how much of the fridge leftovers I've eaten",
+    "leftovers progress bar",
+    "how close am i to clearing out the fridge?",
+    "show me my leftover-clearing progress",
+    "fridge audit progress",
+    "am I actually eating the leftovers or just making more",
+    "leftovers situation status please",
+    "how much of the leftovers have i eaten",
+    "fridge leftovers progress",
+    "track leftover consumption",
+    "how many leftovers are left",
+    "leftover eating tracker",
+    "fridge cleanout progress"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"row between\">\n    <b class=\"card-title\">Fridge Leftovers Eaten</b>\n    <span class=\"badge info\"><i class=\"dot\"></i>this week</span>\n  </div>\n  <p class=\"muted t-small\">Hey <regex>user_name</regex>, the curry from Tuesday has maybe one more day in it. Choose wisely.</p>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Containers cleared</b><span>4 / 6 &middot; 67%</span></div>\n    <div class=\"progress\"><span style=\"width:67%\"></span></div>\n  </div>\n  <details class=\"acc\">\n    <summary>What's still in there</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Rice &mdash; fine until Thursday</li>\n        <li>Roast veg &mdash; eat today, honestly</li>\n      </ul>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Bike Chain Cleaning Interval",
+   "user_requests": [
+    "how many kms until I should clean my bike chain",
+    "bike chain cleaning progress",
+    "chain lube tracker",
+    "am I overdue for a chain clean",
+    "track my bike maintenance interval",
+    "chain clean status",
+    "kms since last chain clean, show it",
+    "how many kms until i clean my bike chain",
+    "bike chain cleaning progress",
+    "track bike chain maintenance interval",
+    "chain cleaning due tracker",
+    "how long since i cleaned my bike chain",
+    "bike chain service interval"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"row between\">\n    <b class=\"card-title\">Bike Chain Cleaning Interval</b>\n    <span class=\"badge warn\"><i class=\"dot\"></i>due soon</span>\n  </div>\n  <p class=\"muted t-small\"><regex>user_name</regex>, 300&nbsp;km is the usual window. You're nearly there and the drivetrain has started whispering.</p>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Distance since last clean</b><span>248 / 300 km</span></div>\n    <div class=\"progress\"><span style=\"width:83%\"></span></div>\n  </div>\n  <div class=\"grid two\">\n    <div class=\"stat\"><span class=\"label\">Wet rides</span><span class=\"value\">3</span></div>\n    <div class=\"stat\"><span class=\"label\">Lube left</span><span class=\"value\">~30<span class=\"unit\">%</span></span></div>\n  </div>\n  <details class=\"acc\">\n    <summary>Quick clean checklist</summary>\n    <div class=\"body\">\n      <ol class=\"list\">\n        <li>Degreaser on, rag through the links</li>\n        <li>Rinse, dry, one drop per roller</li>\n        <li>Wipe the excess so grit doesn't stick</li>\n      </ol>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Sleep Debt Repaid",
+   "user_requests": [
+    "track my sleep debt and how much I've paid back",
+    "sleep debt progress bar",
+    "how much sleep am I behind?",
+    "show sleep debt paid off",
+    "am i catching up on sleep",
+    "sleep recovery status",
+    "zzz tracker pls",
+    "how much sleep debt have i paid back",
+    "sleep debt progress",
+    "track my sleep debt repayment",
+    "sleep debt remaining",
+    "how much sleep do i owe",
+    "sleep debt tracker"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"row between\">\n    <b class=\"card-title\">Sleep Debt Repaid</b>\n    <span class=\"badge good\"><i class=\"dot\"></i>recovering</span>\n  </div>\n  <p class=\"muted t-small\">Slow and steady, <regex>user_name</regex>. Naps count. So does going to bed before midnight for once.</p>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Debt paid back this week</b><span>3.5 / 5 h &middot; 70%</span></div>\n    <div class=\"progress\"><span style=\"width:70%\"></span></div>\n  </div>\n  <div class=\"callout good\">\n    <p class=\"t-small\">Three nights of seven-plus hours in a row. That's the whole trick.</p>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Pantry Spice Declutter",
+   "user_requests": [
+    "how many old spices have I thrown out",
+    "pantry declutter progress",
+    "spice jar clear-out tracker",
+    "am I done sorting the spice shelf?",
+    "show pantry spice cleanup",
+    "old spice purge status",
+    "spice rack declutter bar",
+    "how many spices have i decluttered",
+    "pantry spice cleanout progress",
+    "track my spice decluttering",
+    "old spice purge status",
+    "how many spices thrown out",
+    "pantry spice organization tracker"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"row between\">\n    <b class=\"card-title\">Pantry Spice Declutter</b>\n    <span class=\"badge accent\"><i class=\"dot\"></i>in progress</span>\n  </div>\n  <p class=\"muted t-small\">If the jar has no smell when you open it, <regex>user_name</regex>, it's dust with a label.</p>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Jars checked</b><span>21 / 34 &middot; 62%</span></div>\n    <div class=\"progress\"><span style=\"width:62%\"></span></div>\n  </div>\n  <details class=\"acc\">\n    <summary>Where things stand</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Kept &mdash; 16 jars, dated with tape</li>\n        <li>Tossed &mdash; 5, mostly ground spices</li>\n        <li>Left &mdash; the top shelf, where hope lives</li>\n      </ul>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Watercolour Palette Used",
+   "user_requests": [
+    "which paints have I actually used this month",
+    "watercolour palette progress",
+    "track paint usage across my palette",
+    "how many colours have I touched?",
+    "palette coverage bar",
+    "paints used tracker",
+    "am i neglecting half my palette again",
+    "how many of my watercolour pans have i touched this month",
+    "paint usage tracker for my palette pls",
+    "which watercolour colours have i not used yet",
+    "show me how much of my paint set i've actually used",
+    "watercolour palette usage bar",
+    "i wanna see which paints i've been ignoring in my tin"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"row between\">\n    <b class=\"card-title\">Watercolour Palette Used</b>\n    <span class=\"badge info\"><i class=\"dot\"></i>April</span>\n  </div>\n  <p class=\"muted t-small\"><regex>user_name</regex>, burnt sienna is doing all the heavy lifting again. Give the violets a turn.</p>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Pans touched</b><span>18 / 24 &middot; 75%</span></div>\n    <div class=\"progress\"><span style=\"width:75%\"></span></div>\n  </div>\n  <div class=\"grid two\">\n    <div class=\"stat\"><span class=\"label\">Never opened</span><span class=\"value\">6</span></div>\n    <div class=\"stat\"><span class=\"label\">Most used</span><span class=\"value t-small\">Burnt sienna</span></div>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Downspout Rain Check",
+   "user_requests": [
+    "are my gutters and downspouts clear before the storm",
+    "downspout check progress",
+    "gutter clearing tracker",
+    "how much of the downspouts have I done?",
+    "rain drainage status",
+    "downspout flush progress bar",
+    "storm prep gutter check",
+    "gutters clear? big storm coming",
+    "make me a bar for how many downspouts i've checked",
+    "cleaned 3 of 5 downspouts so far, track it",
+    "rain's coming, how many spouts have i cleared",
+    "downspout maintence progress bar",
+    "track my gutter cleaning before the wet season"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"row between\">\n    <b class=\"card-title\">Downspout Rain Check</b>\n    <span class=\"badge warn\"><i class=\"dot\"></i>storm Tuesday</span>\n  </div>\n  <p class=\"muted t-small\">Clear gutters now, <regex>user_name</regex>, or spend Tuesday watching water cascade down the siding.</p>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Downspouts flushed</b><span>3 / 5 &middot; 60%</span></div>\n    <div class=\"progress\"><span style=\"width:60%\"></span></div>\n  </div>\n  <details class=\"acc\">\n    <summary>Notes so far</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Front left &mdash; done, leaf mush cleared</li>\n        <li>Back two &mdash; done, ran a hose through</li>\n        <li>Front right &mdash; blocked at the elbow</li>\n      </ul>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "I need a tracker for my passport application progress",
+    "passport progress please",
+    "How far along is my passport renewal?",
+    "show me where my passport paperwork is",
+    "can you make a passport timeline?",
+    "passport status bar",
+    "where am I in the passport process",
+    "passport app tracker - where am i at",
+    "how far along is my passport renewal",
+    "progress bar for my new passport paperwork",
+    "i've done the photos and the form, what's left on my passport",
+    "passport process steps completed",
+    "hows my passport application coming along"
+   ],
+   "title": "Passport Application Journey",
+   "html": "<div class=\"card\"><div class=\"meter\"><div class=\"top\"><b>Passport Application Progress</b><span>60%</span></div><div class=\"progress\"><span style=\"width:60%\"></span></div></div><p class=\"muted t-small\">You've sent the photos, paid the fees, and survived the queue at the post office. Now you wait.</p><div class=\"callout info\"><p><b>Next up:</b> the joy of checking the mail every day. Estimated arrival: 4\u20136 weeks. <regex>user_name</regex>, maybe start a countdown?</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "track my houseplant repotting",
+    "repot progress",
+    "how many plants have I repotted?",
+    "show plant repotting status",
+    "I want to see my repotting to-do",
+    "repotting tracker",
+    "where am I with repotting?",
+    "how many plants have i repotted so far",
+    "repotting tracker for my indoor jungle",
+    "4 plants done, 12 to go, show me a bar",
+    "which of my houseplants still need new pots",
+    "monstera done, fern done, what else needs repotting",
+    "show repotting progress for all my plants"
+   ],
+   "title": "Houseplant Repotting Progress",
+   "html": "<div class=\"card\"><div class=\"meter\"><div class=\"top\"><b>Plants Repotted</b><span>4 of 7</span></div><div class=\"progress\"><span style=\"width:57%\"></span></div></div><p class=\"muted t-small\">The monstera is thriving, the fern is dramatic, and the snake plant doesn't care either way.</p><ul class=\"list t-small\"><li>Monstera \u2014 done</li><li>Fern \u2014 done</li><li>Pothos \u2014 done</li><li>Snake plant \u2014 done</li><li>ZZ plant \u2014 waiting</li><li>Peace lily \u2014 waiting</li><li>Rubber tree \u2014 waiting</li></ul><p class=\"dim t-small\">Three to go. You've got this, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "make a progress bar for my jigsaw puzzle",
+    "puzzle progress",
+    "how much of the puzzle is done?",
+    "show puzzle completion",
+    "puzzle tracker please",
+    "where am I in the puzzle?",
+    "puzzle status",
+    "how much of the puzzle have i done",
+    "1000 piece puzzle progress pls",
+    "jigsaw tracker - edges done, sky to go",
+    "show me the % of my puzzle finished",
+    "puzzle bar, i'm about half way",
+    "track my progress on the big jigsaw"
+   ],
+   "title": "Jigsaw Puzzle Completion",
+   "html": "<div class=\"card\"><div class=\"meter\"><div class=\"top\"><b>Jigsaw Puzzle: 1000 pieces</b><span>72%</span></div><div class=\"progress\"><span style=\"width:72%\"></span></div></div><p class=\"muted t-small\">The border is solid, the sky is almost there, and the last tree is mocking you.</p><div class=\"callout good\"><p><b>Good news:</b> only 280 pieces left. At your current pace, you'll finish by Sunday. <regex>user_name</regex>, maybe save the last piece for a dramatic reveal?</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "track my sourdough starter",
+    "starter progress",
+    "how's my sourdough starter doing?",
+    "show sourdough rise",
+    "sourdough tracker",
+    "where is my starter at?",
+    "starter status",
+    "is my starter ready yet",
+    "how risen is my sourdough starter",
+    "starter doubling tracker",
+    "show me how active my starter is today",
+    "sourdough rise progress bar",
+    "my starter's at peak? show me"
+   ],
+   "title": "Sourdough Starter Rise",
+   "html": "<div class=\"card\"><div class=\"meter\"><div class=\"top\"><b>Sourdough Starter Rise</b><span>1.8\u00d7</span></div><div class=\"progress\"><span style=\"width:60%\"></span></div></div><p class=\"muted t-small\">Target: double in size. Your starter is bubbly, active, and smells like a bakery \u2014 or a brewery, depending on the day.</p><div class=\"callout info\"><p><b>Tip:</b> feed it at its peak. <regex>user_name</regex>, if it's sluggish, try a warmer spot. If it's too fast, a cooler one.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "show my reading progress",
+    "how far into my book am I?",
+    "reading tracker",
+    "book progress",
+    "where am I in my book?",
+    "reading status",
+    "track my reading",
+    "how far into my book am i",
+    "reading bar for my current novel",
+    "page 142 of 380, track that",
+    "show how much of this book i've read",
+    "my book progress pls",
+    "where am i in my book rn"
+   ],
+   "title": "Reading Progress",
+   "html": "<div class=\"card\"><div class=\"meter\"><div class=\"top\"><b>Reading: The Midnight Library</b><span>64%</span></div><div class=\"progress\"><span style=\"width:64%\"></span></div></div><p class=\"muted t-small\">You've read 192 of 304 pages. The plot is thickening, and you're pretty sure the next chapter will ruin you.</p><div class=\"callout good\"><p><b>Keep going:</b> just 112 pages left. <regex>user_name</regex>, maybe a cup of tea and one more chapter?</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "track my water intake",
+    "how much water have I had?",
+    "hydration progress",
+    "water tracker",
+    "show my hydration",
+    "where am I on water?",
+    "water intake today",
+    "how much water have i drunk today",
+    "hydration bar pls",
+    "2 litres down, 1 to go, show me",
+    "am i hitting my water goal",
+    "track my glasses of water",
+    "water intake progress for today"
+   ],
+   "title": "Hydration Progress",
+   "html": "<div class=\"card\"><div class=\"meter\"><div class=\"top\"><b>Water Intake Today</b><span>1.4 L</span></div><div class=\"progress\"><span style=\"width:70%\"></span></div></div><p class=\"muted t-small\">Goal: 2 L. You're 70% there. Your plants are jealous.</p><div class=\"callout warn\"><p><b>Nudge:</b> <regex>user_name</regex>, a glass now would hit the spot. Your future self will thank you.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how much of my podcast back catalog have I listened to",
+    "podcast backlog progress",
+    "i'm 14 eps behind on my podcasts, is that bad",
+    "track my podcast listening progress",
+    "help me see my podcast catch-up progress pls",
+    "how many podcast episodes have I gotten through",
+    "show podcast completion bar",
+    "how many eps of my backlog are done",
+    "podcast queue progress bar",
+    "i've cleared 8 of 30 episodes, track it",
+    "show me how much of my podcast backlog is left",
+    "deleting listened eps, how far along am i",
+    "podcast backlog tracker pls"
+   ],
+   "title": "Podcast Backlog Cleared",
+   "html": "<div class=\"meter\">\n  <div class=\"top\"><b>Podcast Backlog Cleared</b><span>34 of 50 episodes</span></div>\n  <div class=\"progress\"><span style=\"width:68%\"></span></div>\n  <p class=\"t-small muted\">68% done \u2014 16 episodes left. At one a day, you'll be caught up in a little over two weeks.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "am i on track with my miles for the month",
+    "running mileage progress",
+    "how many miles have i run this month",
+    "check my running goal progress",
+    "show my monthly running mileage",
+    "am i gonna hit my run goal this month",
+    "running log progress",
+    "how many miles have i run this month",
+    "running tracker for my monthly goal",
+    "12 of 40 miles done, show me",
+    "am i behind on my mileage this month",
+    "show my miles progress bar",
+    "monthly run goal bar please"
+   ],
+   "title": "Monthly Running Mileage",
+   "html": "<div class=\"meter\">\n  <div class=\"top\"><b>Monthly Running Mileage</b><span>47.5 of 80 miles</span></div>\n  <div class=\"progress\"><span style=\"width:59%\"></span></div>\n  <p class=\"t-small muted\">59% of your goal. You have 11 days left \u2014 about 3 miles a day would get you there.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how much have i saved for my trip",
+    "travel fund progress",
+    "check my vacation savings",
+    "am i close to my travel goal",
+    "trip fund status",
+    "how much more do i need to save for vacation",
+    "savings progress for japan trip",
+    "how close am i to my holiday savings goal",
+    "travel savings bar",
+    "saved \u00a3640 of \u00a32000, track it",
+    "show my trip fund progress",
+    "am i nearly there with my travel money",
+    "holiday fund tracker pls"
+   ],
+   "title": "Travel Fund",
+   "html": "<div class=\"meter\">\n  <div class=\"top\"><b>Travel Fund</b><span>$1,240 of $2,000</span></div>\n  <div class=\"progress\"><span style=\"width:62%\"></span></div>\n  <p class=\"t-small muted\">62% saved. You're $760 away from your goal.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many books have i read this year",
+    "reading challenge progress",
+    "am i on track with my reading goal",
+    "book goal progress",
+    "how many books left to hit my target",
+    "reading log for the year",
+    "show my 2025 reading progress",
+    "how many books have i finished since january",
+    "reading count bar for 2025",
+    "7 books down, track it",
+    "show my yearly book tally as a bar",
+    "am i on track for my reading challenge",
+    "books finished this year progress"
+   ],
+   "title": "Books Read This Year",
+   "html": "<div class=\"meter\">\n  <div class=\"top\"><b>Books Read This Year</b><span>7 of 12 books</span></div>\n  <div class=\"progress\"><span style=\"width:58%\"></span></div>\n  <p class=\"t-small muted\">58% of your 2025 goal. Five books to go.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how much of my course have i finished",
+    "online course progress",
+    "am i almost done with this course",
+    "course completion status",
+    "how many lessons left in my course",
+    "check my course progress",
+    "course progress bar",
+    "how far through my udemy course am i",
+    "course completion bar pls",
+    "module 4 of 9 done, show me",
+    "track my online class progress",
+    "how much of the course have i watched",
+    "my course bar looks like what"
+   ],
+   "title": "Online Course Progress",
+   "html": "<div class=\"meter\">\n  <div class=\"top\"><b>Online Course Progress</b><span>18 of 30 lessons</span></div>\n  <div class=\"progress\"><span style=\"width:60%\"></span></div>\n  <p class=\"t-small muted\">60% complete. Twelve lessons left.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many days of my streak have i done",
+    "streak progress",
+    "am i close to my streak goal",
+    "check my daily streak",
+    "how many more days for my streak badge",
+    "streak status",
+    "daily habit streak progress",
+    "what's my streak at",
+    "streak counter bar pls",
+    "23 days in a row, show me",
+    "how long have i kept this streak going",
+    "daily habit streak tracker",
+    "am i about to hit a milestone on my streak"
+   ],
+   "title": "Daily Streak",
+   "html": "<div class=\"meter\">\n  <div class=\"top\"><b>Daily Streak</b><span>23 of 30 days</span></div>\n  <div class=\"progress\"><span style=\"width:77%\"></span></div>\n  <p class=\"t-small muted\">77% to your 30-day badge. Just 7 days left.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Compost Bin Fill Level",
+   "user_requests": [
+    "how full is my compost bin?",
+    "compost progress plz",
+    "is it time to empty the compost?",
+    "show me the compost level",
+    "compost bin status",
+    "how much compost do I have?",
+    "check my compost pile",
+    "how full is the compost now",
+    "compost bar pls",
+    "bin's about 70% full, track it",
+    "do i need to empty the compost bin",
+    "show me my compost fill level",
+    "is my compost bin nearly full"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\"><b>Compost Bin Fill Level</b> <span class=\"badge info\"><i class=\"dot\"></i>cached match</span></div><div class=\"meter\"><div class=\"top\"><b>Progress</b><span>68%</span></div><div class=\"progress\"><span style=\"width:68%\"></span></div></div><p class=\"muted t-small\">Estimated fill based on last 4 weeks of kitchen scraps and yard waste. Empty when it hits 90%\u2014about two more weeks, <regex>user_name</regex>.</p><div class=\"row between\"><span class=\"dim\">Updated 2 days ago</span><span class=\"dim\">Bin #1</span></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Dishwasher Salt Refill",
+   "user_requests": [
+    "do I need to refill the dishwasher salt?",
+    "dishwasher salt level?",
+    "how much salt is left in the dishwasher?",
+    "check dishwasher salt",
+    "salt refill reminder",
+    "when to add salt to dishwasher",
+    "dw salt status",
+    "is the dishwasher salt low",
+    "salt level bar for the dishwasher",
+    "do i need to buy more dishwasher salt",
+    "how much salt is left in the dishwasher",
+    "dishwasher salt gauge pls",
+    "show me the salt level in my dishwasher"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\"><b>Dishwasher Salt Refill</b> <span class=\"badge info\"><i class=\"dot\"></i>cached match</span></div><div class=\"meter\"><div class=\"top\"><b>Salt remaining</b><span>24%</span></div><div class=\"progress\"><span style=\"width:24%\"></span></div></div><p class=\"muted t-small\">You're down to the last quarter. A refill will last about 6 weeks. Pick up a bag next time you're out, <regex>user_name</regex>.</p><div class=\"row between\"><span class=\"dim\">Last refilled 5 weeks ago</span><span class=\"dim\">1 kg bag</span></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Cat Litter Box Cleanliness",
+   "user_requests": [
+    "how dirty is the litter box?",
+    "cat litter status",
+    "is the litter box due for a clean?",
+    "litter box progress",
+    "check cat litter",
+    "when did I last clean the litter?",
+    "litter box freshness",
+    "litter box status rn",
+    "cat box getting gross yet?",
+    "do i gotta scoop the litter",
+    "kitty toilet how nasty is it",
+    "is the tray due for a full change",
+    "litter situation pls"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\"><b>Cat Litter Box Cleanliness</b> <span class=\"badge warn\"><i class=\"dot\"></i>near due</span></div><div class=\"meter\"><div class=\"top\"><b>Freshness</b><span>45%</span></div><div class=\"progress\"><span style=\"width:45%\"></span></div></div><p class=\"muted t-small\">Scooped yesterday, but full change is due in 2 days. The cat's been giving you that look, <regex>user_name</regex>.</p><div class=\"row between\"><span class=\"dim\">Last full change: 6 days ago</span><span class=\"dim\">2 cats</span></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Washing Machine Filter Clean",
+   "user_requests": [
+    "when should I clean the washing machine filter?",
+    "washer filter status",
+    "is the washing machine filter dirty?",
+    "check washer filter",
+    "washing machine maintenance",
+    "filter clean progress",
+    "how long since washer filter cleaned?",
+    "is my washer filter clogged up",
+    "how long since i rinsed the washing machine filter",
+    "laundry filter check needed?",
+    "machine filter maintenance status",
+    "when did i last pull the filter out the washer",
+    "washer filter grossness level"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\"><b>Washing Machine Filter Clean</b> <span class=\"badge good\"><i class=\"dot\"></i>up to date</span></div><div class=\"meter\"><div class=\"top\"><b>Time until next clean</b><span>72%</span></div><div class=\"progress\"><span style=\"width:72%\"></span></div></div><p class=\"muted t-small\">You cleaned it 3 weeks ago. Next due in about 5 weeks. Keep it up, <regex>user_name</regex>.</p><div class=\"row between\"><span class=\"dim\">Last cleaned: 21 days ago</span><span class=\"dim\">Interval: 8 weeks</span></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Dryer Lint Trap Emptying",
+   "user_requests": [
+    "is the dryer lint trap empty?",
+    "lint trap status",
+    "check dryer lint",
+    "when was the lint trap last emptied?",
+    "dryer safety check",
+    "lint trap progress",
+    "how full is the lint trap?",
+    "did i clear the lint screen",
+    "dryer trap full again?",
+    "lint filter status after last load",
+    "should i scrape the lint out the dryer",
+    "tumble dryer fluff trap how bad",
+    "is it safe to run another dry cycle"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\"><b>Dryer Lint Trap Emptying</b> <span class=\"badge bad\"><i class=\"dot\"></i>needs attention</span></div><div class=\"meter\"><div class=\"top\"><b>Fullness</b><span>85%</span></div><div class=\"progress\"><span style=\"width:85%\"></span></div></div><p class=\"muted t-small\">It's been 3 loads since you last emptied it. A quick check now saves a fire hazard later, <regex>user_name</regex>.</p><div class=\"row between\"><span class=\"dim\">Last emptied: 3 loads ago</span><span class=\"dim\">Reminder: every load</span></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Shower Head Descale",
+   "user_requests": [
+    "when should I descale the shower head?",
+    "shower head scale status",
+    "is the shower head clogged?",
+    "check shower head",
+    "descale progress",
+    "how long since shower head cleaned?",
+    "shower head maintenance",
+    "shower head all crusty yet?",
+    "how long till i need to soak the shower head in vinegar",
+    "limescale on the shower head level",
+    "my showerhead spraying weird is it scale",
+    "descaling due date for shower head",
+    "bathroom shower head mineral buildup check"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\"><b>Shower Head Descale</b> <span class=\"badge info\"><i class=\"dot\"></i>cached match</span></div><div class=\"meter\"><div class=\"top\"><b>Time until next descale</b><span>30%</span></div><div class=\"progress\"><span style=\"width:30%\"></span></div></div><p class=\"muted t-small\">You descaled it 5 weeks ago. Next due in about 2 weeks. The spray's still strong, but a soak will keep it that way, <regex>user_name</regex>.</p><div class=\"row between\"><span class=\"dim\">Last descaled: 35 days ago</span><span class=\"dim\">Interval: 7 weeks</span></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how full is my compost bin?",
+    "compost level check",
+    "show me the compost bin fill",
+    "is it time to empty the compost?",
+    "how much compost have i made",
+    "track my kitchen scraps bin",
+    "compost progress pls",
+    "is the compost caddy overflowing",
+    "how much room left in the compost bin",
+    "should i empty the kitchen compost today",
+    "compost bucket capacity left",
+    "food waste bin how stuffed is it",
+    "when do i need to take compost out"
+   ],
+   "title": "Compost Bin Fill Level",
+   "html": "<div class=\"card\">\n  <div class=\"card-title\">Compost Bin Fill Level</div>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Kitchen scraps bin</b><span>68%</span></div>\n    <div class=\"progress\"><span style=\"width:68%\"></span></div>\n  </div>\n  <div class=\"row between t-small muted\" style=\"margin-top:var(--s-2)\">\n    <span>Empty in ~3 days</span>\n    <span>34 / 50 L</span>\n  </div>\n  <div class=\"callout info\" style=\"margin-top:var(--s-3)\">\n    <p>Bokashi bran topped up yesterday. Green: brown ratio is 1:3 \u2014 a bit leafy, <regex>user_name</regex>. Toss in a handful of shredded cardboard.</p>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "dishwasher salt level?",
+    "is my dishwasher salt low",
+    "check the salt in the dishwasher",
+    "when do i need to refill dishwasher salt",
+    "how much salt is left in the dishwasher",
+    "dishwasher salt status",
+    "salt refill reminder for dishwasher",
+    "do i need to top up the dishwasher salt",
+    "salt light on the dishwasher?",
+    "how low is the dishwasher salt reservoir",
+    "when to add more salt to the dishwasher",
+    "dishwasher salt ran out yet",
+    "is my DW salt ok"
+   ],
+   "title": "Dishwasher Salt Refill",
+   "html": "<div class=\"card\">\n  <div class=\"card-title\">Dishwasher Salt Refill</div>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Salt reservoir</b><span>82%</span></div>\n    <div class=\"progress\"><span style=\"width:82%\"></span></div>\n  </div>\n  <div class=\"row between t-small muted\" style=\"margin-top:var(--s-2)\">\n    <span>Next refill around 14 May</span>\n    <span>1.2 kg left</span>\n  </div>\n  <div class=\"callout good\" style=\"margin-top:var(--s-3\">\n    <p>Plenty in there. No limescale drama today, <regex>user_name</regex>.</p>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how clean is the cat litter box",
+    "litter box freshness",
+    "cat litter status",
+    "is the litter tray due for a change",
+    "check litter box level",
+    "litter box cleanliness tracker",
+    "when to clean the cat litter",
+    "litter box status rn",
+    "cat box getting gross yet?",
+    "do i gotta scoop the litter",
+    "kitty toilet how nasty is it",
+    "is the tray due for a full change",
+    "litter situation pls"
+   ],
+   "title": "Cat Litter Box Cleanliness",
+   "html": "<div class=\"card\">\n  <div class=\"card-title\">Cat Litter Box Cleanliness</div>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Clump-free area</b><span>45%</span></div>\n    <div class=\"progress\"><span style=\"width:45%\"></span></div>\n  </div>\n  <div class=\"row between t-small muted\" style=\"margin-top:var(--s-2)\">\n    <span>Full change due in 2 days</span>\n    <span>3 clumps scooped today</span>\n  </div>\n  <div class=\"callout warn\" style=\"margin-top:var(--s-3)\">\n    <p>Getting into \u201cneeds attention\u201d territory. A quick scoop tonight keeps the peace, <regex>user_name</regex>.</p>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "washing machine filter check",
+    "is the washer filter dirty",
+    "clean the washing machine filter",
+    "filter status on the washer",
+    "when did i last clean the washing machine filter",
+    "washing machine filter progress",
+    "check washer filter",
+    "is my washer filter clogged up",
+    "how long since i rinsed the washing machine filter",
+    "laundry filter check needed?",
+    "machine filter maintenance status",
+    "when did i last pull the filter out the washer",
+    "washer filter grossness level"
+   ],
+   "title": "Washing Machine Filter Clean",
+   "html": "<div class=\"card\">\n  <div class=\"card-title\">Washing Machine Filter Clean</div>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Filter cleanliness</b><span>30%</span></div>\n    <div class=\"progress\"><span style=\"width:30%\"></span></div>\n  </div>\n  <div class=\"row between t-small muted\" style=\"margin-top:var(--s-2)\">\n    <span>Last cleaned 18 days ago</span>\n    <span>Recommended every 30 days</span>\n  </div>\n  <div class=\"callout bad\" style=\"margin-top:var(--s-3)\">\n    <p>That lint build-up is getting bold. A five-minute rinse will keep your machine purring, <regex>user_name</regex>.</p>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "dryer lint trap check",
+    "is the lint trap empty",
+    "did i empty the dryer lint",
+    "dryer lint status",
+    "lint trap fullness",
+    "check dryer lint trap",
+    "empty lint trap reminder",
+    "did i clear the lint screen",
+    "dryer trap full again?",
+    "lint filter status after last load",
+    "should i scrape the lint out the dryer",
+    "tumble dryer fluff trap how bad",
+    "is it safe to run another dry cycle"
+   ],
+   "title": "Dryer Lint Trap Emptying",
+   "html": "<div class=\"card\">\n  <div class=\"card-title\">Dryer Lint Trap Emptying</div>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Lint trap fullness</b><span>92%</span></div>\n    <div class=\"progress\"><span style=\"width:92%\"></span></div>\n  </div>\n  <div class=\"row between t-small muted\" style=\"margin-top:var(--s-2)\">\n    <span>Last emptied 2 loads ago</span>\n    <span>Fire risk: high</span>\n  </div>\n  <div class=\"callout bad\" style=\"margin-top:var(--s-3)\">\n    <p>This one\u2019s not just about fluff. Empty it before the next load, <regex>user_name</regex>.</p>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "shower head descale progress",
+    "how much scale is on the shower head",
+    "shower head cleaning status",
+    "is the shower head due for a descale",
+    "check shower head scale",
+    "shower head maintenance",
+    "descale the shower head",
+    "shower head all crusty yet?",
+    "how long till i need to soak the shower head in vinegar",
+    "limescale on the shower head level",
+    "my showerhead spraying weird is it scale",
+    "descaling due date for shower head",
+    "bathroom shower head mineral buildup check"
+   ],
+   "title": "Shower Head Descale",
+   "html": "<div class=\"card\">\n  <div class=\"card-title\">Shower Head Descale</div>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Scale removal progress</b><span>15%</span></div>\n    <div class=\"progress\"><span style=\"width:15%\"></span></div>\n  </div>\n  <div class=\"row between t-small muted\" style=\"margin-top:var(--s-2)\">\n    <span>Soaked 20 min today</span>\n    <span>Target: 2 hours</span>\n  </div>\n  <div class=\"callout info\" style=\"margin-top:var(--s-3)\">\n    <p>Patience and vinegar, <regex>user_name</regex>. Give it another soak tomorrow and those nozzles will sing.</p>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Pizza Dough Hydration Target",
+   "user_requests": [
+    "how wet is my pizza dough supposed to be",
+    "show pizza dough hydration progress",
+    "dough water level tracker",
+    "hows my neapolitan dough hydration looking",
+    "pizza dough hydration %",
+    "track hydration for my pizza dough batch",
+    "am i hitting the right hydration on this dough",
+    "what hydration % for neapolitan dough",
+    "my dough feels too dry what should the water ratio be",
+    "ideal water to flour ratio for pizza dough",
+    "is 65 percent hydration right for my dough",
+    "dough too sticky am i over hydrated",
+    "target water percentage for the pizza dough"
+   ],
+   "html": "<div class=\"card stack\">\n  <div class=\"between\"><b class=\"card-title\">Pizza Dough Hydration</b><span class=\"badge accent\"><i class=\"dot\"></i>cached match</span></div>\n  <p class=\"muted t-small\">Hey <regex>user_name</regex>, 65% is the classic starting line \u2014 springy, not soupy.</p>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Water to flour</b><span>130 g / 200 g</span></div>\n    <div class=\"progress\"><span style=\"width:65%\"></span></div>\n  </div>\n  <div class=\"grid two\">\n    <div class=\"stat\"><span class=\"label\">Current hydration</span><span class=\"value\">65<span class=\"unit\">%</span></span></div>\n    <div class=\"stat\"><span class=\"label\">Remaining to 70%</span><span class=\"value\">10<span class=\"unit\">g</span></span><span class=\"delta down\">+10 g water</span></div>\n  </div>\n  <details class=\"acc\"><summary>Why 65%?</summary><div class=\"body\"><p class=\"t-small\">It handles easily by hand but still bakes open and airy. Push to 70% only once the dough stops feeling sticky.</p></div></details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Bike Tyre Pressure Check",
+   "user_requests": [
+    "what psi should my road bike tyres be",
+    "bike tyre pressure progress",
+    "am i pumping enough air in my tyres",
+    "tyre psi tracker",
+    "check my bike pressure level",
+    "road bike tyre inflation status",
+    "how close am i to correct tyre pressure",
+    "are my bike tires pumped enough",
+    "what bar should my gravel tyres be at",
+    "tyre pressure for my mtb please",
+    "should i pump my tires before the ride",
+    "current psi in my road tyres vs recommended",
+    "bike tubes need air?"
+   ],
+   "html": "<div class=\"card stack\">\n  <div class=\"between\"><b class=\"card-title\">Bike Tyre Pressure</b><span class=\"badge info\">target 80 psi</span></div>\n  <p class=\"muted t-small\"><regex>user_name</regex>, 62 psi rides fine, but add 10 more and you will feel the road smoother.</p>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Front tyre</b><span>62 / 80 psi</span></div>\n    <div class=\"progress\"><span style=\"width:78%\"></span></div>\n  </div>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Rear tyre</b><span>74 / 80 psi</span></div>\n    <div class=\"progress\"><span style=\"width:93%\"></span></div>\n  </div>\n  <div class=\"callout warn\"><p class=\"t-small\">Rear is nearly there. Pump both to 80 before a long ride \u2014 pinch flats love a soft front.</p></div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Budget Savings Progress",
+   "user_requests": [
+    "how much have i saved toward my goal",
+    "savings pot progress",
+    "am i on track with my savings",
+    "show my savings tracker",
+    "progress on my emergency fund",
+    "how full is my savings jar",
+    "savings goal status",
+    "am i close to my savings target",
+    "how much left till i hit my savings goal",
+    "saving progress this month",
+    "did i reach my monthly savings yet",
+    "where am i at with the emergency fund goal",
+    "percent of savings goal completed"
+   ],
+   "html": "<div class=\"card stack\">\n  <div class=\"between\"><b class=\"card-title\">Savings Goal</b><span class=\"badge good\"><i class=\"dot\"></i>on track</span></div>\n  <p class=\"muted t-small\"><regex>user_name</regex>, \u00a31,240 of \u00a32,000 in the pot. Sixty-two percent there.</p>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Emergency fund</b><span>62%</span></div>\n    <div class=\"progress\"><span style=\"width:62%\"></span></div>\n  </div>\n  <div class=\"grid two\">\n    <div class=\"stat\"><span class=\"label\">Saved</span><span class=\"value\">\u00a31,240</span></div>\n    <div class=\"stat\"><span class=\"label\">Still to go</span><span class=\"value\">\u00a3760</span><span class=\"delta down\">~4 months</span></div>\n  </div>\n  <details class=\"acc\"><summary>How I worked that out</summary><div class=\"body\"><p class=\"t-small\">You added roughly \u00a3190 a month lately. At that pace the goal lands in about four months.</p></div></details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Project Deadline Burn-down",
+   "user_requests": [
+    "how much of my project is done",
+    "project burn down chart",
+    "am i going to finish on time",
+    "show project completion progress",
+    "deadline progress bar",
+    "how far through is my project",
+    "project status percent",
+    "are we on track for the deadline",
+    "how much work is left on the project",
+    "burndown chart status",
+    "am i gonna miss the deadline",
+    "remaining tasks vs days left on my project",
+    "project completion percentage"
+   ],
+   "html": "<div class=\"card stack\">\n  <div class=\"between\"><b class=\"card-title\">Project Burn-down</b><span class=\"badge warn\">due in 9 days</span></div>\n  <p class=\"muted t-small\"><regex>user_name</regex>, 48 of 60 tasks closed. Keep the same rhythm and you land a day early.</p>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Tasks done</b><span>48 / 60</span></div>\n    <div class=\"progress\"><span style=\"width:80%\"></span></div>\n  </div>\n  <div class=\"grid two\">\n    <div class=\"stat\"><span class=\"label\">Closed</span><span class=\"value\">80<span class=\"unit\">%</span></span></div>\n    <div class=\"stat\"><span class=\"label\">Per day needed</span><span class=\"value\">1.3</span></div>\n  </div>\n  <details class=\"acc\"><summary>What could slip?</summary><div class=\"body\"><p class=\"t-small\">Three of the remaining tasks sit on the same reviewer. Nudge them first.</p></div></details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Water Intake Target",
+   "user_requests": [
+    "how much water have i drunk today",
+    "hydration progress bar",
+    "am i drinking enough water",
+    "water tracker today",
+    "show my water goal",
+    "how many glasses left",
+    "hydration status for today",
+    "am i hydrated enough today",
+    "how many glasses of water left to drink",
+    "water tracker progress",
+    "did i hit my 8 cups yet",
+    "how much more h2o do i need",
+    "hydration goal status"
+   ],
+   "html": "<div class=\"card stack\">\n  <div class=\"between\"><b class=\"card-title\">Water Intake Today</b><span class=\"badge accent\">1.8 L target</span></div>\n  <p class=\"muted t-small\"><regex>user_name</regex>, four glasses down. Two more and you hit target.</p>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Glasses</b><span>4 / 6</span></div>\n    <div class=\"progress\"><span style=\"width:67%\"></span></div>\n  </div>\n  <div class=\"grid two\">\n    <div class=\"stat\"><span class=\"label\">Drunk so far</span><span class=\"value\">1.2<span class=\"unit\">L</span></span></div>\n    <div class=\"stat\"><span class=\"label\">Remaining</span><span class=\"value\">0.6<span class=\"unit\">L</span></span><span class=\"delta down\">2 glasses</span></div>\n  </div>\n  <details class=\"acc\"><summary>Why front-load it?</summary><div class=\"body\"><p class=\"t-small\">Drinking most of it before 6pm keeps you from waking up thirsty at midnight.</p></div></details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Bookshelf Shelf Declutter",
+   "user_requests": [
+    "how many books have i cleared off my shelf",
+    "bookshelf declutter progress",
+    "am i making progress tidying books",
+    "shelf clearing tracker",
+    "how full is my to-sort pile",
+    "declutter status for books",
+    "books sorted percent",
+    "how many books still on the shelf to sort",
+    "did i finish clearing the bookshelf",
+    "decluttering progress on my books",
+    "how many books have i gotten rid of",
+    "shelf still cluttered?",
+    "books donated count so far"
+   ],
+   "html": "<div class=\"card stack\">\n  <div class=\"between\"><b class=\"card-title\">Bookshelf Declutter</b><span class=\"badge info\">one shelf at a time</span></div>\n  <p class=\"muted t-small\"><regex>user_name</regex>, 34 of 80 books are sorted into keep, donate, or gift. That is nearly half.</p>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Sorted</b><span>34 / 80</span></div>\n    <div class=\"progress\"><span style=\"width:42%\"></span></div>\n  </div>\n  <div class=\"grid two\">\n    <div class=\"stat\"><span class=\"label\">Keep</span><span class=\"value\">21</span></div>\n    <div class=\"stat\"><span class=\"label\">Donate or gift</span><span class=\"value\">13</span><span class=\"delta down\">bag ready</span></div>\n  </div>\n  <details class=\"acc\"><summary>Handy rule</summary><div class=\"body\"><p class=\"t-small\">If you cannot recall reading it and it is not signed or special, it goes in the donate pile.</p></div></details>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how full is my compost bin?",
+    "compost level check pls",
+    "is the compost ready to turn?",
+    "show me the compost bin fill progress",
+    "how much room left in compost?",
+    "compost status??",
+    "bin fill % for compost",
+    "compost status",
+    "how much compost is in there",
+    "is my compost full yet",
+    "compost bin % full",
+    "how full is compost",
+    "compost lvl"
+   ],
+   "title": "Compost Bin Fill Level",
+   "html": "<div class=\"card\">\n  <div class=\"card-title\">Compost Bin Fill Level</div>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Bin fullness</b><span>68%</span></div>\n    <div class=\"progress\"><span style=\"width:68%\"></span></div>\n  </div>\n  <p class=\"t-small muted\">About a third of the bin left. Good time to give it a turn this weekend.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "did i add dishwasher salt?",
+    "dishwasher salt refill status",
+    "check the salt level in the dishwasher",
+    "when should i refill dishwasher salt?",
+    "salt indicator for dishwasher",
+    "how's the dishwasher salt doing",
+    "remind me about dishwasher salt",
+    "dishwasher salt level",
+    "do i need to refill dishwasher salt",
+    "salt for dish washer",
+    "how much dishwasher salt left",
+    "dishwasher salt status",
+    "did i put salt in the dishwasher"
+   ],
+   "title": "Dishwasher Salt Refill",
+   "html": "<div class=\"card\">\n  <div class=\"card-title\">Dishwasher Salt Refill</div>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Salt remaining</b><span>22%</span></div>\n    <div class=\"progress\"><span style=\"width:22%\"></span></div>\n  </div>\n  <p class=\"t-small muted\">Getting low. You've got maybe three washes left before the light comes on.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "cat litter box cleanliness",
+    "how dirty is the litter box?",
+    "litter box status",
+    "check litter box",
+    "is the litter box full?",
+    "litter box scoop reminder",
+    "cat box cleanliness level",
+    "litter box status",
+    "how clean is the cat litter",
+    "cat litter check",
+    "litter box clean?",
+    "how dirty is the litter box",
+    "litter box freshness"
+   ],
+   "title": "Cat Litter Box Cleanliness",
+   "html": "<div class=\"card\">\n  <div class=\"card-title\">Cat Litter Box Cleanliness</div>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Freshness</b><span>45%</span></div>\n    <div class=\"progress\"><span style=\"width:45%\"></span></div>\n  </div>\n  <p class=\"t-small muted\">Halfway to scoop time. Your cat's giving you that look.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "washing machine filter clean?",
+    "when did i last clean the washer filter?",
+    "washer filter status",
+    "check washing machine filter",
+    "filter cleanliness for washing machine",
+    "washing machine filter reminder",
+    "how's the washer filter",
+    "washer filter status",
+    "when did i last clean the washing machine filter",
+    "washing machine filter clean",
+    "is the washer filter clean",
+    "washing machine filter check",
+    "how clean is the washing machine filter"
+   ],
+   "title": "Washing Machine Filter Clean",
+   "html": "<div class=\"card\">\n  <div class=\"card-title\">Washing Machine Filter Clean</div>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Cleanliness</b><span>81%</span></div>\n    <div class=\"progress\"><span style=\"width:81%\"></span></div>\n  </div>\n  <p class=\"t-small muted\">Still pretty clean. You can hold off for another couple of weeks.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "dryer lint trap empty?",
+    "did i empty the lint trap?",
+    "lint trap status",
+    "check dryer lint trap",
+    "is the lint trap full?",
+    "dryer lint reminder",
+    "how much lint is in the trap?",
+    "lint trap status",
+    "did i empty the lint trap",
+    "dryer lint trap",
+    "how full is the lint trap",
+    "dryer lint trap empty",
+    "lint trap check"
+   ],
+   "title": "Dryer Lint Trap Emptying",
+   "html": "<div class=\"card\">\n  <div class=\"card-title\">Dryer Lint Trap Emptying</div>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Trap fullness</b><span>12%</span></div>\n    <div class=\"progress\"><span style=\"width:12%\"></span></div>\n  </div>\n  <p class=\"t-small muted\">Basically empty. You're good for a few more loads.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "shower head descale progress",
+    "how's the shower head?",
+    "shower head scale buildup",
+    "check shower head",
+    "descale shower head status",
+    "when to descale shower head?",
+    "shower head clean level",
+    "shower head status",
+    "when was the shower head descaled",
+    "shower descale progress",
+    "is the shower head descaled",
+    "shower head cleaning",
+    "descale shower head"
+   ],
+   "title": "Shower Head Descale",
+   "html": "<div class=\"card\">\n  <div class=\"card-title\">Shower Head Descale</div>\n  <div class=\"meter\">\n    <div class=\"top\"><b>Flow health</b><span>55%</span></div>\n    <div class=\"progress\"><span style=\"width:55%\"></span></div>\n  </div>\n  <p class=\"t-small muted\">Slight mineral buildup. A quick vinegar soak would perk it right up.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "How much of the greenhouse is planted",
+    "greenhouse seed planting progress",
+    "seed starts status pls",
+    "how many trays have sprouted",
+    "show me greenhouse planting",
+    "planting progress tracker",
+    "seedling count update",
+    "greenhouse planting progress",
+    "how much have i planted in the greenhouse",
+    "seed planting status",
+    "greenhouse seeds",
+    "how many seeds planted in greenhouse",
+    "greenhouse planting %"
+   ],
+   "title": "Greenhouse Seed Planting",
+   "html": "<div class=\"meter\">\n  <div class=\"top\"><b>Greenhouse seed trays planted</b><span>42 of 60</span></div>\n  <div class=\"progress\"><span style=\"width:70%\"></span></div>\n</div>\n<p class=\"t-small muted\">Tomatoes, basil, and peppers are in. The slowpokes: eggplant and rosemary.</p>\n<details class=\"acc\">\n  <summary>What's left</summary>\n  <div class=\"body\">\n    <ul class=\"list\">\n      <li>Eggplant \u2014 8 trays</li>\n      <li>Rosemary \u2014 6 trays</li>\n      <li>Thyme \u2014 4 trays</li>\n    </ul>\n  </div>\n</details>\n",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many recipes have I tried from that book",
+    "cookbook recipe progress",
+    "recipe testing status",
+    "how far through the cookbook am I",
+    "show recipe trial progress",
+    "recipes cooked vs total",
+    "cookbook completion",
+    "cookbook progress",
+    "how many recipes tested",
+    "recipe testing status",
+    "cookbook recipes tried",
+    "how many recipes from the cookbook",
+    "recipe testing progress"
+   ],
+   "title": "Cookbook Recipe Testing",
+   "html": "<div class=\"meter\">\n  <div class=\"top\"><b>Recipes tested from <i>Salt, Fat, Acid, Heat</i></b><span>14 of 32</span></div>\n  <div class=\"progress\"><span style=\"width:44%\"></span></div>\n</div>\n<p class=\"t-small muted\">You've cooked 14 recipes so far. The buttermilk chicken is still undefeated.</p>\n<details class=\"acc\">\n  <summary>Next up</summary>\n  <div class=\"body\">\n    <ol class=\"list\">\n      <li>Miso-glazed eggplant</li>\n      <li>Lemon curd</li>\n      <li>Focaccia</li>\n    </ol>\n  </div>\n</details>\n",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many photos have I sorted",
+    "photo library declutter progress",
+    "digital photo cleanup status",
+    "how far through my photo sort am I",
+    "show photo sorting progress",
+    "photo cull percentage",
+    "library cleanup tracker",
+    "photo sorting progress",
+    "how many photos sorted",
+    "photo declutter status",
+    "photos sorted",
+    "how many photos left to sort",
+    "photo library cleanup progress"
+   ],
+   "title": "Photo Library Declutter",
+   "html": "<div class=\"meter\">\n  <div class=\"top\"><b>Photos sorted into albums</b><span>1,240 of 3,600</span></div>\n  <div class=\"progress\"><span style=\"width:34%\"></span></div>\n</div>\n<p class=\"t-small muted\">You've sorted 1,240 photos. The 2019 folder is still a mystery.</p>\n<details class=\"acc\">\n  <summary>Breakdown by year</summary>\n  <div class=\"body\">\n    <ul class=\"list\">\n      <li>2023 \u2014 done</li>\n      <li>2022 \u2014 80% sorted</li>\n      <li>2021 \u2014 40% sorted</li>\n      <li>2020 \u2014 barely started</li>\n    </ul>\n  </div>\n</details>\n",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many postcards have I sent",
+    "postcard writing progress",
+    " snail mail status",
+    "how far through my postcard list am I",
+    "show postcard sending progress",
+    "postcards sent vs planned",
+    "mail tracker",
+    "postcard progress",
+    "how many postcards sent",
+    "postcard status",
+    "postcards written",
+    "how many postcards left to send",
+    "postcard writing progress"
+   ],
+   "title": "Postcard Writing Project",
+   "html": "<div class=\"meter\">\n  <div class=\"top\"><b>Postcards written and sent</b><span>23 of 50</span></div>\n  <div class=\"progress\"><span style=\"width:46%\"></span></div>\n</div>\n<p class=\"t-small muted\">23 postcards stamped and sent. The cat one is a crowd favourite.</p>\n<details class=\"acc\">\n  <summary>Who's left</summary>\n  <div class=\"body\">\n    <ul class=\"list\">\n      <li>Aunt Mabel \u2014 needs a birthday one</li>\n      <li>Pen pal in Osaka</li>\n      <li>Cousin Jamie</li>\n      <li>+ 24 more</li>\n    </ul>\n  </div>\n</details>\n",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many modules done in that course",
+    "online course progress",
+    "course completion status",
+    "how far through the course am I",
+    "show course progress",
+    "module tracker",
+    "class progress",
+    "course progress",
+    "how many modules completed",
+    "online course status",
+    "course completion %",
+    "how much of the course done",
+    "modules done in course"
+   ],
+   "title": "Online Course Completion",
+   "html": "<div class=\"meter\">\n  <div class=\"top\"><b>Modules completed in <i>Intro to Permaculture</i></b><span>9 of 12</span></div>\n  <div class=\"progress\"><span style=\"width:75%\"></span></div>\n</div>\n<p class=\"t-small muted\">Three modules left. You aced the soil quiz.</p>\n<details class=\"acc\">\n  <summary>Remaining modules</summary>\n  <div class=\"body\">\n    <ol class=\"list\">\n      <li>Water systems</li>\n      <li>Guild planting</li>\n      <li>Final project</li>\n    </ol>\n  </div>\n</details>\n",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many letters written for the campaign",
+    "letter writing progress",
+    "advocacy letters status",
+    "how far through my letter list am I",
+    "show letter writing progress",
+    "letters sent vs goal",
+    "campaign tracker",
+    "letter writing progress",
+    "how many letters written",
+    "advocacy letters status",
+    "letters written for campaign",
+    "how many advocacy letters sent",
+    "advocacy letter progress"
+   ],
+   "title": "Advocacy Letter Writing",
+   "html": "<div class=\"meter\">\n  <div class=\"top\"><b>Letters written to representatives</b><span>17 of 30</span></div>\n  <div class=\"progress\"><span style=\"width:57%\"></span></div>\n</div>\n<p class=\"t-small muted\">17 letters sent. Your handwriting is getting fancy.</p>\n<details class=\"acc\">\n  <summary>By topic</summary>\n  <div class=\"body\">\n    <ul class=\"list\">\n      <li>Climate action \u2014 10</li>\n      <li>Local parks \u2014 4</li>\n      <li>Library funding \u2014 3</li>\n    </ul>\n  </div>\n</details>\n",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "How much of my monthly reading goal is left?",
+    "reading progress bar please",
+    "I set a 5-book goal this month, show me where I'm at",
+    "book tracker update?",
+    "how many books have I read this month vs target",
+    "reading goal status",
+    "show my book count progress",
+    "reading goal progress",
+    "how many books read this month",
+    "monthly reading status",
+    "reading goal %",
+    "how much of my reading goal",
+    "books read this month"
+   ],
+   "title": "Monthly Reading Goal",
+   "html": "<div class=\"meter\"><div class=\"top\"><b>Books this month</b><span>3 of 5</span></div><div class=\"progress\"><span style=\"width:60%\"></span></div><p class=\"t-small muted\">2 books to go. Current: <em>The Overstory</em>.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how's my hydration looking today?",
+    "water intake progress",
+    "8 cups goal, how many left",
+    "did I drink enough water",
+    "track my water",
+    "hydration status",
+    "water bar",
+    "water intake today",
+    "how much water have i had",
+    "hydration status",
+    "water progress",
+    "how much water left to drink",
+    "hydration level"
+   ],
+   "title": "Hydration Progress",
+   "html": "<div class=\"meter\"><div class=\"top\"><b>Water today</b><span>5 of 8 cups</span></div><div class=\"progress\"><span style=\"width:62.5%\"></span></div><p class=\"t-small muted\">3 cups to go. Keep sipping, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how many podcasts left?",
+    "podcast backlog progress",
+    "am I caught up on podcasts yet",
+    "podcast queue status",
+    "show podcast progress",
+    "backlog cleared?",
+    "podcast bar",
+    "podcast progress",
+    "how many podcasts left to listen",
+    "podcast backlog status",
+    "podcasts cleared",
+    "how many podcasts listened",
+    "podcast backlog %"
+   ],
+   "title": "Podcast Backlog Cleared",
+   "html": "<div class=\"meter\"><div class=\"top\"><b>Podcasts cleared</b><span>12 of 20</span></div><div class=\"progress\"><span style=\"width:60%\"></span></div><p class=\"t-small muted\">8 episodes left in the queue. Nearly there.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "savings progress?",
+    "how's my travel fund coming along",
+    "how much saved for the trip",
+    "travel fund bar",
+    "am I on track for travel savings",
+    "savings status",
+    "trip fund progress",
+    "travel savings",
+    "how much in travel fund",
+    "travel fund progress",
+    "vacation fund status",
+    "how much saved for travel",
+    "travel fund %"
+   ],
+   "title": "Travel Fund",
+   "html": "<div class=\"meter\"><div class=\"top\"><b>Travel fund</b><span>$750 of $1,200</span></div><div class=\"progress\"><span style=\"width:62.5%\"></span></div><p class=\"t-small muted\">$450 to go. That's about 6 weeks at current pace.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how far into my online course am I",
+    "course progress bar",
+    "online course completion status",
+    "show my course progress",
+    "how many modules left",
+    "course done?",
+    "progress on the course"
+   ],
+   "title": "Online Course Completion",
+   "html": "<div class=\"meter\"><div class=\"top\"><b>Course progress</b><span>5 of 8 modules</span></div><div class=\"progress\"><span style=\"width:62.5%\"></span></div><p class=\"t-small muted\">3 modules left. Next: Module 6 \u2013 Data Visualisation.</p></div>"
+  },
+  {
+   "user_requests": [
+    "daily streak update?",
+    "how many days in a row",
+    "show my streak progress",
+    "streak bar",
+    "am I still on a streak",
+    "current streak status",
+    "daily habit streak"
+   ],
+   "title": "Daily Streak",
+   "html": "<div class=\"meter\"><div class=\"top\"><b>Daily streak</b><span>14 days of 30</span></div><div class=\"progress\"><span style=\"width:46.7%\"></span></div><p class=\"t-small muted\">16 days to go for the monthly badge. Keep it up, <regex>user_name</regex>.</p></div>"
+  },
+  {
+   "user_requests": [
+    "how's my sourdough starter looking",
+    "starter rise progress",
+    "is my levain ready yet?",
+    "check my sourdough rise",
+    "sourdough starter peek",
+    "show starter growth",
+    "my starter, is it doubled?"
+   ],
+   "title": "Sourdough Starter Rise",
+   "html": "<div class=\"meter\"><div class=\"top\"><b>Sourdough starter rise</b><span>68%</span></div><div class=\"progress\"><span style=\"width:68%\"></span></div><p class=\"t-small dim\">You're at 68% of the doubling mark. Give it another hour or so, <regex>user_name</regex>.</p></div>"
+  },
+  {
+   "user_requests": [
+    "how many books have I read",
+    "reading goal progress",
+    "books read this year",
+    "track my reading",
+    "yearly reading challenge",
+    "am I on pace for books?",
+    "show my reading progress"
+   ],
+   "title": "Books Read This Year",
+   "html": "<div class=\"meter\"><div class=\"top\"><b>Books read this year</b><span>14 / 24</span></div><div class=\"progress\"><span style=\"width:58%\"></span></div><p class=\"t-small dim\">58% of your goal. You're a bit ahead of schedule, <regex>user_name</regex>.</p></div>"
+  },
+  {
+   "user_requests": [
+    "how much water have I had",
+    "hydration progress",
+    "water intake today",
+    "am I drinking enough?",
+    "track my water",
+    "hydration goal",
+    "show water progress"
+   ],
+   "title": "Hydration Progress",
+   "html": "<div class=\"meter\"><div class=\"top\"><b>Hydration progress</b><span>1.6 / 2.5 L</span></div><div class=\"progress\"><span style=\"width:64%\"></span></div><p class=\"t-small dim\">64% of your daily water goal. Keep sipping, <regex>user_name</regex>.</p></div>"
+  },
+  {
+   "user_requests": [
+    "podcast backlog status",
+    "how many podcasts left?",
+    "my podcast queue",
+    "backlog progress",
+    "podcast catch-up",
+    "show podcast backlog",
+    "am I clearing my podcasts?"
+   ],
+   "title": "Podcast Backlog Cleared",
+   "html": "<div class=\"meter\"><div class=\"top\"><b>Podcast backlog cleared</b><span>23 / 45</span></div><div class=\"progress\"><span style=\"width:51%\"></span></div><p class=\"t-small dim\">Just over half done. Nice steady progress, <regex>user_name</regex>.</p></div>"
+  },
+  {
+   "user_requests": [
+    "travel fund progress",
+    "how's my travel savings?",
+    "vacation fund",
+    "saving for trip",
+    "travel budget status",
+    "show travel fund",
+    "am I close to my travel goal?"
+   ],
+   "title": "Travel Fund",
+   "html": "<div class=\"meter\"><div class=\"top\"><b>Travel fund</b><span>\u00a31,850 / \u00a33,000</span></div><div class=\"progress\"><span style=\"width:62%\"></span></div><p class=\"t-small dim\">62% of your travel goal. Keep it up, <regex>user_name</regex>.</p></div>"
+  },
+  {
+   "user_requests": [
+    "daily streak progress",
+    "how's my streak?",
+    "streak status",
+    "am I keeping my streak?",
+    "show daily streak",
+    "streak progress",
+    "my habit streak"
+   ],
+   "title": "Daily Streak",
+   "html": "<div class=\"meter\"><div class=\"top\"><b>Daily streak</b><span>12 / 30 days</span></div><div class=\"progress\"><span style=\"width:40%\"></span></div><p class=\"t-small dim\">12 days in a row. 40% of your monthly target, <regex>user_name</regex>.</p></div>"
+  }
+ ]
+}

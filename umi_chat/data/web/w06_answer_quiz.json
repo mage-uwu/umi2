@@ -1,0 +1,245 @@
+{
+ "widget": "answer_quiz",
+ "instances": [
+  {
+   "title": "Classic Pop Quiz Toggle",
+   "user_requests": [
+    "quiz me on this one",
+    "hide the answer till I guess",
+    "make it a pop quiz pls",
+    "i wanna try answering first, then show me",
+    "give me a quiz card for this",
+    "wrap that as a quiz answer i can peek at",
+    "turn this into a flashcards style reveal",
+    "Test my knowledge on this, but keep it simple.",
+    "Pop quiz! What's the answer?",
+    "Can u quiz me on this 1?",
+    "I want a quick quiz, please.",
+    "Hit me with a question about this.",
+    "Do a pop quiz for this content."
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"row between\">\n    <h3 class=\"card-title\">Pop quiz, <regex>user_name</regex></h3>\n    <span class=\"badge accent\"><i class=\"dot\"></i>answer hidden</span>\n  </div>\n  <p class=\"muted t-small\">Take a guess first. The reveal will wait.</p>\n  <div class=\"quiz\">\n    <div class=\"q\">What's the answer?</div>\n    <details>\n      <summary>Show answer</summary>\n      <div class=\"answer\">{{answer}}</div>\n    </details>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Hint-First Accordion Variant",
+   "user_requests": [
+    "give me a hint before the answer",
+    "accordion reveal for the answer",
+    "can you quiz me with a hint step",
+    "hide answer behind two clicks",
+    "make it a staged quiz reveal",
+    "i want to guess, then see the answer",
+    "accordion style quiz answer pls",
+    "Can I get a clue before the solution?",
+    "Show me a hint, then reveal the answer.",
+    "I need a little nudge before seeing the answer.",
+    "Give me a hint first, then the answer.",
+    "Can u give me a hint b4 the ans?",
+    "Hint first, answer later, please."
+   ],
+   "html": "<div class=\"card flat\">\n  <h3 class=\"card-title\"><regex>user_name</regex>, here's your quiz</h3>\n  <div class=\"quiz\">\n    <div class=\"q\">Ready to test yourself?</div>\n    <details class=\"acc\">\n      <summary>Hint</summary>\n      <div class=\"body\">It's hiding right below.</div>\n    </details>\n    <details class=\"acc\">\n      <summary>Reveal answer</summary>\n      <div class=\"body answer\">{{answer}}</div>\n    </details>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Confidence Meter Quiz Card",
+   "user_requests": [
+    "quiz me and show confidence",
+    "add a confidence bar to the quiz",
+    "how sure are you? quiz format",
+    "give me the quiz with a meter",
+    "rate the answer confidence in a quiz",
+    "show me the answer behind a confident quiz",
+    "quiz card with a progress bar plz",
+    "Quiz me and let me rate how sure I am.",
+    "I want to see my confidence level on this question.",
+    "Ask me and show how confident I am.",
+    "Test me with a confidence slider.",
+    "Quiz w/ confidence meter pls.",
+    "Let me guess and show my confidence."
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"row between\">\n    <h3 class=\"card-title\">Quiz for <regex>user_name</regex></h3>\n    <span class=\"badge info\"><i class=\"dot\"></i>cached</span>\n  </div>\n  <p class=\"muted t-small\">Guess first, then compare notes.</p>\n  <div class=\"grid two\">\n    <div class=\"stat\">\n      <div class=\"label\">Confidence</div>\n      <div class=\"value\">0.86</div>\n    </div>\n  </div>\n  <div class=\"meter\"><div class=\"progress\"><span style=\"width:86%\"></span></div></div>\n  <div class=\"quiz\">\n    <div class=\"q\">What's the answer?</div>\n    <details>\n      <summary>Show answer</summary>\n      <div class=\"answer\">{{answer}}</div>\n    </details>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Near Miss Self-Test",
+   "user_requests": [
+    "quiz me but warn if it's a near miss",
+    "is this a near miss? quiz me",
+    "self-test with a near miss label",
+    "show me the quiz answer with caveats",
+    "quiz format, flag near miss",
+    "make a quiz card that says near miss",
+    "quiz me and be honest about near misses",
+    "Quiz me and tell me if I'm close.",
+    "Warn me if my answer is almost right.",
+    "Let me self-test and flag near misses.",
+    "Ask me and if I'm near, let me know.",
+    "Quiz me but tell me if it's a close call.",
+    "Self-test with near miss warnings."
+   ],
+   "html": "<div class=\"callout warn\">\n  <div class=\"row between\">\n    <strong><regex>user_name</regex>, quick check</strong>\n    <span class=\"badge warn\"><i class=\"dot\"></i>near miss</span>\n  </div>\n  <p class=\"t-small\">Not a perfect stored match. Still worth a guess.</p>\n</div>\n<div class=\"card\">\n  <div class=\"quiz\">\n    <div class=\"q\">What do you think the answer is?</div>\n    <details class=\"acc\">\n      <summary>Show answer</summary>\n      <div class=\"body answer\">{{answer}}</div>\n    </details>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Flip-Card Quiz Style",
+   "user_requests": [
+    "flashcard me this answer",
+    "make it flip like a card",
+    "flip quiz format please",
+    "hide the answer like a flashcard",
+    "quiz as a flip card",
+    "can you flip-card this quiz answer",
+    "show answer only after i guess",
+    "Make it a flip card for this answer.",
+    "Show this as a flashcard I can flip.",
+    "I want a flashcard style quiz for this.",
+    "Turn this into a flip card quiz.",
+    "Flashcard this plz.",
+    "Flip card quiz for this one."
+   ],
+   "html": "<div class=\"card\">\n  <h3 class=\"card-title\">Flip it, <regex>user_name</regex></h3>\n  <p class=\"muted t-small\">Guess, then flip.</p>\n  <div class=\"flip\">\n    <div class=\"quiz\">\n      <div class=\"q\">What's the answer?</div>\n      <details>\n        <summary>Flip to answer</summary>\n        <div class=\"answer\">{{answer}}</div>\n      </details>\n    </div>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Question-Led Mini Quiz",
+   "user_requests": [
+    "ask me a question first then answer",
+    "quiz with a custom question",
+    "put a question above the answer toggle",
+    "mini quiz pls with my question",
+    "im ready, quiz me with that question",
+    "question then hidden answer format",
+    "make it a quiz with a prompt",
+    "Ask me a question first, then give the answer.",
+    "Start with a question, then answer it.",
+    "I want to be asked before seeing the answer.",
+    "Question first, answer after.",
+    "Ask me sumthin then tell me.",
+    "Lead with a question then reveal."
+   ],
+   "html": "<div class=\"card flat\">\n  <div class=\"row\">\n    <svg width=\"20\" height=\"20\" viewBox=\"0 0 20 20\" fill=\"none\" aria-hidden=\"true\">\n      <circle cx=\"10\" cy=\"10\" r=\"9\" stroke=\"var(--accent)\" stroke-width=\"1.5\"/>\n      <path d=\"M7.5 7.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .8-1 1.7\" stroke=\"var(--accent)\" stroke-width=\"1.5\" stroke-linecap=\"round\"/>\n      <circle cx=\"10\" cy=\"14.2\" r=\"1\" fill=\"var(--accent)\"/>\n    </svg>\n    <div>\n      <strong><regex>user_name</regex>, your question:</strong>\n      <p class=\"t-small muted\">Take a swing at it before revealing.</p>\n    </div>\n  </div>\n  <div class=\"quiz\">\n    <div class=\"q\">Go ahead, guess.</div>\n    <details class=\"acc\">\n      <summary>Show answer</summary>\n      <div class=\"body answer\">{{answer}}</div>\n    </details>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Journal Prompt Reveal",
+   "user_requests": [
+    "hide the answer like a diary entry I have to open",
+    "show it as a little journal page i flip open",
+    "can u make the reply feel like a secret note",
+    "wrap it in something i'd see in a notebook",
+    "make the answer look like a private page",
+    "journal style pls \u2014 i want to feel like im peeking",
+    "put the answer behind a page i turn",
+    "Hide the answer like a journal entry I need to open.",
+    "Make it a diary prompt that reveals the answer.",
+    "I want to open a journal to see the answer.",
+    "Present the answer as a journal entry.",
+    "Hide ans like a diary entry pls.",
+    "Journal style reveal for the answer."
+   ],
+   "html": "<div class=\"quiz\">\n  <div class=\"q\">\n    <span class=\"badge info\"><i class=\"dot\"></i>journal prompt</span>\n    <p class=\"muted t-small\"><regex>user_name</regex>, write your answer below. Flip the page when ready.</p>\n  </div>\n  <details class=\"acc\">\n    <summary>Turn the page</summary>\n    <div class=\"body\">\n      <div class=\"answer\">{{answer}}</div>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Ticket Stub Reveal",
+   "user_requests": [
+    "make it look like a concert ticket i tear open",
+    "hide the answer under a stub",
+    "can you style the reply like a ticket to a show",
+    "show the answer when i tear the ticket",
+    "ticket vibes pls \u2014 rip to reveal",
+    "put the answer on a ticket stub",
+    "i want the reply hidden like a ticket pouch",
+    "Make it look like a ticket stub I tear to reveal.",
+    "Show the answer on a tear-off ticket.",
+    "I want to rip a ticket to see the answer.",
+    "Present the answer as a concert ticket stub.",
+    "Ticket stub reveal for the ans.",
+    "Like a ticket I tear open to see answer."
+   ],
+   "html": "<div class=\"quiz\">\n  <div class=\"q\">\n    <span class=\"badge accent\"><i class=\"dot\"></i>your ticket</span>\n    <p class=\"muted t-small\"><regex>user_name</regex>, here's your stub. Tear the edge to see the answer.</p>\n  </div>\n  <details class=\"flip\">\n    <summary>Tear to reveal</summary>\n    <div class=\"body\">\n      <div class=\"answer\">{{answer}}</div>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Fortune Cookie Quiz",
+   "user_requests": [
+    "hide the answer like a fortune cookie note",
+    "can u make the reply pop out of a cookie",
+    "fortune cookie vibes for the answer",
+    "show it like a little paper slip from a cookie",
+    "wrap the reply in a fortune cookie",
+    "i want to crack the cookie to get the answer",
+    "make it a fortune slip i unfold",
+    "Hide the answer like a fortune cookie message.",
+    "Make the answer appear in a fortune cookie.",
+    "I want to crack open a fortune cookie for the answer.",
+    "Show the answer as a fortune cookie note.",
+    "Fortune cookie style reveal pls.",
+    "Like a fortune cookie with the answer inside."
+   ],
+   "html": "<div class=\"quiz\">\n  <div class=\"q\">\n    <span class=\"badge warn\"><i class=\"dot\"></i>fortune inside</span>\n    <p class=\"muted t-small\"><regex>user_name</regex>, crack the cookie when you're ready. It's folded tight in there.</p>\n  </div>\n  <details class=\"acc\">\n    <summary>Crack open</summary>\n    <div class=\"body\">\n      <div class=\"answer\">{{answer}}</div>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Lab Coat Specimen Card",
+   "user_requests": [
+    "make it look like a science specimen card",
+    "hide the answer under a slide label",
+    "can you do a lab report reveal for the reply",
+    "show the answer like a specimen tag",
+    "lab coat pls \u2014 peek under the slide",
+    "put the answer on a specimen card",
+    "i want the reply hidden behind a microscope slide",
+    "Make it look like a specimen card from a lab.",
+    "Present the answer as a science specimen label.",
+    "I want a lab coat specimen card reveal.",
+    "Show the answer on a lab specimen card.",
+    "Specimen card style for the ans.",
+    "Like a science specimen card with the answer."
+   ],
+   "html": "<div class=\"quiz\">\n  <div class=\"q\">\n    <span class=\"badge good\"><i class=\"dot\"></i>specimen sealed</span>\n    <p class=\"muted t-small\"><regex>user_name</regex>, slide the cover off when you want to observe the answer.</p>\n  </div>\n  <details class=\"acc\">\n    <summary>Remove slide cover</summary>\n    <div class=\"body\">\n      <div class=\"answer\">{{answer}}</div>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Detective Evidence Bag",
+   "user_requests": [
+    "hide the answer like a detective's evidence bag",
+    "can u make the reply an evidence file",
+    "show it like a case file i open",
+    "detective vibes for the answer",
+    "put the answer in an evidence bag",
+    "i want to unzip the bag to see it",
+    "make it a case closed reveal",
+    "Hide the answer like it's in a detective's evidence bag.",
+    "Present the answer as evidence in a bag.",
+    "I want to open an evidence bag to see the answer.",
+    "Show the answer as a detective evidence bag.",
+    "Evidence bag reveal for the ans.",
+    "Like a detective's evidence bag with the answer."
+   ],
+   "html": "<div class=\"quiz\">\n  <div class=\"q\">\n    <span class=\"badge bad\"><i class=\"dot\"></i>evidence bag</span>\n    <p class=\"muted t-small\"><regex>user_name</regex>, the case is sealed. Unzip the bag to view the answer.</p>\n  </div>\n  <details class=\"acc\">\n    <summary>Unzip bag</summary>\n    <div class=\"body\">\n      <div class=\"answer\">{{answer}}</div>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Magic Hat Pull",
+   "user_requests": [
+    "hide the answer like a rabbit in a hat",
+    "can u make the reply appear from a magic hat",
+    "show it like a magician's reveal",
+    "magic vibes for the answer",
+    "put the answer under a hat until i pull it",
+    "i want to reach in and grab the reply",
+    "make it a presto reveal",
+    "Hide the answer like a rabbit in a hat.",
+    "Make the answer appear as if pulled from a hat.",
+    "I want to pull the answer from a magic hat.",
+    "Show the answer like a magic trick from a hat.",
+    "Magic hat style reveal pls.",
+    "Like pulling a rabbit from a hat for the answer."
+   ],
+   "html": "<div class=\"quiz\">\n  <div class=\"q\">\n    <span class=\"badge accent\"><i class=\"dot\"></i>magic hat</span>\n    <p class=\"muted t-small\"><regex>user_name</regex>, nothing up my sleeve. Reach in when you're ready for the answer.</p>\n  </div>\n  <details class=\"flip\">\n    <summary>Reach into the hat</summary>\n    <div class=\"body\">\n      <div class=\"answer\">{{answer}}</div>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  }
+ ]
+}

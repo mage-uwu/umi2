@@ -1,0 +1,238 @@
+{
+ "widget": "answer_card",
+ "instances": [
+  {
+   "title": "Classic note card with cached badge",
+   "user_requests": [
+    "just give me the answer already",
+    "show me what you got in a card please",
+    "can u wrap ur reply in a lil box for me",
+    "What's the answer? Put it in a tidy card.",
+    "reply in a note card pls",
+    "I want ur answer framed nicely, card style",
+    "gimme the short version in a card",
+    "spit out the answer pls",
+    "jus gimme da answer rn",
+    "I don't need the whole explanation, just the result",
+    "answer. now.",
+    "could you cut to the chase and tell me",
+    "wuts the answer lol"
+   ],
+   "html": "<article class=\"card\">\n  <div class=\"card-title\">\n    <h3>Note for <regex>user_name</regex></h3>\n    <span class=\"badge accent\"><i class=\"dot\"></i>cached match</span>\n  </div>\n  <p>{{answer}}</p>\n</article>",
+   "augmented": true
+  },
+  {
+   "title": "Answer card with tags and accordion detail",
+   "user_requests": [
+    "answer with some tags on it if u can",
+    "show the reply + tags + maybe more detail",
+    "card please, with labels and a behind-the-scenes peek",
+    "reply in a card, tag it, and tuck the details away",
+    "can i get the answer w/ tags and hidden extra bits?",
+    "wrap it up: tags, answer, optional more",
+    "answer card + tags + collapsible notes pls",
+    "can the answer have lil topic chips on it",
+    "answer plz n toss some hashtags on there",
+    "id like labels attached to the response if possible",
+    "show answer w/ keywords pls",
+    "gimme the answer tagged up",
+    "answer but with some lil pill thingies"
+   ],
+   "html": "<article class=\"card\">\n  <div class=\"card-title\">\n    <h3>Quick answer for <regex>user_name</regex></h3>\n    <span class=\"row\" style=\"gap:var(--s-2)\">\n      <span class=\"badge accent\">cached</span>\n      <span class=\"badge info\">fast</span>\n      <span class=\"badge good\"><i class=\"dot\"></i>ready</span>\n    </span>\n  </div>\n  <p>{{answer}}</p>\n  <details class=\"acc\">\n    <summary>More context</summary>\n    <div class=\"body\">\n      <p class=\"muted t-small\">Tucked away so the card stays clean. Open if you want the longer walk-through.</p>\n    </div>\n  </details>\n</article>",
+   "augmented": true
+  },
+  {
+   "title": "Recessed flat answer card, terminal-ish",
+   "user_requests": [
+    "flat card, no fancy shadows please",
+    "keep it plain n simple, just the answer",
+    "answer in a quiet card style",
+    "show reply in a minimal flat card",
+    "no fluff: just answer in a card",
+    "gimme the flat version of the card thnx",
+    "answer card but low-key / recessed look",
+    "no drop shadows no rounded corners, just flat",
+    "make it look like a terminal output pls",
+    "answer in a plain boxy style, zero gloss",
+    "flat ui answer plz",
+    "terminal vibes, no gradients",
+    "just raw flat answer card thanks"
+   ],
+   "html": "<article class=\"card flat\" style=\"background:var(--bg-alt)\">\n  <div class=\"card-title\">\n    <h3>Answer &mdash; <regex>user_name</regex></h3>\n    <span class=\"badge\"><i class=\"dot\"></i>plain</span>\n  </div>\n  <p style=\"margin:0;\">{{answer}}</p>\n  <p class=\"dim t-small\" style=\"margin:var(--s-3) 0 0;\">flat mode, no extras</p>\n</article>",
+   "augmented": true
+  },
+  {
+   "title": "Answer card with info callout accent",
+   "user_requests": [
+    "card w/ a little info callout on it",
+    "answer + a heads-up callout in one card",
+    "show the answer and call out the key point",
+    "info-style card for the reply pls",
+    "answer in a card, accent the important part",
+    "wrap reply w/ a callout so i dont miss it",
+    "reply card + info highlight thx",
+    "mini stats version of the answer pls",
+    "squish the answer into numbers",
+    "stat card for this answer, compact",
+    "gimme the short numerical take",
+    "answer as a lil metric tile",
+    "small stat box w/ the answer in it"
+   ],
+   "html": "<article class=\"card\">\n  <div class=\"card-title\">\n    <h3>Here's your answer, <regex>user_name</regex></h3>\n    <span class=\"badge accent\"><i class=\"dot\"></i>cached match</span>\n  </div>\n  <div class=\"callout info\">\n    <p style=\"margin:0;\">{{answer}}</p>\n  </div>\n  <p class=\"dim t-small\" style=\"margin:var(--s-3) 0 0;\">Callout style keeps the reply from blending into the page.</p>\n</article>",
+   "augmented": true
+  },
+  {
+   "title": "Compact stat-style answer card",
+   "user_requests": [
+    "condense the answer into a stat card",
+    "card with a number/badge vibe if possible",
+    "answer as a compact status card",
+    "make the reply look like a dashboard tile",
+    "reply in a lil stat card w/ the answer",
+    "show answer compact + badge stats",
+    "answer card, compact, dashboard-ish"
+   ],
+   "html": "<article class=\"card\" style=\"max-width:520px;\">\n  <div class=\"row between\" style=\"align-items:baseline;\">\n    <h3 class=\"card-title\" style=\"margin:0;border:0;padding:0;\">Answer</h3>\n    <span class=\"badge accent\"><i class=\"dot\"></i>ready</span>\n  </div>\n  <p style=\"margin:var(--s-3) 0 0;\">{{answer}}</p>\n  <div class=\"meter\" aria-hidden=\"true\" style=\"margin-top:var(--s-3);\">\n    <span style=\"width:100%\"></span>\n  </div>\n  <p class=\"dim t-small\" style=\"margin:var(--s-2) 0 0;\">confidence: full</p>\n</article>"
+  },
+  {
+   "title": "Answer card as an accordion panel",
+   "user_requests": [
+    "put the answer in a collapsible card",
+    "answer card that i can expand/collapse",
+    "reply in an accordion card pls",
+    "can u wrap answer so its tucked but openable",
+    "collapsible answer card for me",
+    "show answer in a fold-away card",
+    "answer card w/ accordion, closed by default",
+    "hide the answer behind a clicky thing",
+    "collapsible answer card pls",
+    "answer inside an expander",
+    "make the reply fold open n shut",
+    "accordion it up pls",
+    "wrap the answer in a dropdown panel"
+   ],
+   "html": "<details class=\"acc\" open>\n  <summary>Answer for <regex>user_name</regex></summary>\n  <div class=\"body\">\n    <article class=\"card flat\" style=\"margin-top:var(--s-3);\">\n      <div class=\"card-title\">\n        <h3 style=\"margin:0;\">The reply</h3>\n        <span class=\"badge info\"><i class=\"dot\"></i>expandable</span>\n      </div>\n      <p style=\"margin:0;\">{{answer}}</p>\n    </article>\n  </div>\n</details>",
+   "augmented": true
+  },
+  {
+   "title": "Answer card with a memory-jog indicator",
+   "user_requests": [
+    "can u show me that again",
+    "hey umi whats the cached answer for this one",
+    "show reply pls",
+    "I need the answer displayed like normal",
+    "gimme that reply card again",
+    "hey can you pull up the cached response 4 me?",
+    "drop the answer plz",
+    "remind me what u said earlier",
+    "bring that back up pls",
+    "re-surface the last answer",
+    "show me again what the reply was",
+    "jog my memory, what was it",
+    "can u redisplay the previous answer"
+   ],
+   "html": "<article class=\"card\">\n  <div class=\"card-title\">\n    <h3>Answer for <regex>user_name</regex></h3>\n    <span class=\"badge info\"><i class=\"dot\"></i>cached</span>\n  </div>\n  <p>{{answer}}</p>\n</article>",
+   "augmented": true
+  },
+  {
+   "title": "Answer card with star rating and collapsed extra",
+   "user_requests": [
+    "show me the reply in a nice card",
+    "how would you reply to this?",
+    "can u answer this with a rating",
+    "display the answer card with the little stars",
+    "I want the reply with a fun rating thingy",
+    "hey umi, show this reply w/ stars pls",
+    "give me the answer w/ a rating",
+    "pretty card w/ stars pls",
+    "rate the answer n tuck the extras away",
+    "nice looking reply card w/ a score",
+    "answer card plus hidden more section",
+    "give it a rating outta 5 n collapse the rest",
+    "fancy card w/ stars n a show more"
+   ],
+   "html": "<article class=\"card\">\n  <div class=\"card-title\">\n    <h3>Answer for <regex>user_name</regex></h3>\n    <span class=\"badge accent\"><i class=\"dot\"></i>4.8</span>\n  </div>\n  <p>{{answer}}</p>\n  <details class=\"acc\">\n    <summary>More context</summary>\n    <div class=\"body\"><p>This one's been cached for a while\u2014still warm.</p></div>\n  </details>\n</article>",
+   "augmented": true
+  },
+  {
+   "title": "Answer card with a progress bar for cache freshness",
+   "user_requests": [
+    "can u show the answer w/ a progress bar",
+    "i want the reply w/ the cache meter",
+    "show me the answer card with a freshness bar",
+    "give me the reply w/ the little progress thing",
+    "hey umi show the ans with a bar pls",
+    "display reply with cache progress",
+    "pull up the answer w/ the meter",
+    "how fresh is this answer, show a bar",
+    "answer w/ a freshness meter pls",
+    "progress bar on the reply so i know how stale",
+    "show the answer n how cached it is",
+    "bar showing cache status on the card",
+    "answer card w/ a lil loading-style bar"
+   ],
+   "html": "<article class=\"card\">\n  <div class=\"card-title\">\n    <h3>Answer for <regex>user_name</regex></h3>\n    <span class=\"badge good\"><i class=\"dot\"></i>fresh</span>\n  </div>\n  <div class=\"meter\"><span style=\"width:88%\"></span></div>\n  <p>{{answer}}</p>\n</article>",
+   "augmented": true
+  },
+  {
+   "title": "Answer card with a quote block and cite",
+   "user_requests": [
+    "show me the answer as a quote",
+    "can u reply in quote format?",
+    "display the answer as a blockquote pls",
+    "i want the answer to look like a quote from you",
+    "hey umi give me the reply in quote form",
+    "show the answer card with the quote thing",
+    "reply as a quote please",
+    "render the reply as a pull quote w/ source",
+    "answer in blockquote form pls",
+    "quote style answer with a citation",
+    "put the response in a quote n say where it came from",
+    "show it like a quoted excerpt",
+    "answer as a cite-able quote block"
+   ],
+   "html": "<article class=\"card\">\n  <div class=\"card-title\">\n    <h3>Answer for <regex>user_name</regex></h3>\n  </div>\n  <blockquote class=\"quote\">\n    <p>{{answer}}</p>\n    <cite>\u2014 Umi, just now</cite>\n  </blockquote>\n</article>",
+   "augmented": true
+  },
+  {
+   "title": "Answer card as a recipe-style content block",
+   "user_requests": [
+    "show me the answer like a recipe",
+    "can u format the reply as a recipe?",
+    "give me the answer in recipe format pls",
+    "i want the reply to look like a recipe card",
+    "hey umi show the ans as a recipe",
+    "display the reply w/ recipe styling",
+    "show me the answer like a cooking recipe",
+    "do it like a recipe: ingredients n steps",
+    "answer in recipe format pls",
+    "card that looks like a cooking recipe",
+    "show the answer as ingredients then method",
+    "recipe style pls, steps numbered",
+    "render the reply like a food recipe"
+   ],
+   "html": "<article class=\"card\">\n  <div class=\"card-title\">\n    <h3>Recipe: Answer for <regex>user_name</regex></h3>\n  </div>\n  <div class=\"recipe\">\n    <div class=\"head\">Serve warm</div>\n    <div class=\"meta\">Prep: instant \u00b7 Serves: 1</div>\n    <div class=\"body\">\n      <p>{{answer}}</p>\n    </div>\n  </div>\n</article>",
+   "augmented": true
+  },
+  {
+   "title": "Answer card with a mini timeline and cached badge",
+   "user_requests": [
+    "show the answer w/ a timeline",
+    "can u display the reply on a timeline?",
+    "give me the answer card w/ the little timeline",
+    "i want the reply w/ a timeline view",
+    "hey umi show the ans w/ a timeline pls",
+    "display the reply w/ the timeline thing",
+    "pull up the answer w/ timeline",
+    "answer plus lil time markers pls",
+    "show the reply w/ a small timeline n cache tag",
+    "timeline strip on the answer card pls",
+    "answer card w/ dated steps n a cached chip",
+    "gimme the answer w/ a mini chronology",
+    "reply card w/ timeline dots n cached label"
+   ],
+   "html": "<article class=\"card\">\n  <div class=\"card-title\">\n    <h3>Answer for <regex>user_name</regex></h3>\n    <span class=\"badge\"><i class=\"dot\"></i>cached</span>\n  </div>\n  <ul class=\"timeline\">\n    <li><span class=\"when\">now</span> Answer served from cache</li>\n    <li><span class=\"when\">just now</span> Reply prepared</li>\n  </ul>\n  <p>{{answer}}</p>\n</article>",
+   "augmented": true
+  }
+ ]
+}

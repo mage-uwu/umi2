@@ -1,0 +1,2237 @@
+{
+ "widget": "schedule",
+ "instances": [
+  {
+   "title": "Weekday Work Agenda",
+   "user_requests": [
+    "plan my workday",
+    "build me a weekday schedule",
+    "9 to 5 agenda pls",
+    "what does my work day look like",
+    "make a timeline for today at work",
+    "schedule my office hours",
+    "ok give me a proper workday plan",
+    "Help me organize my work tasks for today",
+    "I need a daily work plan",
+    "schedule for my 9-5",
+    "make a workday timetable",
+    "plan out my office hours",
+    "workday agenda please"
+   ],
+   "html": "<div class=\"card\"><h4>Today \u00b7 Workday</h4>\n<ul class=\"timeline\">\n<li><span class=\"when\">08:30</span><p>Inbox triage \u2014 reply, file, or ignore. Be ruthless.</p></li>\n<li><span class=\"when\">09:00</span><p>Deep work block: the one task that actually matters.</p></li>\n<li><span class=\"when\">10:30</span><p>Team standup, 15 min. Then coffee, also 15 min.</p></li>\n<li><span class=\"when\">11:00</span><p>Second deep block or meetings, whichever the day demands.</p></li>\n<li><span class=\"when\">12:30</span><p>Lunch. Away from the screen, <regex>user_name</regex>.</p></li>\n<li><span class=\"when\">14:00</span><p>Collaboration window \u2014 reviews, pairing, questions.</p></li>\n<li><span class=\"when\">16:00</span><p>Wrap-up: notes, tomorrow's top three, close the laptop.</p></li>\n</ul>\n<p class=\"t-small muted\">Rule of thumb: protect 09:00\u201311:00. Everything else can flex.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Morning Routine Before 9am",
+   "user_requests": [
+    "morning routine schedule",
+    "what should my morning look like",
+    "plan my early hours",
+    "6am to 9am plan",
+    "help me own my mornings",
+    "give me a get-ready timeline",
+    "morning agenda plz",
+    "I need a morning schedule to get ready for work",
+    "plan my morning from wake up to 9",
+    "what should I do before 9am?",
+    "morning routine planner",
+    "help me structure my mornings",
+    "schedule my early morning activities"
+   ],
+   "html": "<div class=\"card\"><h4>Morning \u00b7 The Good Version</h4>\n<ul class=\"timeline\">\n<li><span class=\"when\">06:30</span><p>Wake. Phone stays face-down. You know why.</p></li>\n<li><span class=\"when\">06:40</span><p>Water, then ten minutes of stretching or a short walk.</p></li>\n<li><span class=\"when\">07:00</span><p>Shower, dress, and pick the outfit the night before \u2014 future you says thanks.</p></li>\n<li><span class=\"when\">07:30</span><p>Breakfast with actual protein, not just coffee and hope.</p></li>\n<li><span class=\"when\">08:00</span><p>Ten-minute plan: three tasks, one of them small.</p></li>\n<li><span class=\"when\">08:45</span><p>Commute or desk setup. Arrive before the chaos, <regex>user_name</regex>.</p></li>\n</ul>\n<p class=\"t-small muted\">Slipped a step? Fine. Skip the plan, not the water.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Weekend Errand Run",
+   "user_requests": [
+    "plan my saturday errands",
+    "weekend to-do schedule",
+    "errands route for tomorrow",
+    "help me run my saturday",
+    "schedule my chores and shopping",
+    "sat morning plan",
+    "errand day timeline",
+    "plan my saturday to-do list",
+    "errand schedule for saturday",
+    "help me organize weekend tasks",
+    "I have a bunch of errands to run, plan it",
+    "weekend chore schedule",
+    "make a plan for my saturday errands"
+   ],
+   "html": "<div class=\"card\"><h4>Saturday \u00b7 Errands</h4>\n<ul class=\"timeline\">\n<li><span class=\"when\">09:00</span><p>Groceries first. List in hand, cart smaller than your ambition.</p></li>\n<li><span class=\"when\">10:15</span><p>Pharmacy and post office \u2014 same block, one trip.</p></li>\n<li><span class=\"when\">11:00</span><p>Hardware store or the random thing you keep postponing.</p></li>\n<li><span class=\"when\">12:00</span><p>Lunch. Sit down for it, <regex>user_name</regex>.</p></li>\n<li><span class=\"when\">13:30</span><p>Laundry in, floors swept. Podcast optional but recommended.</p></li>\n<li><span class=\"when\">15:30</span><p>Return anything still in the car. The car counts as a closet.</p></li>\n<li><span class=\"when\">16:30</span><p>Done. Free evening, earned.</p></li>\n</ul>\n<p class=\"t-small muted\">Batch by location, not by mood. Saves the whole afternoon.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Study Session Plan",
+   "user_requests": [
+    "make me a study schedule",
+    "plan my revision evening",
+    "pomodoro plan for tonight",
+    "how should i structure study time",
+    "exam prep timeline",
+    "schedule my study blocks",
+    "revision plan pls",
+    "help me plan my study time",
+    "create a study timetable",
+    "I need a schedule for studying",
+    "plan my revision sessions",
+    "study schedule for exams",
+    "organize my study sessions"
+   ],
+   "html": "<div class=\"card\"><h4>Evening \u00b7 Study</h4>\n<ul class=\"timeline\">\n<li><span class=\"when\">17:30</span><p>Set up: phone in another room, tabs down to three.</p></li>\n<li><span class=\"when\">17:40</span><p>Block 1 \u2014 hardest subject first, 25 min on, 5 off.</p></li>\n<li><span class=\"when\">18:15</span><p>Block 2 \u2014 second subject. Active recall beats re-reading.</p></li>\n<li><span class=\"when\">19:00</span><p>Dinner break. Proper one, twenty minutes minimum.</p></li>\n<li><span class=\"when\">19:30</span><p>Block 3 \u2014 practice questions or past papers.</p></li>\n<li><span class=\"when\">20:15</span><p>Review notes, mark what stayed fuzzy, stop.</p></li>\n<li><span class=\"when\">20:45</span><p>Shutdown. Sleep is part of the study plan, <regex>user_name</regex>.</p></li>\n</ul>\n<p class=\"t-small muted\">Three focused blocks beat six distracted ones. Every time.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Travel Day Timeline",
+   "user_requests": [
+    "plan my travel day",
+    "airport schedule",
+    "flight day timeline",
+    "help me not miss my flight",
+    "travel day agenda",
+    "schedule for a flight morning",
+    "what time should i leave",
+    "plan my trip day",
+    "travel itinerary for the day",
+    "schedule for a day of traveling",
+    "help me organize my travel day",
+    "what should my travel day look like?",
+    "make a timeline for my travel day"
+   ],
+   "html": "<div class=\"card\"><h4>Travel Day \u00b7 Domestic Flight</h4>\n<ul class=\"timeline\">\n<li><span class=\"when\">T-3h</span><p>Leave home. Add 30 min if it's raining or rush hour.</p></li>\n<li><span class=\"when\">T-2h</span><p>Arrive at the airport. Bag drop, then security line.</p></li>\n<li><span class=\"when\">T-1h15</span><p>Through security. Refill the bottle after the checkpoint.</p></li>\n<li><span class=\"when\">T-45m</span><p>Find the gate, confirm it on the board \u2014 gates move.</p></li>\n<li><span class=\"when\">T-30m</span><p>Snack, charger out, boarding pass ready. No wandering.</p></li>\n<li><span class=\"when\">T-0</span><p>Boarding. Seat, headphones, done.</p></li>\n</ul>\n<p class=\"t-small muted\">Checked bag? Add an hour. Peace of mind, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Home Cleaning Sprint",
+   "user_requests": [
+    "plan my cleaning day",
+    "schedule my housework",
+    "deep clean timeline",
+    "help me clean the flat in one go",
+    "chore schedule for sunday",
+    "cleaning runsheet plz",
+    "plan a tidy-up afternoon",
+    "I need a cleaning schedule",
+    "plan my house cleaning tasks",
+    "help me clean my home efficiently",
+    "make a cleaning timeline",
+    "schedule for deep cleaning",
+    "organize my cleaning day"
+   ],
+   "html": "<div class=\"card\"><h4>Sunday \u00b7 Clean House, Clear Head</h4>\n<ul class=\"timeline\">\n<li><span class=\"when\">10:00</span><p>Declutter first \u2014 15 min, one basket, everything out of place.</p></li>\n<li><span class=\"when\">10:20</span><p>Dust top to bottom: shelves, sills, then surfaces.</p></li>\n<li><span class=\"when\">10:50</span><p>Kitchen: counters, hob, sink. Bin out on the way past.</p></li>\n<li><span class=\"when\">11:20</span><p>Bathroom: spray, wait, wipe. Let the cleaner do the work.</p></li>\n<li><span class=\"when\">11:45</span><p>Vacuum, then mop behind yourself, room by room.</p></li>\n<li><span class=\"when\">12:30</span><p>Laundry folded and put away. Not on the chair.</p></li>\n<li><span class=\"when\">13:00</span><p>Done. Light a candle, <regex>user_name</regex>, you earned it.</p></li>\n</ul>\n<p class=\"t-small muted\">Work top-down and dry-to-wet. That's the whole trick.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Plant Watering Day",
+   "user_requests": [
+    "when should I water my plants today?",
+    "plant care schedule for today pls",
+    "my houseplants need a drink",
+    "watering routine for indoor plants",
+    "help me remember to water the ferns",
+    "plant watering plan",
+    "schedule for watering my green friends",
+    "help me schedule watering my plants",
+    "when to water plants today?",
+    "plant care schedule",
+    "I need a watering plan for my plants",
+    "plan my plant watering routine",
+    "remind me when to water plants"
+   ],
+   "html": "<div class=\"card\"><h4>Plant Watering Day</h4><ul class=\"timeline\"><li><span class=\"when\">08:00</span><p>Check soil moisture for all pots</p></li><li><span class=\"when\">09:00</span><p>Water ferns and calathea (they're thirsty)</p></li><li><span class=\"when\">10:00</span><p>Mist the tropical plants</p></li><li><span class=\"when\">14:00</span><p>Rotate pots for even light</p></li><li><span class=\"when\">18:00</span><p>Empty saucers to avoid root rot</p></li><li><span class=\"when\">20:00</span><p>Quick leaf check for pests</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Grocery Shopping Trip",
+   "user_requests": [
+    "grocery shopping timeline",
+    "when to go to the store today",
+    "plan my supermarket run",
+    "schedule for grocery shopping",
+    "help me get groceries efficiently",
+    "supermarket trip agenda",
+    "what's the best time for grocery shopping?",
+    "plan my grocery run",
+    "schedule for grocery shopping",
+    "help me organize my grocery trip",
+    "make a grocery shopping itinerary",
+    "I need a timeline for grocery shopping",
+    "grocery store trip plan"
+   ],
+   "html": "<div class=\"card\"><h4>Grocery Shopping Trip</h4><ul class=\"timeline\"><li><span class=\"when\">09:00</span><p>Check pantry and fridge for staples</p></li><li><span class=\"when\">09:30</span><p>Make list: produce, dairy, protein, snacks</p></li><li><span class=\"when\">10:00</span><p>Head to store (avoid crowds)</p></li><li><span class=\"when\">10:15</span><p>Shop aisles: produce first, frozen last</p></li><li><span class=\"when\">11:00</span><p>Checkout and bag</p></li><li><span class=\"when\">11:30</span><p>Unpack and put away</p></li><li><span class=\"when\">12:00</span><p>Wipe down counters and make lunch</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Laundry Day Plan",
+   "user_requests": [
+    "laundry day schedule",
+    "when to do laundry today",
+    "plan my laundry tasks",
+    "help me get laundry done",
+    "laundry routine for today",
+    "schedule for washing clothes",
+    "laundry day timeline",
+    "help me plan laundry day",
+    "schedule for doing laundry",
+    "I need a laundry routine",
+    "organize my laundry tasks",
+    "make a laundry timeline",
+    "plan my laundry day"
+   ],
+   "html": "<div class=\"card\"><h4>Laundry Day Plan</h4><ul class=\"timeline\"><li><span class=\"when\">08:00</span><p>Sort clothes: lights, darks, delicates</p></li><li><span class=\"when\">08:30</span><p>Start first load (whites, hot water)</p></li><li><span class=\"when\">10:00</span><p>Move to dryer; start second load (colors)</p></li><li><span class=\"when\">11:30</span><p>Fold and hang first load</p></li><li><span class=\"when\">12:00</span><p>Start third load (delicates, cold)</p></li><li><span class=\"when\">13:30</span><p>Dry delicates on low or air dry</p></li><li><span class=\"when\">15:00</span><p>Put away all clean clothes</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Pet Care Routine",
+   "user_requests": [
+    "pet care schedule",
+    "when to feed and walk the dog",
+    "daily pet routine",
+    "help me plan pet care",
+    "schedule for my cat and dog",
+    "pet care timeline",
+    "what should I do for my pets today?",
+    "schedule for taking care of my pet",
+    "help me plan pet care",
+    "pet routine planner",
+    "I need a daily pet care schedule",
+    "organize my pet's day",
+    "make a pet care timetable"
+   ],
+   "html": "<div class=\"card\"><h4>Pet Care Routine</h4><ul class=\"timeline\"><li><span class=\"when\">07:00</span><p>Feed cat and dog breakfast</p></li><li><span class=\"when\">07:30</span><p>Walk dog (30 min)</p></li><li><span class=\"when\">09:00</span><p>Refresh water bowls</p></li><li><span class=\"when\">12:00</span><p>Playtime with cat (laser or toy)</p></li><li><span class=\"when\">17:00</span><p>Feed dinner and scoop litter box</p></li><li><span class=\"when\">19:00</span><p>Evening walk for dog</p></li><li><span class=\"when\">21:00</span><p>Brush pets and settle them in</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Self-Care Sunday",
+   "user_requests": [
+    "self-care schedule for sunday",
+    "plan my relaxation day",
+    "sunday self-care routine",
+    "help me recharge today",
+    "schedule for a lazy sunday",
+    "self-care timeline",
+    "what should I do for self-care today?",
+    "plan my self-care day",
+    "I need a relaxing sunday schedule",
+    "self-care routine for sunday",
+    "help me plan a day of self-care",
+    "schedule my sunday self-care",
+    "make a self-care sunday plan"
+   ],
+   "html": "<div class=\"card\"><h4>Self-Care Sunday</h4><ul class=\"timeline\"><li><span class=\"when\">09:00</span><p>Gentle wake-up: stretch and hydrate</p></li><li><span class=\"when\">10:00</span><p>Skincare and bath ritual</p></li><li><span class=\"when\">11:30</span><p>Journal or read a book</p></li><li><span class=\"when\">13:00</span><p>Healthy lunch and tea</p></li><li><span class=\"when\">15:00</span><p>Nature walk or gentle yoga</p></li><li><span class=\"when\">17:00</span><p>Digital detox hour: no screens</p></li><li><span class=\"when\">20:00</span><p>Early bedtime with calming playlist</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "DIY Home Project",
+   "user_requests": [
+    "diy project timeline",
+    "plan my home improvement tasks",
+    "schedule for painting the room",
+    "help me fix the shelf today",
+    "diy schedule for today",
+    "home project agenda",
+    "when to start my diy project",
+    "plan my home improvement project",
+    "schedule for a DIY task",
+    "help me organize my DIY project",
+    "I need a timeline for my home project",
+    "make a DIY project schedule",
+    "plan my DIY home renovation"
+   ],
+   "html": "<div class=\"card\"><h4>DIY Home Project</h4><ul class=\"timeline\"><li><span class=\"when\">09:00</span><p>Gather tools and materials</p></li><li><span class=\"when\">09:30</span><p>Prep area: cover floors, tape edges</p></li><li><span class=\"when\">10:00</span><p>Start project: sand and prime (if painting)</p></li><li><span class=\"when\">11:30</span><p>First coat or assembly</p></li><li><span class=\"when\">13:00</span><p>Lunch break and dry time</p></li><li><span class=\"when\">14:00</span><p>Second coat or finishing touches</p></li><li><span class=\"when\">16:00</span><p>Clean up and admire your work</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Wedding Day Timeline",
+   "user_requests": [
+    "need a wedding day schedule",
+    "what time should things happen on my wedding day",
+    "wedding run of show",
+    "help me plan my wedding timeline",
+    "wedding day agenda pls",
+    "outline for wedding day events",
+    "timeline for a wedding day from morning to night",
+    "help me plan my wedding day",
+    "schedule for wedding day events",
+    "I need a wedding day itinerary",
+    "organize my wedding timeline",
+    "make a timeline for my wedding",
+    "plan the wedding day schedule"
+   ],
+   "html": "<div class=\"card\"><h4>Wedding Day Timeline</h4><p class=\"muted t-small\">A gentle run of show. Adjust as your venue allows.</p><ul class=\"timeline\"><li><span class=\"when\">07:30</span><p>Breakfast &amp; quiet start</p></li><li><span class=\"when\">08:30</span><p>Hair &amp; makeup</p></li><li><span class=\"when\">11:00</span><p>Photos: getting ready</p></li><li><span class=\"when\">12:30</span><p>Lunch &amp; touch-ups</p></li><li><span class=\"when\">14:00</span><p>Ceremony</p></li><li><span class=\"when\">15:00</span><p>Cocktail hour &amp; group photos</p></li><li><span class=\"when\">16:30</span><p>Reception &amp; dinner</p></li><li><span class=\"when\">18:30</span><p>Toasts &amp; first dance</p></li><li><span class=\"when\">20:00</span><p>Dancing &amp; dessert</p></li><li><span class=\"when\">22:00</span><p>Send-off</p></li></ul><div class=\"callout info\"><p><strong>Tip:</strong> Build in 15-minute buffers. Something always runs long, and that's okay.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Job Interview Day Schedule",
+   "user_requests": [
+    "interview day plan",
+    "how to schedule my day around a job interview",
+    "what should I do before an interview",
+    "interview day timeline",
+    "job interview prep schedule",
+    "schedule for interview day morning",
+    "plan my day for an important interview",
+    "help me plan my interview day",
+    "schedule for job interview",
+    "I need an interview day timeline",
+    "organize my interview day",
+    "make a plan for interview day",
+    "interview day schedule"
+   ],
+   "html": "<div class=\"card\"><h4>Job Interview Day Schedule</h4><ul class=\"timeline\"><li><span class=\"when\">07:00</span><p>Wake up, light breakfast</p></li><li><span class=\"when\">07:45</span><p>Review notes &amp; key stories</p></li><li><span class=\"when\">08:30</span><p>Get dressed, check tech</p></li><li><span class=\"when\">09:15</span><p>Travel or log in early</p></li><li><span class=\"when\">10:00</span><p>Interview</p></li><li><span class=\"when\">11:30</span><p>Send thank-you note</p></li><li><span class=\"when\">12:00</span><p>Debrief &amp; relax</p></li></ul><div class=\"callout good\"><p><strong>Go get 'em.</strong> You've prepared for this. Breathe.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Airport Departure Day",
+   "user_requests": [
+    "airport day schedule",
+    "what time should I get to the airport",
+    "flight day timeline",
+    "plan my airport day",
+    "departure day agenda",
+    "timeline for flying out",
+    "how to schedule the day of a flight",
+    "help me plan my airport day",
+    "schedule for flight departure",
+    "I need an airport timeline",
+    "organize my departure day",
+    "make a plan for airport day",
+    "airport departure schedule"
+   ],
+   "html": "<div class=\"card\"><h4>Airport Departure Day</h4><ul class=\"timeline\"><li><span class=\"when\">3h before</span><p>Leave home / hotel</p></li><li><span class=\"when\">2h before</span><p>Arrive at airport</p></li><li><span class=\"when\">1h 45m</span><p>Check bags &amp; security</p></li><li><span class=\"when\">1h before</span><p>Find gate, grab snack</p></li><li><span class=\"when\">40m</span><p>Board</p></li><li><span class=\"when\">0</span><p>Takeoff</p></li></ul><div class=\"callout warn\"><p><strong>Heads up:</strong> International flights often need an extra hour. Check your airline's guidance.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "New Baby Day",
+   "user_requests": [
+    "newborn day schedule",
+    "what does a day with a newborn look like",
+    "baby day routine",
+    "schedule for a day with a new baby",
+    "newborn feeding and sleep timeline",
+    "how to plan a day with a baby",
+    "baby's day agenda",
+    "help me plan my day with a newborn",
+    "schedule for new baby care",
+    "I need a newborn day routine",
+    "organize my day with a new baby",
+    "make a schedule for baby day",
+    "new baby day plan"
+   ],
+   "html": "<div class=\"card\"><h4>A Day with a Newborn</h4><p class=\"muted t-small\">Every baby is different. This is a loose rhythm, not a rule.</p><ul class=\"timeline\"><li><span class=\"when\">7:00</span><p>Feed, diaper, maybe sleep</p></li><li><span class=\"when\">9:00</span><p>Nap for baby, rest for you</p></li><li><span class=\"when\">11:00</span><p>Feed &amp; tummy time</p></li><li><span class=\"when\">13:00</span><p>Nap</p></li><li><span class=\"when\">15:00</span><p>Feed &amp; cuddle</p></li><li><span class=\"when\">17:00</span><p>Nap or walk</p></li><li><span class=\"when\">19:00</span><p>Feed &amp; bath (if bath day)</p></li><li><span class=\"when\">21:00</span><p>Wind down for night</p></li></ul><div class=\"callout info\"><p><strong>Be kind to yourself.</strong> The schedule bends. So can you.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Moving Day Plan",
+   "user_requests": [
+    "moving day schedule",
+    "timeline for moving house",
+    "how to plan moving day",
+    "what order should things happen on move day",
+    "moving day checklist schedule",
+    "plan my move day",
+    "agenda for moving to a new place",
+    "Help me organize my move tomorrow",
+    "I'm relocating next week, need a moving schedule",
+    "moving day timetable please",
+    "Need a schedule for moving to a new apartment",
+    "move day plan??",
+    "how should I plan moving day?"
+   ],
+   "html": "<div class=\"card\"><h4>Moving Day Plan</h4><ul class=\"timeline\"><li><span class=\"when\">7:00</span><p>Wake up, final sweep</p></li><li><span class=\"when\">7:30</span><p>Load truck / movers arrive</p></li><li><span class=\"when\">9:00</span><p>Hit the road</p></li><li><span class=\"when\">10:00</span><p>Arrive, unload</p></li><li><span class=\"when\">12:00</span><p>Lunch break</p></li><li><span class=\"when\">13:00</span><p>Set up essentials: beds, kitchen, bath</p></li><li><span class=\"when\">16:00</span><p>Return truck / final walkthrough</p></li><li><span class=\"when\">18:00</span><p>Order dinner, relax</p></li></ul><div class=\"callout good\"><p><strong>You did it.</strong> The boxes can wait until tomorrow.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Concert Day Itinerary",
+   "user_requests": [
+    "concert day schedule",
+    "what's the timeline for a concert day",
+    "plan my day for a concert",
+    "concert day agenda",
+    "how to schedule a concert outing",
+    "timeline for going to a show",
+    "concert night plan",
+    "I'm going to a concert tonight, plan my day",
+    "concert timeline for tomorrow",
+    "need itinerary for concert day",
+    "how to schedule my concert day",
+    "make me a concert day plan pls",
+    "gig day schedule"
+   ],
+   "html": "<div class=\"card\"><h4>Concert Day Itinerary</h4><ul class=\"timeline\"><li><span class=\"when\">14:00</span><p>Check set times &amp; venue rules</p></li><li><span class=\"when\">16:00</span><p>Light dinner &amp; hydrate</p></li><li><span class=\"when\">17:30</span><p>Head to venue</p></li><li><span class=\"when\">18:00</span><p>Doors open, find spot</p></li><li><span class=\"when\">19:00</span><p>Opening act</p></li><li><span class=\"when\">20:30</span><p>Headliner</p></li><li><span class=\"when\">22:30</span><p>Show ends, head home</p></li></ul><div class=\"callout warn\"><p><strong>Earplugs:</strong> Your future self will thank you.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Doctor's Appointment Day",
+   "user_requests": [
+    "I have a doctor's appointment tomorrow, make me a schedule",
+    "plan out my morning around a 9:30 checkup",
+    "how should I structure my day for a medical visit?",
+    "schedule my doctor visit day for me",
+    "what's the timeline for a routine physical appointment?",
+    "give me a simple agenda for my appointment with the specialist",
+    "makin a day plan for doc appt, thanks",
+    "I have a doctor's visit tomorrow, help me plan",
+    "need a schedule for my doctor appointment",
+    "doctor day timetable",
+    "plan my day around a doctor's appointment",
+    "doc appointment tomorrow, how to schedule?",
+    "appointment day itinerary"
+   ],
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Doctor's Appointment Day</h4><ul class=\"timeline\"><li><span class=\"when\">7:30</span><p>Light breakfast. Water okay unless fasting was requested.</p></li><li><span class=\"when\">8:15</span><p>Gather insurance card, ID, medication list, and any questions.</p></li><li><span class=\"when\">8:45</span><p>Leave early. Rushing raises blood pressure, and they check that.</p></li><li><span class=\"when\">9:30</span><p>Appointment. Breathe. You're in good hands.</p></li><li><span class=\"when\">10:15</span><p>Check out, schedule any follow-up, and grab a small treat. You earned it.</p></li><li><span class=\"when\">11:00</span><p>Home. Note any instructions or next steps while they're fresh.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Wedding Anniversary Evening",
+   "user_requests": [
+    "plan our anniversary evening at home",
+    "how to schedule a romantic anniversary night in",
+    "anniversary date night timeline",
+    "schedule for our wedding anniversary dinner",
+    "what should our anniversary evening look like?",
+    "make a plan for celebrating our anniversary tonight",
+    "anniversary night in \u2013 need a schedule",
+    "anniversary dinner plan at home",
+    "plan a romantic evening for our anniversary",
+    "need a schedule for our anniversary night",
+    "how to plan our anniversary evening",
+    "anniversary evening itinerary",
+    "help me organize our anniversary celebration"
+   ],
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Wedding Anniversary Evening</h4><ul class=\"timeline\"><li><span class=\"when\">4:00</span><p>Set out candles, playlist, and anything you forgot to buy.</p></li><li><span class=\"when\">5:00</span><p>Dress up a little. Not because you have to, but because it's fun.</p></li><li><span class=\"when\">5:45</span><p>Toast to another year. Sparkling cider counts.</p></li><li><span class=\"when\">6:30</span><p>Dinner. Put phones in another room.</p></li><li><span class=\"when\">8:00</span><p>Look at old photos or play the song you first danced to.</p></li><li><span class=\"when\">9:30</span><p>Slow down. The best part of the evening is the quiet part.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Baby Shower Day",
+   "user_requests": [
+    "plan a baby shower schedule",
+    "timeline for hosting a baby shower",
+    "how to schedule a baby shower afternoon",
+    "baby shower agenda for the guests",
+    "schedule for the baby shower I'm hosting",
+    "run of show for a baby shower",
+    "baby shower day plan, help",
+    "I'm hosting a baby shower, need a schedule",
+    "baby shower timeline",
+    "plan my baby shower day",
+    "how to schedule a baby shower",
+    "baby shower itinerary pls",
+    "need a plan for baby shower day"
+   ],
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Baby Shower Day</h4><ul class=\"timeline\"><li><span class=\"when\">10:00</span><p>Set up decorations, food, and a comfortable seat for the guest of honor.</p></li><li><span class=\"when\">11:30</span><p>Guests arrive. Hand them a drink and a name tag if you like games.</p></li><li><span class=\"when\">12:00</span><p>Brunch or lunch. Keep it easy\u2014people will be chatting.</p></li><li><span class=\"when\">1:00</span><p>Games or advice cards. Optional, but always get a laugh.</p></li><li><span class=\"when\">1:45</span><p>Gift opening. Have someone write down who gave what.</p></li><li><span class=\"when\">2:30</span><p>Cake, photos, goodbyes. You did great.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Housewarming Party Prep",
+   "user_requests": [
+    "schedule my housewarming party prep",
+    "timeline for getting ready for a housewarming",
+    "how to plan a housewarming party day of",
+    "housewarming prep schedule",
+    "what should I do first for housewarming party?",
+    "make a prep plan for housewarming tomorrow",
+    "housewarming prep \u2013 need a timeline",
+    "getting ready for housewarming party, need schedule",
+    "housewarming prep timeline",
+    "plan my housewarming party prep",
+    "how to prep for a housewarming party",
+    "housewarming party prep schedule",
+    "help me organize housewarming prep"
+   ],
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Housewarming Party Prep</h4><ul class=\"timeline\"><li><span class=\"when\">8:00</span><p>Clear clutter from main rooms. Baskets are your friend.</p></li><li><span class=\"when\">9:30</span><p>Quick clean: bathroom, kitchen counters, floors.</p></li><li><span class=\"when\">10:30</span><p>Grocery run for ice, drinks, and easy snacks.</p></li><li><span class=\"when\">12:00</span><p>Food prep. Anything that can sit out is a win.</p></li><li><span class=\"when\">2:00</span><p>Set out plates, cups, and a trash bag where people can find it.</p></li><li><span class=\"when\">3:00</span><p>Shower, change, light a candle. Guests arrive at 4.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Parent-Teacher Conference Day",
+   "user_requests": [
+    "plan my parent teacher conference day",
+    "schedule for meeting the teacher",
+    "how to prepare for parent teacher conference",
+    "timeline for school conference afternoon",
+    "parent teacher conference agenda",
+    "what's the plan for PT conference?",
+    "parent-teacher conf day \u2013 schedule it",
+    "I have parent-teacher conferences tomorrow, plan my day",
+    "parent teacher conference schedule",
+    "need itinerary for conference day",
+    "plan my parent-teacher meeting day",
+    "conference day timetable",
+    "help schedule my parent-teacher conferences"
+   ],
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Parent-Teacher Conference Day</h4><ul class=\"timeline\"><li><span class=\"when\">8:00</span><p>Review your child's recent work and any notes from home.</p></li><li><span class=\"when\">9:00</span><p>Write down two or three questions or concerns.</p></li><li><span class=\"when\">11:30</span><p>Eat lunch. You'll think better on a full stomach.</p></li><li><span class=\"when\">1:00</span><p>Arrive 5 minutes early. Bring a pen and something to write on.</p></li><li><span class=\"when\">1:15</span><p>Conference. Listen first, then ask. Keep it collaborative.</p></li><li><span class=\"when\">2:00</span><p>Note action steps at home. Share highlights with your child.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Birthday Party Day",
+   "user_requests": [
+    "plan a birthday party schedule",
+    "timeline for a kid's birthday party",
+    "how to schedule a birthday party afternoon",
+    "birthday party agenda for guests",
+    "schedule for the birthday party I'm throwing",
+    "run of show for birthday party",
+    "birthday party day plan, please",
+    "I'm hosting a birthday party, need a schedule",
+    "birthday party timeline",
+    "plan my birthday party day",
+    "how to schedule a birthday party",
+    "birthday party itinerary",
+    "need a plan for birthday party day"
+   ],
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Birthday Party Day</h4><ul class=\"timeline\"><li><span class=\"when\">9:00</span><p>Decorations up, balloons filled, cake table ready.</p></li><li><span class=\"when\">11:00</span><p>Food and drinks set out. Keep it simple.</p></li><li><span class=\"when\">12:00</span><p>Guests arrive. Have a small activity ready for early birds.</p></li><li><span class=\"when\">12:30</span><p>Eat, mingle, and let kids run around if it's that kind of party.</p></li><li><span class=\"when\">1:30</span><p>Cake, candles, and the birthday song. Phones out for photos.</p></li><li><span class=\"when\">2:30</span><p>Presents if you're opening them, then goodie bags and goodbyes.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "First Day of School Schedule",
+   "user_requests": [
+    "first day of school schedule pls",
+    "school morning plan for <regex>user_name</regex>",
+    "how to get kids ready for first day",
+    "first day school timeline",
+    "help me plan the first day of school morning",
+    "school run schedule for tomorrow",
+    "first day of school: what time should we leave?",
+    "first day of school tomorrow, help me plan",
+    "need a schedule for first day of school",
+    "back to school day timetable",
+    "plan my first day of school",
+    "first day school itinerary",
+    "how to schedule first day of school"
+   ],
+   "html": "<div class=\"card\"><h4>First Day of School</h4><ul class=\"timeline\"><li><span class=\"when\">6:45 AM</span><p>Wake up, get dressed (clothes laid out last night)</p></li><li><span class=\"when\">7:00 AM</span><p>Breakfast and pack lunch/snack</p></li><li><span class=\"when\">7:20 AM</span><p>Brush teeth, put on shoes, grab backpack</p></li><li><span class=\"when\">7:35 AM</span><p>Leave for school (first-day traffic buffer)</p></li><li><span class=\"when\">7:55 AM</span><p>Arrive at school, find classroom line</p></li><li><span class=\"when\">8:10 AM</span><p>Drop-off done \u2014 deep breath, <regex>user_name</regex>.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Thanksgiving Dinner Day",
+   "user_requests": [
+    "thanksgiving dinner schedule",
+    "how to time thanksgiving cooking",
+    "thanksgiving day cooking timeline",
+    "thanksgiving prep schedule for <regex>user_name</regex>",
+    "help! thanksgiving dinner timing",
+    "what time to start turkey for thanksgiving",
+    "thanksgiving cooking plan",
+    "Thanksgiving is coming, need a dinner schedule",
+    "thanksgiving day timeline",
+    "plan my thanksgiving dinner",
+    "how to schedule thanksgiving dinner",
+    "thanksgiving dinner itinerary",
+    "need a plan for Thanksgiving day"
+   ],
+   "html": "<div class=\"card\"><h4>Thanksgiving Day</h4><ul class=\"timeline\"><li><span class=\"when\">8:00 AM</span><p>Preheat oven, prep turkey (stuff, season)</p></li><li><span class=\"when\">9:00 AM</span><p>Turkey in oven \u2014 calculate time by weight</p></li><li><span class=\"when\">12:00 PM</span><p>Prep sides: peel potatoes, chop veggies</p></li><li><span class=\"when\">2:00 PM</span><p>Turkey out, rest 30 min; bake casseroles</p></li><li><span class=\"when\">3:00 PM</span><p>Mash potatoes, make gravy, warm rolls</p></li><li><span class=\"when\">3:30 PM</span><p>Eat! <regex>user_name</regex>, you did it.</p></li><li><span class=\"when\">5:00 PM</span><p>Pie and coffee</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Tax Day Filing Schedule",
+   "user_requests": [
+    "tax day plan",
+    "how to organize tax filing day",
+    "last minute tax filing schedule",
+    "taxes due tomorrow help",
+    "tax filing timeline <regex>user_name</regex>",
+    "schedule for doing taxes",
+    "tax day checklist",
+    "tax day is approaching, need a filing schedule",
+    "tax filing day plan",
+    "how to schedule tax day",
+    "tax day timeline",
+    "need a schedule for filing taxes",
+    "plan my tax day"
+   ],
+   "html": "<div class=\"card\"><h4>Tax Filing Day</h4><ul class=\"timeline\"><li><span class=\"when\">8:00 AM</span><p>Gather W-2s, 1099s, receipts, last year's return</p></li><li><span class=\"when\">9:00 AM</span><p>Log into tax software or meet accountant</p></li><li><span class=\"when\">10:30 AM</span><p>Enter income and deductions \u2014 double-check numbers</p></li><li><span class=\"when\">12:00 PM</span><p>Lunch break (taxes are hungry work)</p></li><li><span class=\"when\">1:00 PM</span><p>Review summary, fix errors</p></li><li><span class=\"when\">2:00 PM</span><p>E-file and save confirmation. Done, <regex>user_name</regex>!</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Moving Out Day",
+   "user_requests": [
+    "moving out schedule",
+    "moving day timeline",
+    "how to plan moving out day",
+    "moving out checklist <regex>user_name</regex>",
+    "help with moving out schedule",
+    "moving day plan",
+    "what to do on moving out day",
+    "I'm moving out tomorrow, need a schedule",
+    "moving out day timeline",
+    "plan my moving out day",
+    "how to schedule moving out",
+    "moving out itinerary",
+    "need a plan for moving out day"
+   ],
+   "html": "<div class=\"card\"><h4>Moving Out</h4><ul class=\"timeline\"><li><span class=\"when\">7:00 AM</span><p>Final walkthrough: check all rooms, closets, cabinets</p></li><li><span class=\"when\">8:00 AM</span><p>Movers arrive (or load your own truck)</p></li><li><span class=\"when\">10:00 AM</span><p>Load furniture, boxes, plants</p></li><li><span class=\"when\">12:00 PM</span><p>Quick lunch, hydrate</p></li><li><span class=\"when\">1:00 PM</span><p>Clean apartment (broom-swept), take photos</p></li><li><span class=\"when\">3:00 PM</span><p>Return keys to landlord, say goodbye</p></li><li><span class=\"when\">4:00 PM</span><p>Drive to new place \u2014 new chapter, <regex>user_name</regex>!</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Project Deadline Day",
+   "user_requests": [
+    "project deadline schedule",
+    "day before project due plan",
+    "how to finish project on deadline day",
+    "deadline day timeline <regex>user_name</regex>",
+    "help me plan my project deadline",
+    "project due tomorrow schedule",
+    "final day project plan",
+    "project deadline tomorrow, need a schedule",
+    "deadline day timeline",
+    "plan my project deadline day",
+    "how to schedule deadline day",
+    "project deadline itinerary",
+    "need a plan for project deadline"
+   ],
+   "html": "<div class=\"card\"><h4>Project Deadline</h4><ul class=\"timeline\"><li><span class=\"when\">8:00 AM</span><p>Review requirements, make a final to-do list</p></li><li><span class=\"when\">9:00 AM</span><p>Work on highest-priority tasks \u2014 no distractions</p></li><li><span class=\"when\">12:00 PM</span><p>Lunch and quick walk</p></li><li><span class=\"when\">1:00 PM</span><p>Polish, test, and proofread</p></li><li><span class=\"when\">3:00 PM</span><p>Submit or present. Breathe, <regex>user_name</regex>.</p></li><li><span class=\"when\">4:00 PM</span><p>Celebrate (even small wins count)</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Road Trip Departure Day",
+   "user_requests": [
+    "road trip day schedule",
+    "how to plan road trip departure",
+    "road trip morning timeline",
+    "road trip day plan <regex>user_name</regex>",
+    "leaving for road trip schedule",
+    "road trip departure checklist",
+    "what to do before a road trip",
+    "road trip tomorrow, need a departure schedule",
+    "road trip day timeline",
+    "plan my road trip departure day",
+    "how to schedule road trip day",
+    "road trip itinerary for departure",
+    "need a plan for road trip day"
+   ],
+   "html": "<div class=\"card\"><h4>Road Trip Departure</h4><ul class=\"timeline\"><li><span class=\"when\">6:00 AM</span><p>Wake up, final pack (chargers, snacks, playlist)</p></li><li><span class=\"when\">6:30 AM</span><p>Load car, check tire pressure and gas</p></li><li><span class=\"when\">7:00 AM</span><p>Hit the road \u2014 coffee in hand</p></li><li><span class=\"when\">9:00 AM</span><p>First rest stop: stretch, bathroom, snacks</p></li><li><span class=\"when\">12:00 PM</span><p>Lunch break at a scenic spot or diner</p></li><li><span class=\"when\">3:00 PM</span><p>Switch drivers if needed, admire the view</p></li><li><span class=\"when\">5:00 PM</span><p>Arrive at destination. Adventure awaits, <regex>user_name</regex>!</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sunday Roast Dinner Prep",
+   "user_requests": [
+    "plan a sunday roast dinner timeline for 6pm",
+    "roast dinner prep schedule",
+    "when do i put the chicken in for 6pm dinner",
+    "sunday roast for 6, what time start",
+    "roast dinner timings please",
+    "help me time a roast dinner for 6pm",
+    "cooking a sunday roast for 6pm, when to start",
+    "Sunday roast tomorrow, need a prep schedule",
+    "roast dinner timeline",
+    "plan my sunday roast prep",
+    "how to schedule sunday roast dinner",
+    "sunday roast itinerary",
+    "need a plan for sunday roast"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Sunday Roast \u2014 Dinner at 6</h4>\n  <p class=\"muted t-small\">Serves 6 \u00b7 <regex>user_name</regex>, preheat to 200\u00b0C fan.</p>\n  <ul class=\"timeline\">\n    <li><span class=\"when\">2:00 PM</span><p>Peel potatoes, carrots, parsnips. Get the chicken out of the fridge.</p></li>\n    <li><span class=\"when\">2:30 PM</span><p>Parboil potatoes 8 min, shake in colander, into hot oil. Chicken in oven (1.5 hr).</p></li>\n    <li><span class=\"when\">3:30 PM</span><p>Make Yorkshire pudding batter. Rest it.</p></li>\n    <li><span class=\"when\">4:00 PM</span><p>Turn potatoes. Baste chicken. Prep veg for steaming.</p></li>\n    <li><span class=\"when\">5:00 PM</span><p>Chicken out to rest (20 min). Turn oven up to 220\u00b0C. Yorkshire tin in to heat.</p></li>\n    <li><span class=\"when\">5:20 PM</span><p>Yorkshires in. Steam veg. Make gravy.</p></li>\n    <li><span class=\"when\">5:50 PM</span><p>Carve chicken. Everything to table.</p></li>\n    <li><span class=\"when\">6:00 PM</span><p>Eat. You did it.</p></li>\n  </ul>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Baby's Day (Feeding & Naps)",
+   "user_requests": [
+    "baby schedule for 3 month old",
+    "feed and nap times for baby",
+    "infant daily routine",
+    "when should baby nap and eat",
+    "3 month old schedule please",
+    "baby day plan feeding and naps",
+    "help me plan baby's day",
+    "need a schedule for my baby's day",
+    "baby feeding and nap schedule",
+    "plan my baby's day",
+    "how to schedule baby's feeding and naps",
+    "baby daily itinerary",
+    "help me organize my baby's day"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Baby's Day \u2014 3 Months</h4>\n  <p class=\"muted t-small\">Flexible guide, <regex>user_name</regex>. Follow the baby, not the clock.</p>\n  <ul class=\"timeline\">\n    <li><span class=\"when\">7:00 AM</span><p>Wake, feed. Nappy change.</p></li>\n    <li><span class=\"when\">8:00 AM</span><p>Awake time \u2014 tummy play, cuddles.</p></li>\n    <li><span class=\"when\">9:00 AM</span><p>Nap 1 (45\u201390 min).</p></li>\n    <li><span class=\"when\">10:30 AM</span><p>Feed. Nappy.</p></li>\n    <li><span class=\"when\">11:30 AM</span><p>Nap 2.</p></li>\n    <li><span class=\"when\">1:00 PM</span><p>Feed. Play.</p></li>\n    <li><span class=\"when\">2:00 PM</span><p>Nap 3.</p></li>\n    <li><span class=\"when\">4:00 PM</span><p>Feed. Quiet play.</p></li>\n    <li><span class=\"when\">5:00 PM</span><p>Catnap 4 (short).</p></li>\n    <li><span class=\"when\">6:30 PM</span><p>Bath, feed, wind down.</p></li>\n    <li><span class=\"when\">7:30 PM</span><p>Bedtime. Dream feed at 10:30 if needed.</p></li>\n  </ul>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Ramadan Iftar Evening",
+   "user_requests": [
+    "ramadan iftar schedule",
+    "iftar evening plan",
+    "when to eat and pray during ramadan",
+    "ramadan daily timetable",
+    "iftar time plan please",
+    "help me organise ramadan evenings",
+    "iftar and taraweeh timings",
+    "iftar timing for tonight",
+    "ramadan evening schedule",
+    "when do we eat after maghrib",
+    "iftar plan for today",
+    "ramadan iftar timetable",
+    "schedule for iftar dinner"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Ramadan Iftar Evening</h4>\n  <p class=\"muted t-small\">Times are approximate, <regex>user_name</regex> \u2014 adjust to your local maghrib.</p>\n  <ul class=\"timeline\">\n    <li><span class=\"when\">Before Maghrib</span><p>Prep dates, water, and soup. Set the table.</p></li>\n    <li><span class=\"when\">Maghrib (approx 6:15 PM)</span><p>Break fast with dates and water. Pray Maghrib.</p></li>\n    <li><span class=\"when\">6:45 PM</span><p>Main meal \u2014 keep it light and nourishing.</p></li>\n    <li><span class=\"when\">7:30 PM</span><p>Clear up, rest. Maybe a short nap.</p></li>\n    <li><span class=\"when\">8:30 PM</span><p>Isha prayer, then Taraweeh.</p></li>\n    <li><span class=\"when\">10:00 PM</span><p>Light snack, more water.</p></li>\n    <li><span class=\"when\">11:00 PM</span><p>Wind down. Prepare suhoor.</p></li>\n    <li><span class=\"when\">4:00 AM (Suhoor)</span><p>Eat a filling, slow-release meal before Fajr.</p></li>\n  </ul>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Weekend Camping Trip",
+   "user_requests": [
+    "camping trip schedule",
+    "weekend camping plan",
+    "what to do on a camping trip timeline",
+    "camping itinerary for saturday",
+    "plan my camping weekend",
+    "camping day schedule please",
+    "help me organise a camping trip",
+    "camping plan for the weekend",
+    "weekend camping itinerary",
+    "camping schedule sat sun",
+    "plan our camping trip",
+    "what time we leave for camping",
+    "camping trip timeline"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Weekend Camping \u2014 Saturday</h4>\n  <p class=\"muted t-small\">A loose plan, <regex>user_name</regex>. Nature doesn't rush.</p>\n  <ul class=\"timeline\">\n    <li><span class=\"when\">7:30 AM</span><p>Wake to birdsong. Coffee over the stove.</p></li>\n    <li><span class=\"when\">8:30 AM</span><p>Breakfast \u2014 porridge, bacon, whatever's easy.</p></li>\n    <li><span class=\"when\">9:30 AM</span><p>Wash up, tidy camp, check the map.</p></li>\n    <li><span class=\"when\">10:00 AM</span><p>Morning hike or swim. Pack water and snacks.</p></li>\n    <li><span class=\"when\">1:00 PM</span><p>Lunch back at camp. Rest in the shade.</p></li>\n    <li><span class=\"when\">3:00 PM</span><p>Explore, read, nap, fish \u2014 your call.</p></li>\n    <li><span class=\"when\">5:30 PM</span><p>Collect firewood (before dark).</p></li>\n    <li><span class=\"when\">6:30 PM</span><p>Start the fire. Dinner \u2014 one-pot chilli?</p></li>\n    <li><span class=\"when\">8:00 PM</span><p>Stargazing, marshmallows, stories.</p></li>\n    <li><span class=\"when\">10:00 PM</span><p>Torches out, fire safe, sleep.</p></li>\n  </ul>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Remote Work Day",
+   "user_requests": [
+    "remote work schedule",
+    "work from home plan",
+    "daily routine for working from home",
+    "wfh timetable please",
+    "remote work day structure",
+    "help me plan a work from home day",
+    "wfh schedule for productivity",
+    "work from home schedule",
+    "remote work plan for tomorrow",
+    "wfh daily schedule",
+    "my remote day timetable",
+    "plan my work from home day",
+    "remote work agenda"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Remote Work Day</h4>\n  <p class=\"muted t-small\">Structure beats scrolling, <regex>user_name</regex>.</p>\n  <ul class=\"timeline\">\n    <li><span class=\"when\">8:00 AM</span><p>Wake, shower, dress \u2014 yes, properly.</p></li>\n    <li><span class=\"when\">8:30 AM</span><p>Breakfast. No email yet.</p></li>\n    <li><span class=\"when\">9:00 AM</span><p>Start work. Review today's top 3 tasks.</p></li>\n    <li><span class=\"when\">9:30 AM</span><p>Deep work block 1 \u2014 hardest task first.</p></li>\n    <li><span class=\"when\">11:00 AM</span><p>Stretch, water, quick walk.</p></li>\n    <li><span class=\"when\">11:15 AM</span><p>Email and messages catch-up.</p></li>\n    <li><span class=\"when\">12:00 PM</span><p>Lunch away from the desk.</p></li>\n    <li><span class=\"when\">1:00 PM</span><p>Deep work block 2 or meetings.</p></li>\n    <li><span class=\"when\">3:00 PM</span><p>Collaborative tasks, calls.</p></li>\n    <li><span class=\"when\">4:30 PM</span><p>Wrap up, plan tomorrow, shut the laptop.</p></li>\n    <li><span class=\"when\">5:00 PM</span><p>Done. Move your body.</p></li>\n  </ul>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Dinner Party Timeline",
+   "user_requests": [
+    "dinner party schedule",
+    "plan a dinner party timeline",
+    "when to start cooking for a dinner party",
+    "dinner party prep schedule",
+    "hosting dinner party timetable",
+    "help me time a dinner party",
+    "dinner party for 8, what time start cooking",
+    "dinner party schedule",
+    "plan dinner party timing",
+    "what time to start cooking for dinner party",
+    "dinner party agenda",
+    "party timeline for tonight",
+    "dinner party prep schedule"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Dinner Party \u2014 Guests at 7</h4>\n  <p class=\"muted t-small\">Serves 8 \u00b7 <regex>user_name</regex>, you've got this.</p>\n  <ul class=\"timeline\">\n    <li><span class=\"when\">2:00 PM</span><p>Shop for any last bits. Check dietary needs.</p></li>\n    <li><span class=\"when\">3:00 PM</span><p>Make dessert (something that sits well).</p></li>\n    <li><span class=\"when\">4:00 PM</span><p>Prep veg, marinade, set the table.</p></li>\n    <li><span class=\"when\">5:00 PM</span><p>Start cooking the main. Preheat oven for sides.</p></li>\n    <li><span class=\"when\">6:00 PM</span><p>Shower and change. Put on music.</p></li>\n    <li><span class=\"when\">6:30 PM</span><p>Chill drinks, arrange nibbles.</p></li>\n    <li><span class=\"when\">7:00 PM</span><p>Guests arrive. Welcome drinks and snacks.</p></li>\n    <li><span class=\"when\">7:45 PM</span><p>Serve starter or go straight to main.</p></li>\n    <li><span class=\"when\">9:00 PM</span><p>Dessert, coffee, good conversation.</p></li>\n    <li><span class=\"when\">10:30 PM</span><p>Guests leave. Collapse. Dishes can wait.</p></li>\n  </ul>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Beach Day Outing",
+   "user_requests": [
+    "Plan a beach day for tomorrow",
+    "beach day sched pls",
+    "what should my beach day timeline look like",
+    "Schedule my beach trip",
+    "beach day agenda",
+    "help me plan a day at the beach",
+    "beach day plan",
+    "beach day schedule",
+    "plan a beach trip",
+    "beach outing timetable",
+    "what to do for beach day",
+    "beach day itinerary",
+    "schedule for beach trip tomorrow"
+   ],
+   "html": "<div class=\"card\"><h4>Beach Day Outing</h4><p class=\"muted t-small\"><regex>user_name</regex>, here's your sun-soaked agenda.</p><ul class=\"timeline\"><li><span class=\"when\">07:30</span><p>Pack towels, sunscreen, snacks, and water.</p></li><li><span class=\"when\">08:30</span><p>Leave home, grab coffee on the way.</p></li><li><span class=\"when\">09:30</span><p>Arrive, claim a spot, set up umbrella.</p></li><li><span class=\"when\">11:00</span><p>Swim, paddle, build the sandcastle of your dreams.</p></li><li><span class=\"when\">12:30</span><p>Picnic lunch\u2014keep it shade-friendly.</p></li><li><span class=\"when\">14:00</span><p>Reapply sunscreen, read or nap.</p></li><li><span class=\"when\">16:30</span><p>Final swim, shake the sand off.</p></li><li><span class=\"when\">17:30</span><p>Watch the sun dip, then head home.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Farmers Market Morning",
+   "user_requests": [
+    "farmers market run sat morning",
+    "plan my market trip",
+    "what time should I go to the farmers market",
+    "market morning schedule",
+    "schedule for farmers market",
+    "farmers market plan",
+    "how to plan a farmers market visit",
+    "farmers market schedule",
+    "plan farmers market trip",
+    "farmers market saturday morning",
+    "when to go to farmers market",
+    "farmers market morning plan",
+    "market run schedule"
+   ],
+   "html": "<div class=\"card\"><h4>Farmers Market Morning</h4><p class=\"muted t-small\"><regex>user_name</regex>, go early for the good stuff.</p><ul class=\"timeline\"><li><span class=\"when\">07:00</span><p>Check list, grab reusable bags and cash.</p></li><li><span class=\"when\">07:30</span><p>Arrive at opening\u2014best picks, smallest crowds.</p></li><li><span class=\"when\">07:45</span><p>Produce first: berries, greens, tomatoes.</p></li><li><span class=\"when\">08:15</span><p>Bakery and dairy stalls.</p></li><li><span class=\"when\">08:45</span><p>Coffee and a pastry, people-watch.</p></li><li><span class=\"when\">09:15</span><p>Meat, fish, or cheese if you need them.</p></li><li><span class=\"when\">09:45</span><p>Load the car, head home.</p></li><li><span class=\"when\">10:30</span><p>Wash and store everything.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Library Study Morning",
+   "user_requests": [
+    "library study morning plan",
+    "I want to study at the library",
+    "library schedule for studying",
+    "plan my library sesh",
+    "library study agenda",
+    "library morning routine",
+    "help me plan library study time",
+    "library study schedule",
+    "plan library study session",
+    "study morning at library",
+    "library timetable for studying",
+    "morning study plan library",
+    "library study agenda"
+   ],
+   "html": "<div class=\"card\"><h4>Library Study Morning</h4><p class=\"muted t-small\"><regex>user_name</regex>, quiet focus, good light.</p><ul class=\"timeline\"><li><span class=\"when\">08:45</span><p>Arrive, find a table by the window.</p></li><li><span class=\"when\">09:00</span><p>Review notes, set one clear goal.</p></li><li><span class=\"when\">09:30</span><p>Deep work block\u2014phone on silent.</p></li><li><span class=\"when\">10:45</span><p>Short walk, water refill.</p></li><li><span class=\"when\">11:00</span><p>Second focus block.</p></li><li><span class=\"when\">12:15</span><p>Summarize what you covered.</p></li><li><span class=\"when\">12:30</span><p>Lunch break.</p></li><li><span class=\"when\">13:15</span><p>Check out books, head home.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Dentist Appointment Day",
+   "user_requests": [
+    "dentist appointment day sched",
+    "plan my dentist visit",
+    "what should my dentist day look like",
+    "dentist appointment agenda",
+    "schedule for dentist",
+    "dentist day plan",
+    "how to plan a dentist appointment day",
+    "dentist appointment schedule",
+    "plan for dentist day",
+    "dentist visit timetable",
+    "what time is dentist appointment",
+    "dentist day agenda",
+    "schedule dentist appointment"
+   ],
+   "html": "<div class=\"card\"><h4>Dentist Appointment Day</h4><p class=\"muted t-small\"><regex>user_name</regex>, you've got this.</p><ul class=\"timeline\"><li><span class=\"when\">08:00</span><p>Brush and floss\u2014be honest with them.</p></li><li><span class=\"when\">08:30</span><p>Light breakfast, avoid staining drinks.</p></li><li><span class=\"when\">09:15</span><p>Confirm appointment, find insurance card.</p></li><li><span class=\"when\">09:45</span><p>Leave with buffer for parking.</p></li><li><span class=\"when\">10:15</span><p>Check in, fill any forms.</p></li><li><span class=\"when\">10:30</span><p>Cleaning and checkup.</p></li><li><span class=\"when\">11:15</span><p>Schedule next visit if needed.</p></li><li><span class=\"when\">11:45</span><p>Treat yourself to something soft.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Car Maintenance Day",
+   "user_requests": [
+    "car maintenance day plan",
+    "schedule my car service",
+    "what does a car maintenance day look like",
+    "car service agenda",
+    "plan car maintenance",
+    "car care day schedule",
+    "help me plan car maintenance",
+    "car maintenance schedule",
+    "plan car maintenance day",
+    "car service timetable",
+    "what to do for car maintenance",
+    "car upkeep day plan",
+    "schedule car maintenance"
+   ],
+   "html": "<div class=\"card\"><h4>Car Maintenance Day</h4><p class=\"muted t-small\"><regex>user_name</regex>, a little TLC for the ride.</p><ul class=\"timeline\"><li><span class=\"when\">08:00</span><p>Check oil, coolant, tire pressure at home.</p></li><li><span class=\"when\">08:30</span><p>Gather service records and keys.</p></li><li><span class=\"when\">09:00</span><p>Drop car at the shop.</p></li><li><span class=\"when\">09:30</span><p>Arrange a ride or wait area.</p></li><li><span class=\"when\">11:00</span><p>Check in on progress.</p></li><li><span class=\"when\">12:30</span><p>Pick up, review the invoice.</p></li><li><span class=\"when\">13:30</span><p>Test drive\u2014listen for anything new.</p></li><li><span class=\"when\">14:00</span><p>Log the service for next time.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Rainy Day Indoors",
+   "user_requests": [
+    "rainy day indoor plan",
+    "what to do on a rainy day",
+    "rainy day schedule",
+    "plan my rainy day",
+    "rainy day agenda",
+    "rainy day routine",
+    "help me plan a rainy day",
+    "rainy day schedule",
+    "plan for rainy day inside",
+    "indoor activities for rainy day",
+    "rainy day timetable",
+    "what to do on rainy day",
+    "rainy day indoor agenda"
+   ],
+   "html": "<div class=\"card\"><h4>Rainy Day Indoors</h4><p class=\"muted t-small\"><regex>user_name</regex>, cozy is the plan.</p><ul class=\"timeline\"><li><span class=\"when\">09:00</span><p>Slow breakfast, watch the rain.</p></li><li><span class=\"when\">10:00</span><p>Tidy one small corner.</p></li><li><span class=\"when\">11:00</span><p>Read or a podcast with tea.</p></li><li><span class=\"when\">12:30</span><p>Warm lunch\u2014soup, maybe.</p></li><li><span class=\"when\">14:00</span><p>Bake something or do a puzzle.</p></li><li><span class=\"when\">16:00</span><p>Indoor stretch or light workout.</p></li><li><span class=\"when\">18:00</span><p>Dinner and a movie.</p></li><li><span class=\"when\">20:30</span><p>Early wind-down, listen to the rain.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Seaside Pier Fishing Morning",
+   "user_requests": [
+    "pier fishing plan",
+    "schedule for fishing at the pier",
+    "what time should I go fishing tomorrow?",
+    "fishing trip timeline",
+    "help me plan a morning of pier fishing",
+    "tide times and fishing schedule",
+    "fishing schedule for saturday",
+    "pier fishing schedule",
+    "plan pier fishing morning",
+    "fishing at pier timetable",
+    "seaside fishing morning plan",
+    "when to go pier fishing",
+    "pier fishing agenda"
+   ],
+   "html": "<div class=\"card\"><h4>Seaside Pier Fishing</h4><p class=\"muted\">Tide's out at 6:12. Bait up.</p><ul class=\"timeline\"><li><span class=\"when\">05:30</span><p>Wake, coffee, grab gear</p></li><li><span class=\"when\">06:00</span><p>Arrive at pier, pick spot</p></li><li><span class=\"when\">06:15</span><p>Cast lines as tide turns</p></li><li><span class=\"when\">08:00</span><p>Breakfast sandwich from the shack</p></li><li><span class=\"when\">09:30</span><p>Last cast, pack up</p></li><li><span class=\"when\">10:00</span><p>Home, clean catch</p></li></ul><p class=\"t-small dim\">Remember: license, bucket, rag.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Volunteer Shift at Animal Shelter",
+   "user_requests": [
+    "animal shelter volunteer schedule",
+    "my shift at the shelter",
+    "what do I do at the animal shelter?",
+    "volunteer timetable for shelter",
+    "plan my animal shelter volunteer hours",
+    "shelter volunteer morning plan",
+    "schedule for volunteering with dogs",
+    "animal shelter volunteer schedule",
+    "plan volunteer shift",
+    "volunteer at shelter timetable",
+    "animal shelter shift plan",
+    "when is my volunteer shift",
+    "shelter volunteer agenda"
+   ],
+   "html": "<div class=\"card\"><h4>Shelter Volunteer Shift</h4><p class=\"muted\">Saturday, 9am\u20131pm. Wear closed-toe shoes.</p><ul class=\"timeline\"><li><span class=\"when\">09:00</span><p>Check in, sign log</p></li><li><span class=\"when\">09:15</span><p>Clean kennels, fresh water</p></li><li><span class=\"when\">10:00</span><p>Walk dogs in pairs</p></li><li><span class=\"when\">11:30</span><p>Socialize cats, tidy room</p></li><li><span class=\"when\">12:30</span><p>Laundry: bedding and towels</p></li><li><span class=\"when\">12:50</span><p>Debrief with coordinator</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Garage Sale Prep and Morning",
+   "user_requests": [
+    "garage sale schedule",
+    "planning a garage sale timeline",
+    "what's the schedule for a garage sale?",
+    "when to set up for garage sale",
+    "garage sale morning routine",
+    "help me organize a garage sale schedule",
+    "garage sale day plan",
+    "garage sale schedule",
+    "plan garage sale prep",
+    "garage sale morning timetable",
+    "prep for garage sale",
+    "garage sale day plan",
+    "schedule garage sale"
+   ],
+   "html": "<div class=\"card\"><h4>Garage Sale Day</h4><p class=\"muted\">Friday prep, Saturday sell.</p><ul class=\"timeline\"><li><span class=\"when\">Fri 4:00pm</span><p>Sort, price, box items</p></li><li><span class=\"when\">Fri 6:30pm</span><p>Make signs, gather change</p></li><li><span class=\"when\">Sat 6:00am</span><p>Set up tables, hang signs</p></li><li><span class=\"when\">Sat 7:00am</span><p>Open\u2014early birds arrive</p></li><li><span class=\"when\">Sat 11:00am</span><p>Discount everything half off</p></li><li><span class=\"when\">Sat 1:00pm</span><p>Pack leftovers for donation</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Hiking Trail Day Plan",
+   "user_requests": [
+    "hiking schedule",
+    "plan a day hike",
+    "what time should I start hiking?",
+    "hiking timeline for a day trip",
+    "schedule for a hike",
+    "help me plan a hiking day",
+    "day hike itinerary",
+    "hiking schedule",
+    "plan hiking day",
+    "hiking trail timetable",
+    "day hike plan",
+    "when to start hiking",
+    "hiking agenda"
+   ],
+   "html": "<div class=\"card\"><h4>Day Hike: Blue Ridge Loop</h4><p class=\"muted\">8 miles, moderate. Start early.</p><ul class=\"timeline\"><li><span class=\"when\">06:30</span><p>Breakfast, fill water bottles</p></li><li><span class=\"when\">07:15</span><p>Drive to trailhead</p></li><li><span class=\"when\">08:00</span><p>Begin hike, steady pace</p></li><li><span class=\"when\">10:30</span><p>Summit break, snack</p></li><li><span class=\"when\">12:00</span><p>Lunch by the creek</p></li><li><span class=\"when\">14:00</span><p>Return to car, stretch</p></li><li><span class=\"when\">15:00</span><p>Post-hike burger</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Yard Sale and Lemonade Stand",
+   "user_requests": [
+    "lemonade stand schedule",
+    "yard sale and lemonade stand plan",
+    "what time to set up lemonade stand?",
+    "schedule for a lemonade stand",
+    "help me plan a lemonade stand",
+    "lemonade stand timeline",
+    "yard sale day schedule",
+    "yard sale schedule",
+    "plan yard sale and lemonade stand",
+    "lemonade stand timetable",
+    "yard sale morning plan",
+    "schedule for yard sale",
+    "yard sale agenda"
+   ],
+   "html": "<div class=\"card\"><h4>Lemonade Stand & Yard Sale</h4><p class=\"muted\">Sunny, 85\u00b0F. Ice is your friend.</p><ul class=\"timeline\"><li><span class=\"when\">08:00</span><p>Set up tables, hang signs</p></li><li><span class=\"when\">08:45</span><p>Squeeze lemons, mix batches</p></li><li><span class=\"when\">09:00</span><p>Open for business</p></li><li><span class=\"when\">11:00</span><p>Refill ice, restock cookies</p></li><li><span class=\"when\">13:00</span><p>Peak heat\u2014offer free refills</p></li><li><span class=\"when\">15:00</span><p>Count earnings, pack up</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Blood Donation Appointment",
+   "user_requests": [
+    "blood donation schedule",
+    "what to expect at blood donation?",
+    "blood donation appointment timeline",
+    "plan for donating blood",
+    "schedule for blood donation",
+    "how long does blood donation take?",
+    "blood drive appointment",
+    "blood donation schedule",
+    "plan blood donation appointment",
+    "donation appointment timetable",
+    "when is blood donation",
+    "blood donation day plan",
+    "schedule blood donation"
+   ],
+   "html": "<div class=\"card\"><h4>Blood Donation Appointment</h4><p class=\"muted\">Eat well, hydrate. You've got this.</p><ul class=\"timeline\"><li><span class=\"when\">09:00</span><p>Check in, show ID</p></li><li><span class=\"when\">09:15</span><p>Health questionnaire</p></li><li><span class=\"when\">09:30</span><p>Mini physical: pulse, BP, iron</p></li><li><span class=\"when\">09:45</span><p>Donation (about 10 min)</p></li><li><span class=\"when\">10:00</span><p>Rest, juice, cookies</p></li><li><span class=\"when\">10:20</span><p>Head home, take it easy</p></li></ul><p class=\"t-small dim\">No heavy lifting today.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Bike Tune-Up Afternoon",
+   "user_requests": [
+    "bike tune up schedule",
+    "how to tune up a bike afternoon",
+    "schedule for bike maintenance",
+    "bike tune-up plan",
+    "tune up my bike today",
+    "afternoon bike service",
+    "schedule for bike checkup",
+    "need a timeline for tuning my bike this afternoon",
+    "bike maint day half day",
+    "block out some time to fix up my bicycle sat",
+    "schedule for bike checkup n chain lube",
+    "how long does a bike tune up take, plan it out",
+    "plan my afternoon around cleaning up my road bike"
+   ],
+   "html": "<div class=\"card\"><h4>Bike Tune-Up Afternoon</h4><p>Keep your ride smooth, <regex>user_name</regex>. Here's the plan.</p><ul class=\"timeline\"><li><span class=\"when\">1:00</span><p>Gather tools and set up a work area.</p></li><li><span class=\"when\">1:15</span><p>Clean the chain and drivetrain.</p></li><li><span class=\"when\">1:45</span><p>Check and adjust brakes.</p></li><li><span class=\"when\">2:15</span><p>Index gears and check shifting.</p></li><li><span class=\"when\">2:45</span><p>Inspect tires and inflate to recommended pressure.</p></li><li><span class=\"when\">3:00</span><p>Lube chain and wipe down frame.</p></li><li><span class=\"when\">3:30</span><p>Test ride around the block.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Podcast Episode Recording",
+   "user_requests": [
+    "podcast recording schedule",
+    "how to plan a podcast episode",
+    "schedule for recording a podcast",
+    "podcast episode timeline",
+    "record a podcast today",
+    "afternoon podcast recording plan",
+    "schedule for podcast production",
+    "block out studio time for recording an ep",
+    "plan my pod recording session this week",
+    "podcast taping day timeline pls",
+    "need a rundown for tomorrow's podcast record",
+    "schedule 90 min to record ep 12",
+    "how should i structure my recording session for the show"
+   ],
+   "html": "<div class=\"card\"><h4>Podcast Episode Recording</h4><p>Ready to hit record, <regex>user_name</regex>? Here's your flow.</p><ul class=\"timeline\"><li><span class=\"when\">1:00 PM</span><p>Review episode outline and talking points.</p></li><li><span class=\"when\">1:15 PM</span><p>Set up recording equipment and check levels.</p></li><li><span class=\"when\">1:30 PM</span><p>Record intro and sponsor reads.</p></li><li><span class=\"when\">1:45 PM</span><p>Record main segment.</p></li><li><span class=\"when\">2:30 PM</span><p>Record outro and call to action.</p></li><li><span class=\"when\">2:45 PM</span><p>Back up audio files.</p></li><li><span class=\"when\">3:00 PM</span><p>Edit and export episode.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sewing Project Session",
+   "user_requests": [
+    "sewing session schedule",
+    "how to plan a sewing project",
+    "schedule for sewing time",
+    "sewing project timeline",
+    "sew a project today",
+    "afternoon sewing plan",
+    "schedule for sewing a garment",
+    "timeblock my sewing this weekend",
+    "need a plan for a sewing afternoon",
+    "schedule to finish my quilt block",
+    "sewing machine session layout for sat",
+    "plan out hours at the machine to make a dress",
+    "help me carve out sewing time today"
+   ],
+   "html": "<div class=\"card\"><h4>Sewing Project Session</h4><p>Let's stitch something, <regex>user_name</regex>. Here's your timeline.</p><ul class=\"timeline\"><li><span class=\"when\">1:00</span><p>Set up sewing machine and ironing board.</p></li><li><span class=\"when\">1:15</span><p>Cut fabric pieces according to pattern.</p></li><li><span class=\"when\">1:45</span><p>Sew main seams.</p></li><li><span class=\"when\">2:30</span><p>Press seams and attach any closures.</p></li><li><span class=\"when\">3:00</span><p>Hem and finish edges.</p></li><li><span class=\"when\">3:30</span><p>Final press and try on.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Car Wash and Detailing",
+   "user_requests": [
+    "car wash schedule",
+    "how to plan car detailing",
+    "schedule for car cleaning",
+    "car wash and detail timeline",
+    "wash my car today",
+    "afternoon car detailing plan",
+    "schedule for car wash and wax",
+    "block time to wash n detail my car",
+    "plan a morning to clean the whip",
+    "car detail sesh schedule",
+    "need a timeline for washing the truck inside and out",
+    "detailing my car tomorrow, how to fit it in",
+    "schedule a full car clean incl vacuum n wax"
+   ],
+   "html": "<div class=\"card\"><h4>Car Wash and Detailing</h4><p>Time to make it shine, <regex>user_name</regex>. Here's the order.</p><ul class=\"timeline\"><li><span class=\"when\">1:00</span><p>Gather supplies: soap, buckets, sponges, towels.</p></li><li><span class=\"when\">1:15</span><p>Rinse car to remove loose dirt.</p></li><li><span class=\"when\">1:30</span><p>Wash from top to bottom using two-bucket method.</p></li><li><span class=\"when\">2:00</span><p>Rinse and dry with microfiber towels.</p></li><li><span class=\"when\">2:20</span><p>Apply wax or sealant.</p></li><li><span class=\"when\">3:00</span><p>Clean interior: vacuum, wipe dashboard, windows.</p></li><li><span class=\"when\">3:30</span><p>Final inspection and touch-ups.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Photography Walk",
+   "user_requests": [
+    "photography walk schedule",
+    "how to plan a photo walk",
+    "schedule for photography outing",
+    "photo walk timeline",
+    "go on a photography walk",
+    "afternoon photo walk plan",
+    "schedule for a photo shoot",
+    "time for a photo walk downtown",
+    "plan my golden hour shoot stroll",
+    "schedule a camera walk this weekend",
+    "need an itinerary for a street photography outing",
+    "block out 2 hrs to shoot pics around the park",
+    "plan a photo walk w/ my new lens"
+   ],
+   "html": "<div class=\"card\"><h4>Photography Walk</h4><p>Capture the light, <regex>user_name</regex>. Here's your route.</p><ul class=\"timeline\"><li><span class=\"when\">1:00</span><p>Check camera battery and memory card.</p></li><li><span class=\"when\">1:15</span><p>Head to location, scout good spots.</p></li><li><span class=\"when\">1:30</span><p>Start shooting: focus on composition.</p></li><li><span class=\"when\">2:30</span><p>Change perspective, try different angles.</p></li><li><span class=\"when\">3:00</span><p>Review shots and adjust settings.</p></li><li><span class=\"when\">3:30</span><p>Wrap up and back up photos.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Furniture Assembly Afternoon",
+   "user_requests": [
+    "furniture assembly schedule",
+    "how to plan furniture assembly",
+    "schedule for assembling furniture",
+    "furniture assembly timeline",
+    "assemble furniture today",
+    "afternoon furniture assembly plan",
+    "schedule for building furniture",
+    "timeblock for building my new ikea desk",
+    "how long to assemble a bookshelf, plan it",
+    "schedule an afternoon to put together the crib",
+    "need a step plan for assembling a bed frame today",
+    "plan my sat around assembling furniture",
+    "block time to build the dresser"
+   ],
+   "html": "<div class=\"card\"><h4>Furniture Assembly Afternoon</h4><p>Let's build it, <regex>user_name</regex>. Here's your plan.</p><ul class=\"timeline\"><li><span class=\"when\">1:00</span><p>Open box and check all parts and hardware.</p></li><li><span class=\"when\">1:15</span><p>Read instructions and sort pieces.</p></li><li><span class=\"when\">1:30</span><p>Begin assembly: attach legs or base.</p></li><li><span class=\"when\">2:00</span><p>Continue with shelves or drawers.</p></li><li><span class=\"when\">2:45</span><p>Tighten all screws and bolts.</p></li><li><span class=\"when\">3:00</span><p>Move into place and clean up.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Bathroom Deep Clean",
+   "user_requests": [
+    "give me a plan to deep clean the bathroom",
+    "bathroom cleaning schedule",
+    "how to tackle a gross bathroom in one afternoon",
+    "bathroom deep clean today plan",
+    "i need a timeline for scrubbing the bathroom top to bottom",
+    "bathroom reset schedule please",
+    "cleaning the bathroom when was the last time ugh can u schedule it",
+    "scrub down the bathroom top to bottom, plan it",
+    "need a checklist schedule for bathroom cleaning",
+    "time block to deep clean both bathrooms",
+    "bathroom refresh day plan",
+    "how do i fit cleaning the shower tile grout sink into one block",
+    "plan a sat am to scour the bathroom"
+   ],
+   "html": "<div class=\"card\"><h4>Bathroom Deep Clean</h4><p class=\"muted t-small\">A top-to-bottom reset. Spray, wait, wipe. That's the whole trick.</p><ul class=\"timeline\"><li><span class=\"when\">0:00</span><p>Clear counters and floor. Spray shower, tub, and toilet with cleaner\u2014let them soak while you work elsewhere.</p></li><li><span class=\"when\">0:15</span><p>Mirrors and glass. Streak-free first, before dust settles back down.</p></li><li><span class=\"when\">0:25</span><p>Sink and vanity. Scrub the basin, wipe handles and faucet, then the counter.</p></li><li><span class=\"when\">0:35</span><p>Scrub the shower and tub now that cleaner has had time to loosen things up.</p></li><li><span class=\"when\">0:50</span><p>Toilet inside and out. The part guests can see counts too.</p></li><li><span class=\"when\">1:00</span><p>Floors last. Sweep, then mop corners to door so you don't walk on wet tile.</p></li><li><span class=\"when\">1:15</span><p>Fresh towels, new liner, empty the bin. Stand back and admire. <regex>user_name</regex>, you're done.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Kitchen Deep Clean",
+   "user_requests": [
+    "kitchen deep clean plan",
+    "how do i clean my kitchen from top to bottom",
+    "schedule for scrubbing the kitchen",
+    "kitchen reset after cooking a huge meal",
+    "deep clean the kitchen today",
+    "i need to tackle the kitchen it's a disaster",
+    "kitchen cleaning timeline pls",
+    "deep clean the kitchen, make me a timeline",
+    "scrub kitchen top to bottom checklist",
+    "need a schedule to degrease the stove and clean cabinets",
+    "kitchen reset day plan",
+    "plan a few hrs to really clean my kitchen",
+    "time block kitchen deep clean incl oven n fridge"
+   ],
+   "html": "<div class=\"card\"><h4>Kitchen Deep Clean</h4><p class=\"muted t-small\">Work top down. Whatever falls just gets wiped later.</p><ul class=\"timeline\"><li><span class=\"when\">0:00</span><p>Empty the sink and load the dishwasher. Clear counters completely.</p></li><li><span class=\"when\">0:10</span><p>Cabinet fronts and upper shelves. A damp cloth and a little degreaser go far.</p></li><li><span class=\"when\">0:25</span><p>Backsplash and behind the stove. That's where the grease hides, <regex>user_name</regex>.</p></li><li><span class=\"when\">0:40</span><p>Stovetop and burners. Soak grates in hot soapy water while you scrub the rest.</p></li><li><span class=\"when\">0:55</span><p>Countertops, corners, and the coffee maker. Yes, that too.</p></li><li><span class=\"when\">1:10</span><p>Fridge quick pass. Toss anything expired, wipe the shelves you can reach.</p></li><li><span class=\"when\">1:25</span><p>Floor. Sweep, then mop. Push everything toward the door and you're finished.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Home Office Reset",
+   "user_requests": [
+    "help me tidy my home office",
+    "home office cleaning and organizing plan",
+    "my desk is buried how do i fix it",
+    "office reset schedule",
+    "declutter and clean work from home desk",
+    "home office deep clean today",
+    "clean up my office it's out of control please schedule it",
+    "declutter and organize my office, plan it",
+    "need a schedule to reset my workspace",
+    "office tidy up timeblock",
+    "help me organize my desk and shelves today",
+    "plan a home office declutter session",
+    "time block to purge papers n cables in my office"
+   ],
+   "html": "<div class=\"card\"><h4>Home Office Reset</h4><p class=\"muted t-small\">Two hours to a desk you actually want to sit at.</p><ul class=\"timeline\"><li><span class=\"when\">0:00</span><p>Clear the desk entirely. Everything goes to the floor or a box for now.</p></li><li><span class=\"when\">0:15</span><p>Wipe the desk, monitor, keyboard, and mouse. Crumbs are not decor.</p></li><li><span class=\"when\">0:30</span><p>Sort the pile into keep, file, toss, and \"why do I have this.\" Be honest, <regex>user_name</regex>.</p></li><li><span class=\"when\">0:55</span><p>Shelves and drawers. One category per drawer if you're feeling ambitious.</p></li><li><span class=\"when\">1:20</span><p>Cables. Untangle, label if you're fancy, tuck them out of sight.</p></li><li><span class=\"when\">1:45</span><p>Floor and trash. Vacuum the corners, take the bin out.</p></li><li><span class=\"when\">2:00</span><p>Put back only what you use daily. The rest waits in the box for another day.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Fridge and Pantry Tidy",
+   "user_requests": [
+    "how to clean out the fridge and pantry",
+    "fridge and pantry organizing schedule",
+    "my pantry is chaos help me sort it",
+    "clean out expired food today plan",
+    "fridge deep clean and pantry reset",
+    "schedule for defrosting and cleaning the fridge",
+    "pantry and fridge tidy please i can't find anything",
+    "clean out n organize the fridge, plan it",
+    "pantry purge day schedule",
+    "need a timeline for defrosting fridge and wiping shelves",
+    "tidy my pantry and fridge this weekend",
+    "plan to toss old food and restock pantry",
+    "timeblock for a fridge + pantry cleanout"
+   ],
+   "html": "<div class=\"card\"><h4>Fridge &amp; Pantry Tidy</h4><p class=\"muted t-small\">A gentle reminder: condiments expire. They just do it quietly.</p><ul class=\"timeline\"><li><span class=\"when\">0:00</span><p>Empty the fridge shelf by shelf into a cooler or the counter. Toss anything past it.</p></li><li><span class=\"when\">0:20</span><p>Wipe every shelf and drawer with warm soapy water. Check the door seals too.</p></li><li><span class=\"when\">0:45</span><p>Pantry: pull everything out and check dates. Group like with like.</p></li><li><span class=\"when\">1:10</span><p>Wipe pantry shelves and corners. A damp cloth handles most of it.</p></li><li><span class=\"when\">1:30</span><p>Put it all back\u2014fridge top shelf for ready-to-eat, pantry with labels facing out if you like that.</p></li><li><span class=\"when\">1:55</span><p>Make a quick list of what you actually need before you shop again, <regex>user_name</regex>.</p></li><li><span class=\"when\">2:00</span><p>Admire your work. Then make a snack and mess it all up again.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Windows and Floors Day",
+   "user_requests": [
+    "plan for washing windows and cleaning floors",
+    "how to wash windows and mop floors in one go",
+    "window and floor cleaning schedule",
+    "my floors need mopping and windows are gross",
+    "clean windows and floors today",
+    "timeline for washing windows and scrubbing floors",
+    "windows and floors please schedule them together",
+    "wash all the windows and mop floors, plan it",
+    "need a schedule for window washing n floor scrubbing",
+    "floor + glass cleaning day timeline",
+    "plan a full day of windows and floors",
+    "time block to clean every window then vacuum mop",
+    "how to fit washing windows and cleaning carpets in one day"
+   ],
+   "html": "<div class=\"card\"><h4>Windows &amp; Floors Day</h4><p class=\"muted t-small\">Wash windows first. Floors last. Otherwise you'll just re-mop footprints.</p><ul class=\"timeline\"><li><span class=\"when\">0:00</span><p>Dust blinds and sills. A dry microfiber cloth does most of the heavy lifting.</p></li><li><span class=\"when\">0:15</span><p>Interior glass, one window at a time. Top to bottom, inside edges too.</p></li><li><span class=\"when\">0:35</span><p>Exterior panes if you can reach safely. If not, skip without guilt.</p></li><li><span class=\"when\">0:50</span><p>Vacuum or sweep every room. Move what you can, work around what you can't.</p></li><li><span class=\"when\">1:15</span><p>Mop one room at a time, starting farthest from the door. Two buckets if you're fancy.</p></li><li><span class=\"when\">1:45</span><p>Deep-clean any stubborn spots before the floor dries.</p></li><li><span class=\"when\">2:00</span><p>Let it all dry. Put your feet up, <regex>user_name</regex>. You earned it.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Before Guests Arrive",
+   "user_requests": [
+    "quick clean before guests arrive",
+    "speed clean plan for last minute visitors",
+    "guests are coming in an hour help",
+    "fast house tidy schedule",
+    "make the house presentable before people show up",
+    "cleaning schedule for when guests come over",
+    "clean the house fast before guests arrive please",
+    "guests in 2 hrs, what do i clean first",
+    "speed clean plan b4 ppl come over",
+    "last minute tidy before company",
+    "need a quick schedule to get the house presentable",
+    "in laws arriving soon, help",
+    "fast cleanup before visitors checklist"
+   ],
+   "html": "<div class=\"card\"><h4>Before Guests Arrive</h4><p class=\"muted t-small\">They won't inspect the baseboards. They'll use the bathroom. Priorities.</p><ul class=\"timeline\"><li><span class=\"when\">0:00</span><p>Grab a laundry basket and sweep all clutter into it. Hide in a closet. Done.</p></li><li><span class=\"when\">0:05</span><p>Bathroom: toilet, sink, mirror, fresh towel. The only room guests truly see.</p></li><li><span class=\"when\">0:15</span><p>Kitchen counters. Clear, wipe, hide the dish rack if it's loud.</p></li><li><span class=\"when\">0:20</span><p>Living room: fluff pillows, fold the throw blanket, straighten the coffee table.</p></li><li><span class=\"when\">0:25</span><p>Quick vacuum or sweep of main paths. Entry, hall, living room, bathroom threshold.</p></li><li><span class=\"when\">0:35</span><p>Light a candle, open a window, put on music. Atmosphere covers a lot, <regex>user_name</regex>.</p></li><li><span class=\"when\">0:40</span><p>Glance around, exhale. Anyone who judges past this point was never going to be easy.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Weeknight Dinner Party Plan",
+   "user_requests": [
+    "dinner party for 6 tonight",
+    "help me schedule a dinner party",
+    "friends coming for dinner at 7",
+    "need a timeline for hosting dinner",
+    "last-minute dinner party plan",
+    "how to time a dinner party",
+    "dinner party tonight need help",
+    "hosting 8 ppl for dinner tonite, need a plan",
+    "dinner party timeline for a weeknight",
+    "plan a supper party for friends this eve",
+    "cooking schedule for a 3 course dinner party",
+    "have ppl over for dinner, how to prep n time it",
+    "dinner party for 10, block my afternoon and evening"
+   ],
+   "html": "<div class=\"card\"><h4>Weeknight Dinner Party</h4><ul class=\"timeline\"><li><span class=\"when\">15:00</span><p>Check recipes, make grocery list</p></li><li><span class=\"when\">16:00</span><p>Shop for ingredients</p></li><li><span class=\"when\">17:00</span><p>Prep veggies, marinate protein</p></li><li><span class=\"when\">17:45</span><p>Set table, chill drinks</p></li><li><span class=\"when\">18:15</span><p>Start cooking mains</p></li><li><span class=\"when\">18:50</span><p>Finish sides, warm bread</p></li><li><span class=\"when\">19:00</span><p><regex>user_name</regex>, guests arrive \u2014 pour wine</p></li><li><span class=\"when\">19:30</span><p>Serve dinner</p></li><li><span class=\"when\">20:30</span><p>Dessert and coffee</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Family Movie Night",
+   "user_requests": [
+    "movie night with kids",
+    "plan a family movie night",
+    "need a schedule for movie night",
+    "what time should we start movie night",
+    "movie marathon tonight",
+    "help me organize family movie night",
+    "movie night timeline",
+    "movie night w the fam, plan it",
+    "need a schedule for snacks n film with the kids",
+    "family film night timeline tonight",
+    "plan a cozy movie evening at home",
+    "movie marathon with kids schedule",
+    "block out friday night for a family flick"
+   ],
+   "html": "<div class=\"card\"><h4>Family Movie Night</h4><ul class=\"timeline\"><li><span class=\"when\">17:00</span><p>Pick movie, make popcorn</p></li><li><span class=\"when\">17:30</span><p>Set up blankets and pillows</p></li><li><span class=\"when\">18:00</span><p>Order or make dinner</p></li><li><span class=\"when\">18:45</span><p>Eat dinner together</p></li><li><span class=\"when\">19:15</span><p>Clean up, bathroom break</p></li><li><span class=\"when\">19:30</span><p><regex>user_name</regex>, start the movie</p></li><li><span class=\"when\">21:00</span><p>Intermission \u2014 more snacks</p></li><li><span class=\"when\">21:15</span><p>Second half of movie</p></li><li><span class=\"when\">22:30</span><p>Bedtime routine</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Saturday Morning Farmers Market",
+   "user_requests": [
+    "farmers market tomorrow",
+    "plan my farmers market trip",
+    "what time to go to farmers market",
+    "farmers market schedule",
+    "help me shop at farmers market",
+    "farmers market morning plan",
+    "when should I leave for farmers market",
+    "farmers mkt run sat am, plan it",
+    "need a timeline for the market and errands after",
+    "plan my saturday morning at the farmers market",
+    "mkt trip tomorrow morning schedule",
+    "block time for the farmer's market n dropping off groceries",
+    "what time should i leave for the market sat"
+   ],
+   "html": "<div class=\"card\"><h4>Saturday Farmers Market</h4><ul class=\"timeline\"><li><span class=\"when\">07:30</span><p>Wake up, light breakfast</p></li><li><span class=\"when\">08:00</span><p>Check list, grab bags</p></li><li><span class=\"when\">08:15</span><p>Leave for market</p></li><li><span class=\"when\">08:30</span><p>Arrive, walk the stalls</p></li><li><span class=\"when\">09:00</span><p>Buy produce, eggs, bread</p></li><li><span class=\"when\">09:45</span><p>Coffee and pastry break</p></li><li><span class=\"when\">10:15</span><p>Head home, unpack</p></li><li><span class=\"when\">10:45</span><p>Wash and store veggies</p></li><li><span class=\"when\">11:30</span><p><regex>user_name</regex>, plan meals for the week</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Virtual Conference Day",
+   "user_requests": [
+    "virtual conference today",
+    "plan my online conference day",
+    "conference schedule for remote attendee",
+    "help me schedule a virtual conference",
+    "online conference timeline",
+    "how to manage a virtual conference",
+    "conference day agenda for remote",
+    "virtual conf all day, help me plan breaks",
+    "need a schedule for a zoom conference day",
+    "block my day around an online summit",
+    "webinar marathon today, plan my time",
+    "plan my conference day incl lunch n coffee breaks",
+    "virtual event from 9 to 5, how to structure my day"
+   ],
+   "html": "<div class=\"card\"><h4>Virtual Conference Day</h4><ul class=\"timeline\"><li><span class=\"when\">08:00</span><p>Log in early, test audio/video</p></li><li><span class=\"when\">08:30</span><p>Review schedule, pick sessions</p></li><li><span class=\"when\">09:00</span><p>Keynote</p></li><li><span class=\"when\">10:00</span><p>Session 1: Tech trends</p></li><li><span class=\"when\">11:00</span><p>Networking break \u2014 virtual coffee</p></li><li><span class=\"when\">11:30</span><p>Session 2: Workshop</p></li><li><span class=\"when\">12:30</span><p><regex>user_name</regex>, lunch break \u2014 step away</p></li><li><span class=\"when\">13:30</span><p>Session 3: Panel discussion</p></li><li><span class=\"when\">14:30</span><p>Session 4: Q&A</p></li><li><span class=\"when\">15:30</span><p>Wrap-up, notes, follow-ups</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sunday Reset for the Week",
+   "user_requests": [
+    "sunday reset routine",
+    "plan my sunday reset",
+    "weekly reset schedule",
+    "help me organize for the week",
+    "sunday prep for the week ahead",
+    "reset day plan",
+    "get ready for the week ahead",
+    "Help me reset for the week this Sunday",
+    "Start-of-week reset schedule for today",
+    "sunday reset pls",
+    "What does a Sunday reset look like?",
+    "Prep my week on Sunday",
+    "Give me a Sunday reset plan"
+   ],
+   "html": "<div class=\"card\"><h4>Sunday Reset</h4><ul class=\"timeline\"><li><span class=\"when\">08:00</span><p>Wake up, stretch, water</p></li><li><span class=\"when\">08:30</span><p>Light breakfast</p></li><li><span class=\"when\">09:00</span><p>Review calendar, set priorities</p></li><li><span class=\"when\">09:30</span><p>Meal plan and grocery list</p></li><li><span class=\"when\">10:00</span><p>Tidy main rooms, start laundry</p></li><li><span class=\"when\">11:00</span><p>Batch cook or prep ingredients</p></li><li><span class=\"when\">12:30</span><p>Lunch and break</p></li><li><span class=\"when\">13:30</span><p>Errands or outdoor time</p></li><li><span class=\"when\">15:00</span><p>Finish laundry, fold clothes</p></li><li><span class=\"when\">16:00</span><p>Plan outfits, pack bag</p></li><li><span class=\"when\">17:00</span><p><regex>user_name</regex>, relax and unwind</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Balcony Garden Care Day",
+   "user_requests": [
+    "balcony garden care",
+    "plan my balcony garden day",
+    "when to water balcony plants",
+    "balcony garden schedule",
+    "help me care for my balcony garden",
+    "balcony garden routine",
+    "plants on my balcony need attention",
+    "Plan my balcony garden chores today",
+    "What should I do for my balcony garden today?",
+    "balcony garden day schedule",
+    "Need a schedule for caring for my balcony plants",
+    "Balcony plant care routine for today",
+    "Help me organize balcony garden tasks"
+   ],
+   "html": "<div class=\"card\"><h4>Balcony Garden Care</h4><ul class=\"timeline\"><li><span class=\"when\">07:00</span><p>Check soil moisture, water if dry</p></li><li><span class=\"when\">07:30</span><p>Inspect leaves for pests</p></li><li><span class=\"when\">08:00</span><p>Rotate pots for even light</p></li><li><span class=\"when\">10:00</span><p>Prune dead leaves, deadhead flowers</p></li><li><span class=\"when\">12:00</span><p>Shade delicate plants if hot</p></li><li><span class=\"when\">16:00</span><p>Fertilize if needed (monthly)</p></li><li><span class=\"when\">18:00</span><p><regex>user_name</regex>, sweep balcony, tidy tools</p></li><li><span class=\"when\">19:00</span><p>Evening mist for humidity-loving plants</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sourdough Bake Day",
+   "user_requests": [
+    "sourdough baking schedule for tomorrow",
+    "plan my bread day",
+    "when do I feed the starter and bake?",
+    "sourdough timeline pls",
+    "help me schedule a sourdough bake around work",
+    "bread baking day agenda",
+    "I want to bake sourdough this weekend, make a plan",
+    "Sourdough baking day plan",
+    "Help me with my sourdough schedule today",
+    "sourdough day timeline",
+    "I'm baking sourdough today, need a schedule",
+    "Plan out my sourdough bake",
+    "Sourdough bread baking timeline for today"
+   ],
+   "html": "<div class=\"card\"><h4>Sourdough Bake Day</h4><ul class=\"timeline\"><li><span class=\"when\">07:00</span><p>Feed starter. It should be bubbly by lunch.</p></li><li><span class=\"when\">12:00</span><p>Mix dough. Autolyse 45 min, then add salt.</p></li><li><span class=\"when\">13:00</span><p>Stretch and fold every 30 min, four times.</p></li><li><span class=\"when\">16:00</span><p>Shape. Cold proof in the fridge overnight.</p></li><li><span class=\"when\">Next day 08:00</span><p>Preheat oven with Dutch oven. Bake 20 min lid on, 25 min lid off.</p></li></ul><p class=\"muted t-small\">Cool completely before slicing. I know. It's hard.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Weekly Meal Prep Sunday",
+   "user_requests": [
+    "meal prep schedule for Sunday",
+    "plan my cooking day",
+    "batch cooking timeline",
+    "sunday meal prep agenda",
+    "I need to prep meals for the week",
+    "help me schedule meal prep",
+    "cook once eat all week schedule",
+    "Plan my Sunday meal prep",
+    "Meal prep schedule for today",
+    "sunday meal prep plan",
+    "I need to prep meals for the week, help me schedule",
+    "Weekly food prep Sunday schedule",
+    "Organize my Sunday meal prep"
+   ],
+   "html": "<div class=\"card\"><h4>Weekly Meal Prep Sunday</h4><ul class=\"timeline\"><li><span class=\"when\">09:00</span><p>Plan menu. Check fridge and pantry first.</p></li><li><span class=\"when\">09:30</span><p>Grocery run or pickup order.</p></li><li><span class=\"when\">11:00</span><p>Chop veggies. Start grains and proteins.</p></li><li><span class=\"when\">13:00</span><p>Assemble containers. Label with dates.</p></li><li><span class=\"when\">15:00</span><p>Clean kitchen. Reward yourself with a snack.</p></li></ul><p class=\"muted t-small\">Three days max for cooked proteins. Freeze what you won't eat by Wednesday.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Morning Run Routine",
+   "user_requests": [
+    "morning run schedule",
+    "plan my run tomorrow",
+    "when should I run and eat?",
+    "running routine before work",
+    "help me fit a run in the morning",
+    "5k training morning plan",
+    "run schedule for busy mornings",
+    "Plan my morning run today",
+    "What should my morning run look like?",
+    "morning run plan",
+    "I want to run this morning, give me a schedule",
+    "Schedule for my morning jog",
+    "Help me structure my morning run"
+   ],
+   "html": "<div class=\"card\"><h4>Morning Run Routine</h4><ul class=\"timeline\"><li><span class=\"when\">05:45</span><p>Wake up. Water. Light stretch.</p></li><li><span class=\"when\">06:00</span><p>Head out. Easy pace first mile.</p></li><li><span class=\"when\">06:45</span><p>Back home. Cool down walk.</p></li><li><span class=\"when\">07:00</span><p>Shower, breakfast, coffee.</p></li><li><span class=\"when\">07:30</span><p>Out the door for work.</p></li></ul><p class=\"muted t-small\">Lay out clothes the night before. Future you will be grateful.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Study Session for Exam",
+   "user_requests": [
+    "study schedule for tomorrow",
+    "plan my exam prep day",
+    "how to study for a test in one day",
+    "cram session timeline",
+    "help me schedule studying",
+    "finals study plan",
+    "study day agenda with breaks",
+    "Help me study for my exam today",
+    "Study plan for exam tomorrow",
+    "exam study schedule",
+    "I have an exam coming up, need a study schedule",
+    "Plan my study session for today",
+    "How should I study for my exam today?"
+   ],
+   "html": "<div class=\"card\"><h4>Study Session for Exam</h4><ul class=\"timeline\"><li><span class=\"when\">08:00</span><p>Review notes. Highlight key concepts.</p></li><li><span class=\"when\">09:30</span><p>Break. Walk, snack, water.</p></li><li><span class=\"when\">10:00</span><p>Practice problems. No peeking.</p></li><li><span class=\"when\">12:00</span><p>Lunch. Real food, not just coffee.</p></li><li><span class=\"when\">13:00</span><p>Flashcards and self-quizzing.</p></li><li><span class=\"when\">15:00</span><p>Review mistakes. Make a cheat sheet.</p></li><li><span class=\"when\">17:00</span><p>Stop. Sleep is part of studying.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Monthly Bills and Budget Check",
+   "user_requests": [
+    "bill paying schedule",
+    "plan my budget day",
+    "when to pay bills",
+    "monthly finance check timeline",
+    "help me organize bill paying",
+    "budget review agenda",
+    "payday routine",
+    "Help me with my monthly budget and bills",
+    "Schedule for paying bills today",
+    "monthly finance check schedule",
+    "I need to do my bills and budget, give me a schedule",
+    "Plan my bill paying and budgeting",
+    "Monthly budget review and bill payment schedule"
+   ],
+   "html": "<div class=\"card\"><h4>Monthly Bills and Budget Check</h4><ul class=\"timeline\"><li><span class=\"when\">09:00</span><p>List all bills due this month.</p></li><li><span class=\"when\">09:30</span><p>Check bank balance and upcoming auto-pays.</p></li><li><span class=\"when\">10:00</span><p>Pay what's due before the 15th.</p></li><li><span class=\"when\">10:30</span><p>Update budget spreadsheet or app.</p></li><li><span class=\"when\">11:00</span><p>Set reminders for next month.</p></li></ul><p class=\"muted t-small\">Automate what you can. Your future self hates late fees.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Gaming Marathon Evening",
+   "user_requests": [
+    "gaming schedule tonight",
+    "plan my game night",
+    "when to take breaks during gaming",
+    "marathon gaming timeline",
+    "help me schedule a long gaming session",
+    "game night agenda",
+    "how to game all evening without burning out",
+    "Plan my gaming marathon tonight",
+    "I'm gaming all evening, need a schedule",
+    "gaming marathon schedule",
+    "How to structure a gaming marathon evening?",
+    "Help me plan a night of gaming",
+    "Gaming session schedule for tonight"
+   ],
+   "html": "<div class=\"card\"><h4>Gaming Marathon Evening</h4><ul class=\"timeline\"><li><span class=\"when\">18:00</span><p>Dinner and hydrate. Real water.</p></li><li><span class=\"when\">19:00</span><p>Warm-up matches or easy levels.</p></li><li><span class=\"when\">20:30</span><p>Stretch break. Eyes off screen.</p></li><li><span class=\"when\">21:00</span><p>Main quest or ranked matches.</p></li><li><span class=\"when\">22:30</span><p>Snack and chat break.</p></li><li><span class=\"when\">23:00</span><p>Final push. One more level.</p></li><li><span class=\"when\">00:00</span><p>Save and sleep. The game will wait.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "what should my pottery studio day look like?",
+    "plan my glazing and firing schedule for saturday",
+    "pottery day schedule pls",
+    "how do I block out a full day in the studio?",
+    "clay day timeline for someone who always overruns",
+    "schedule for throwing, trimming, and glazing in one day",
+    "i need a pottery day agenda, nothing fancy",
+    "Plan my pottery day",
+    "Pottery studio schedule for today",
+    "pottery day plan",
+    "I'm going to the pottery studio today, help me plan",
+    "What should I do on my pottery studio day?",
+    "Organize my pottery studio session"
+   ],
+   "title": "Pottery Studio Day",
+   "html": "<div class=\"card\"><h4>Pottery Day</h4><p class=\"t-small muted\">A gentle arc. Clay doesn't care about your calendar, but <regex>user_name</regex> does.</p><ul class=\"timeline\"><li><span class=\"when\">08:30</span><p>Wedging and setup. Apron, water, towel, podcast.</p></li><li><span class=\"when\">09:00</span><p>Throwing. Four to six pieces, no perfectionism.</p></li><li><span class=\"when\">11:00</span><p>Tea break. Hands dry, shoulders drop.</p></li><li><span class=\"when\">11:30</span><p>Trim and stamp. Check leather-hard pieces from last week.</p></li><li><span class=\"when\">13:00</span><p>Lunch away from the wheel.</p></li><li><span class=\"when\">14:00</span><p>Glaze testing on test tiles.</p></li><li><span class=\"when\">15:30</span><p>Load bisque kiln if you have enough dry work.</p></li><li><span class=\"when\">16:30</span><p>Clean up. Reclaim clay. Wipe every surface.</p></li><li><span class=\"when\">17:00</span><p>Make notes: what worked, what cracked.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "plan my bread baking day",
+    "sourdough schedule for tomorrow?",
+    "i want to bake bread but i'm scared of the timing",
+    "help me schedule a bake day with starter and oven",
+    "bread day plan",
+    "how do i fit sourdough around work and sleep?",
+    "schedule my bread baking, i keep missing the bulk rise",
+    "Plan my bread baking schedule",
+    "Bread baking day timeline",
+    "bread baking plan",
+    "I'm baking bread today, need a schedule",
+    "Help me organize my bread baking day",
+    "What should my bread baking day look like?"
+   ],
+   "title": "Bread Baking Day",
+   "html": "<div class=\"card\"><h4>Bread Day</h4><p class=\"t-small muted\">It's mostly waiting. You're just the assistant, <regex>user_name</regex>.</p><ul class=\"timeline\"><li><span class=\"when\">08:00</span><p>Feed starter. Coffee for you.</p></li><li><span class=\"when\">12:00</span><p>Mix dough. Autolyse 45 min.</p></li><li><span class=\"when\">13:00</span><p>Add salt, stretch and fold every 30 min, 3 rounds.</p></li><li><span class=\"when\">15:00</span><p>Bulk rise until puffy. Walk, read, ignore it.</p></li><li><span class=\"when\">17:00</span><p>Shape. Bench rest. Cold proof overnight.</p></li><li><span class=\"when\">18:00</span><p>Preheat Dutch oven for tomorrow.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "plan a cold water swim day",
+    "open water swim schedule for the weekend?",
+    "i want to swim in the lake but need a plan",
+    "cold plunge + swim routine for saturday",
+    "help me schedule a swim day safely",
+    "swim day timeline pls",
+    "what should my open water swim day look like?",
+    "Plan my open water swim today",
+    "Open water swimming schedule",
+    "open water swim plan",
+    "I'm going for an open water swim, help me plan my day",
+    "What should I do for an open water swim day?",
+    "Schedule for open water swimming"
+   ],
+   "title": "Open Water Swim Day",
+   "html": "<div class=\"card\"><h4>Open Water Swim</h4><p class=\"t-small muted\">Cold water is honest. Plan around it, <regex>user_name</regex>.</p><ul class=\"timeline\"><li><span class=\"when\">07:30</span><p>Check tide, wind, water quality. Eat a light breakfast.</p></li><li><span class=\"when\">08:30</span><p>Pack: tow float, cap, goggles, warm layers, flask.</p></li><li><span class=\"when\">09:00</span><p>Arrive. Walk the entry. Spot landmarks.</p></li><li><span class=\"when\">09:15</span><p>Warm up on land. Get in slowly.</p></li><li><span class=\"when\">09:30</span><p>Swim 20\u201330 min. Stay parallel to shore.</p></li><li><span class=\"when\">10:00</span><p>Exit. Dry fast, dress warm, hot drink.</p></li><li><span class=\"when\">10:30</span><p>Log conditions and how you felt.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "plan my cheese making day",
+    "cheese day schedule?",
+    "i want to make mozzarella and ricotta tomorrow",
+    "help me schedule a cheese making session",
+    "cheese making timeline for a beginner",
+    "how do i fit cheese making into one morning?",
+    "schedule my cheese day, i have milk and rennet",
+    "Plan my cheese making today",
+    "Cheese making schedule",
+    "cheese making day plan",
+    "I'm making cheese today, need a timeline",
+    "Help me organize my cheese making day",
+    "What does a cheese making day look like?"
+   ],
+   "title": "Cheese Making Day",
+   "html": "<div class=\"card\"><h4>Cheese Day</h4><p class=\"t-small muted\">Warm milk, clean hands, patience. That's most of it, <regex>user_name</regex>.</p><ul class=\"timeline\"><li><span class=\"when\">08:00</span><p>Sanitise everything. Set milk in a warm water bath.</p></li><li><span class=\"when\">08:30</span><p>Add culture. Wait 30 min.</p></li><li><span class=\"when\">09:00</span><p>Add rennet. Wait until clean break, 30\u201345 min.</p></li><li><span class=\"when\">09:45</span><p>Cut curds. Stir gently. Heat slowly.</p></li><li><span class=\"when\">10:30</span><p>Drain whey. Save it for ricotta or soup.</p></li><li><span class=\"when\">11:00</span><p>Press or stretch. Salt and shape.</p></li><li><span class=\"when\">12:00</span><p>Clean up. Label. Taste the whey.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "plan my fermentation day",
+    "kombucha and kimchi schedule for sunday?",
+    "i want to start a batch of sauerkraut and kombucha",
+    "fermentation day plan",
+    "help me schedule a fermenting session",
+    "how do i do a fermentation day without chaos?",
+    "schedule my ferments, i have jars everywhere",
+    "Plan my fermentation day",
+    "Fermentation schedule for today",
+    "fermentation day plan",
+    "I'm fermenting stuff today, need a schedule",
+    "Help me organize my fermentation activities",
+    "What should my fermentation day look like?"
+   ],
+   "title": "Fermentation Day",
+   "html": "<div class=\"card\"><h4>Ferment Day</h4><p class=\"t-small muted\">You're just setting the table for microbes, <regex>user_name</regex>. Then you wait.</p><ul class=\"timeline\"><li><span class=\"when\">09:00</span><p>Wash jars and hands. Boil water for brine.</p></li><li><span class=\"when\">09:30</span><p>Chop cabbage. Massage with salt. Rest 30 min.</p></li><li><span class=\"when\">10:00</span><p>Pack kraut into jars. Keep it submerged.</p></li><li><span class=\"when\">10:30</span><p>Bottle kombucha. Flavour with ginger or berry.</p></li><li><span class=\"when\">11:00</span><p>Start new kombucha batch. Sweet tea, cool, add starter.</p></li><li><span class=\"when\">11:30</span><p>Label everything with date and contents.</p></li><li><span class=\"when\">12:00</span><p>Find a dark, cool spot. Set a reminder for 3 days.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "plan a soap making day",
+    "cold process soap schedule?",
+    "i want to make soap this weekend",
+    "help me schedule a soap making session",
+    "soap day timeline for a beginner",
+    "how do i fit soap making into an afternoon?",
+    "schedule my soap day, i have lye and oils",
+    "Plan my soap making day",
+    "Soap making schedule",
+    "soap making day plan",
+    "I'm making soap today, need a timeline",
+    "Help me organize my soap making",
+    "What does a soap making day look like?"
+   ],
+   "title": "Soap Making Day",
+   "html": "<div class=\"card\"><h4>Soap Day</h4><p class=\"t-small muted\">Safety first, then the fun part. Lye doesn't do jokes, <regex>user_name</regex>.</p><ul class=\"timeline\"><li><span class=\"when\">12:30</span><p>Set up: goggles, gloves, vinegar, ventilation. Cover surfaces.</p></li><li><span class=\"when\">13:00</span><p>Weigh oils. Melt gently.</p></li><li><span class=\"when\">13:30</span><p>Mix lye into water (outside or by a window). Cool to 40\u00b0C.</p></li><li><span class=\"when\">14:00</span><p>Combine at matching temps. Stick blend to trace.</p></li><li><span class=\"when\">14:30</span><p>Add scent and colour. Pour into mould.</p></li><li><span class=\"when\">15:00</span><p>Insulate. Clean everything twice.</p></li><li><span class=\"when\">15:30</span><p>Log recipe. Set reminder to cut in 24\u201348 hours.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Networking Event Evening",
+   "user_requests": [
+    "I have a networking event tonight, can you give me a schedule?",
+    "schedule for evening networking event",
+    "Help me plan my time at the business mixer tonight",
+    "networking event agenda",
+    "What should my timeline look like for the chamber of commerce meet and greet?",
+    "I'm going to a networking thing later, need a plan",
+    "can u make a sched for the networking event im attending",
+    "Plan my networking event tonight",
+    "Networking event schedule",
+    "networking event evening plan",
+    "I have a networking event this evening, help me plan",
+    "What should I do before and after a networking event?",
+    "Schedule for networking event tonight"
+   ],
+   "html": "<div class=\"card\"><h4>Networking Event Evening</h4><ul class=\"timeline\"><li><span class=\"when\">5:30 PM</span><p>Arrive early, grab name tag, scan room</p></li><li><span class=\"when\">5:45 PM</span><p>First round: introduce yourself to 2-3 people near entrance</p></li><li><span class=\"when\">6:15 PM</span><p>Join a conversation circle, listen more than talk</p></li><li><span class=\"when\">6:45 PM</span><p>Target one key contact, ask about their work</p></li><li><span class=\"when\">7:15 PM</span><p>Swap cards, note a follow-up detail on the back</p></li><li><span class=\"when\">7:45 PM</span><p>Thank the hosts, say goodnight to new friends</p></li><li><span class=\"when\">8:15 PM</span><p>Home: jot down names and one memory each</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Doctor's Appointment Day",
+   "user_requests": [
+    "I have a doctor's appointment today, can you schedule my day?",
+    "schedule for doctor appointment",
+    "Help me plan around my doctor visit",
+    "doctor appointment agenda",
+    "What should my timeline look like for the checkup?",
+    "I'm seeing the doctor later, need a plan",
+    "can u make a sched for my dr appt",
+    "Plan my day around a doctor's appointment",
+    "Doctor's appointment schedule",
+    "doctor appointment day plan",
+    "I have a doctor's appointment today, help me plan",
+    "What should my day look like with a doctor's appointment?",
+    "Schedule for doctor's appointment day"
+   ],
+   "html": "<div class=\"card\"><h4>Doctor's Appointment Day</h4><ul class=\"timeline\"><li><span class=\"when\">7:00 AM</span><p>Light breakfast, take any regular meds</p></li><li><span class=\"when\">8:00 AM</span><p>Review symptoms, jot questions for the doctor</p></li><li><span class=\"when\">9:00 AM</span><p>Gather insurance card, ID, medication list</p></li><li><span class=\"when\">9:30 AM</span><p>Leave for clinic, allow buffer for traffic</p></li><li><span class=\"when\">10:00 AM</span><p>Check in, update any forms</p></li><li><span class=\"when\">10:30 AM</span><p>Appointment: ask your top three questions</p></li><li><span class=\"when\">11:15 AM</span><p>Schedule follow-up if needed, pick up prescriptions</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Wedding Anniversary Evening",
+   "user_requests": [
+    "Our anniversary is tonight, can you plan the evening?",
+    "anniversary evening schedule",
+    "Help me make our anniversary special tonight",
+    "wedding anniversary agenda",
+    "What should our timeline be for our anniversary dinner?",
+    "I need a plan for our anniversary evening",
+    "can u make a sched for our anniversary tonight",
+    "anniv dinner tonite need a timeline",
+    "help me map out our anniversary night, reservations at 7",
+    "it's our 10th anniversary today!! plan the whole evening pls",
+    "anniversary evening rundown - dinner, walk, dessert",
+    "need a plan for tonight, it's me & hubby's anniversary",
+    "ok so our anniversary is this evening, how should we pace it"
+   ],
+   "html": "<div class=\"card\"><h4>Wedding Anniversary Evening</h4><ul class=\"timeline\"><li><span class=\"when\">4:00 PM</span><p>Start getting ready, play your song</p></li><li><span class=\"when\">5:00 PM</span><p>Exchange cards or small gifts</p></li><li><span class=\"when\">5:30 PM</span><p>Head to dinner reservation</p></li><li><span class=\"when\">6:00 PM</span><p>Dinner: order something you both love</p></li><li><span class=\"when\">7:30 PM</span><p>After-dinner walk, hold hands</p></li><li><span class=\"when\">8:30 PM</span><p>Home: look through old photos</p></li><li><span class=\"when\">9:30 PM</span><p>Toast to the next year</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Baby Shower Day",
+   "user_requests": [
+    "I'm hosting a baby shower today, need a schedule",
+    "baby shower day schedule",
+    "Help me plan the baby shower timeline",
+    "baby shower agenda",
+    "What should the flow be for the baby shower?",
+    "I have a baby shower to run today",
+    "can u make a sched for the baby shower",
+    "throwing a baby shower this afternoon, need a run of show",
+    "baby shower today!! help me schedule games, food, gifts",
+    "shower for my sister starts at 1, plan it out",
+    "need timeline for baby shower - decorating thru cleanup",
+    "hosting a sprinkle today, same vibe as a shower, schedule it",
+    "baby shower day plan plz, guests arrive at noon"
+   ],
+   "html": "<div class=\"card\"><h4>Baby Shower Day</h4><ul class=\"timeline\"><li><span class=\"when\">9:00 AM</span><p>Set up decorations, arrange gift table</p></li><li><span class=\"when\">10:00 AM</span><p>Prep food and drinks, chill what needs chilling</p></li><li><span class=\"when\">11:00 AM</span><p>Final walkthrough: games ready, prizes out</p></li><li><span class=\"when\">11:30 AM</span><p>Guests arrive, greet and offer drinks</p></li><li><span class=\"when\">12:00 PM</span><p>Brunch served, mingling</p></li><li><span class=\"when\">12:45 PM</span><p>Games and gift opening</p></li><li><span class=\"when\">1:30 PM</span><p>Thank guests, hand out favors</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Housewarming Party Prep",
+   "user_requests": [
+    "I'm hosting a housewarming party today, need a schedule",
+    "housewarming party prep schedule",
+    "Help me plan my housewarming party timeline",
+    "housewarming agenda",
+    "What should my prep look like for the housewarming?",
+    "I have a housewarming to prep for today",
+    "can u make a sched for the housewarming",
+    "housewarming tonite, gotta prep - make me a schedule",
+    "new house party today, what should I do when",
+    "need a prep timeline for our housewarming, guests at 6",
+    "housewarming party today, help me not panic, schedule it",
+    "prep schedule for housewarming: cleaning, food, playlist",
+    "ppl coming over at 7 for housewarming, plan my day"
+   ],
+   "html": "<div class=\"card\"><h4>Housewarming Party Prep</h4><ul class=\"timeline\"><li><span class=\"when\">8:00 AM</span><p>Declutter main areas, hide boxes</p></li><li><span class=\"when\">9:00 AM</span><p>Clean kitchen and bathroom, set out towels</p></li><li><span class=\"when\">10:00 AM</span><p>Set up drinks station and snacks</p></li><li><span class=\"when\">11:00 AM</span><p>Arrange seating, light candles</p></li><li><span class=\"when\">12:00 PM</span><p>Music on, lights dimmed, final touch-ups</p></li><li><span class=\"when\">12:30 PM</span><p>Guests arrive, offer tour</p></li><li><span class=\"when\">2:00 PM</span><p>Relax and enjoy your new home with friends</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Parent-Teacher Conference Day",
+   "user_requests": [
+    "I have a parent-teacher conference today, can you schedule it?",
+    "parent-teacher conference day schedule",
+    "Help me plan for the parent-teacher meeting",
+    "parent-teacher conference agenda",
+    "What should my timeline be for the school meeting?",
+    "I need a plan for the parent-teacher conference",
+    "can u make a sched for the pta meeting",
+    "conferences today, need to fit 5 meetings in",
+    "parent teacher conf day - schedule my slots and breaks",
+    "I have back to back PTCs this afternoon, organize it",
+    "teacher conference day plan, starting at 8am",
+    "need a schedule for parent-teacher conferences today",
+    "PTC day!! help me block out times"
+   ],
+   "html": "<div class=\"card\"><h4>Parent-Teacher Conference Day</h4><ul class=\"timeline\"><li><span class=\"when\">7:30 AM</span><p>Review child's recent work and grades</p></li><li><span class=\"when\">8:00 AM</span><p>List questions or concerns to raise</p></li><li><span class=\"when\">8:30 AM</span><p>Drop off child at school if needed</p></li><li><span class=\"when\">9:00 AM</span><p>Arrive early, sign in at office</p></li><li><span class=\"when\">9:15 AM</span><p>Meeting: listen, take notes, ask questions</p></li><li><span class=\"when\">10:00 AM</span><p>Thank teacher, agree on next steps</p></li><li><span class=\"when\">10:30 AM</span><p>Debrief with partner or child later</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "plan my saturday morning yard work",
+    "I need a schedule for cleaning the gutters and mowing",
+    "yard chores list for this weekend",
+    "how should I tackle my yard this saturday?",
+    "make me a timeline for outdoor cleanup day",
+    "yard work agenda plz",
+    "whats a good schedule for lawn and garden tasks",
+    "saturday am yard chores - give me a plan",
+    "mow, weed, trim... need a sat morning schedule",
+    "yard work saturday, start at 8, what's the order",
+    "plan my sat morning outside chores pls",
+    "got a ton of yard stuff sat am, schedule it",
+    "saturday morning lawn & garden tasks, lay it out"
+   ],
+   "title": "Saturday Yard Work Morning",
+   "html": "<div class=\"card\"><h4>Saturday Yard Work</h4><ul class=\"timeline\"><li><span class=\"when\">07:30</span><p>Coffee, check weather, gather gloves and bags.</p></li><li><span class=\"when\">08:00</span><p>Mow front and back lawns. Edge along walkways.</p></li><li><span class=\"when\">09:15</span><p>Water beds, pull weeds, deadhead flowers.</p></li><li><span class=\"when\">10:00</span><p>Sweep paths, bag clippings, wipe tools.</p></li><li><span class=\"when\">10:45</span><p>Cold drink. Survey the work. Feel smug.</p></li></ul><p class=\"muted\">Adjust times if the sun's already blazing, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "set up a study plan for my online course",
+    "need a schedule for learning a language at home",
+    "how to structure my self-study time",
+    "online course study timetable",
+    "help me plan my study sessions",
+    "make a daily study schedule",
+    "self-study agenda for tomorrow",
+    "need a study sched for my coursera class",
+    "block out study time for online course this week",
+    "help me plan self-study sessions, 2 hrs a day",
+    "online course study plan - pomodoro style",
+    "set up my study blocks for the certification course",
+    "study plan for my udemy course, evenings"
+   ],
+   "title": "Self-Study Session Plan",
+   "html": "<div class=\"card\"><h4>Study Block</h4><ul class=\"timeline\"><li><span class=\"when\">09:00</span><p>Review yesterday's notes. 10 minutes.</p></li><li><span class=\"when\">09:15</span><p>Watch lecture or read chapter. Take notes by hand.</p></li><li><span class=\"when\">10:00</span><p>Break. Walk, water, no screens.</p></li><li><span class=\"when\">10:15</span><p>Practice problems or flashcards. Active recall.</p></li><li><span class=\"when\">11:00</span><p>Summarize key points in your own words.</p></li><li><span class=\"when\">11:30</span><p>Plan tomorrow's first task. Close the book.</p></li></ul><p class=\"muted\">Keep the phone in another room, <regex>user_name</regex>. It helps.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "I need a schedule for my first day at a new job",
+    "new job orientation day plan",
+    "what should I do on my first day?",
+    "first day at work timeline",
+    "help me prepare for my first day",
+    "schedule for starting a new job",
+    "first day of work agenda",
+    "new job tomorrow!! plan my first day",
+    "first day at work - need a timeline (commute, onboarding, lunch)",
+    "starting a new job, help me schedule day 1",
+    "day one at new company, what's my schedule",
+    "need first day plan for new job, 9am start",
+    "nervous about day 1, make me a schedule for new job"
+   ],
+   "title": "First Day at a New Job",
+   "html": "<div class=\"card\"><h4>First Day</h4><ul class=\"timeline\"><li><span class=\"when\">07:00</span><p>Wake up. Dress one notch sharper than you think.</p></li><li><span class=\"when\">08:15</span><p>Arrive early. Find your desk, say hello.</p></li><li><span class=\"when\">09:00</span><p>Orientation: paperwork, passwords, tour.</p></li><li><span class=\"when\">11:00</span><p>Meet the team. Write down names.</p></li><li><span class=\"when\">12:30</span><p>Lunch. Ask someone where they go.</p></li><li><span class=\"when\">14:00</span><p>Set up email, calendar, and a to-do list.</p></li><li><span class=\"when\">16:30</span><p>Review the day. Note questions for tomorrow.</p></li></ul><p class=\"muted\">You've got this, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "plan my airport travel day",
+    "flight day schedule",
+    "what time should I leave for the airport?",
+    "airport departure timeline",
+    "help me plan for a flight",
+    "day of travel agenda",
+    "flying out tomorrow, need a schedule",
+    "flight at 3pm, plan my whole airport day",
+    "travel day - need a sched from wake up to boarding",
+    "flying out today, help me time everything",
+    "airport day plan: packing, drive, security, gate",
+    "need a timeline for my travel day, international flight",
+    "red eye tonight, schedule my airport day"
+   ],
+   "title": "Airport Travel Day",
+   "html": "<div class=\"card\"><h4>Travel Day</h4><ul class=\"timeline\"><li><span class=\"when\">06:00</span><p>Final check: ID, boarding pass, charger, meds.</p></li><li><span class=\"when\">06:30</span><p>Leave for airport. Buffer for traffic.</p></li><li><span class=\"when\">07:30</span><p>Check bags. Security. Refill water bottle.</p></li><li><span class=\"when\">08:15</span><p>Find gate. Confirm departure time on screen.</p></li><li><span class=\"when\">09:00</span><p>Board. Settle in. Download a podcast.</p></li><li><span class=\"when\">12:00</span><p>Land. Stretch. Head to baggage claim.</p></li></ul><p class=\"muted\">Safe travels, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "create a daily schedule for my dog",
+    "dog care routine timeline",
+    "when should I walk and feed my dog?",
+    "doggy day plan",
+    "schedule for pet care",
+    "help me plan my dog's day",
+    "dog routine agenda",
+    "daily doggo schedule - walks & food",
+    "plan my pup's day, meals and walks",
+    "need a routine for my dog: potty, walk, breakfast, dinner",
+    "dog day schedule pls, 2 walks + 2 meals",
+    "make a daily plan for my dog's walks and feeding",
+    "puppy schedule - when to walk, feed, play"
+   ],
+   "title": "Dog's Day (Walks & Meals)",
+   "html": "<div class=\"card\"><h4>Dog's Day</h4><ul class=\"timeline\"><li><span class=\"when\">06:30</span><p>Wake up, let out for a quick pee.</p></li><li><span class=\"when\">07:00</span><p>Breakfast. Fresh water.</p></li><li><span class=\"when\">08:00</span><p>Morning walk. Sniff everything.</p></li><li><span class=\"when\">12:00</span><p>Midday break. Play or a short stroll.</p></li><li><span class=\"when\">17:30</span><p>Dinner. Then another walk.</p></li><li><span class=\"when\">21:00</span><p>Last call outside. Bedtime chew.</p></li></ul><p class=\"muted\">Adjust for your dog's energy, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "schedule for cleaning out the garage",
+    "garage organization day plan",
+    "how to tackle a messy garage",
+    "garage cleanout timeline",
+    "help me organize my garage",
+    "garage declutter agenda",
+    "plan a garage cleaning day",
+    "cleaning the garage today, need a game plan",
+    "garage purge day - schedule it for me",
+    "help me tackle the garage today, block by block",
+    "garage cleanup saturday, where do I start",
+    "need a schedule to clean out my garage in one day",
+    "garage cleanout - sort, donate, trash, organize"
+   ],
+   "title": "Garage Cleanout Day",
+   "html": "<div class=\"card\"><h4>Garage Cleanout</h4><ul class=\"timeline\"><li><span class=\"when\">08:00</span><p>Clear the driveway. Set up three zones: keep, donate, toss.</p></li><li><span class=\"when\">08:30</span><p>Start with the back wall. Pull everything out.</p></li><li><span class=\"when\">10:00</span><p>Sweep floors and wipe shelves.</p></li><li><span class=\"when\">10:30</span><p>Sort items into zones. Be honest.</p></li><li><span class=\"when\">12:00</span><p>Lunch break. Hydrate.</p></li><li><span class=\"when\">13:00</span><p>Put keepers back neatly. Label bins.</p></li><li><span class=\"when\">15:00</span><p>Load donations. Sweep again. Done.</p></li></ul><p class=\"muted\">One corner at a time, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "plan my saturday morning as a beekeeper",
+    "bee hive inspection schedule for the weekend",
+    "how should i time my apiary work tomorrow?",
+    "I need a morning plan for checking my bees",
+    "beekeeping to do list saturday",
+    "schedule for hive check and honey prep",
+    "morning beekeeper routine timeline",
+    "sat morning hive checks - plan it",
+    "beekeeping sat am: inspections, feeding, notes",
+    "need a schedule for my apiary saturday morning",
+    "plan my morning with the bees, 3 hives",
+    "beekeeper chores sat morning - smoke, inspect, record",
+    "saturday bee work, lay out my morning"
+   ],
+   "title": "Beekeeper's Saturday Morning",
+   "html": "<div class=\"card\"><h4>Beekeeper's Saturday</h4><p class=\"muted t-small\">Mellow pace. Smoke early, drink coffee later.</p><ul class=\"timeline\"><li><span class=\"when\">07:00</span><p>Gear check: veil, gloves, smoker fuel, hive tool.</p></li><li><span class=\"when\">07:30</span><p>Light smoker. Let it cool to a gentle puff.</p></li><li><span class=\"when\">08:00</span><p>Inspect <strong>Hive A</strong> first. Look for queen cells, brood pattern, stores.</p></li><li><span class=\"when\">08:45</span><p>Swap to <strong>Hive B</strong>. Check for mites. Add super if honey flow is on.</p></li><li><span class=\"when\">09:30</span><p>Clean tools. Close hives gently. Note findings.</p></li><li><span class=\"when\">10:00</span><p>Coffee and a sit. The bees did most of the work.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "plan a day of mushroom foraging",
+    "mushroom hunt schedule autumn",
+    "how to time a forage walk",
+    "foraging itinerary for chanterelles",
+    "I want to spend saturday hunting mushrooms",
+    "mushroom picking morning plan",
+    "wild mushroom forage timeline",
+    "going mushroom hunting today, need a plan",
+    "foraging day - schedule drive, hike, ID, sorting",
+    "need a timeline for a mushroom forage trip",
+    "chanterelle hunting tomorrow, plan my day",
+    "mushroom foraging day plan, early start",
+    "help me schedule a full day of foraging for mushrooms"
+   ],
+   "title": "Mushroom Foraging Day",
+   "html": "<div class=\"card\"><h4>Foraging Day</h4><p class=\"muted t-small\">Early start. The good ones don't wait.</p><ul class=\"timeline\"><li><span class=\"when\">06:30</span><p>Check weather. Rain yesterday? Perfect. Grab a basket and knife.</p></li><li><span class=\"when\">07:00</span><p>Head to the oak grove. Walk slow, look down.</p></li><li><span class=\"when\">08:00</span><p>First patch: chanterelles near mossy logs. Cut, don't pull.</p></li><li><span class=\"when\">09:30</span><p>Snack and water. Cross-check anything uncertain.</p></li><li><span class=\"when\">10:30</span><p>Loop back via the creek. Look for oyster mushrooms on dead wood.</p></li><li><span class=\"when\">12:00</span><p>Home. Spread the haul in a basket to breathe.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "plan my evening for a star party",
+    "backyard astronomy schedule tonight",
+    "telescope setup timeline for stargazing",
+    "how to time a stargazing session",
+    "I want to watch the meteor shower tonight",
+    "stargazing plan for clear skies",
+    "evening telescope routine",
+    "star party tonite in my yard, plan it",
+    "stargazing this evening - need a schedule",
+    "need an evening plan for backyard astronomy",
+    "setting up the telescope tonight, what's the timeline",
+    "stargazing night - when to set up, observe, pack in",
+    "plan my backyard star watching evening"
+   ],
+   "title": "Backyard Stargazing Evening",
+   "html": "<div class=\"card\"><h4>Stargazing Evening</h4><p class=\"muted t-small\">Clear skies, warm drink, and a little patience.</p><ul class=\"timeline\"><li><span class=\"when\">18:30</span><p>Check forecast. No clouds? We're on.</p></li><li><span class=\"when\">19:00</span><p>Set up telescope. Let it cool to outdoor temp.</p></li><li><span class=\"when\">20:00</span><p>Eyes adjust. Start with the moon or a bright planet.</p></li><li><span class=\"when\">20:45</span><p>Find the Andromeda Galaxy. A fuzzy smudge is a win.</p></li><li><span class=\"when\">21:30</span><p>Meteor watch. Lie back. Don't chase every streak.</p></li><li><span class=\"when\">22:30</span><p>Pack up. Warm drink. Sleep under the afterglow.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "plan my morning for a pottery class",
+    "pottery studio schedule",
+    "how to time a ceramics session",
+    "I have a wheel throwing class tomorrow",
+    "pottery class morning routine",
+    "ceramics studio timeline",
+    "morning at the pottery studio",
+    "pottery class this am, need a schedule",
+    "studio morning - wedging, throwing, cleanup",
+    "need a plan for my morning in the pottery studio",
+    "ceramics session tomorrow am, block it out",
+    "pottery studio time - plan my 3 hrs",
+    "morning at the wheel, schedule my session"
+   ],
+   "title": "Pottery Studio Morning",
+   "html": "<div class=\"card\"><h4>Pottery Studio</h4><p class=\"muted t-small\">Apron on. Sleeves up. Clay waits for no one.</p><ul class=\"timeline\"><li><span class=\"when\">09:00</span><p>Arrive. Wedge clay. Set up wheel with water and sponge.</p></li><li><span class=\"when\">09:30</span><p>Center the first ball. Breathe. Slow hands.</p></li><li><span class=\"when\">10:15</span><p>Pull walls on two bowls. Don't rush the rim.</p></li><li><span class=\"when\">11:00</span><p>Trim earlier pieces. Check leather-hard stage.</p></li><li><span class=\"when\">11:45</span><p>Clean wheel. Cover work with plastic. Wash hands.</p></li><li><span class=\"when\">12:00</span><p>Head home. Clay under the nails is a badge.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "plan my afternoon for a skate session",
+    "skateboarding schedule at the park",
+    "how to time a skatepark visit",
+    "I want to skate this afternoon",
+    "skatepark afternoon plan",
+    "skate session timeline",
+    "afternoon skateboarding routine",
+    "skate session this afternoon, plan it",
+    "heading to the skatepark, need a timeline",
+    "afternoon skate - warm up, sesh, chill",
+    "skatepark plan for today, 2-5pm",
+    "need a schedule for my skate session this afternoon",
+    "skating this afternoon, help me plan it out"
+   ],
+   "title": "Skatepark Afternoon",
+   "html": "<div class=\"card\"><h4>Skatepark Afternoon</h4><p class=\"muted t-small\">Pads on. Playlist ready. Go easy at first.</p><ul class=\"timeline\"><li><span class=\"when\">14:00</span><p>Arrive. Warm up with a few laps around the park.</p></li><li><span class=\"when\">14:30</span><p>Practice flatground: ollies, shove-its. Keep it loose.</p></li><li><span class=\"when\">15:15</span><p>Hit the mini ramp. Start low, build confidence.</p></li><li><span class=\"when\">16:00</span><p>Try the ledge. Film a trick if you're feeling it.</p></li><li><span class=\"when\">16:45</span><p>Cool down. Stretch. Hydrate.</p></li><li><span class=\"when\">17:00</span><p>Head out. That slam you didn't take? Victory.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "plan my day at the ren faire",
+    "renaissance fair schedule",
+    "how to time a visit to the faire",
+    "I'm going to the ren faire tomorrow",
+    "renaissance festival itinerary",
+    "ren faire day plan",
+    "what to do at the renaissance fair",
+    "ren faire tomorrow!! plan my day",
+    "faire day - need a schedule for shows, food, joust",
+    "need a timeline for the renaissance festival",
+    "going to the ren faire today, what should I see when",
+    "renaissance faire day plan, arrive at opening",
+    "help me schedule my day at the faire"
+   ],
+   "title": "Renaissance Faire Day",
+   "html": "<div class=\"card\"><h4>Ren Faire Day</h4><p class=\"muted t-small\">Comfy shoes. Cash for turkey legs. Ye olde good time.</p><ul class=\"timeline\"><li><span class=\"when\">09:30</span><p>Arrive at the gate. Grab a map and schedule.</p></li><li><span class=\"when\">10:00</span><p>Watch the joust. Cheer for your knight.</p></li><li><span class=\"when\">11:30</span><p>Wander the artisan stalls. Buy something small and shiny.</p></li><li><span class=\"when\">12:30</span><p>Lunch: turkey leg, mead, or a meat pie.</p></li><li><span class=\"when\">14:00</span><p>Catch a comedy show or the mud beggars.</p></li><li><span class=\"when\">16:00</span><p>Last walk through. Head home before the crowds.</p></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Blood Pressure Check Day",
+   "user_requests": [
+    "plan my day for a blood pressure check",
+    "blood pressure appointment schedule",
+    "need a timeline for my bp check tomorrow",
+    "map out my morning for the clinic visit",
+    "what's my day look like for the bp screening?",
+    "schedule my blood pressure check day pls",
+    "help me organize my day around the bp check"
+   ],
+   "html": "<div class=\"card\"><h4>A Day Around Your BP Check</h4><ul class=\"timeline\"><li><span class=\"when\">07:30</span><p>Wake up, skip coffee and cigarettes\u2014they'll skew the reading.</p></li><li><span class=\"when\">08:00</span><p>Light breakfast if allowed. Note any meds you took.</p></li><li><span class=\"when\">09:15</span><p>Head to the clinic. Bring your log from the last week.</p></li><li><span class=\"when\">10:00</span><p>Check-in, cuff on, breathe easy. It's quick.</p></li><li><span class=\"when\">11:00</span><p>Debrief with the nurse. Ask about your target range.</p></li><li><span class=\"when\">12:30</span><p>Lunch and a short walk to reset.</p></li><li><span class=\"when\">14:00</span><p>Log today's numbers and any notes.</p></li></ul><p class=\"muted\">Keep the cuff arm still, <regex>user_name</regex>. And don't stress\u2014the number is just data.</p></div>"
+  },
+  {
+   "title": "Tax Filing Sprint",
+   "user_requests": [
+    "tax day crunch plan",
+    "organize my tax filing day",
+    "schedule for getting taxes done",
+    "help me power through my taxes today",
+    "tax prep and filing timeline",
+    "i need a schedule for tax filing",
+    "map out tax day for me"
+   ],
+   "html": "<div class=\"card\"><h4>Tax Filing Sprint</h4><ul class=\"timeline\"><li><span class=\"when\">08:00</span><p>Gather W-2s, 1099s, receipts. One pile, no chaos.</p></li><li><span class=\"when\">09:00</span><p>Log into the software. Breathe. You've done harder.</p></li><li><span class=\"when\">10:30</span><p>Enter income and deductions. Check twice.</p></li><li><span class=\"when\">12:00</span><p>Lunch break\u2014step away from the screen.</p></li><li><span class=\"when\">13:00</span><p>Review credits and deductions you might've missed.</p></li><li><span class=\"when\">14:30</span><p>E-file and save the confirmation. Print a copy.</p></li><li><span class=\"when\">15:00</span><p>Shred sensitive drafts, file the rest.</p></li></ul><p class=\"muted\">Done before 4pm, <regex>user_name</regex>. That's a win.</p></div>"
+  },
+  {
+   "title": "Vaccination Appointment Day",
+   "user_requests": [
+    "vaccine appointment schedule",
+    "plan my day for the jab",
+    "what's my timeline for the vaccination?",
+    "schedule for my booster shot day",
+    "organize my day around the vaccine",
+    "need a plan for vaccination day",
+    "map my vaccination appointment"
+   ],
+   "html": "<div class=\"card\"><h4>Vaccination Appointment Day</h4><ul class=\"timeline\"><li><span class=\"when\">08:30</span><p>Hydrate and eat a real breakfast\u2014no empty stomach.</p></li><li><span class=\"when\">09:30</span><p>Check your paperwork: ID, insurance card, consent form.</p></li><li><span class=\"when\">10:15</span><p>Arrive at the clinic. Wear short sleeves.</p></li><li><span class=\"when\">10:45</span><p>The jab. Look away if you need to. It's a pinch.</p></li><li><span class=\"when\">11:00</span><p>Wait 15 minutes for observation. Read a magazine.</p></li><li><span class=\"when\">12:00</span><p>Lunch, then a gentle afternoon. No heavy lifting.</p></li><li><span class=\"when\">18:00</span><p>Log any side effects. Rest if you feel off.</p></li></ul><p class=\"muted\">Plan a quiet evening, <regex>user_name</regex>. Your arm might complain.</p></div>"
+  },
+  {
+   "title": "Meditation Retreat Morning",
+   "user_requests": [
+    "meditation morning schedule",
+    "plan my zen morning",
+    "mindfulness retreat day timeline",
+    "help me structure a meditation morning",
+    "schedule for a silent morning",
+    "organize my meditation retreat",
+    "map out my mindful day"
+   ],
+   "html": "<div class=\"card\"><h4>Meditation Retreat Morning</h4><ul class=\"timeline\"><li><span class=\"when\">05:30</span><p>Wake gently. No phone. Just breath.</p></li><li><span class=\"when\">06:00</span><p>Tea and a light stretch. Let the day arrive.</p></li><li><span class=\"when\">06:30</span><p>Sitting meditation. Twenty minutes. Just this.</p></li><li><span class=\"when\">07:00</span><p>Walking meditation\u2014slow steps, senses open.</p></li><li><span class=\"when\">07:45</span><p>Breakfast in silence. Taste every bite.</p></li><li><span class=\"when\">08:30</span><p>Journal a few lines. What's present?</p></li><li><span class=\"when\">09:00</span><p>Rest or read. Carry the calm forward.</p></li></ul><p class=\"muted\">Nothing to achieve, <regex>user_name</regex>. That's the point.</p></div>"
+  },
+  {
+   "title": "Community Garden Workday",
+   "user_requests": [
+    "garden workday schedule",
+    "plan my community garden shift",
+    "what's the timeline for the garden volunteer day?",
+    "schedule my morning at the allotment",
+    "organize a garden workday",
+    "need a plan for garden volunteering",
+    "map out my community garden tasks"
+   ],
+   "html": "<div class=\"card\"><h4>Community Garden Workday</h4><ul class=\"timeline\"><li><span class=\"when\">07:30</span><p>Gather gloves, trowel, water bottle, sun hat.</p></li><li><span class=\"when\">08:00</span><p>Arrive at the plot. Check the shared toolshed.</p></li><li><span class=\"when\">08:15</span><p>Weeding and bed prep. Loosen that soil.</p></li><li><span class=\"when\">09:30</span><p>Watering rounds. Soak the roots, not the leaves.</p></li><li><span class=\"when\">10:30</span><p>Planting or transplanting seedlings. Label them.</p></li><li><span class=\"when\">11:30</span><p>Compost turn and tidy shared paths.</p></li><li><span class=\"when\">12:00</span><p>Pack up, wash hands, log hours. Home for lunch.</p></li></ul><p class=\"muted\">Wear sunscreen, <regex>user_name</regex>. The sun doesn't negotiate.</p></div>"
+  },
+  {
+   "title": "Moving Day Schedule",
+   "user_requests": [
+    "moving day timeline",
+    "plan my move day",
+    "schedule for moving house",
+    "help me organize moving day",
+    "what's the plan for my move?",
+    "map out the move day",
+    "need a moving day run sheet"
+   ],
+   "html": "<div class=\"card\"><h4>Moving Day Schedule</h4><ul class=\"timeline\"><li><span class=\"when\">06:30</span><p>Up early. Coffee, then final box check.</p></li><li><span class=\"when\">07:00</span><p>Movers arrive. Point out fragile and heavy items.</p></li><li><span class=\"when\">07:30</span><p>Load truck. Essentials box goes last, stays close.</p></li><li><span class=\"when\">09:00</span><p>Final walkthrough\u2014check closets, cupboards, garage.</p></li><li><span class=\"when\">10:00</span><p>Drive to new place. Unlock, breathe, direct traffic.</p></li><li><span class=\"when\">12:00</span><p>Lunch break for everyone. Hydrate.</p></li><li><span class=\"when\">15:00</span><p>Set up beds and kitchen first. The rest can wait.</p></li></ul><p class=\"muted\">Label boxes by room, <regex>user_name</regex>. Future you will cheer.</p></div>"
+  },
+  {
+   "title": "Saturday Allotment Work Morning",
+   "user_requests": [
+    "plan my allotment morning",
+    "what should I do at the plot today?",
+    "need a timetable for the allotment, got 3 hours",
+    "sat morning plot plan pls",
+    "help me organise my gardening bits",
+    "make me a schedule for the allotment this Saturday",
+    "schedule for allotment chores"
+   ],
+   "html": "<div class=\"card\"><h4>Saturday Allotment Plan</h4><div class=\"row between\"><span class=\"when\">08:30</span><p>Arrive, open shed, fill water butts</p></div><div class=\"row between\"><span class=\"when\">09:00</span><p>Weed the onion bed and hoe between rows</p></div><div class=\"row between\"><span class=\"when\">10:00</span><p>Plant out the courgette seedlings under fleece</p></div><div class=\"row between\"><span class=\"when\">10:45</span><p>Tea break \u2014 flask and a biscuit</p></div><div class=\"row between\"><span class=\"when\">11:00</span><p>Sow a row of beetroot and water the greenhouse</p></div><div class=\"row between\"><span class=\"when\">11:45</span><p>Tidy tools, label crops, note what\u2019s ready next week</p></div><p class=\"muted\"><regex>user_name</regex>, leave the rhubarb alone. It\u2019s doing its thing.</p></div>"
+  },
+  {
+   "title": "Home Brewing Afternoon",
+   "user_requests": [
+    "brew day schedule",
+    "I'm brewing beer this afternoon, need a plan",
+    "homebrew timeline pls",
+    "help me time my brew session",
+    "afternoon brewing schedule",
+    "beer making schedule",
+    "brewing session plan"
+   ],
+   "html": "<div class=\"card\"><h4>Home Brew Timeline</h4><div class=\"row between\"><span class=\"when\">13:00</span><p>Sanitise fermenter, siphon, and airlock</p></div><div class=\"row between\"><span class=\"when\">13:30</span><p>Heat strike water to 71\u00b0C</p></div><div class=\"row between\"><span class=\"when\">14:00</span><p>Mash in \u2014 hold at 66\u00b0C for 60 min</p></div><div class=\"row between\"><span class=\"when\">15:00</span><p>Sparge and collect 23L in the kettle</p></div><div class=\"row between\"><span class=\"when\">15:30</span><p>Boil 60 min \u2014 add hops at 60, 15, and 5</p></div><div class=\"row between\"><span class=\"when\">16:45</span><p>Chill to 20\u00b0C, transfer, pitch yeast</p></div><p class=\"muted\">A clean brew is a happy brew. You\u2019ve got this, <regex>user_name</regex>.</p></div>"
+  },
+  {
+   "title": "Instrument Practice Session",
+   "user_requests": [
+    "plan my piano practice",
+    "guitar practice schedule",
+    "I need to practise violin, make a plan",
+    "music practice schedule",
+    "practise my scales and pieces",
+    "how to structure my practice time",
+    "schedule for instrument practice"
+   ],
+   "html": "<div class=\"card\"><h4>Practice Session</h4><div class=\"row between\"><span class=\"when\">16:00</span><p>Warm up: long tones and scales in C and G</p></div><div class=\"row between\"><span class=\"when\">16:15</span><p>Technical work: arpeggios and shifting exercise</p></div><div class=\"row between\"><span class=\"when\">16:35</span><p>Piece 1: slow practice, hands separately</p></div><div class=\"row between\"><span class=\"when\">16:55</span><p>Break \u2014 stretch, sip water</p></div><div class=\"row between\"><span class=\"when\">17:00</span><p>Piece 2: tricky bars, metronome at 60</p></div><div class=\"row between\"><span class=\"when\">17:20</span><p>Play through both pieces once, no stopping</p></div><p class=\"muted\"><regex>user_name</regex>, slow is smooth. Smooth is fast.</p></div>"
+  },
+  {
+   "title": "Car Maintenance Day",
+   "user_requests": [
+    "plan my car service",
+    "car maintenance schedule",
+    "what to do for car tune-up today",
+    "I'm servicing my car, need a timeline",
+    "car upkeep schedule",
+    "schedule for car check-up",
+    "car maintenance morning"
+   ],
+   "html": "<div class=\"card\"><h4>Car Maintenance Morning</h4><div class=\"row between\"><span class=\"when\">09:00</span><p>Check tyre pressures and tread depth</p></div><div class=\"row between\"><span class=\"when\">09:20</span><p>Top up engine oil and coolant</p></div><div class=\"row between\"><span class=\"when\">09:40</span><p>Test lights, wipers, and horn</p></div><div class=\"row between\"><span class=\"when\">10:00</span><p>Replace air filter if dirty</p></div><div class=\"row between\"><span class=\"when\">10:20</span><p>Check brake fluid and battery terminals</p></div><div class=\"row between\"><span class=\"when\">10:40</span><p>Wash and vacuum interior</p></div><p class=\"muted\">A little love now saves a lot of rust later, <regex>user_name</regex>.</p></div>"
+  },
+  {
+   "title": "Indoor Plant Care Day",
+   "user_requests": [
+    "plant care schedule",
+    "indoor plant day plan",
+    "I need to water and repot my plants",
+    "houseplant chore list",
+    "schedule for plant care",
+    "help me plan my plant day",
+    "plant care routine"
+   ],
+   "html": "<div class=\"card\"><h4>Indoor Plant Care</h4><div class=\"row between\"><span class=\"when\">10:00</span><p>Inspect all plants for pests and yellow leaves</p></div><div class=\"row between\"><span class=\"when\">10:20</span><p>Water those that need it \u2014 check soil first</p></div><div class=\"row between\"><span class=\"when\">10:45</span><p>Repot any root-bound plants</p></div><div class=\"row between\"><span class=\"when\">11:15</span><p>Wipe leaves with a damp cloth</p></div><div class=\"row between\"><span class=\"when\">11:30</span><p>Rotate pots for even growth</p></div><div class=\"row between\"><span class=\"when\">11:45</span><p>Feed with diluted fertiliser</p></div><p class=\"muted\"><regex>user_name</regex>, if in doubt, don\u2019t water. They\u2019re more forgiving of drought than drowning.</p></div>"
+  },
+  {
+   "title": "Birdwatching Morning",
+   "user_requests": [
+    "birdwatching schedule",
+    "plan a birdwatch morning",
+    "I want to go birding, need a timeline",
+    "birding itinerary",
+    "morning birdwatching plan",
+    "schedule for birding",
+    "birdwatch outing plan"
+   ],
+   "html": "<div class=\"card\"><h4>Birdwatching Morning</h4><div class=\"row between\"><span class=\"when\">06:00</span><p>Arrive at the hide before sunrise, set up scope</p></div><div class=\"row between\"><span class=\"when\">06:30</span><p>Listen for dawn chorus \u2014 note species and calls</p></div><div class=\"row between\"><span class=\"when\">07:00</span><p>Scan the reedbed for bitterns and marsh harriers</p></div><div class=\"row between\"><span class=\"when\">07:30</span><p>Walk the woodland trail, look for woodpeckers</p></div><div class=\"row between\"><span class=\"when\">08:15</span><p>Check the scrape for waders and ducks</p></div><div class=\"row between\"><span class=\"when\">08:45</span><p>Coffee from the flask, log sightings in the book</p></div><p class=\"muted\"><regex>user_name</regex>, the early birder gets the bittern.</p></div>"
+  },
+  {
+   "title": "Sushi Making Evening",
+   "user_requests": [
+    "plan a sushi night for me and <regex>user_name</regex>",
+    "sushi making schedule",
+    "i wanna roll sushi tonight, lay out the plan",
+    "help me time a homemade sushi dinner",
+    "sushi night agenda pls",
+    "whats the order of operations for making sushi at home",
+    "block out my evening for sushi prep and rolling"
+   ],
+   "html": "<div class=\"card\">\n<h4>Sushi Night</h4>\n<p class=\"t-small muted\">Rice is the clock. Everything else waits on it.</p>\n<ul class=\"timeline\">\n<li><span class=\"when\">16:30</span><p>Rinse rice until water runs clear, then start the rice cooker.</p></li>\n<li><span class=\"when\">17:00</span><p>Slice cucumber, avocado, mango. Chill on a plate.</p></li>\n<li><span class=\"when\">17:30</span><p>Rice done. Fold in seasoned vinegar, fan it cool to room temp.</p></li>\n<li><span class=\"when\">18:00</span><p>Set out nori, mat, water bowl, sharp knife. <b>Build station.</b></p></li>\n<li><span class=\"when\">18:15</span><p>Roll. First one messy, second one better. That's the deal.</p></li>\n<li><span class=\"when\">19:00</span><p>Eat. Wasabi, soy, pickled ginger, done.</p></li>\n</ul>\n<details class=\"acc\">\n<summary>Make-ahead notes</summary>\n<div class=\"body\">\n<ul class=\"list\">\n<li>Rice vinegar mix: 3 tbsp vinegar, 2 tbsp sugar, 1 tsp salt per 2 cups dry rice.</li>\n<li>Cut rolls with a wet knife, wipe between slices.</li>\n<li>Fish: keep it cold, buy it same day, use it first.</li>\n</ul>\n</div>\n</details>\n</div>\n"
+  },
+  {
+   "title": "Laundry Day Plan",
+   "user_requests": [
+    "laundry day plan",
+    "how to run a whole laundry day without losing my mind",
+    "schedule for laundry day",
+    "lay out my laundry day, wash to fold",
+    "laundry to-do list, timed",
+    "help me plan laundry sunday",
+    "whats the best way to knock out all the laundry"
+   ],
+   "html": "<div class=\"card\">\n<h4>Laundry Day</h4>\n<div class=\"grid two\">\n<div class=\"stat\"><div class=\"label\">Loads</div><div class=\"value\">3</div></div>\n<div class=\"stat\"><div class=\"label\">Total time</div><div class=\"value\">~4<span class=\"unit\"> h</span></div></div>\n</div>\n<ul class=\"timeline\">\n<li><span class=\"when\">09:00</span><p>Sort: darks, lights, towels. Check pockets. Empty the lint trap.</p></li>\n<li><span class=\"when\">09:15</span><p>Load 1 in the wash (darks, cold).</p></li>\n<li><span class=\"when\">10:00</span><p>Load 1 to dryer. Load 2 (lights) into wash.</p></li>\n<li><span class=\"when\">10:45</span><p>Load 2 to dryer. Load 3 (towels, warm) into wash.</p></li>\n<li><span class=\"when\">11:30</span><p>Towels into dryer. Fold load 1 at the counter.</p></li>\n<li><span class=\"when\">12:30</span><p>Fold the rest. Put it all away, <i>actually</i> away.</p></li>\n</ul>\n<details class=\"acc\">\n<summary>Small wins</summary>\n<div class=\"body\">\n<ul class=\"list\">\n<li>Wash delicates in a mesh bag on cold.</li>\n<li>Half-dry towels, hang them to finish.</li>\n<li>Keep a lint bin by the machine, empty it weekly.</li>\n</ul>\n</div>\n</details>\n</div>\n"
+  },
+  {
+   "title": "Baby's Day (Feeds & Naps)",
+   "user_requests": [
+    "plan my day around the babys feeds and naps",
+    "baby schedule for today",
+    "feed and nap schedule for my little one",
+    "lay out a baby day, wake window and all",
+    "help me keep track of feeds and naps",
+    "daily plan for newborn feedings and naps",
+    "block out the day around nap times"
+   ],
+   "html": "<div class=\"card\">\n<h4>Baby's Day</h4>\n<p class=\"t-small muted\">Wake windows are a guide, not a contract. Babies improvise.</p>\n<ul class=\"timeline\">\n<li><span class=\"when\">07:00</span><p>Wake, diaper change, first feed.</p></li>\n<li><span class=\"when\">08:00</span><p>Tummy time on the mat, 5\u201310 min. Keep it short and cheerful.</p></li>\n<li><span class=\"when\">09:00</span><p>Nap 1. Aim for 45\u201390 min in the crib.</p></li>\n<li><span class=\"when\">10:30</span><p>Feed, change, a little quiet play.</p></li>\n<li><span class=\"when\">12:00</span><p>Nap 2 \u2014 usually the longest, 1.5\u20132 h.</p></li>\n<li><span class=\"when\">14:30</span><p>Feed, then out for a stroller walk or fresh air.</p></li>\n<li><span class=\"when\">16:00</span><p>Nap 3, short, 30\u201345 min.</p></li>\n<li><span class=\"when\">18:00</span><p>Bath, feed, dim lights, wind down for bed.</p></li>\n<li><span class=\"when\">19:30</span><p>Bedtime. You did it.</p></li>\n</ul>\n</div>\n"
+  },
+  {
+   "title": "Haircut and Salon Visit",
+   "user_requests": [
+    "salon day plan",
+    "plan my haircut appointment",
+    "whats the schedule for a salon visit",
+    "block out time for haircut and color",
+    "how long does a salon visit take, lay it out",
+    "plan my trip to the hairdresser",
+    "barber appointment agenda"
+   ],
+   "html": "<div class=\"card\">\n<h4>Salon Visit</h4>\n<div class=\"grid two\">\n<div class=\"stat\"><div class=\"label\">In chair</div><div class=\"value\">2<span class=\"unit\"> h</span></div></div>\n<div class=\"stat\"><div class=\"label\">Bring</div><div class=\"value\">Photos</div></div>\n</div>\n<ul class=\"timeline\">\n<li><span class=\"when\">13:45</span><p>Arrive, check in. Phone off, coat off.</p></li>\n<li><span class=\"when\">14:00</span><p>Consult. Show reference photos. Say the word \"short\" carefully.</p></li>\n<li><span class=\"when\">14:15</span><p>Wash and scalp massage. This is the good part.</p></li>\n<li><span class=\"when\">14:30</span><p>Cut or color. Relax. Small talk optional.</p></li>\n<li><span class=\"when\">15:45</span><p>Style and dry. Learn how they do it.</p></li>\n<li><span class=\"when\">16:00</span><p>Pay, tip, book the next one before you forget.</p></li>\n</ul>\n<details class=\"acc\">\n<summary>After-care</summary>\n<div class=\"body\"><p>Wait 48 h before the first wash if you colored. Sleep on a silk pillowcase if you can.</p></div>\n</details>\n</div>\n"
+  },
+  {
+   "title": "Rainy Day Indoors",
+   "user_requests": [
+    "rainy day plan for staying in",
+    "what to do on a rainy day, schedule it",
+    "indoor day agenda",
+    "its pouring, plan my day",
+    "rainy day activity schedule for the family",
+    "block out a cozy rainy day",
+    "plan a rainy day with kids, no screens"
+   ],
+   "html": "<div class=\"card\">\n<h4>Rainy Day In</h4>\n<ul class=\"timeline\">\n<li><span class=\"when\">08:30</span><p>Slow breakfast. Something warm. No rush.</p></li>\n<li><span class=\"when\">10:00</span><p>One small project: a drawer, a shelf, a puzzle.</p></li>\n<li><span class=\"when\">11:30</span><p>Board game or cards. Winner picks lunch.</p></li>\n<li><span class=\"when\">13:00</span><p>Soup on the stove. Bread in the oven if you're feeling it.</p></li>\n<li><span class=\"when\">15:00</span><p>Reading hour. Actual paper books count double.</p></li>\n<li><span class=\"when\">17:00</span><p>Movie with blankets and popcorn, lights low.</p></li>\n</ul>\n<details class=\"acc\">\n<summary>If the power goes out</summary>\n<div class=\"body\"><p>Candles, a deck of cards, and a story told badly on purpose. Works every time.</p></div>\n</details>\n</div>\n"
+  },
+  {
+   "title": "Charity Shop Volunteer Shift",
+   "user_requests": [
+    "volunteer shift schedule at the charity shop",
+    "plan my morning volunteering at the thrift store",
+    "charity shop shift agenda",
+    "block out time for my volunteer shift",
+    "what happens during a thrift store volunteer shift",
+    "help me plan my saturday volunteer slot",
+    "lay out my shift, sorting to till"
+   ],
+   "html": "<div class=\"card\">\n<h4>Charity Shop Shift</h4>\n<div class=\"row between\">\n<span class=\"badge info\"><i class=\"dot\"></i>Volunteer</span>\n<span class=\"t-small dim\">4 h \u00b7 Saturdays</span>\n</div>\n<ul class=\"timeline\">\n<li><span class=\"when\">09:30</span><p>Arrive, sign in, apron on.</p></li>\n<li><span class=\"when\">09:45</span><p>Sort donated bags: keep, clean, price, bin.</p></li>\n<li><span class=\"when\">11:00</span><p>Tag and hang clothes. Size checks, spot-clean stains.</p></li>\n<li><span class=\"when\">12:00</span><p>Break. Tea in the back room, sit down properly.</p></li>\n<li><span class=\"when\">12:30</span><p>Front of shop. Greet, help, keep the rails tidy.</p></li>\n<li><span class=\"when\">13:30</span><p>Straighten displays, note low stock on the list.</p></li>\n<li><span class=\"when\">13:50</span><p>Sign out, chat to the manager, head home.</p></li>\n</ul>\n<details class=\"acc\">\n<summary>What to bring</summary>\n<div class=\"body\"><ul class=\"list\"><li>Comfortable shoes, gloves for sorting.</li><li>A water bottle and a snack.</li><li>Any items you've been meaning to donate.</li></ul></div>\n</details>\n</div>\n"
+  },
+  {
+   "title": "Morning Run Routine",
+   "user_requests": [
+    "What's the schedule for a morning run?",
+    "Plan my morning run routine please",
+    "I need a timeline for my run in the morning",
+    "how should i structure my morning run?",
+    "Morning run plan",
+    "schedule my run tomorrow morning",
+    "Can you give me a morning run timetable? Like, when to wake up, stretch, etc"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Morning Run Routine</h4>\n  <ul class=\"timeline\">\n    <li><span class=\"when\">05:30</span><p>Wake up, drink water, use bathroom.</p></li>\n    <li><span class=\"when\">05:45</span><p>Dynamic stretches: leg swings, lunges, arm circles.</p></li>\n    <li><span class=\"when\">06:00</span><p>Head out for the run. Start easy, build to steady pace.</p></li>\n    <li><span class=\"when\">06:45</span><p>Cool down with a walk, then static stretches.</p></li>\n    <li><span class=\"when\">07:00</span><p>Shower, breakfast, and you're set for the day.</p></li>\n  </ul>\n</div>"
+  },
+  {
+   "title": "Saturday Yard Work Morning",
+   "user_requests": [
+    "Yard work plan for Saturday morning",
+    "I need a schedule for yard work",
+    "What should I do first when doing yard work?",
+    "Make me a timeline for saturday yard work",
+    "yard work to-do list and schedule",
+    "saturday morning yard work agenda",
+    "Plan my yard work for this Saturday morning. I've got a lot to do."
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Saturday Yard Work Morning</h4>\n  <ul class=\"timeline\">\n    <li><span class=\"when\">07:00</span><p>Gear up: gloves, hat, sunscreen, water bottle.</p></li>\n    <li><span class=\"when\">07:15</span><p>Mow the lawn while it's still cool.</p></li>\n    <li><span class=\"when\">08:00</span><p>Trim edges and pull weeds from flower beds.</p></li>\n    <li><span class=\"when\">08:45</span><p>Water plants and sweep walkways.</p></li>\n    <li><span class=\"when\">09:30</span><p>Break: lemonade and a snack.</p></li>\n    <li><span class=\"when\">10:00</span><p>Clean and put away tools.</p></li>\n  </ul>\n</div>"
+  },
+  {
+   "title": "Laundry Day Plan",
+   "user_requests": [
+    "Laundry day schedule",
+    "How to plan laundry day?",
+    "Give me a laundry timeline",
+    "I need a schedule for doing laundry all day",
+    "laundry day agenda",
+    "What's the best way to organize laundry day?",
+    "Plan my laundry day from start to finish"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Laundry Day Plan</h4>\n  <ul class=\"timeline\">\n    <li><span class=\"when\">08:00</span><p>Sort clothes: lights, darks, delicates.</p></li>\n    <li><span class=\"when\">08:30</span><p>Start first load (whites).</p></li>\n    <li><span class=\"when\">09:30</span><p>Move whites to dryer, start darks.</p></li>\n    <li><span class=\"when\">10:30</span><p>Move darks to dryer, start delicates.</p></li>\n    <li><span class=\"when\">11:00</span><p>Fold and put away whites.</p></li>\n    <li><span class=\"when\">12:00</span><p>Fold and put away darks and delicates.</p></li>\n  </ul>\n</div>"
+  },
+  {
+   "title": "Rainy Day Indoors",
+   "user_requests": [
+    "Rainy day schedule ideas",
+    "What to do on a rainy day indoors?",
+    "Indoor activities timetable for a rainy day",
+    "Plan my rainy day",
+    "I need a schedule for a cosy indoor day",
+    "rainy day agenda",
+    "It's pouring outside. How should I spend the day indoors?"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Rainy Day Indoors</h4>\n  <ul class=\"timeline\">\n    <li><span class=\"when\">09:00</span><p>Slow morning: tea, toast, and a book.</p></li>\n    <li><span class=\"when\">10:30</span><p>Tidy up one small area.</p></li>\n    <li><span class=\"when\">11:30</span><p>Bake something simple (cookies).</p></li>\n    <li><span class=\"when\">13:00</span><p>Lunch and a favourite show.</p></li>\n    <li><span class=\"when\">14:30</span><p>Creative time: draw, write, or puzzle.</p></li>\n    <li><span class=\"when\">16:00</span><p>Board games or video games.</p></li>\n    <li><span class=\"when\">18:00</span><p>Cook a comforting dinner.</p></li>\n    <li><span class=\"when\">20:00</span><p>Movie under a blanket.</p></li>\n  </ul>\n</div>"
+  },
+  {
+   "title": "Charity Shop Volunteer Shift",
+   "user_requests": [
+    "Volunteer shift schedule at charity shop",
+    "What's the plan for my charity shop shift?",
+    "Charity shop volunteer timetable",
+    "I need a schedule for volunteering at a charity shop",
+    "volunteer shift agenda",
+    "How should I structure my charity shop shift?",
+    "Plan my volunteer shift at the charity shop from opening to closing"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Charity Shop Volunteer Shift</h4>\n  <ul class=\"timeline\">\n    <li><span class=\"when\">09:00</span><p>Arrive, sign in, and greet the team.</p></li>\n    <li><span class=\"when\">09:15</span><p>Sort donations: tag, size, and steam.</p></li>\n    <li><span class=\"when\">10:30</span><p>Restock shelves and tidy displays.</p></li>\n    <li><span class=\"when\">12:00</span><p>Lunch break.</p></li>\n    <li><span class=\"when\">13:00</span><p>Assist customers and run the till.</p></li>\n    <li><span class=\"when\">15:00</span><p>Straighten up and prep for tomorrow.</p></li>\n    <li><span class=\"when\">16:00</span><p>Sign out and debrief.</p></li>\n  </ul>\n</div>"
+  },
+  {
+   "title": "Sushi Making Evening",
+   "user_requests": [
+    "Sushi making schedule for tonight",
+    "How to plan a sushi making evening?",
+    "Sushi night timeline",
+    "I need a schedule for making sushi at home",
+    "sushi making agenda",
+    "What's the best order to make sushi?",
+    "Plan my sushi making evening from start to finish"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Sushi Making Evening</h4>\n  <ul class=\"timeline\">\n    <li><span class=\"when\">16:30</span><p>Rinse rice until water runs clear.</p></li>\n    <li><span class=\"when\">17:00</span><p>Cook rice and prepare sushi vinegar.</p></li>\n    <li><span class=\"when\">17:30</span><p>Slice fish and veggies; set up rolling station.</p></li>\n    <li><span class=\"when\">18:00</span><p>Season rice and let it cool to room temp.</p></li>\n    <li><span class=\"when\">18:15</span><p>Roll maki and shape nigiri.</p></li>\n    <li><span class=\"when\">18:45</span><p>Plate and serve with soy sauce, wasabi, ginger.</p></li>\n    <li><span class=\"when\">19:00</span><p>Eat and enjoy!</p></li>\n  </ul>\n</div>"
+  }
+ ]
+}

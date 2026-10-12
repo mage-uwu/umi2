@@ -1,0 +1,2237 @@
+{
+ "widget": "css_snippet",
+ "instances": [
+  {
+   "title": "CSS center anything with grid",
+   "user_requests": [
+    "how do i center a div with css",
+    "cSS grid center trick",
+    "Center both horz and vert without flexbox",
+    "need to center a box perfectly css pls",
+    "what is place-items center",
+    "best way to vertically align in 2024 css",
+    "cant remember the one-liner for centering, help",
+    "css grid place items center",
+    "centering vertically and horizontally css grid",
+    "how to center a div using grid",
+    "grid center align",
+    "best way to center with css grid",
+    "make a div centered with grid layout"
+   ],
+   "html": "<div class=\"card\"><h4>CSS snippet</h4><p class=\"t-small muted\">The no-drama centering spell, for any block inside a parent.</p><pre class=\"code\"><code>.parent {\n  display: grid;\n  place-items: center;\n  min-height: 100svh;\n}\n\n.child {\n  max-width: 32rem;\n}\n</code></pre><p class=\"t-small dim\">Works in every modern browser. No flexbugs, no margin tricks. <regex>user_name</regex>, paste and exhale.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS custom property fallback syntax",
+   "user_requests": [
+    "how does var fallback work in css",
+    "css var() second argument",
+    "fallback value for custom properties",
+    "what if variable missing css",
+    "var with default in css",
+    "set a fallback color if variable not defined",
+    "explain var() syntax pls",
+    "css var fallback",
+    "how to set a fallback for css variables",
+    "css custom property default value",
+    "var() second argument css",
+    "fallback in css variables syntax",
+    "what if css variable is not defined"
+   ],
+   "html": "<div class=\"card\"><h4>CSS snippet</h4><p class=\"t-small muted\">Use the second argument to give <code>var()</code> a safety net.</p><pre class=\"code\"><code>.card {\n  background: var(--surface, #ffffff);\n  border: 1px solid var(--line, rgba(0,0,0,.12));\n  color: var(--text, #111);\n}\n</code></pre><p class=\"t-small dim\">If <code>--surface</code> is never defined, the fallback kicks in. No warning, no crash. <regex>user_name</regex>, your UI stays dressed.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS smooth scrolling with reduced motion",
+   "user_requests": [
+    "smooth scroll css",
+    "how to make page scroll smooth",
+    "css scroll-behavior smooth",
+    "smooth anchor links but respect motion settings",
+    "scroll-behavior: smooth, but not for everyone",
+    "make scrolling less janky on my site",
+    "anchor jump smooth css",
+    "css smooth scroll disable for reduced motion",
+    "prefers-reduced-motion smooth scroll",
+    "smooth scrolling but respect user motion settings",
+    "how to make smooth scroll accessible",
+    "css scroll-behavior reduced motion media query",
+    "turn off smooth scrolling for motion sensitivity"
+   ],
+   "html": "<div class=\"card\"><h4>CSS snippet</h4><p class=\"t-small muted\">Smooth scroll, but only for people who haven't asked for less motion.</p><pre class=\"code\"><code>@media (prefers-reduced-motion: no-preference) {\n  html {\n    scroll-behavior: smooth;\n  }\n}\n</code></pre><p class=\"t-small dim\">Nested media query keeps the default jump for motion-sensitive users. <regex>user_name</regex>, considerate and quiet.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS clamp() for fluid type",
+   "user_requests": [
+    "responsive font size without media queries",
+    "clamp css font size",
+    "fluid typography css",
+    "make text scale with viewport",
+    "how to use clamp for font size",
+    "css font-size min max preferred",
+    "one line responsive text css",
+    "css clamp font size",
+    "fluid typography with clamp",
+    "responsive text without media queries using clamp",
+    "how to use clamp for font size",
+    "clamp() css example for headings",
+    "make font size scale with viewport using clamp"
+   ],
+   "html": "<div class=\"card\"><h4>CSS snippet</h4><p class=\"t-small muted\">A heading that scales between two sizes, no breakpoints involved.</p><pre class=\"code\"><code>h1 {\n  font-size: clamp(1.5rem, 5vw + 1rem, 3rem);\n  line-height: 1.15;\n}\n</code></pre><p class=\"t-small dim\">Minimum 1.5rem, preferred 5vw + 1rem, maximum 3rem. <regex>user_name</regex>, let the viewport do the math.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS light and dark mode with system setting",
+   "user_requests": [
+    "dark mode css auto",
+    "prefers-color-scheme example",
+    "how to support dark mode",
+    "light dark theme with css only",
+    "system dark mode css",
+    "make my site follow the os theme",
+    "css media query for dark mode",
+    "prefers-color-scheme dark mode css",
+    "auto dark mode based on system",
+    "css detect dark mode",
+    "light and dark theme with css",
+    "how to make website follow system theme",
+    "dark mode css media query"
+   ],
+   "html": "<div class=\"card\"><h4>CSS snippet</h4><p class=\"t-small muted\">Let the operating system pick the colours, no toggle needed.</p><pre class=\"code\"><code>:root {\n  --bg: #ffffff;\n  --ink: #111111;\n}\n\n@media (prefers-color-scheme: dark) {\n  :root {\n    --bg: #111111;\n    --ink: #f0f0f0;\n  }\n}\n</code></pre><p class=\"t-small dim\">Use <code>var(--bg)</code> and <code>var(--ink)</code> everywhere. <regex>user_name</regex>, instant night mode.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS truncate long text with ellipsis",
+   "user_requests": [
+    "text overflow ellipsis css",
+    "truncate text one line css",
+    "how to cut off long text with dots",
+    "ellipsis css single line",
+    "make text not wrap and show ...",
+    "css text-overflow: ellipsis not working",
+    "shorten long titles in cards",
+    "css ellipsis overflow",
+    "how to cut off text with dots",
+    "text-overflow ellipsis not working",
+    "truncate text css one line",
+    "css show ellipsis for long text",
+    "make text end with ... css"
+   ],
+   "html": "<div class=\"card\"><h4>CSS snippet</h4><p class=\"t-small muted\">One line, then three dots. A classic.</p><pre class=\"code\"><code>.truncate {\n  overflow: hidden;\n  white-space: nowrap;\n  text-overflow: ellipsis;\n  max-width: 100%;\n}\n</code></pre><p class=\"t-small dim\">For multi-line, use <code>line-clamp</code> instead. <regex>user_name</regex>, keep those cards tidy.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS :has() for parent selection",
+   "user_requests": [
+    "how do I style a parent based on its child in CSS?",
+    "can i use :has() to style parents?",
+    "css :has() parent selector example",
+    "style form group when input is invalid using css",
+    "how to change card background when it contains a specific element",
+    ":has() pseudo-class usage",
+    "parent selector based on child css",
+    "css parent selector based on child",
+    "style parent if child exists css",
+    "how to use :has() in css",
+    "css has selector example",
+    "select parent element with css",
+    "parent selector css :has"
+   ],
+   "html": "<div class=\"card\">\n  <h4>CSS snippet</h4>\n  <p class=\"muted\">Style a parent when it contains a specific child using <code>:has()</code>.</p>\n  <pre class=\"code\"><code>.card:has(img) {\\n  background: var(--accent-soft);\\n  border-color: var(--accent);\\n}\\n\\n/* Real-world: highlight form group when input has a value */\\n.field:has(input:not(:placeholder-shown)) .label {\\n  color: var(--accent);\\n  font-weight: 600;\\n}</code></pre>\n  <div class=\"callout info\">\n    <p><strong>Note:</strong> Support is good in all modern browsers (Chrome 105+, Safari 15.4+, Firefox 121+). For older browsers, a fallback class is needed.</p>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS container queries for responsive components",
+   "user_requests": [
+    "what are container queries and how do I use them?",
+    "css container queries example",
+    "make component responsive based on its container width",
+    "how to use @container in css",
+    "container query syntax",
+    "responsive card without media queries",
+    "css @container rule",
+    "css container queries example",
+    "how to use container queries",
+    "responsive design with container queries",
+    "container query css syntax",
+    "style based on container size css",
+    "container queries vs media queries"
+   ],
+   "html": "<div class=\"card\">\n  <h4>CSS snippet</h4>\n  <p class=\"muted\">Make components adapt to their container width, not just viewport.</p>\n  <pre class=\"code\"><code>.card-wrapper {\\n  container-type: inline-size;\\n  container-name: card;\\n}\\n\\n@container card (min-width: 400px) {\\n  .card-content {\\n    display: flex;\\n    gap: var(--s-4);\\n  }\\n}\\n\\n/* Fallback for older browsers */\\n.card-content {\\n  display: block;\\n}</code></pre>\n  <div class=\"callout good\">\n    <p><strong>Tip:</strong> Name your containers to avoid accidental matches. <code>container-name</code> keeps things tidy.</p>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS accent-color for form controls",
+   "user_requests": [
+    "how to style checkboxes and radio buttons accent color?",
+    "css accent-color example",
+    "change checkbox color css",
+    "style radio buttons with css accent-color",
+    "accent-color property usage",
+    "custom checkbox color without images",
+    "css accent color for form inputs",
+    "css accent color checkbox",
+    "style radio buttons with accent-color",
+    "change checkbox color css",
+    "accent-color css example",
+    "how to color form controls css",
+    "custom checkbox color without images"
+   ],
+   "html": "<div class=\"card\">\n  <h4>CSS snippet</h4>\n  <p class=\"muted\">Tint checkboxes, radios, and range inputs with one line using <code>accent-color</code>.</p>\n  <pre class=\"code\"><code>input[type=\"checkbox\"],\\ninput[type=\"radio\"],\\ninput[type=\"range\"] {\\n  accent-color: var(--accent);\\n}\\n\\n/* Or set globally for all form controls */\\n:root {\\n  accent-color: var(--accent);\\n}</code></pre>\n  <div class=\"callout info\">\n    <p><strong>Support:</strong> Works in all modern browsers. For full custom styling, you'll still need <code>appearance: none</code> and pseudo-elements.</p>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS logical properties for RTL support",
+   "user_requests": [
+    "how to make css work with right-to-left languages?",
+    "css logical properties example",
+    "rtl support with css logical properties",
+    "use margin-inline-start instead of margin-left",
+    "logical properties for internationalization",
+    "css for ltr and rtl layouts",
+    "writing mode aware css",
+    "css logical properties rtl",
+    "how to support right-to-left with css",
+    "margin-inline-start vs margin-left",
+    "css for rtl languages",
+    "logical properties css example",
+    "make css work for arabic and hebrew"
+   ],
+   "html": "<div class=\"card\">\n  <h4>CSS snippet</h4>\n  <p class=\"muted\">Use logical properties to make your layout adapt automatically to different writing directions.</p>\n  <pre class=\"code\"><code>.box {\\n  /* Instead of margin-left / margin-right */\\n  margin-inline: var(--s-4);\\n\\n  /* Instead of padding-top / padding-bottom */\\n  padding-block: var(--s-3);\\n\\n  /* Instead of border-left */\\n  border-inline-start: 2px solid var(--accent);\\n\\n  /* Instead of left / right for positioning */\\n  inset-inline-start: 0;\\n}</code></pre>\n  <div class=\"callout good\">\n    <p><strong>Benefit:</strong> Works for both LTR and RTL without extra CSS. Set <code>dir=\"rtl\"</code> on the container and it just works.</p>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS @supports for feature detection",
+   "user_requests": [
+    "how to check if a css feature is supported?",
+    "css @supports rule example",
+    "feature detection in css",
+    "use @supports for fallbacks",
+    "@supports syntax",
+    "conditionally apply css based on browser support",
+    "css supports rule",
+    "css supports rule",
+    "how to check if css property is supported",
+    "feature detection css @supports",
+    "css @supports example",
+    "use css if supported",
+    "detect browser support for css"
+   ],
+   "html": "<div class=\"card\">\n  <h4>CSS snippet</h4>\n  <p class=\"muted\">Apply styles only if the browser supports a feature.</p>\n  <pre class=\"code\"><code>/* Base styles for all browsers */\\n.grid {\\n  display: flex;\\n  flex-wrap: wrap;\\n}\\n\\n/* Enhanced grid for supporting browsers */\\n@supports (display: grid) {\\n  .grid {\\n    display: grid;\\n    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\\n  }\\n}\\n\\n/* Check for a specific property value */\\n@supports (backdrop-filter: blur(10px)) {\\n  .overlay {\\n    backdrop-filter: blur(10px);\\n  }\\n}</code></pre>\n  <div class=\"callout info\">\n    <p><strong>Tip:</strong> Use <code>@supports not</code> to provide fallbacks for unsupported features.</p>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS scroll snap for carousels",
+   "user_requests": [
+    "how to make a css-only carousel?",
+    "css scroll snap example",
+    "create a horizontal scroll gallery with snap",
+    "scroll snap for image slider",
+    "css scroll-snap-type usage",
+    "snap scrolling without javascript",
+    "carousel with css scroll snap",
+    "css scroll snap carousel",
+    "how to make a carousel with css only",
+    "scroll snap example",
+    "css snap scrolling for slider",
+    "build a carousel without javascript",
+    "scroll-snap-type css"
+   ],
+   "html": "<div class=\"card\">\n  <h4>CSS snippet</h4>\n  <p class=\"muted\">Create a smooth, scroll-snapping carousel with pure CSS.</p>\n  <pre class=\"code\"><code>.carousel {\\n  display: flex;\\n  overflow-x: auto;\\n  scroll-snap-type: x mandatory;\\n  gap: var(--s-4);\\n  padding: var(--s-4);\\n  scroll-padding: var(--s-4);\\n}\\n\\n.carousel > * {\\n  flex: 0 0 80%;\\n  scroll-snap-align: start;\\n  scroll-snap-stop: always;\\n  border-radius: var(--r-md);\\n}</code></pre>\n  <div class=\"callout good\">\n    <p><strong>Note:</strong> Works on touch and trackpad. Add <code>scroll-behavior: smooth</code> for buttery transitions.</p>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS center anything with grid",
+   "user_requests": [
+    "how do i center a div with css grid",
+    "grid centering trick for any element",
+    "center something vertically and horizontally with css",
+    "css grid place-items center",
+    "fastest way to center a button in css",
+    "center content inside a flex or grid container",
+    "css one-liner to center absolutely anything",
+    "css grid place items center",
+    "centering vertically and horizontally css grid",
+    "how to center a div using grid",
+    "grid center align",
+    "best way to center with css grid",
+    "make a div centered with grid layout"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Center anything with CSS grid</h4>\n  <p class=\"muted t-small\">The one-liner, <regex>user_name</regex>. Works for any element with a width/height or intrinsic size.</p>\n  <pre class=\"code\"><code>.center {\n  display: grid;\n  place-items: center;\n  min-height: 100vh;\n}</code></pre>\n  <p class=\"t-small dim\">Or on the child: <code>margin: auto</code> only works if the parent is a grid/flex container.</p>\n  <details class=\"acc\">\n    <summary>Why it works</summary>\n    <div class=\"body\">\n      <p><code>place-items: center</code> is shorthand for <code>align-items: center</code> and <code>justify-items: center</code> on the grid container. That centers the child in both axes without needing fixed dimensions on the parent.</p>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS custom property fallback syntax",
+   "user_requests": [
+    "how to use fallback in css variables",
+    "css var fallback syntax",
+    "what does the second value in var mean css",
+    "css custom property default value",
+    "var fallback for color css",
+    "how to provide a fallback for a css variable",
+    "css variables with fallback example",
+    "css var fallback",
+    "how to set a fallback for css variables",
+    "css custom property default value",
+    "var() second argument css",
+    "fallback in css variables syntax",
+    "what if css variable is not defined"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Fallbacks for CSS custom properties</h4>\n  <p class=\"muted t-small\">Don't let a missing variable break your styles, <regex>user_name</regex>.</p>\n  <pre class=\"code\"><code>.card {\n  background: var(--panel, #fff);\n  color: var(--ink, #111);\n  border: 1px solid var(--line, #ddd);\n}</code></pre>\n  <p class=\"t-small dim\">If <code>--panel</code> is not defined, the fallback <code>#fff</code> is used. Works for any valid value, including other variables.</p>\n  <details class=\"acc\">\n    <summary>Nested fallbacks</summary>\n    <div class=\"body\">\n      <p>You can chain fallbacks: <code>var(--a, var(--b, blue))</code>. If <code>--a</code> is missing, it tries <code>--b</code>, then <code>blue</code>.</p>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS smooth scrolling with reduced motion",
+   "user_requests": [
+    "smooth scrolling css but respect reduced motion",
+    "how to do smooth scroll without breaking accessibility",
+    "css scroll-behavior smooth reduced motion",
+    "prefers-reduced-motion smooth scroll",
+    "smooth scrolling but disable for users who prefer no motion",
+    "how to respect reduced motion with css scroll",
+    "css smooth scroll with media query",
+    "css smooth scroll disable for reduced motion",
+    "prefers-reduced-motion smooth scroll",
+    "smooth scrolling but respect user motion settings",
+    "how to make smooth scroll accessible",
+    "css scroll-behavior reduced motion media query",
+    "turn off smooth scrolling for motion sensitivity"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Smooth scrolling, but kind</h4>\n  <p class=\"muted t-small\">Respect <code>prefers-reduced-motion</code>, <regex>user_name</regex>.</p>\n  <pre class=\"code\"><code>html {\n  scroll-behavior: smooth;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  html {\n    scroll-behavior: auto;\n  }\n}</code></pre>\n  <p class=\"t-small dim\">This keeps the nice slide for those who want it, and turns it off for those who don't.</p>\n  <details class=\"acc\">\n    <summary>What about anchor links?</summary>\n    <div class=\"body\">\n      <p>This applies to all scrolling, including anchor jumps. Just set it on the scrolling container (usually <code>html</code>).</p>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS clamp() for fluid type",
+   "user_requests": [
+    "css clamp font-size fluid typography",
+    "fluid type with clamp css",
+    "how to make font size scale with viewport using clamp",
+    "clamp for responsive text css",
+    "css clamp syntax for font-size",
+    "easy fluid typography with css clamp",
+    "use clamp to resize text smoothly",
+    "css clamp font size",
+    "fluid typography with clamp",
+    "responsive text without media queries using clamp",
+    "how to use clamp for font size",
+    "clamp() css example for headings",
+    "make font size scale with viewport using clamp"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Fluid type with <code>clamp()</code></h4>\n  <p class=\"muted t-small\">One line, no media queries, <regex>user_name</regex>.</p>\n  <pre class=\"code\"><code>h1 {\n  font-size: clamp(1.5rem, 4vw, 3rem);\n}</p>\n<p>p {\n  font-size: clamp(1rem, 1.5vw, 1.25rem);\n}</code></pre>\n  <p class=\"t-small dim\"><code>clamp(min, preferred, max)</code> keeps type readable at any size.</p>\n  <details class=\"acc\">\n    <summary>How to pick values</summary>\n    <div class=\"body\">\n      <p>Set <code>min</code> to your smallest comfortable size, <code>max</code> to the largest, and <code>preferred</code> to a viewport-relative unit like <code>vw</code> that hits those bounds around typical screen widths.</p>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS light and dark mode with system setting",
+   "user_requests": [
+    "css dark mode prefers-color-scheme",
+    "how to auto switch light dark mode css",
+    "system dark mode css",
+    "prefers-color-scheme dark light example",
+    "css media query for dark mode",
+    "make website follow system theme css",
+    "automatic dark mode with css variables",
+    "make my site follow the user's OS theme automatically",
+    "auto dark mode css based on device preference",
+    "prefers-color-scheme both light and dark styles",
+    "how to respect system dark mode settings in css",
+    "css media query for dark mode not working?",
+    "toggle between light and dark using system default"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Light and dark mode, automatically</h4>\n  <p class=\"muted t-small\">Let the system decide, <regex>user_name</regex>.</p>\n  <pre class=\"code\"><code>:root {\n  --bg: #fff;\n  --ink: #111;\n}\n\n@media (prefers-color-scheme: dark) {\n  :root {\n    --bg: #111;\n    --ink: #eee;\n  }\n}\n\nbody {\n  background: var(--bg);\n  color: var(--ink);\n}</code></pre>\n  <p class=\"t-small dim\">No toggle needed. Just use the variables everywhere.</p>\n  <details class=\"acc\">\n    <summary>Can I add a manual toggle too?</summary>\n    <div class=\"body\">\n      <p>Yes, with a class on <code>html</code> and a checkbox hack. But for now, this covers most users.</p>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS truncate long text with ellipsis",
+   "user_requests": [
+    "css ellipsis for long text",
+    "how to truncate text with css",
+    "text-overflow ellipsis example",
+    "truncate single line css",
+    "css cut off text with dots",
+    "ellipsis for overflowing text in a div",
+    "show ... when text is too long css",
+    "cut off text with dots when it's too long css",
+    "how to add ... at the end of overflowing text",
+    "css ellipsis not showing on multiline",
+    "truncate a paragraph to one line with css",
+    "make long titles end with three dots",
+    "text-overflow ellipsis not working fix"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Truncate long text</h4>\n  <p class=\"muted t-small\">One line, then dots. <regex>user_name</regex>, meet ellipsis.</p>\n  <pre class=\"code\"><code>.truncate {\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  max-width: 100%;\n}</code></pre>\n  <p class=\"t-small dim\">Works for a single line. For multiple lines, you'll need <code>-webkit-line-clamp</code> (non-standard but widely supported).</p>\n  <details class=\"acc\">\n    <summary>Multi-line truncation</summary>\n    <div class=\"body\">\n      <p><code>display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;</code> clamps to 3 lines. It's not standard, but it works in most browsers.</p>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS aspect-ratio for media boxes",
+   "user_requests": [
+    "how to keep image boxes from jumping when they load",
+    "CSS aspect-ratio? saw it in a tutorial, not sure how to use",
+    "stop my cards resizing as images load",
+    "aspect ratio css for a 16:9 video wrapper",
+    "reserve space for images so layout doesn't shift",
+    "how do i lock a div to square with css",
+    "aspect-ratio quickie pls",
+    "reserve space for images so layout doesn't shift",
+    "css aspect ratio box for responsive images",
+    "stop image loading from causing layout jump",
+    "maintain 16:9 ratio for video embeds css",
+    "how to set width and height proportionally in css",
+    "prevent content reflow when images load"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">CSS aspect-ratio for media boxes</h4>\n  <p class=\"muted t-small\">Reserve the space before the image arrives, so nothing jumps.</p>\n  <pre class=\"code\"><code>.thumb {\n  aspect-ratio: 16 / 9;\n  width: 100%;\n  border-radius: var(--r-sm);\n  background: var(--panel-2);\n  overflow: hidden;\n}\n\n.thumb > img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  display: block;\n}\n\n/* square avatar tile */\n.avatar-tile {\n  aspect-ratio: 1;\n  width: var(--s-6);\n  border-radius: var(--r-pill);\n  background: var(--panel-2);\n}</code></pre>\n  <details class=\"acc\">\n    <summary>Why it works</summary>\n    <div class=\"body\">\n      <p class=\"t-small\"><regex>user_name</regex>, the browser knows the box's height from the width, so it never has to guess. No more layout shift when the image lands.</p>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS min() max() and clamp() together",
+   "user_requests": [
+    "how to make text size scale smoothly instead of only at breakpoints",
+    "fluid typography that also respects min/max limits",
+    "css min max clamp together?",
+    "better than a pile of media queries for font sizes",
+    "responsive headings without breakpoint jumps",
+    "font scaling as viewport changes css",
+    "clamp min max help",
+    "css fluid typography without media queries",
+    "make font size grow with viewport smoothly",
+    "clamp() vs min() vs max() difference",
+    "responsive text that scales between sizes",
+    "how to use clamp for padding and margin",
+    "create a fluid type scale with css functions"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">CSS min() max() and clamp() together</h4>\n  <p class=\"muted t-small\">One line that scales between two honest bounds.</p>\n  <pre class=\"code\"><code>h1 {\n  font-size: clamp(1.5rem, 4vw + 1rem, 3rem);\n  line-height: 1.15;\n}\n\n/* min() picks the smaller, max() the larger */\n.sidebar {\n  width: min(280px, 30%);\n}\n\n.reading {\n  max-width: min(65ch, 100% - var(--s-4));\n  margin-inline: auto;\n}</code></pre>\n  <div class=\"callout info\">\n    <p class=\"t-small\">The middle value grows with the viewport. The outer two are your floor and ceiling. Say goodbye to a stack of breakpoints for type.</p>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS scrollbar-color and scrollbar-width",
+   "user_requests": [
+    "make scrollbars match my dark theme",
+    "custom scrollbar colors without webkit hacks",
+    "scrollbar width thin css",
+    "my scrollbars are too chunky on desktop",
+    "can css style the scrollbar these days",
+    "scrollbar-color works in firefox and chrome?",
+    "scrollbar styling css",
+    "custom scrollbar colors for dark mode",
+    "thin scrollbar css firefox",
+    "style browser scrollbar to match theme",
+    "scrollbar-width not working in chrome?",
+    "change scrollbar color with css only",
+    "make scrollbars less obtrusive"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">CSS scrollbar-color and scrollbar-width</h4>\n  <p class=\"muted t-small\">Friendly, standard properties instead of <code>::-webkit-scrollbar</code>.</p>\n  <pre class=\"code\"><code>html {\n  scrollbar-color: var(--accent) var(--panel-2);\n  scrollbar-width: thin;\n}\n\n.scroller {\n  max-height: 12rem;\n  overflow: auto;\n  scrollbar-gutter: stable;\n}</code></pre>\n  <details class=\"acc\">\n    <summary>What each part does</summary>\n    <div class=\"body\">\n      <p class=\"t-small\"><strong>scrollbar-color</strong> takes a thumb and a track colour. <strong>scrollbar-width</strong> takes <em>auto</em>, <em>thin</em>, or <em>none</em>. Widely supported now, so you can retire the vendor dance.</p>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS @layer for taming specificity",
+   "user_requests": [
+    "how do i stop specificity wars in my css",
+    "css layers explained simply",
+    "organize my stylesheet so overrides are predictable",
+    "@layer base utilities components",
+    "layers for a small design system",
+    "specificity keeps biting me, help",
+    "css @layer basics",
+    "how to organize css layers to avoid !important",
+    "css cascade layers explained",
+    "control specificity order with @layer",
+    "reset styles with lowest priority layer",
+    "use @layer to override third-party css",
+    "managing css specificity in large projects"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">CSS @layer for taming specificity</h4>\n  <p class=\"muted t-small\">Later layers win, no matter how specific the selector.</p>\n  <pre class=\"code\"><code>@layer reset, base, utilities;\n\n@layer base {\n  .btn { background: var(--panel-2); }\n}\n\n@layer utilities {\n  .btn.primary { background: var(--accent); }\n}\n\n/* works too */\n@layer base {\n  h2 { font-size: var(--t-4); }\n}</code></pre>\n  <div class=\"callout good\">\n    <p class=\"t-small\">Order in the first line decides who wins. Keep that list short-ish and your cascade becomes a tidy little stack.</p>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS text-wrap: balance and pretty",
+   "user_requests": [
+    "balance my headings so they don't look lopsided",
+    "css text-wrap pretty for paragraphs",
+    "stop orphan words in shorter copy",
+    "headline line breaks look bad on mobile",
+    "text-wrap balance browser support",
+    "nicer line wrapping without manual br",
+    "text-wrap css please",
+    "make headlines wrap evenly without orphans",
+    "css text-wrap balance browser support",
+    "how to prevent single word on last line",
+    "pretty text wrapping for paragraphs",
+    "balance vs pretty text-wrap difference",
+    "fix awkward line breaks in headings"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">CSS text-wrap: balance and pretty</h4>\n  <p class=\"muted t-small\">Let the browser nudge line breaks into place.</p>\n  <pre class=\"code\"><code>h1, h2, h3 {\n  text-wrap: balance;\n  max-width: 30ch;\n}\n\np {\n  text-wrap: pretty;\n}\n\n.badge {\n  text-wrap: nowrap;\n}</code></pre>\n  <ul class=\"list t-small\">\n    <li><strong>balance</strong> &ndash; evens out short, multi-line blocks like headings.</li>\n    <li><strong>pretty</strong> &ndash; keeps the last line from being a lonely word.</li>\n    <li><strong>nowrap</strong> &ndash; handy for pills and labels.</li>\n  </ul>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS :focus-visible for keyboard users",
+   "user_requests": [
+    "stop the focus ring from showing on mouse clicks",
+    "focus-visible vs :focus explained",
+    "accessible focus styles without annoying outlines on clicks",
+    "keyboard navigation visible but mouse not",
+    "css focus-visible where supported",
+    "focus outline only when tabbing",
+    ":focus-visible quick help",
+    "show focus ring only for keyboard navigation",
+    "remove outline on click but keep for tab",
+    "css focus-visible vs focus",
+    "accessible focus styles without mouse outline",
+    "how to style focus for keyboard accessibility",
+    "hide focus ring on mouse but show on tab"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">CSS :focus-visible for keyboard users</h4>\n  <p class=\"muted t-small\">A ring for tabbers, quiet for clickers.</p>\n  <pre class=\"code\"><code>.btn:focus-visible,\n.link:focus-visible {\n  outline: 2px solid var(--accent);\n  outline-offset: 2px;\n  border-radius: var(--r-sm);\n}\n\n.btn:focus:not(:focus-visible) {\n  outline: none;\n}</code></pre>\n  <details class=\"acc\">\n    <summary>The short version</summary>\n    <div class=\"body\">\n      <p class=\"t-small\"><code>:focus-visible</code> fires when the user is likely keyboarding. The second rule silences the ring after a mouse click. Everyone stays happy.</p>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS :is() and :where() for compact selectors",
+   "user_requests": [
+    "how to shorten my css selectors",
+    "css :is() vs :where()",
+    "can i group selectors without repeating myself",
+    "what does :where() do in css",
+    "simplify selector lists css",
+    "css specificity zero selector",
+    "is and where pseudo classes explained",
+    "combine multiple selectors with :is()",
+    "reduce selector repetition with css :where",
+    "difference between :is and :where specificity",
+    "shorten long css selectors list",
+    "use :is() to group hover styles",
+    "css pseudo-class for matching any selector"
+   ],
+   "html": "<div class=\"card\"><h4>CSS :is() and :where() for compact selectors</h4><pre class=\"code\"><code>/* before */\n.card &gt; .title,\n.panel &gt; .title,\n.sheet &gt; .title { color: var(--ink); }\n\n/* after */\n:is(.card, .panel, .sheet) &gt; .title { color: var(--ink); }\n\n/* :where() = zero specificity, easy overrides */\n:where(.card, .panel, .sheet) &gt; .title { color: var(--ink); }\n</code></pre><p class=\"t-small dim\">:is() keeps the highest specificity of its arguments. :where() throws it all away (0,0,0), so later rules win without a fight.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS @property for typed custom properties",
+   "user_requests": [
+    "css @property at-rule",
+    "how to animate css variables",
+    "typed custom properties css",
+    "make css variable animate smoothly",
+    "what is @property in css",
+    "transitions on custom properties",
+    "css property syntax explained",
+    "register custom properties with css @property",
+    "css @property syntax examples",
+    "animate custom properties with @property",
+    "how to define typed css variables",
+    "use @property for gradient transitions",
+    "css houdini @property not working"
+   ],
+   "html": "<div class=\"card\"><h4>CSS @property for typed custom properties</h4><pre class=\"code\"><code>@property --angle {\n  syntax: '&lt;angle&gt;';\n  inherits: false;\n  initial-value: 0deg;\n}\n\n.spinner {\n  --angle: 0deg;\n  rotate: var(--angle);\n  transition: --angle .6s ease;\n}\n.spinner:hover { --angle: 180deg; }\n</code></pre><p class=\"t-small dim\">Typed via syntax, custom properties can animate. Untyped ones just snap.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS background-clip: text for gradient headings",
+   "user_requests": [
+    "gradient text css",
+    "how to make text a gradient",
+    "background clip text snippet",
+    "colorful heading css",
+    "text with gradient fill",
+    "css background-clip text",
+    "gradient font effect css",
+    "gradient text effect with css",
+    "how to make text filled with gradient",
+    "background-clip text not working safari",
+    "css text with image background",
+    "create colorful gradient headings",
+    "clip background to text css fallback"
+   ],
+   "html": "<div class=\"card\"><h4>CSS background-clip: text for gradient headings</h4><pre class=\"code\"><code>.gradient-text {\n  background: linear-gradient(90deg, var(--accent), var(--accent-2));\n  -webkit-background-clip: text;\n  background-clip: text;\n  color: transparent;\n  /* fallback for forced-colors */\n}\n@media (forced-colors: active) {\n  .gradient-text { color: CanvasText; background: none; }\n}\n</code></pre><p class=\"t-small dim\">Paint the gradient, clip it to the glyphs, then hide the fill. The media query keeps it readable in high-contrast mode.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS writing-mode for vertical text",
+   "user_requests": [
+    "vertical text css",
+    "css writing-mode snippet",
+    "how to rotate text 90 degrees with css",
+    "sideways text in css",
+    "vertical headings css",
+    "css text-orientation",
+    "make text read bottom to top css",
+    "display text vertically in css",
+    "writing-mode vertical-rl example",
+    "how to rotate text 90 degrees with css",
+    "vertical sidebar text css",
+    "css text-orientation upright",
+    "make text read top to bottom"
+   ],
+   "html": "<div class=\"card\"><h4>CSS writing-mode for vertical text</h4><pre class=\"code\"><code>.vertical-label {\n  writing-mode: vertical-rl;\n  text-orientation: mixed;\n  /* or upright for CJK */\n  letter-spacing: .12em;\n  text-transform: uppercase;\n  font-size: var(--t-2);\n  color: var(--ink-2);\n}\n</code></pre><p class=\"t-small dim\">Beats rotate() for accessibility: screen readers still read the string naturally, and logical properties keep padding sane.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS mix-blend-mode for overlay effects",
+   "user_requests": [
+    "css blend modes",
+    "mix-blend-mode examples",
+    "how to blend text over image css",
+    "blend mode overlay css",
+    "css multiply blend",
+    "text over image with blend mode",
+    "css blend mode snippet",
+    "blend images with background css",
+    "mix-blend-mode multiply example",
+    "how to create duotone effect with css",
+    "css blend modes for text over image",
+    "difference between mix-blend-mode and background-blend-mode",
+    "make overlay effect with css blend"
+   ],
+   "html": "<div class=\"card\"><h4>CSS mix-blend-mode for overlay effects</h4><pre class=\"code\"><code>.hero {\n  position: relative;\n  background: var(--bg-alt);\n}\n.hero::before {\n  content: '';\n  position: absolute;\n  inset: 0;\n  background: linear-gradient(135deg, var(--accent), transparent);\n  mix-blend-mode: overlay;\n  pointer-events: none;\n}\n.hero &gt; * { position: relative; }\n</code></pre><p class=\"t-small dim\">Blends the pseudo-element with whatever sits behind it. Keep the overlay pointer-events: none so links still click.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS will-change for smoother animations",
+   "user_requests": [
+    "css will-change property",
+    "how to make animations smoother",
+    "when to use will-change css",
+    "performance css animation",
+    "css will-change snippet",
+    "optimize css transitions",
+    "smoother transforms css",
+    "improve animation performance with will-change",
+    "when to use will-change css",
+    "will-change transform example",
+    "css will-change best practices",
+    "prevent janky animations with will-change",
+    "will-change causing memory issues"
+   ],
+   "html": "<div class=\"card\"><h4>CSS will-change for smoother animations</h4><pre class=\"code\"><code>.slider {\n  transition: transform .3s ease;\n}\n.slider.is-active {\n  will-change: transform;\n}\n\n/* better: only while interacting */\n.slider:hover,\n.slider:focus-visible {\n  will-change: transform;\n}\n</code></pre><p class=\"t-small dim\">Hints the browser to promote the layer. Add it just before motion starts, remove it after. Leaning on it forever eats memory.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS :disabled and :enabled for form controls",
+   "user_requests": [
+    "how to style disabled inputs",
+    "css :disabled pseudo class",
+    "make disabled buttons look greyed out",
+    "style enabled form fields",
+    "css :enabled example",
+    "disabled input styling css",
+    "form control disabled state css",
+    "style disabled buttons with css",
+    "css :enabled pseudo-class example",
+    "how to change color of disabled input",
+    "differentiate enabled and disabled form fields",
+    "css disabled attribute selector vs pseudo-class",
+    "make disabled inputs look greyed out"
+   ],
+   "html": "<div class=\"card\"><h4>CSS :disabled and :enabled</h4><pre class=\"code\"><code>input:disabled,\nbutton:disabled {\n  opacity: 0.5;\n  cursor: not-allowed;\n  background: var(--bg-alt);\n  color: var(--ink-3);\n  border-color: var(--line);\n}\n\ninput:enabled,\nbutton:enabled {\n  background: var(--panel);\n  color: var(--ink);\n  border: 1px solid var(--line-2);\n}\n\ninput:enabled:focus-visible {\n  outline: 2px solid var(--accent);\n  outline-offset: 2px;\n}</code></pre><p class=\"muted\">Only works on native controls. Add <code>disabled</code> in HTML.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS :required and :optional for form fields",
+   "user_requests": [
+    "css :required pseudo class",
+    "style required form fields",
+    "how to mark required inputs",
+    "css :optional selector",
+    "required star with css",
+    "form required field styling css",
+    "css required optional pseudo",
+    "style required inputs with css",
+    "css :optional pseudo-class example",
+    "how to highlight required fields",
+    "add asterisk to required labels css",
+    "required vs optional form styling",
+    "css pseudo-class for required inputs"
+   ],
+   "html": "<div class=\"card\"><h4>CSS :required and :optional</h4><pre class=\"code\"><code>input:required {\n  border-left: 3px solid var(--warn);\n}\n\ninput:required + label::after {\n  content: \" *\";\n  color: var(--bad);\n}\n\ninput:optional {\n  border-left: 3px solid var(--line-2);\n}\n\n/* Reduce motion for any animation */\n@media (prefers-reduced-motion: reduce) {\n  input:required {\n    transition: none;\n  }\n}</code></pre><p class=\"muted\">Mirror this to <code>select</code> and <code>textarea</code>.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS :read-only and :read-write for form fields",
+   "user_requests": [
+    "css readonly input styling",
+    "style read-only form fields",
+    "css :read-write pseudo class",
+    "make readonly inputs look different",
+    "how to style readonly attribute",
+    "css readonly vs disabled",
+    "readonly input css",
+    "styling inputs that users cant edit css",
+    "read only vs read write pseudo classes",
+    "make locked fields look greyed out css",
+    "css target editable text boxes",
+    "how 2 style readonly inputs differently",
+    "pseudo class for writable form controls"
+   ],
+   "html": "<div class=\"card\"><h4>CSS :read-only and :read-write</h4><pre class=\"code\"><code>input:read-only,\ntextarea:read-only {\n  background: var(--bg-alt);\n  color: var(--ink-3);\n  border-style: dashed;\n  cursor: default;\n}\n\ninput:read-write,\ntextarea:read-write {\n  background: var(--panel);\n  color: var(--ink);\n  border: 1px solid var(--line-2);\n}\n\n/* contenteditable also matches :read-write */\n[contenteditable]:read-write {\n  outline: 1px dashed var(--accent);\n}</code></pre><p class=\"muted\">Use <code>readonly</code> for values you show but don't accept edits to.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS :placeholder-shown for input hints",
+   "user_requests": [
+    "css placeholder shown pseudo",
+    "style input placeholder state",
+    "css :placeholder-shown example",
+    "detect empty input with css",
+    "how to style placeholder text",
+    "css placeholder show label",
+    "placeholder-shown input styling",
+    "detect when placeholder still visible css",
+    "hide label once user types something",
+    "css select input that has placeholder showing",
+    "placeholder shown pseudo class examples",
+    "style empty inputs before typing css",
+    "only show hint text when field is blank"
+   ],
+   "html": "<div class=\"card\"><h4>CSS :placeholder-shown</h4><pre class=\"code\"><code>input:placeholder-shown {\n  border-color: var(--line);\n  background: var(--bg-alt);\n}\n\n/* Hide the floating label while placeholder shows */\n.field {\n  position: relative;\n}\n.field label {\n  position: absolute;\n  top: 50%;\n  transform: translateY(-50%);\n  transition: 0.2s ease;\n  pointer-events: none;\n}\n.field:focus-within label,\n.field input:not(:placeholder-shown) + label {\n  top: 0;\n  font-size: 0.75rem;\n  color: var(--accent);\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .field label { transition: none; }\n}</code></pre></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS :valid and :invalid for form feedback",
+   "user_requests": [
+    "style valid invalid forms css",
+    "css :valid :invalid pseudo",
+    "show form errors with css",
+    "green red inputs css",
+    "css validation styling",
+    "form valid invalid css",
+    "input validity css pseudo class",
+    "green border when email is correct css",
+    "red outline bad input fields",
+    "css pseudo classes for form validation states",
+    "style inputs based on validity",
+    "show error color only after typing css",
+    "validity based styling form css"
+   ],
+   "html": "<div class=\"card\"><h4>CSS :valid and :invalid</h4><pre class=\"code\"><code>input:valid {\n  border-color: var(--good);\n}\n\ninput:invalid {\n  border-color: var(--bad);\n}\n\n/* Only show after interaction */\ninput:not(:focus):invalid {\n  background: var(--bad-soft);\n}\n\ninput:invalid + .error-msg {\n  display: block;\n  color: var(--bad);\n}\n.error-msg { display: none; }</code></pre><p class=\"muted\">Combine with <code>:user-invalid</code> when available for better timing.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS :in-range and :out-of-range for number inputs",
+   "user_requests": [
+    "css in range out of range",
+    "style number input ranges",
+    "css :in-range example",
+    "validation for number input css",
+    "css range pseudo classes",
+    "number input min max styling",
+    "in-range out-of-range css",
+    "css number input min max styling",
+    "color the slider handle when out of bounds",
+    "pseudo class for values outside min and max",
+    "style number field red when too big",
+    "in range out of range selectors css",
+    "highlight valid numeric values css"
+   ],
+   "html": "<div class=\"card\"><h4>CSS :in-range and :out-of-range</h4><pre class=\"code\"><code>input[type=\"number\"]:in-range {\n  border-color: var(--good);\n  background: var(--good-soft);\n}\n\ninput[type=\"number\"]:out-of-range {\n  border-color: var(--bad);\n  background: var(--bad-soft);\n}\n\ninput[type=\"number\"]:out-of-range + .hint {\n  color: var(--bad);\n}\n.hint { color: var(--ink-3); }</code></pre><p class=\"muted\">Set <code>min</code> and <code>max</code> on the input for this to work.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS image-rendering for pixel-art scaling",
+   "user_requests": [
+    "how do I keep pixel art from blurring when I scale it up in css?",
+    "css image-rendering crisp edges",
+    "make my 8-bit sprites stay sharp on retina screens pls",
+    "image-rendering pixelated vs crisp-edges difference?",
+    "stop the browser smoothing my pixel divs",
+    "css for retro game sprites not fuzzy",
+    "why is my scaled pixel art blurry css fix",
+    "stop pixel art getting fuzzy css",
+    "crisp edges property for scaled sprites",
+    "image-rendering pixelated example",
+    "blurry upscaled png fix css",
+    "make retro game graphics stay sharp",
+    "nearest neighbor scaling in css"
+   ],
+   "html": "<div class=\"card\"><h4>CSS snippet</h4><p class=\"muted t-small\">Keep pixel art crunchy at any zoom <regex>user_name</regex>.</p><pre class=\"code\"><code>/* Scale up small pixel art without smoothing */\n.sprite {\n  width: 8rem;\n  height: 8rem;\n  image-rendering: pixelated;\n  /* crisp-edges for browsers that dislike pixelated */\n  image-rendering: -moz-crisp-edges;\n}\n\n/* Downscaling photos? Use auto or high-quality */\n.photo {\n  image-rendering: auto;\n}</code></pre><p class=\"dim t-small\"><code>pixelated</code> for upscaling, <code>auto</code> for real pictures.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS object-fit for media that fills its box",
+   "user_requests": [
+    "how to crop an image to fit a square container css",
+    "object-fit cover vs contain explained",
+    "stop my images stretching weird in cards",
+    "css make video cover without distortion",
+    "object-fit and object-position quick guide",
+    "fit images in fixed boxes without squish",
+    "photo not stretching css trick",
+    "cover vs contain explained",
+    "make video fill container without stretching",
+    "image cover crop square css",
+    "object fit cover center example",
+    "fit img inside fixed box css",
+    "how to avoid squished photos in cards"
+   ],
+   "html": "<div class=\"card\"><h4>CSS snippet</h4><p class=\"muted t-small\">Fit media into a box without squishing it, <regex>user_name</regex>.</p><pre class=\"code\"><code>.thumb {\n  width: 200px;\n  height: 200px;\n  object-fit: cover;      /* crop to fill */\n  object-position: center; /* focus point */\n  border-radius: var(--r-2);\n}\n\n/* contain keeps the whole image visible */\n.contain { object-fit: contain; }</code></pre><p class=\"dim t-small\">Use <code>cover</code> for cards, <code>contain</code> for logos.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS scroll-margin-top for sticky headers",
+   "user_requests": [
+    "anchor links land under my sticky header",
+    "css scroll-margin-top fix for fixed nav",
+    "jump links hidden behind header solution",
+    "scroll-margin vs scroll-padding difference",
+    "make anchor links respect sticky bar",
+    "css stop headers covering anchor targets",
+    "smooth scroll under fixed header fix",
+    "anchor jump hidden behind fixed nav",
+    "offset scroll position for hash links",
+    "scroll padding vs scroll margin",
+    "smooth scroll stops under header",
+    "css fix jump link covered by navbar",
+    "extra space above anchor target"
+   ],
+   "html": "<div class=\"card\"><h4>CSS snippet</h4><p class=\"muted t-small\">Stop sticky headers from covering anchor targets, <regex>user_name</regex>.</p><pre class=\"code\"><code>/* Reserve room above each anchor target */\nsection[id] {\n  scroll-margin-top: 5rem;\n}\n\n/* Or globally on any focusable jump target */\n:target {\n  scroll-margin-top: var(--s-7);\n}</code></pre><p class=\"dim t-small\"><code>scroll-margin-top</code> matches your header height.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS touch-action for swipe without zoom",
+   "user_requests": [
+    "css stop pinch zoom on a carousel",
+    "touch-action pan-y for horizontal sliders",
+    "prevent page scroll while swiping a card",
+    "disable double tap zoom on buttons css",
+    "touch-action manipulation vs pan-y",
+    "mobile swipe gestures without zooming",
+    "css touch-action quick fix for sliders",
+    "pan y only css mobile",
+    "disable double tap zoom on slider",
+    "touch action manipulation example",
+    "prevent page zoom while swiping carousel",
+    "css allow horizontal swipe but block pinch",
+    "mobile gestures control css"
+   ],
+   "html": "<div class=\"card\"><h4>CSS snippet</h4><p class=\"muted t-small\">Let swipes work without the page fighting back, <regex>user_name</regex>.</p><pre class=\"code\"><code>/* Allow vertical scroll, block horizontal pan */\n.carousel {\n  touch-action: pan-y;\n  overflow-x: auto;\n  scroll-snap-type: x mandatory;\n}\n\n/* Buttons: no double-tap zoom, still tappable */\n.btn {\n  touch-action: manipulation;\n}</code></pre><p class=\"dim t-small\">Best used on interactive surfaces, not the whole page.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS content-visibility for faster rendering",
+   "user_requests": [
+    "css content-visibility auto for long lists",
+    "skip offscreen rendering to speed up page",
+    "make my long article load faster css",
+    "content-visibility contain-intrinsic-size explained",
+    "css performance trick for big pages",
+    "render only visible sections css",
+    "page feels slow with 1000 comments css fix",
+    "speed up rendering huge page css",
+    "content visibility auto contain intrinsic size",
+    "lazy render offscreen sections",
+    "css skip layout for invisible content",
+    "make long article scroll smoother",
+    "defer painting below the fold css"
+   ],
+   "html": "<div class=\"card\"><h4>CSS snippet</h4><p class=\"muted t-small\">Skip work on offscreen content, <regex>user_name</regex>.</p><pre class=\"code\"><code>.comment {\n  content-visibility: auto;\n  /* Give the browser a size hint */\n  contain-intrinsic-size: 0 120px;\n}\n\n/* Use carefully: search-in-page may skip hidden text */\n@media (prefers-reduced-motion: reduce) {\n  .comment { content-visibility: visible; }\n}</code></pre><p class=\"dim t-small\">Great for long feeds. Test with your own content.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS gap fallback for flexbox spacing",
+   "user_requests": [
+    "css gap in flexbox browser support fallback",
+    "flex gap not working in older safari fix",
+    "margin fallback for flex gap",
+    "space between flex items without margins",
+    "flex gap vs margin spacing",
+    "make flex gap work everywhere",
+    "css gap flex safe fallback",
+    "flex gap not working safari fix",
+    "space between flex items old browsers",
+    "alternative to gap property css",
+    "margin fallback for flex gap",
+    "flexbox spacing support polyfill",
+    "gap in flex containers when unsupported"
+   ],
+   "html": "<div class=\"card\"><h4>CSS snippet</h4><p class=\"muted t-small\">Spacing that survives old Safari, <regex>user_name</regex>.</p><pre class=\"code\"><code>/* Base spacing via margins */\n.row > * + * {\n  margin-left: var(--s-3);\n}\n\n/* Modern browsers: switch to gap */\n@supports (gap: 1rem) {\n  .row {\n    gap: var(--s-3);\n  }\n  .row > * + * {\n    margin-left: 0;\n  }\n}</code></pre><p class=\"dim t-small\"><code>@supports</code> keeps it honest for older engines.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS :autofill for browser-filled fields",
+   "user_requests": [
+    "how do I style autofilled input fields differently",
+    "css autofill background color",
+    "why does chrome make my inputs yellow",
+    "style:-webkit-autofill",
+    "please help me fix the ugly yellow autofill background",
+    "browser autofill looks bad on dark mode",
+    "css :autofill pseudo class",
+    "chrome yellow autofill background override",
+    "style saved password fields css",
+    "remove blue autofill bg",
+    "autofill pseudo class webkit box shadow trick",
+    "make autofilled inputs match my theme",
+    "browser filled input color css"
+   ],
+   "html": "<div class=\"card\">\n  <h4>CSS :autofill</h4>\n  <p class=\"muted\">Browsers paint a yellow (or, in dark mode, a washed-out) background behind fields they fill for you. Outrun that with <code>:autofill</code>.</p>\n  <pre class=\"code\"><code>input:autofill {\n  background-color: var(--panel-2);\n  color: var(--ink);\n  -webkit-text-fill-color: var(--ink);\n  -webkit-box-shadow: 0 0 0 1000px var(--panel-2) inset;\n}\n\n/* Safari needs the vendor prefix */\ninput:-webkit-autofill {\n  -webkit-text-fill-color: var(--ink);\n  transition: background-color 9999s;\n}</code></pre>\n  <p class=\"t-small dim\">The <code>-webkit-box-shadow</code> trick paints over the browser's yellow without fighting the animation.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS ruby-align for elegant annotations",
+   "user_requests": [
+    "what does ruby-align do in css",
+    "align ruby text properly",
+    "css ruby positioning",
+    "how to center furigana above kanji",
+    "ruby annotation alignment css",
+    "css ruby-align start/center/space-between",
+    "make ruby text line up nicely",
+    "ruby text alignment css property",
+    "position furigana above kanji",
+    "ruby annotation spacing options",
+    "what values does ruby align take",
+    "align small text over base characters",
+    "css ruby position and align explained"
+   ],
+   "html": "<div class=\"card\">\n  <h4>CSS ruby-align</h4>\n  <p class=\"muted\">For East Asian typography, <code>&lt;ruby&gt;</code> pairs base text with small annotations. <code>ruby-align</code> decides where those annotations sit.</p>\n  <pre class=\"code\"><code>ruby {\n  ruby-align: center; /* default per spec varies */\n}\n\n/* Push annotations to the start of each base */\n.furigana-start ruby {\n  ruby-align: start;\n}\n\n/* Distribute across the full base width */\n.furigana-wide ruby {\n  ruby-align: space-between;\n}</code></pre>\n  <p class=\"t-small dim\">Use <code>center</code> for balanced look, <code>start</code> for dictionary-style columns. Check the browser: support is still spotty outside Chromium.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS font-variant-numeric for tabular numbers",
+   "user_requests": [
+    "how do I make numbers line up in a table",
+    "css tabular-nums",
+    "font-variant-numeric css",
+    "why do my digits jump around when counting",
+    "make numbers monospaced in css",
+    "tabular figures css",
+    "css lining numbers vs oldstyle",
+    "monospaced digits in tables css",
+    "lining vs oldstyle figures css",
+    "make numbers same width font variant",
+    "tabular nums example",
+    "align decimal columns in a table",
+    "counters that dont jitter css"
+   ],
+   "html": "<div class=\"card\">\n  <h4>CSS font-variant-numeric</h4>\n  <p class=\"muted\">Numbers in most fonts are proportional, so <strong>1</strong> and <strong>8</strong> take different widths. Tables wiggle. Flip them to tabular figures.</p>\n  <pre class=\"code\"><code>table .num {\n  font-variant-numeric: tabular-nums;\n}\n\n/* Oldstyle figures for body text */\n.prose {\n  font-variant-numeric: oldstyle-nums;\n}\n\n/* Fractions and ordinals anyone? */\n.recipe .ratio {\n  font-variant-numeric: diagonal-fractions;\n}</code></pre>\n  <p class=\"t-small dim\">Works in any font that offers the feature; silently ignored otherwise. Pair with <code>text-align: right</code> for clean columns.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS caret-color for custom cursors",
+   "user_requests": [
+    "how to change the blinking cursor color in css",
+    "css caret-color",
+    "make text cursor match my brand color",
+    "input caret invisible on dark background",
+    "custom caret cursor css",
+    "caret color css",
+    "text insertion cursor styling",
+    "change text cursor blinking color",
+    "caret color input css",
+    "make the typing cursor red",
+    "style the insertion point in textarea",
+    "caret color transparent trick",
+    "custom color for text entry cursor"
+   ],
+   "html": "<div class=\"card\">\n  <h4>CSS caret-color</h4>\n  <p class=\"muted\">The blinking text cursor inside inputs inherits <code>color</code> by default, which can vanish on dark panels. Nudge it with <code>caret-color</code>.</p>\n  <pre class=\"code\"><code>input, textarea, [contenteditable] {\n  caret-color: var(--accent);\n}\n\n/* Or hide it entirely (accessibility risk!) */\n.no-caret {\n  caret-color: transparent;\n}</code></pre>\n  <p class=\"t-small dim\">Prefer your accent over hiding. A transparent caret is a small cruelty to keyboard users.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS forced-color-adjust for high-contrast mode",
+   "user_requests": [
+    "how do I handle windows high contrast mode",
+    "css forced-colors",
+    "forced-color-adjust none",
+    "my buttons disappear in high contrast mode",
+    "css high contrast media query",
+    "supported forced colors css",
+    "windows contrast theme breaks my design",
+    "windows high contrast css override",
+    "forced colors media query example",
+    "keep my colors in contrast mode",
+    "forced color adjust none",
+    "whcm styling css",
+    "high contrast mode browser colors"
+   ],
+   "html": "<div class=\"card\">\n  <h4>CSS forced-color-adjust</h4>\n  <p class=\"muted\">Windows High Contrast Mode strips your palette and swaps in system colors. Usually that's good. Sometimes your logo or chart needs to keep its own colors.</p>\n  <pre class=\"code\"><code>@media (forced-colors: active) {\n  .card {\n    border: 1px solid CanvasText;\n  }\n  .btn {\n    forced-color-adjust: auto;\n  }\n  .badge.accent {\n    forced-color-adjust: none;\n    color: var(--accent);\n  }\n}</code></pre>\n  <p class=\"t-small dim\">Use <code>CanvasText</code>, <code>Canvas</code>, <code>LinkText</code> system colours so things stay legible. Apply <code>none</code> sparingly.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS ::backdrop for dialog and fullscreen",
+   "user_requests": [
+    "how to style the backdrop of a dialog element",
+    "css dialog backdrop color",
+    "::backdrop pseudo element",
+    "fullscreen backdrop styling",
+    "make modal overlay blurry css",
+    "style dialog modal overlay",
+    "css ::backdrop blur",
+    "style modal overlay background css",
+    "dialog backdrop blur example",
+    "fullscreen element backdrop color",
+    "backdrop pseudo element css",
+    "dim the page behind a modal",
+    "make dialog background semi transparent"
+   ],
+   "html": "<div class=\"card\">\n  <h4>CSS ::backdrop</h4>\n  <p class=\"muted\">The <code>::backdrop</code> pseudo-element paints behind a <code>&lt;dialog&gt;</code> or a fullscreened element. Great for a blurred scrim.</p>\n  <pre class=\"code\"><code>dialog::backdrop {\n  background: color-mix(in oklab, var(--ink) 60%, transparent);\n  backdrop-filter: blur(6px);\n}\n\nvideo::backdrop {\n  background: black;\n}</code></pre>\n  <p class=\"t-small dim\">Keep the contrast high enough that the dialog's own text stays readable. If <code>backdrop-filter</code> hurts performance on phones, drop it and just darken.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS scroll-driven animations",
+   "user_requests": [
+    "How do I make an animation run when scrolling?",
+    "css scroll timeline example",
+    "Animate progress bar on scroll without JS?",
+    "scroll-linked animations in pure css",
+    "make element fade in as you scroll",
+    "scroll-driven animations simplest code",
+    "css animate on scroll plz",
+    "How can I trigger CSS animations based on scroll position?",
+    "css animation on scroll down",
+    "I want my element to slide in as I scroll",
+    "scroll linked animation css",
+    "make animation play while scrolling",
+    "how to animate on scroll without js"
+   ],
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Scroll-driven progress</h4><p class=\"muted\">CSS now animates on scroll\u2014no JS. Use <code>animation-timeline: scroll()</code> on a progress bar.</p><pre class=\"code\"><code>.progress{inline-size:100%;block-size:6px;background:var(--line);border-radius:var(--r-pill);overflow:hidden}\n.progress > span{display:block;block-size:100%;background:var(--accent);inline-size:0%\n  ;animation:grow linear;animation-timeline:scroll(root);}\n@keyframes grow{from{inline-size:0%}to{inline-size:100%}}</code></pre><div class=\"callout info\"><span class=\"badge info\"><i class=\"dot\"></i>cached match</span> Supported in modern browsers. Fallback: set a default width, progress just won't animate.</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS @starting-style for entry animations",
+   "user_requests": [
+    "css fade in on first paint",
+    "how to animate element appearing in dom",
+    "css @starting-style example",
+    "animate popover open without js",
+    "css transition from display none",
+    "starting-style property demo",
+    "css animate on appear??",
+    "css entry animation when element appears",
+    "how to fade in on initial render css",
+    "@starting-style usage",
+    "animate first style css",
+    "css initial style transition",
+    "make popup fade in with css only"
+   ],
+   "html": "<div class=\"card\"><h4>Animate on entry with @starting-style</h4><p>Your element can fade in the moment it renders\u2014no JS needed. <code>@starting-style</code> sets the \"from\" state.</p><pre class=\"code\"><code>.popover{opacity:1;transform:scale(1);transition:opacity .3s,transform .3s}\n@starting-style{.popover{opacity:0;transform:scale(.9)}}</code></pre><p class=\"muted\">Pair with <code>display:none</code> toggles via <code>details</code> or popover API for smooth show/hide.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS subgrid for aligned cards",
+   "user_requests": [
+    "css subgrid example",
+    "align items across cards with grid",
+    "how to use subgrid to line up content",
+    "nested grid alignment css",
+    "css subgrid row alignment",
+    "make cards align neatly with subgrid",
+    "subgrid plz",
+    "how to align cards using css subgrid",
+    "subgrid card layout example",
+    "css subgrid for equal height cards",
+    "align grid items across columns",
+    "subgrid rows in card grid",
+    "css subgrid practical use"
+   ],
+   "html": "<div class=\"card\"><h4>CSS subgrid</h4><p>Row alignment made easy. Subgrid lets a child grid use its parent's tracks.</p><pre class=\"code\"><code>.grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:auto auto auto;gap:var(--s-3)}\n.card{grid-row:span 3;display:grid;grid-template-rows:subgrid}\n.card h3{grid-row:1}.card p{grid-row:2}.card footer{grid-row:3}</code></pre><p class=\"muted\">Headers, bodies, and footers now line up perfectly across cards.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS view transitions",
+   "user_requests": [
+    "css view transitions api",
+    "animate between pages with css",
+    "view-transition-name example",
+    "how to use view transitions",
+    "css page transition without js",
+    "view transitions css snippet",
+    "css view transition pls",
+    "how to use view transitions in css",
+    "css view transition example",
+    "smooth page transition with css",
+    "view transitions api demo",
+    "animate between pages css",
+    "css view transition name"
+   ],
+   "html": "<div class=\"card\"><h4>View Transitions</h4><p>Smoothly morph elements between states or pages\u2014with just CSS.</p><pre class=\"code\"><code>.card img{view-transition-name: hero}\n::view-transition-old(hero),::view-transition-new(hero){animation-duration:.4s}</code></pre><p class=\"muted\">Works with <code>document.startViewTransition</code> or cross-document navigation in modern browsers.</p><div class=\"callout info\"><span class=\"badge info\"><i class=\"dot\"></i>cached match</span> Chrome and Edge support; Safari and Firefox are catching up.</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS scrollbar-gutter for stable layout",
+   "user_requests": [
+    "css scrollbar-gutter stable",
+    "prevent layout shift when scrollbar appears",
+    "scrollbar-gutter both-edges",
+    "how to reserve scrollbar space",
+    "css stop page jump scrollbar",
+    "scrollbar gutter example",
+    "css scrollbar shift fix",
+    "how to prevent layout shift from scrollbar",
+    "css scrollbar-gutter both-edges",
+    "stable scrollbar gutter css",
+    "avoid page jump when scrollbar appears",
+    "scrollbar-gutter example",
+    "css reserve space for scrollbar"
+   ],
+   "html": "<div class=\"card\"><h4>Stable layout with scrollbar-gutter</h4><p>No more jumps when the scrollbar pops in. Reserve its space upfront.</p><pre class=\"code\"><code>html{scrollbar-gutter:stable}</code></pre><p>Or use <code>stable both-edges</code> to keep centering consistent when content grows.</p><div class=\"callout good\"><span class=\"badge good\"><i class=\"dot\"></i>cached match</span> Supported in all modern browsers except Safari (as of 2025).</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS @scope for scoped styling",
+   "user_requests": [
+    "css @scope example",
+    "how to use @scope rule",
+    "scoped styles without classes",
+    "css @scope donut",
+    "style only inside a component",
+    "css scope rule snippet",
+    "css @scope plz",
+    "how to scope styles with css @scope",
+    "css @scope donut example",
+    "@scope rule css",
+    "scoped css without preprocessor",
+    "style only inside a component css",
+    "css scope to element"
+   ],
+   "html": "<div class=\"card\"><h4>CSS @scope</h4><p>Style elements within a boundary\u2014without extra classes or shadow DOM.</p><pre class=\"code\"><code>@scope (.card) to (.card-footer){\np{color:var(--ink-2);margin-block:var(--s-2)}\n}</code></pre><p class=\"muted\">Only paragraphs inside <code>.card</code> but before <code>.card-footer</code> get styled.</p><div class=\"callout info\"><span class=\"badge info\"><i class=\"dot\"></i>cached match</span> Chrome and Edge support; others may need fallback class-based selectors.</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS color-mix() for tinted UI",
+   "user_requests": [
+    "how do i use color-mix in css",
+    "make a softer accent color without picking a new hex",
+    "css color-mix example for button hover",
+    "can i mix colors in css natively?",
+    "color-mix() syntax and browser support?",
+    "tint my panel background from the accent",
+    "i want a hover shade derived from my brand color",
+    "how to mix colors in css",
+    "color-mix example css",
+    "create tinted colors with css",
+    "css color-mix in srgb",
+    "mix two colors css function",
+    "lighten color with color-mix"
+   ],
+   "html": "<div class=\"card\"><h4>CSS color-mix()</h4><p class=\"muted t-small\">Derive hover and tint colors from one token.</p><pre class=\"code\"><code>:root {\n  --accent: #4f46e5;\n}\n\n.btn {\n  background: var(--accent);\n  transition: background 160ms ease;\n}\n\n.btn:hover {\n  /* 12% white, 88% accent */\n  background: color-mix(in srgb, var(--accent), white 12%);\n}\n\n.btn-soft {\n  /* pale tint on any theme */\n  background: color-mix(in srgb, var(--accent) 15%, var(--panel));\n  color: var(--accent);\n}</code></pre></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS spacing with \u200bclamp()\u200b in container",
+   "user_requests": [
+    "clamp padding between sections",
+    "fluid spacing with clamp css",
+    "how to make section padding responsive without media queries",
+    "css clamp for space not just fonts",
+    "stop writing so many breakpoints for padding",
+    "responsive gap between cards",
+    "make my layout breathe on bigger screens with clamp",
+    "how to use clamp for padding in css",
+    "responsive spacing with clamp",
+    "clamp margin between sections",
+    "css clamp container spacing",
+    "fluid padding using clamp",
+    "set min max spacing css"
+   ],
+   "html": "<div class=\"card\"><h4>Fluid spacing with clamp()</h4><p class=\"muted t-small\">One line replaces three breakpoints.</p><pre class=\"code\"><code>:root {\n  /* min 16px, preferred 4vw, max 48px */\n  --section-pad: clamp(1rem, 4vw, 3rem);\n  --card-gap: clamp(0.75rem, 2vw, 1.5rem);\n}\n\n.section {\n  padding: var(--section-pad);\n}\n\n.card-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\n  gap: var(--card-gap);\n}</code></pre></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS pointer-events: none for decorative overlays",
+   "user_requests": [
+    "ignore clicks on a decorative overlay",
+    "css pointer-events none use case",
+    "how to make an element click-through",
+    "overlay blocks my buttons, help",
+    "prevent hover on a badge inside a card",
+    "css disable mouse on pseudo element",
+    "make my gradient overlay not catch the cursor",
+    "how to make an overlay click-through css",
+    "pointer-events none on overlay",
+    "ignore mouse events on element css",
+    "css click through decorative layer",
+    "disable clicks on background overlay",
+    "make overlay not block clicks"
+   ],
+   "html": "<div class=\"card\"><h4>Click-through overlays</h4><p class=\"muted t-small\">Let the overlay decorate, not intercept.</p><pre class=\"code\"><code>.card {\n  position: relative;\n}\n\n.card::after {\n  content: '';\n  position: absolute;\n  inset: 0;\n  background: linear-gradient(to top, rgba(0,0,0,0.4), transparent);\n  pointer-events: none; /* clicks pass to card content */\n  border-radius: inherit;\n}\n\n/* badge inside a button shouldn't steal the click */\n.btn .badge {\n  pointer-events: none;\n}</code></pre></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS text-decoration-thickness and underline-offset",
+   "user_requests": [
+    "make my underlines thicker and spaced",
+    "css underline offset for links",
+    "custom link underline style",
+    "how to control underline distance in css",
+    "links look cramped, fix underline",
+    "css decoration thickness example",
+    "style my anchor underlines nicer",
+    "how to adjust underline thickness css",
+    "css underline offset example",
+    "custom underline style css",
+    "thicker underline with gap css",
+    "text-decoration-thickness css",
+    "space out underline from text"
+   ],
+   "html": "<div class=\"card\"><h4>Fancier underlines</h4><p class=\"muted t-small\">Two properties, instant upgrade.</p><pre class=\"code\"><code>a {\n  text-decoration-line: underline;\n  text-decoration-color: var(--accent);\n  text-decoration-thickness: 0.08em;\n  text-underline-offset: 0.2em;\n  transition: text-decoration-thickness 120ms ease;\n}\n\na:hover {\n  text-decoration-thickness: 0.16em;\n}\n\n/* skip descenders on some fonts */\na.wide {\n  text-underline-offset: 0.3em;\n}</code></pre></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS scroll-behavior with reduced-motion guard",
+   "user_requests": [
+    "smooth scroll but respect reduced motion",
+    "css scroll-behavior media query",
+    "how to disable smooth scroll for accessibility",
+    "scroll-behavior: smooth and prefers-reduced-motion",
+    "make my anchor links scroll gently",
+    "prefers-reduced-motion smooth scrolling fix",
+    "css scroll animation accessibility",
+    "how to disable smooth scroll for reduced motion",
+    "css scroll-behavior reduced motion media query",
+    "smooth scroll accessible css",
+    "@media prefers-reduced-motion scroll-behavior",
+    "turn off smooth scrolling for motion sensitivity",
+    "respect reduced motion in scroll css"
+   ],
+   "html": "<div class=\"card\"><h4>Smooth scroll, kindly</h4><p class=\"muted t-small\">Add motion only when the user wants it.</p><pre class=\"code\"><code>html {\n  scroll-behavior: smooth;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  html {\n    scroll-behavior: auto;\n  }\n}\n\n/* one-off anchor with margin for sticky header */\n:target {\n  scroll-margin-top: 5rem;\n}</code></pre></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS font-variant-numeric for tabular numbers",
+   "user_requests": [
+    "make numbers line up in a table",
+    "css tabular numbers for prices",
+    "font-variant-numeric tabular-nums example",
+    "numbers jiggle in my pricing table",
+    "how to align digits in css",
+    "css slashed zero for code",
+    "monospaced numbers without monospace font",
+    "how to make numbers monospaced in css",
+    "tabular numbers css example",
+    "font-variant-numeric tabular-nums",
+    "align digits in table css",
+    "css equal width numbers",
+    "make numbers line up vertically"
+   ],
+   "html": "<div class=\"card\"><h4>Tabular numbers</h4><p class=\"muted t-small\">Digits that behave in columns.</p><pre class=\"code\"><code>.price-table {\n  font-variant-numeric: tabular-nums;\n}\n\n.price-table td.num {\n  text-align: right;\n  font-feature-settings: 'tnum' 1; /* fallback */\n}\n\n/* slashed zero for code or IDs */\ncode, .serial {\n  font-variant-numeric: slashed-zero;\n}</code></pre></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS center anything with grid",
+   "user_requests": [
+    "center this div perfectly",
+    "how 2 center a box with css",
+    "make this card sit dead center",
+    "grid centering trick plz",
+    "vertical + horizontal center css",
+    "why wont my element center??",
+    "css centre both axes",
+    "how to center a div with css grid",
+    "grid center items both axes",
+    "css perfect centering grid",
+    "center content using place-items",
+    "center anything css trick",
+    "grid layout center example"
+   ],
+   "html": "<div class=\"card\"><h4>CSS center anything with grid</h4><pre class=\"code\"><code>/* two lines, both axes, no fuss */\n.center {\n  display: grid;\n  place-items: center;\n}\n\n/* if the parent has a set height */\n.parent {\n  min-height: 100vh;\n  display: grid;\n  place-items: center;\n}\n\n/* for inline-size centering inside a block */\n.center-x {\n  display: grid;\n  justify-items: center;\n}</code></pre><p class=\"dim\">The grid must have a definite size; otherwise it shrinks to content and the centering looks like a no-op. Add <code>min-height</code> or a fixed height to the parent.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS custom property fallback syntax",
+   "user_requests": [
+    "css variable fallback?",
+    "how to set default for a css var",
+    "var() second argument meaning",
+    "custom property fallback example",
+    "what if css variable is undefined",
+    "fallback for --my-var plz",
+    "css var with default value",
+    "how to provide fallback for css variable",
+    "css var fallback value",
+    "use default value if custom property not set",
+    "css custom property fallback example",
+    "var() with fallback syntax",
+    "set backup for css variable"
+   ],
+   "html": "<div class=\"card\"><h4>CSS custom property fallback syntax</h4><pre class=\"code\"><code>/* give var() a second argument as a fallback */\n.box {\n  color: var(--ink, #333);\n  padding: var(--s-4, 16px);\n  background: var(--panel, white);\n}\n\n/* fallback can be another var() */\n.card {\n  color: var(--text-color, var(--ink, black));\n}\n\n/* careful: fallback only applies if the variable is not defined at all */\n/* if it's defined but invalid, the fallback is ignored */</code></pre><p class=\"dim\">If <code>--ink</code> is defined as an empty string, the fallback won't kick in; the value becomes empty. Use <code>var(--ink, black)</code> to guard against missing variables, not invalid ones.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS smooth scrolling with reduced motion",
+   "user_requests": [
+    "smooth scroll but respect reduced motion",
+    "scroll-behavior: smooth accessibility",
+    "turn off smooth scroll for motion sensitivity",
+    "prefers-reduced-motion smooth scroll",
+    "how to make anchor links scroll smoothly",
+    "smooth scrolling without being annoying",
+    "css scroll-behavior reduced motion guard",
+    "how to smooth scroll but respect user preference",
+    "css scroll-behavior and prefers-reduced-motion",
+    "accessible smooth scrolling css",
+    "disable smooth scroll for reduced motion users",
+    "css smooth scroll media query",
+    "make scrolling smooth only if allowed"
+   ],
+   "html": "<div class=\"card\"><h4>CSS smooth scrolling with reduced motion</h4><pre class=\"code\"><code>html {\n  scroll-behavior: smooth;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  html {\n    scroll-behavior: auto;\n  }\n}\n\n/* for a specific scroll container */\n.scroll-area {\n  scroll-behavior: smooth;\n}\n@media (prefers-reduced-motion: reduce) {\n  .scroll-area {\n    scroll-behavior: auto;\n  }\n}</code></pre><p class=\"dim\">Smooth scrolling can trigger motion sickness. Always pair it with a <code>prefers-reduced-motion</code> reset. The <code>auto</code> value means instant jump, which is safer.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS clamp() for fluid type",
+   "user_requests": [
+    "fluid typography with clamp",
+    "responsive font size no media queries",
+    "clamp() in css for text",
+    "make font size scale with viewport",
+    "css clamp font-size example",
+    "how to do fluid type simply",
+    "clamp for headings plz",
+    "how to create fluid typography with css clamp",
+    "responsive font size using clamp",
+    "css clamp font-size example",
+    "fluid text with min max css",
+    "scale text with viewport css",
+    "clamp() for headings"
+   ],
+   "html": "<div class=\"card\"><h4>CSS clamp() for fluid type</h4><pre class=\"code\"><code>/* clamp(min, preferred, max) */\nh1 {\n  font-size: clamp(1.5rem, 5vw, 3rem);\n}\n\np {\n  font-size: clamp(1rem, 2.5vw, 1.25rem);\n}\n\n/* use with line-height for better rhythm */\nh1 {\n  font-size: clamp(1.5rem, 5vw, 3rem);\n  line-height: 1.2;\n}</code></pre><p class=\"dim\">The preferred value can be a <code>calc()</code> mixing units, e.g. <code>clamp(1rem, 1rem + 2vw, 2rem)</code>. That keeps the minimum and maximum readable on tiny and huge screens.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS light and dark mode with system setting",
+   "user_requests": [
+    "dark mode based on system pref",
+    "prefers-color-scheme example",
+    "auto dark mode css",
+    "how to make my site dark mode aware",
+    "css media query for dark mode",
+    "light dark theme with system setting",
+    "detect dark mode css",
+    "how to make my site auto switch to dark mode with the system",
+    "css prefers-color-scheme light n dark",
+    "switch theme based on os setting css",
+    "how do i set up dark mode that follows the user's system preference?",
+    "light/dark theme using media query no js",
+    "darkmode auto system css"
+   ],
+   "html": "<div class=\"card\"><h4>CSS light and dark mode with system setting</h4><pre class=\"code\"><code>:root {\n  --bg: #fff;\n  --ink: #111;\n}\n\n@media (prefers-color-scheme: dark) {\n  :root {\n    --bg: #111;\n    --ink: #eee;\n  }\n}\n\nbody {\n  background: var(--bg);\n  color: var(--ink);\n}</code></pre><p class=\"dim\">Define all your colour tokens in <code>:root</code>, then override them inside the media query. That way components never need to know about the mode; they just use the tokens.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS truncate long text with ellipsis",
+   "user_requests": [
+    "cut off long text with ...",
+    "css ellipsis single line",
+    "how to truncate text in css",
+    "text-overflow ellipsis example",
+    "make long words not break layout",
+    "css nowrap ellipsis",
+    "truncate string in a div",
+    "how to put 3 dots at end of overflowing text",
+    "css ellipsis for single line only",
+    "make text cut off with dots in a div",
+    "long text gets ... css",
+    "how to clip text and show ellipsis in css",
+    "text-overflow ellipsis not working help"
+   ],
+   "html": "<div class=\"card\"><h4>CSS truncate long text with ellipsis</h4><pre class=\"code\"><code>/* single line */\n.truncate {\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n/* multi-line (works in modern browsers) */\n.clamp-2 {\n  display: -webkit-box;\n  -webkit-line-clamp: 2;\n  -webkit-box-orient: vertical;\n  overflow: hidden;\n}</code></pre><p class=\"dim\">The single-line version needs a width constraint (e.g. <code>max-width</code>) to kick in. For multi-line, the <code>-webkit-</code> prefixes are still required for Safari and Chrome, but the effect is standard now.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS sticky table header",
+   "user_requests": [
+    "make my table header stay on top when scrolling",
+    "sticky table header css",
+    "how do i keep the th visible while scrolling a long table",
+    "css position sticky for table headers",
+    "pin the header row so i can read columns",
+    "table header scroll fix",
+    "freeze first row of table css",
+    "table header fixed while scrolling css",
+    "keep thead visible on scroll",
+    "css position sticky for table head",
+    "how to make table header stick to top when scrolling down",
+    "scrollable table with static header",
+    "thead sticky css not working"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Sticky table header</h4>\n  <p class=\"muted t-small\">Keep the header row visible while scrolling. Wrap the table in a scroll container.</p>\n  <pre class=\"code\"><code>.table-wrap {\n  overflow: auto;\n  max-height: 400px;\n}\ntable {\n  border-collapse: collapse;\n  width: 100%;\n}\nth {\n  position: sticky;\n  top: 0;\n  background: var(--panel);\n  z-index: 1;\n}</code></pre>\n  <p class=\"t-small\">Works in modern browsers. Add <code>background</code> so content doesn't show through.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS focus ring only when needed",
+   "user_requests": [
+    "remove focus outline but keep it for keyboard users",
+    "css focus visible only on tab",
+    "how to hide focus ring on mouse click",
+    "focus-visible polyfill?",
+    "keyboard accessibility focus indicator",
+    "show outline only when tabbing",
+    "css :focus-visible example",
+    "hide focus outline but show for tab key",
+    "css focus-visible only",
+    "how to show focus ring only on keyboard navigation",
+    "remove outline on click but keep for keyboard users",
+    "button focus outline only when tabbing",
+    "css :focus-visible for accessibility"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Focus ring only when needed</h4>\n  <p class=\"muted t-small\">Use <code>:focus-visible</code> to show a ring for keyboard users, but not on mouse click.</p>\n  <pre class=\"code\"><code>button:focus-visible {\n  outline: 3px solid var(--accent);\n  outline-offset: 2px;\n}\n/* fallback for older browsers */\nbutton:focus {\n  outline: 3px solid var(--accent);\n  outline-offset: 2px;\n}\nbutton:focus:not(:focus-visible) {\n  outline: none;\n}</code></pre>\n  <p class=\"t-small\">The fallback ensures older browsers still show focus. Modern ones use the refined behavior.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS multiple background layers",
+   "user_requests": [
+    "how to layer multiple backgrounds in css",
+    "css background stacking",
+    "multiple background images css",
+    "combine two backgrounds in one element",
+    "css background shorthand multiple",
+    "layer gradient over image css",
+    "css multiple background example",
+    "stacking backgrounds in css",
+    "how to add two background images in one element",
+    "css background with multiple images and gradients",
+    "layer a gradient over a picture using css",
+    "multiple bg images css order",
+    "combine background image and color css"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Multiple background layers</h4>\n  <p class=\"muted t-small\">Stack backgrounds with commas. The first is on top.</p>\n  <pre class=\"code\"><code>.hero {\n  background:\n    linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),\n    url('image.jpg') center/cover no-repeat;\n}</code></pre>\n  <p class=\"t-small\">Use <code>background-blend-mode</code> for more control. No external URLs here, but the pattern works.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS sticky footer with flexbox",
+   "user_requests": [
+    "sticky footer css flexbox",
+    "make footer stay at bottom",
+    "css push footer to bottom",
+    "footer at bottom of page even with little content",
+    "flexbox sticky footer",
+    "css layout footer bottom",
+    "how to keep footer down css",
+    "make footer stay at bottom even with little content",
+    "flexbox push footer to bottom",
+    "how to keep footer at the bottom of the page css",
+    "sticky footer using flexbox no fixed position",
+    "css footer always bottom with flex",
+    "flex column sticky footer tutorial"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Sticky footer with flexbox</h4>\n  <p class=\"muted t-small\">Make the page fill the viewport and push the footer down.</p>\n  <pre class=\"code\"><code>body {\n  min-height: 100vh;\n  display: flex;\n  flex-direction: column;\n}\nmain {\n  flex: 1;\n}\nfooter {\n  margin-top: auto;\n}</code></pre>\n  <p class=\"t-small\">Works with any content height. No positioning hacks.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS image aspect ratio box",
+   "user_requests": [
+    "css aspect ratio for images",
+    "make images same height width",
+    "aspect ratio box css",
+    "responsive image ratio lock",
+    "how to keep image from squishing",
+    "css aspect-ratio property",
+    "image ratio container css",
+    "css keep image square without distortion",
+    "aspect-ratio property for responsive images",
+    "how to make a responsive image with fixed ratio",
+    "16:9 box for images css",
+    "preserve aspect ratio in css",
+    "css image container maintain aspect ratio"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Image aspect ratio box</h4>\n  <p class=\"muted t-small\">Lock an image to a ratio so it doesn't squish. Use <code>object-fit</code> to fill nicely.</p>\n  <pre class=\"code\"><code>.media-box {\n  aspect-ratio: 16 / 9;\n  overflow: hidden;\n  background: var(--bg-alt);\n}\n.media-box img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}</code></pre>\n  <p class=\"t-small\">Great for cards, avatars, and thumbnails. Supported in all modern browsers.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS gradient text with background-clip",
+   "user_requests": [
+    "css gradient text",
+    "make text have gradient color",
+    "background-clip text gradient",
+    "rainbow text css",
+    "how to make text gradient",
+    "css text gradient effect",
+    "gradient headline css",
+    "how to make text have a gradient color",
+    "css text gradient with background-clip text",
+    "gradient font color css",
+    "colorful gradient letters css",
+    "css background-clip text not showing",
+    "linear gradient on text only"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Gradient text with background-clip</h4>\n  <p class=\"muted t-small\">Fill text with a gradient using <code>background-clip: text</code>.</p>\n  <pre class=\"code\"><code>.gradient-text {\n  background: linear-gradient(90deg, var(--accent), var(--accent-2));\n  -webkit-background-clip: text;\n  background-clip: text;\n  color: transparent;\n}</code></pre>\n  <p class=\"t-small\">Use sparingly for headlines. Add a fallback color for older browsers.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS :has() for parent styling",
+   "user_requests": [
+    "how do I style a parent when it contains an image",
+    "css has selector parent element",
+    "style form group when input is invalid",
+    "can i select a div that has a child with class active",
+    "parent selector css has",
+    "highlight card when it contains a badge",
+    "is there a way in css to style a parent based on child",
+    "style parent if it has a certain child css",
+    "css parent selector :has()",
+    "how to change parent style when child exists",
+    "select parent based on child css",
+    "css :has img parent background",
+    "parent styling when contains input css"
+   ],
+   "html": "<div class=\"card\">\n  <h4>CSS :has() \u2014 style the parent</h4>\n  <p class=\"muted\">Now you can target a parent based on what's inside it.</p>\n  <pre class=\"code\"><code>/* Card gets a ring when it has a badge */\n.card:has(.badge) {\n  outline: 2px solid var(--accent);\n  outline-offset: 2px;\n}\n\n/* Form group turns red when its input is invalid */\n.field:has(input:invalid) {\n  border-color: var(--bad);\n}\n\n/* Hide label when placeholder is shown */\n.field:has(input:placeholder-shown) label {\n  opacity: 0.5;\n}</code></pre>\n  <details class=\"acc\">\n    <summary>Check browser support</summary>\n    <div class=\"body\">\n      <p>Supported in all modern browsers (Chrome 105+, Safari 15.4+, Firefox 121+). For older browsers, use a JavaScript fallback or add a class manually.</p>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS scroll-snap for carousels",
+   "user_requests": [
+    "css carousel without js",
+    "scroll snap horizontal gallery",
+    "how to make a swipeable list with css",
+    "css scroll snapping",
+    "snap scroll points css",
+    "build a slider with css only",
+    "scroll snap type x mandatory example",
+    "css only slider with scroll snap",
+    "how to make a carousel with css snap",
+    "horizontal scroll snap carousel css",
+    "scroll-snap-type x mandatory example",
+    "no js image carousel using css",
+    "css snap scroll for slides"
+   ],
+   "html": "<div class=\"card\">\n  <h4>CSS scroll-snap \u2014 no JS carousel</h4>\n  <p class=\"muted\">Make any scroll container snap to items. Great for touch galleries.</p>\n  <pre class=\"code\"><code>.carousel {\n  display: flex;\n  overflow-x: auto;\n  scroll-snap-type: x mandatory;\n  gap: var(--s-4);\n  padding: var(--s-4);\n  -webkit-overflow-scrolling: touch;\n}\n\n.carousel > * {\n  flex: 0 0 80%;\n  scroll-snap-align: center;\n  border-radius: var(--r-md);\n  background: var(--panel-2);\n}</code></pre>\n  <p class=\"t-small dim\">Tip: add <code>scroll-padding</code> to offset for sticky headers.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS accent-color for form controls",
+   "user_requests": [
+    "change checkbox color css",
+    "style radio button accent",
+    "accent-color css variable",
+    "how to tint native form controls",
+    "css checkbox color",
+    "make checkboxes match my brand color",
+    "accent color for range input",
+    "change checkbox color without custom styles",
+    "css accent-color for radio and checkbox",
+    "how to color form controls in css",
+    "radio button color css accent-color",
+    "style range input color css",
+    "accent-color for checkboxes support"
+   ],
+   "html": "<div class=\"card\">\n  <h4>CSS accent-color \u2014 tint native controls</h4>\n  <p class=\"muted\">One line changes checkboxes, radios, and range sliders to match your brand.</p>\n  <pre class=\"code\"><code>:root {\n  accent-color: var(--accent);\n}\n\n/* Or just for a specific form */\nform.promo {\n  accent-color: var(--good);\n}\n\n/* Respect high-contrast mode */\n@media (forced-colors: active) {\n  :root { accent-color: auto; }\n}</code></pre>\n  <p class=\"t-small dim\">Works on <code>input[type=checkbox]</code>, <code>radio</code>, <code>range</code>, and <code>progress</code>.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS gap for flexbox",
+   "user_requests": [
+    "flexbox gap support",
+    "space between flex items without margin",
+    "css gap flex",
+    "how to add gap to flex container",
+    "flex gap fallback for safari",
+    "use gap in flexbox",
+    "flexbox spacing with gap",
+    "space between flex items without margins",
+    "flexbox gap property browser support",
+    "css flex gap not working",
+    "how to add gap in flex container",
+    "use gap instead of margin in flexbox",
+    "flex row gap example"
+   ],
+   "html": "<div class=\"card\">\n  <h4>CSS gap in flexbox</h4>\n  <p class=\"muted\">No more margin hacks. Gap works in flex containers now \u2014 mostly.</p>\n  <pre class=\"code\"><code>.row {\n  display: flex;\n  gap: var(--s-3);\n  flex-wrap: wrap;\n}\n\n/* Fallback for very old Safari */\n@supports not (gap: 1rem) {\n  .row > * + * {\n    margin-left: var(--s-3);\n  }\n}</code></pre>\n  <details class=\"acc\">\n    <summary>Why the fallback?</summary>\n    <div class=\"body\">\n      <p>Safari before 14.1 didn't support flex gap. The <code>@supports</code> rule keeps the layout intact without doubling spacing.</p>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS text-underline-offset",
+   "user_requests": [
+    "underline offset css",
+    "move underline away from text",
+    "css text-decoration-thickness",
+    "style links with custom underline",
+    "underline position css",
+    "make link underline thicker",
+    "adjust underline distance css",
+    "move underline farther from text css",
+    "css underline distance",
+    "how to adjust space between text and underline",
+    "text-underline-offset not working",
+    "underline offset for links css",
+    "increase gap between text and underline"
+   ],
+   "html": "<div class=\"card\">\n  <h4>CSS text-underline-offset & thickness</h4>\n  <p class=\"muted\">Give links a little breathing room under the text.</p>\n  <pre class=\"code\"><code>a {\n  text-decoration: underline;\n  text-decoration-thickness: 0.1em;\n  text-underline-offset: 0.2em;\n  text-decoration-color: var(--accent);\n  transition: text-underline-offset 0.2s;\n}\n\na:hover {\n  text-underline-offset: 0.35em;\n}</code></pre>\n  <p class=\"t-small dim\">Great for headings and buttons where default underlines look cramped.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS scroll-driven animations",
+   "user_requests": [
+    "scroll driven animations css",
+    "animate on scroll without javascript",
+    "css animation based on scroll position",
+    "scroll progress bar css",
+    "css scroll timeline",
+    "fade in elements as you scroll css",
+    "use scroll() in css animations",
+    "animate on scroll with css only",
+    "scroll timeline css animation",
+    "how to make css animation trigger on scroll",
+    "scroll-driven animation examples",
+    "css scroll progress animation",
+    "animate elements as you scroll css"
+   ],
+   "html": "<div class=\"card\">\n  <h4>CSS scroll-driven animations</h4>\n  <p class=\"muted\">Tie animations to scroll progress \u2014 no JavaScript required.</p>\n  <pre class=\"code\"><code>@keyframes fade-in {\n  from { opacity: 0; transform: translateY(20px); }\n  to { opacity: 1; transform: translateY(0); }\n}\n\n.reveal {\n  animation: fade-in linear;\n  animation-timeline: view();\n  animation-range: entry 20% cover 40%;\n}\n\n.progress-bar {\n  animation: grow linear;\n  animation-timeline: scroll(root);\n}\n\n@keyframes grow {\n  from { transform: scaleX(0); }\n  to { transform: scaleX(1); }\n}</code></pre>\n  <p class=\"t-small dim\">Check support: Firefox currently behind a flag. Provide a fallback for older browsers.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "How do I make a sticky header that doesn't cover anchor links?",
+    "Scroll margin top for fixed header",
+    "CSS scroll-margin-top example",
+    "My sticky navbar hides the section title when I jump to it",
+    "Anchor links go under my fixed header",
+    "fix scroll offset for sticky header css",
+    "offset scroll position with scroll-margin-top",
+    "anchor link hidden behind fixed header",
+    "css scroll-margin-top for sticky nav",
+    "how to offset anchor jump below header",
+    "scroll padding top for sticky header",
+    "anchor links covered by navbar fix",
+    "sticky header overlapping anchor target css"
+   ],
+   "title": "CSS scroll-margin-top for anchor links under sticky headers",
+   "html": "<div class=\"card\">\n  <h4>CSS snippet</h4>\n  <p class=\"muted\">Give anchor targets breathing room below a fixed header.</p>\n  <pre class=\"code\"><code>/* Add this to your anchor target elements */\n:target {\n  scroll-margin-top: 5rem; /* adjust to header height */\n}</code></pre>\n  <p class=\"t-small dim\">Works in all modern browsers. <code>:target</code> matches the element the page just jumped to.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "How to add ellipsis to long text in CSS?",
+    "CSS truncate text with three dots",
+    "text-overflow ellipsis example",
+    "How do I cut off long titles and add ... ?",
+    "ellipsis for overflowing text",
+    "css text truncate single line",
+    "make long text show ... instead of wrapping",
+    "how to put 3 dots at end of overflowing text",
+    "css ellipsis for single line only",
+    "make text cut off with dots in a div",
+    "long text gets ... css",
+    "how to clip text and show ellipsis in css",
+    "text-overflow ellipsis not working help"
+   ],
+   "title": "CSS truncate long text with ellipsis",
+   "html": "<div class=\"card\">\n  <h4>CSS snippet</h4>\n  <p class=\"muted\">Cut off long strings cleanly with three dots.</p>\n  <pre class=\"code\"><code>.truncate {\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  max-width: 100%; /* or a fixed width */\n}</code></pre>\n  <p class=\"t-small dim\">Works best on block or inline-block elements with a constrained width.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "How to keep footer at bottom with flexbox?",
+    "CSS sticky footer layout",
+    "make footer stick to bottom when content is short",
+    "footer always at bottom css",
+    "flexbox sticky footer example",
+    "footer not sticking to bottom fix",
+    "css push footer to bottom",
+    "footer won't stay at the bottom when page content is short",
+    "flexbox trick to make footer stick to bottom",
+    "keep footer down even on empty pages",
+    "how 2 make footer stay at bottom css",
+    "footer floating up on short pages fix",
+    "css flex column min-height 100vh footer at end"
+   ],
+   "title": "CSS sticky footer with flexbox",
+   "html": "<div class=\"card\">\n  <h4>CSS snippet</h4>\n  <p class=\"muted\">Keep the footer at the bottom even with little content.</p>\n  <pre class=\"code\"><code>body {\n  display: flex;\n  flex-direction: column;\n  min-height: 100vh;\n  margin: 0;\n}\nmain {\n  flex: 1; /* pushes footer down */\n}\nfooter {\n  /* your footer styles */\n}</code></pre>\n  <p class=\"t-small dim\">Use <code>min-height: 100dvh</code> on newer browsers for mobile address bar safety.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "How to style checkboxes with accent-color?",
+    "CSS accent-color for form controls",
+    "change checkbox color css",
+    "accent-color example for radio and checkbox",
+    "make checkboxes match my brand color",
+    "css accent color input",
+    "color radio buttons css",
+    "change checkbox color to match my brand",
+    "css accent-color radio buttons",
+    "style native form inputs with a custom color",
+    "how to make checkboxes blue instead of default",
+    "accent color for range slider css",
+    "customize form control colors without hacks"
+   ],
+   "title": "CSS accent-color for form controls",
+   "html": "<div class=\"card\">\n  <h4>CSS snippet</h4>\n  <p class=\"muted\">Tint native checkboxes, radios, and progress bars in one line.</p>\n  <pre class=\"code\"><code>:root {\n  accent-color: var(--accent);\n}\n\n/* Or target specific inputs */\ninput[type=\"checkbox\"],\ninput[type=\"radio\"],\nprogress {\n  accent-color: var(--accent);\n}</code></pre>\n  <p class=\"t-small dim\">Supported in all modern browsers; falls back to system colors if unsupported.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "How to make a responsive aspect ratio box?",
+    "CSS aspect-ratio for images and videos",
+    "keep image aspect ratio with CSS",
+    "aspect ratio box example",
+    "responsive video container css",
+    "css aspect-ratio property",
+    "maintain 16:9 ratio css",
+    "video iframe keeps wrong size on mobile",
+    "make a div always 16 by 9",
+    "how to lock element proportions css",
+    "responsive image box that doesn't stretch",
+    "aspect-ratio property not working?",
+    "css keep square ratio for cards"
+   ],
+   "title": "CSS aspect-ratio for media boxes",
+   "html": "<div class=\"card\">\n  <h4>CSS snippet</h4>\n  <p class=\"muted\">Lock media into a ratio without padding hacks.</p>\n  <pre class=\"code\"><code>.media-box {\n  aspect-ratio: 16 / 9;\n  width: 100%;\n  object-fit: cover; /* for images/videos */\n  border-radius: var(--r-s);\n}</code></pre>\n  <p class=\"t-small dim\">Works on <code>img</code>, <code>video</code>, and any block element. Use <code>object-fit</code> to crop or fit.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "How to center a div with CSS grid?",
+    "CSS center anything with grid",
+    "grid place-items center example",
+    "center content both horizontally and vertically",
+    "css grid centering trick",
+    "how to center a box in css",
+    "center div grid",
+    "vertically and horizontally center a div easily",
+    "grid place-items center trick",
+    "how to center text in a box css",
+    "centering elements with display grid",
+    "css grid center both axes",
+    "simplest way to center anything with css"
+   ],
+   "title": "CSS center anything with grid",
+   "html": "<div class=\"card\">\n  <h4>CSS snippet</h4>\n  <p class=\"muted\">The two-line centering trick that works for any element.</p>\n  <pre class=\"code\"><code>.center {\n  display: grid;\n  place-items: center;\n  min-height: 100vh; /* or any height */\n}</code></pre>\n  <p class=\"t-small dim\">Centers both axes. Works for text, images, or nested layouts. Add <code>place-content: center</code> for multiple items.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS conic-gradient for pie charts",
+   "user_requests": [
+    "how do i make a pie chart with only css",
+    "conic-gradient donut chart pls",
+    "no js charts... possible?",
+    "css pie chart snippet for a dashboard",
+    "how to do a progress ring w/ pure css",
+    "conic gradient trick for circular gauges",
+    "make a donut chart in css real quick",
+    "draw a donut chart using css only",
+    "conic gradient percentage calculation",
+    "how to create pie slices with css",
+    "css pie chart no svg",
+    "conic-gradient example for progress ring",
+    "make circular stats with pure css"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Conic-gradient donut</h4>\n  <p class=\"muted t-small\">Hey <regex>user_name</regex>, one declaration, four slices, zero JavaScript.</p>\n  <div class=\"row\" style=\"gap:var(--s-5);align-items:center;flex-wrap:wrap\">\n    <div style=\"--p1:38%;--p2:62%;--p3:84%;width:132px;aspect-ratio:1;border-radius:50%;background:conic-gradient(var(--accent) 0 var(--p1),var(--accent-2) var(--p1) var(--p2),var(--warn) var(--p2) var(--p3),var(--line-2) var(--p3) 100%);-webkit-mask:radial-gradient(circle,transparent 44%,#000 45%);mask:radial-gradient(circle,transparent 44%,#000 45%)\"></div>\n    <ul class=\"list t-small\">\n      <li><i class=\"dot\" style=\"background:var(--accent)\"></i> Cached 38%</li>\n      <li><i class=\"dot\" style=\"background:var(--accent-2)\"></i> Fresh 24%</li>\n      <li><i class=\"dot\" style=\"background:var(--warn)\"></i> Rebuilt 22%</li>\n      <li><i class=\"dot\" style=\"background:var(--line-2)\"></i> Missing 16%</li>\n    </ul>\n  </div>\n  <pre class=\"code\"><code>.donut{\n  width:132px;\n  aspect-ratio:1;\n  border-radius:50%;\n  background:conic-gradient(\n    var(--accent) 0 38%,\n    var(--accent-2) 38% 62%,\n    var(--warn) 62% 84%,\n    var(--line-2) 84% 100%);\n  /* punch the hole */\n  mask:radial-gradient(circle,transparent 44%,#000 45%);\n}</code></pre>\n  <div class=\"callout info t-small\">Slices are just colour stops. Reorder them and the chart reorders; no layout thrash, no repaint of the ring itself.</div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS env() for safe-area insets",
+   "user_requests": [
+    "bottom nav hidden by iphone notch",
+    "safe-area-inset how do i use it",
+    "css for notch + home indicator padding",
+    "my sticky bar gets cut on iphone",
+    "env() safe area padding snippet",
+    "pwa bottom bar behind home bar fix",
+    "viewport-fit cover + safe area css",
+    "content hidden behind iphone home indicator",
+    "safe area inset css for notched phones",
+    "how to use env(safe-area-inset-bottom)",
+    "fixed header under status bar ios",
+    "css safe area padding viewport-fit cover",
+    "mobile browser address bar covering footer"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">env() safe-area insets</h4>\n  <p class=\"muted t-small\">Right, <regex>user_name</regex> \u2014 that home indicator is eating your tab bar. Tell the viewport to stop being shy, then pad around the cutouts.</p>\n  <pre class=\"code\"><code>/* in the head, once */\n&lt;meta name=\"viewport\" content=\"width=device-width,initial-scale=1,viewport-fit=cover\"&gt;\n\n/* then, in CSS */\n.tabbar{\n  position:fixed;\n  inset:auto 0 0 0;\n  padding:var(--s-3);\n  padding-bottom:calc(var(--s-3) + env(safe-area-inset-bottom, 0px));\n  background:var(--panel);\n  border-top:1px solid var(--line);\n}\n\n/* pair it with a fallback so short-landscape phones\n   don't get double padding */\n@media (orientation:landscape){\n  .tabbar{padding-left:env(safe-area-inset-left,0px);\n          padding-right:env(safe-area-inset-right,0px)}\n}</code></pre>\n  <ul class=\"list t-small\">\n    <li><kbd>viewport-fit=cover</kbd> lets content reach the edges at all.</li>\n    <li>Always ship the second argument \u2014 <kbd>env(x, 0px)</kbd> \u2014 old browsers ignore the whole thing without it.</li>\n    <li>Insets are live: rotate the phone and the numbers move.</li>\n  </ul>\n  <div class=\"callout warn t-small\">Don't put the padding on <kbd>body</kbd>. You'll fight overscroll and rubber-banding on iOS.</div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS :focus-visible for keyboard users",
+   "user_requests": [
+    "focus rings showing on mouse clicks annoy me",
+    "focus-visible vs focus difference",
+    "hide outline but keep keyboard access",
+    "css only show focus ring w/ tab key",
+    "accessible focus styles snippet",
+    "remove ugly outline but accessible",
+    "how to do focus rings properly in css",
+    "remove focus outline but keep for keyboard",
+    "focus ring only when tabbing not clicking",
+    "css focus-visible not working in safari",
+    "how to hide focus outline on mouse click",
+    "keyboard accessibility focus styles",
+    ":focus-visible vs :focus difference"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">:focus-visible, the polite focus ring</h4>\n  <p class=\"muted t-small\"><regex>user_name</regex>, mouse users don't want a halo, keyboard users need one. This gives it to exactly the right person.</p>\n  <p>\n    <button type=\"button\" style=\"background:var(--accent);color:var(--bg);border:0;border-radius:var(--r-s,8px);padding:var(--s-2) var(--s-4)\">Save changes</button>\n    <a href=\"#\" style=\"margin-left:var(--s-3)\">Cancel</a>\n  </p>\n  <pre class=\"code\"><code>/* kill the default everywhere\u2026 */\n:focus{outline:none}\n\n/* \u2026then put it back for keyboards only */\n:focus-visible{\n  outline:2px solid var(--accent);\n  outline-offset:2px;\n  border-radius:var(--r-xs,4px);\n}\n\n/* stronger ring on coloured buttons */\n.btn:focus-visible{\n  outline:2px solid var(--accent);\n  outline-offset:3px;\n  box-shadow:0 0 0 4px var(--accent-soft);\n}\n\n/* never lose it on dark backgrounds */\n@media (prefers-color-scheme:dark){\n  :focus-visible{outline-color:var(--accent-2)}\n}</code></pre>\n  <details class=\"acc\">\n    <summary>Why not just use :focus?</summary>\n    <div class=\"body t-small\"><kbd>:focus</kbd> fires on any focus \u2014 click, tap, script. <kbd>:focus-visible</kbd> asks the browser \"was this a keyboard thing?\" and only then shows the ring. Try tabbing through the two controls above.</div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS ladder for equal-height grid rows",
+   "user_requests": [
+    "grid items different heights and it looks bad",
+    "auto-rows stretch grid rows css",
+    "make cards same height in css grid",
+    "grid-template-rows 1fr trick",
+    "uneven grid cards fix",
+    "css grid row height alignment",
+    "equal height cards no js pls",
+    "grid rows all same height regardless of content",
+    "make grid items stretch to tallest sibling",
+    "css grid auto rows equal height",
+    "items in grid have different heights fix",
+    "how to make all cards in a row same height",
+    "grid align-items stretch not working"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Equal-height grid rows</h4>\n  <p class=\"muted t-small\">Cards in a grid stretch by default, <regex>user_name</regex> \u2014 the trouble is usually a stray <kbd>align-items</kbd> or a flex parent stealing the height.</p>\n  <div class=\"grid two\" style=\"gap:var(--s-3)\">\n    <div class=\"card flat\" style=\"margin:0\"><strong>Short</strong><p class=\"muted t-small\" style=\"margin:var(--s-1) 0 0\">One line.</p></div>\n    <div class=\"card flat\" style=\"margin:0\"><strong>Taller</strong><p class=\"muted t-small\" style=\"margin:var(--s-1) 0 0\">Three whole lines of copy so this tile grows taller than its neighbour and shows the problem clearly.</p></div>\n  </div>\n  <pre class=\"code\"><code>.grid{\n  display:grid;\n  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));\n  /* every row, same height as its tallest cell */\n  grid-auto-rows:1fr;\n  gap:var(--s-3);\n}\n\n/* let the tile push its own footer down */\n.tile{display:flex;flex-direction:column;height:100%}\n.tile .foot{margin-top:auto}</code></pre>\n  <ul class=\"list t-small\">\n    <li><kbd>grid-auto-rows:1fr</kbd> makes the implicit rows match each other.</li>\n    <li><kbd>align-items:start</kbd> on the grid undoes the stretch \u2014 check that first.</li>\n    <li>A flex or grid parent with a fixed height will still clip children unless you set <kbd>min-height:0</kbd>.</li>\n  </ul>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS @media (hover: hover) for touch fallback",
+   "user_requests": [
+    "hover effects stuck on my phone",
+    "sticky hover bug mobile css",
+    "hover:hover media query example",
+    "tap highlights stay after tapping",
+    "disable hover styles on touch devices",
+    "media hover none css fix",
+    "my buttons look pressed on mobile",
+    "disable hover styles on touch devices",
+    "css media query for devices with mouse",
+    "hover effect stuck after tap on mobile",
+    "how to detect hover capability css",
+    "@media (hover: hover) and (pointer: fine)",
+    "prevent sticky hover on ipad"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Hover, but only where hover exists</h4>\n  <p class=\"muted t-small\">Yep, <regex>user_name</regex>, that's the sticky-hover classic: phones fake a hover on tap and forget to let go. Wrap it.</p>\n  <pre class=\"code\"><code>/* touch first: no hover styles at all */\n.card{background:var(--panel);border:1px solid var(--line);\n      transition:transform .18s ease, box-shadow .18s ease}\n\n@media (hover:hover) and (pointer:fine){\n  .card:hover{\n    transform:translateY(-2px);\n    box-shadow:0 8px 24px color-mix(in srgb,var(--accent) 16%,transparent);\n  }\n}\n\n/* and stop the grey tap flash */\n.tapme{-webkit-tap-highlight-color:transparent}\n\n/* anything 'stuck' after a tap: reset in the same query */\n@media (hover:none){\n  .card:hover{transform:none;box-shadow:none;background:var(--panel)}\n}</code></pre>\n  <ul class=\"list t-small\">\n    <li><kbd>hover:hover</kbd> \u2014 the device can hover. <kbd>pointer:fine</kbd> \u2014 it's a mouse or trackpad, not a finger.</li>\n    <li>Combine with <kbd>&#64;media (prefers-reduced-motion: reduce)</kbd> if the lift is decorative.</li>\n    <li>Always give a non-hover cue: a border, a chevron, a colour shift that persists.</li>\n  </ul>\n  <div class=\"callout good t-small\">Rule of thumb: hover is a bonus, never the only way to know something is interactive.</div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "CSS filter: drop-shadow for non-rectangular shapes",
+   "user_requests": [
+    "box-shadow disappears on clipped shapes",
+    "shadow follows shape not box css",
+    "drop-shadow vs box-shadow clipped element",
+    "add shadow to a clip-path element",
+    "css shadow around irregular shape",
+    "silhouette shadow trick css",
+    "shadow for a speech bubble css",
+    "box-shadow doesn't follow clip-path shape",
+    "add shadow to svg with transparent background",
+    "css shadow around irregular shape",
+    "drop-shadow vs box-shadow for png",
+    "how to get shadow on cut-out element",
+    "filter drop-shadow not showing"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Shadows that hug the silhouette</h4>\n  <p class=\"muted t-small\"><regex>user_name</regex>, <kbd>box-shadow</kbd> only knows rectangles. Clip anything and the shadow stays square and sad.</p>\n  <div class=\"row\" style=\"gap:var(--s-5);flex-wrap:wrap;align-items:flex-end\">\n    <div style=\"position:relative;width:120px;height:88px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-m,12px);box-shadow:0 6px 16px rgba(0,0,0,.18)\"><span class=\"t-small muted\" style=\"position:absolute;bottom:var(--s-1);left:var(--s-2)\">box-shadow</span></div>\n    <div style=\"position:relative;width:120px;height:88px;background:var(--panel);border:1px solid var(--line);clip-path:polygon(0 0,100% 0,100% 74%,34% 74%,20% 100%,0 100%);filter:drop-shadow(0 6px 14px rgba(0,0,0,.22))\"><span class=\"t-small muted\" style=\"position:absolute;bottom:var(--s-4);left:var(--s-2)\">drop-shadow</span></div>\n  </div>\n  <pre class=\"code\"><code>/* rectangle: cheap, fast, stays inside the box */\n.plain{box-shadow:0 6px 16px rgb(0 0 0 / .18)}\n\n/* any silhouette: follows clip-path, svg, png alpha */\n.bubble{\n  clip-path:polygon(0 0,100% 0,100% 74%,34% 74%,20% 100%,0 100%);\n  filter:drop-shadow(0 6px 14px rgb(0 0 0 / .22));\n}\n\n/* dark mode: shadows read as a lift, not a smudge */\n@media (prefers-color-scheme:dark){\n  .bubble{filter:drop-shadow(0 6px 14px rgb(0 0 0 / .55))}\n}</code></pre>\n  <div class=\"callout warn t-small\">One cost: <kbd>filter</kbd> makes the element its own compositing layer, and it clips descendants too. Fine for a badge; think twice over a whole scrolling list.</div>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how do I make text wrap around a circle?",
+    "css shape-outside with a circle",
+    "wrap text around round image",
+    "text follow circle css trick",
+    "can text flow around a circular div?",
+    "shape-outside circle example",
+    "curved text wrap css",
+    "make paragraph flow around a round image",
+    "css text wrap around a circle",
+    "shape-outside circle example",
+    "how to float text around a shape",
+    "wrap text around an ellipse css",
+    "text following curved image edge"
+   ],
+   "title": "CSS shape-outside for circular text wrap",
+   "html": "<div class=\"card\"><h4>Wrap text around a circle</h4><p>Float a circle and let the text hug its curve.</p><pre class=\"code\"><code>.circle {\n  float: left;\n  width: 120px;\n  height: 120px;\n  border-radius: 50%;\n  shape-outside: circle(50%);\n  margin: 0 var(--s-4) var(--s-2) 0;\n}\n\n/* The circle itself can be invisible */\n.circle::after {\n  content: '';\n  display: block;\n  width: 100%;\n  height: 100%;\n  border-radius: inherit;\n  background: var(--accent-soft);\n}</code></pre></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "what does the css :is() selector do?",
+    "how to group selectors with :is()",
+    ":is() vs :where() difference",
+    "css :is() pseudo class",
+    "simplify css with :is()",
+    "use :is() for multiple selectors",
+    "explain css :is()",
+    "shorter way to write multiple selectors",
+    "css :is() pseudo-class browser support",
+    "how to use :is() in css",
+    "group selectors without repeating",
+    "what's the difference between :is and :where",
+    "css :is() specificity explanation"
+   ],
+   "title": "CSS :is() for grouping selectors",
+   "html": "<div class=\"card\"><h4>Group selectors with :is()</h4><p>Write one rule for many cases. Specificity is the highest in the list.</p><pre class=\"code\"><code>/* Before */\narticle h1,\narticle h2,\narticle h3 { margin-top: 0; }\n\n/* After */\narticle :is(h1, h2, h3) { margin-top: 0; }\n\n/* :is() is forgiving \u2014 unknown selectors are ignored */\n:is(.card, .panel, :--typo) { padding: var(--s-4); }</code></pre></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "css backdrop-filter blur",
+    "frosted glass effect css",
+    "how to make a blurred background css",
+    "backdrop-filter example",
+    "create glassmorphism with css",
+    "blur behind element css",
+    "css backdrop filter for modal",
+    "blur background behind a div",
+    "how to make frosted glass effect css",
+    "backdrop-filter not working firefox",
+    "css glassmorphism blur behind element",
+    "apply blur to background only css",
+    "backdrop-filter blur with transparency"
+   ],
+   "title": "CSS backdrop-filter for frosted glass",
+   "html": "<div class=\"card\"><h4>Frosted glass with backdrop-filter</h4><p>Blurs whatever sits behind the element. Needs a semi-transparent background.</p><pre class=\"code\"><code>.glass {\n  background: color-mix(in srgb, var(--panel) 70%, transparent);\n  backdrop-filter: blur(12px) saturate(140%);\n  -webkit-backdrop-filter: blur(12px) saturate(140%); /* Safari */\n  border: 1px solid var(--line);\n  border-radius: var(--r-m);\n}</code></pre></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "css logical properties margin-inline",
+    "what are logical properties in css?",
+    "margin-inline vs margin-left",
+    "use logical properties for rtl",
+    "css logical properties for internationalization",
+    "how to write css that works in rtl",
+    "logical properties margin-inline-start",
+    "use margin-inline-start instead of margin-left",
+    "css logical properties for rtl support",
+    "how to write direction-aware css",
+    "padding-inline vs padding-left",
+    "logical properties shorthand css",
+    "make layout work for both ltr and rtl"
+   ],
+   "title": "CSS logical properties for direction-aware layouts",
+   "html": "<div class=\"card\"><h4>Logical properties adapt to writing direction</h4><p>Use <code>margin-inline</code> instead of <code>margin-left</code> so your layout works in RTL too.</p><pre class=\"code\"><code>/* Physical */\n.card { margin-left: var(--s-4); }\n\n/* Logical */\n.card { margin-inline-start: var(--s-4); }\n\n/* Also: */\n/* padding-block, border-inline-end, inset-inline-start */</code></pre></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "css text-wrap balance",
+    "make headings wrap nicely css",
+    "text-wrap pretty vs balance",
+    "css balance text lines",
+    "avoid orphans in css",
+    "text-wrap property css",
+    "wrap headlines evenly",
+    "make heading lines even length",
+    "css text-wrap balance browser support",
+    "how to prevent orphan words in headings",
+    "balance text in css",
+    "text-wrap: pretty vs balance",
+    "headline wrapping looks uneven fix"
+   ],
+   "title": "CSS text-wrap: balance for headlines",
+   "html": "<div class=\"card\"><h4>Balance headline lines</h4><p>Stops one word from dangling on its own line. Best for short blocks like titles.</p><pre class=\"code\"><code>h1, h2, h3 {\n  text-wrap: balance;\n}\n\np {\n  text-wrap: pretty; /* avoids orphans */\n}</code></pre></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "css inset shorthand",
+    "how to use inset property css",
+    "inset: 0 for positioning",
+    "css top right bottom left shorthand",
+    "inset vs top left right bottom",
+    "position absolute with inset",
+    "css inset example",
+    "css inset property for absolute positioning",
+    "shorthand for top right bottom left",
+    "how to use inset in css",
+    "inset: 0 vs top:0 right:0 bottom:0 left:0",
+    "css inset example for full overlay",
+    "position absolute fill parent with inset"
+   ],
+   "title": "CSS inset shorthand for positioning",
+   "html": "<div class=\"card\"><h4>Use <code>inset</code> for offsets</h4><p>Shorter than <code>top/right/bottom/left</code>, and it respects logical directions when needed.</p><pre class=\"code\"><code>.overlay {\n  position: absolute;\n  inset: 0; /* top right bottom left all zero */\n}\n\n.badge {\n  position: absolute;\n  inset-block-start: var(--s-2);\n  inset-inline-end: var(--s-2);\n}</code></pre></div>",
+   "augmented": true
+  },
+  {
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">CSS scrollbar-width for slimmer scrollbars</h4>\n  <p class=\"muted\">Hi <regex>user_name</regex> \u2014 here's a snippet to tame those chunky default scrollbars.</p>\n  <pre class=\"code\"><code>.scroller {\n  scrollbar-width: thin;          /* Firefox */\n  scrollbar-color: var(--accent) var(--bg-alt); /* thumb track */\n}\n\n/* WebKit fallback */\n.scroller::-webkit-scrollbar {\n  width: 10px;\n  height: 10px;\n}\n.scroller::-webkit-scrollbar-thumb {\n  background: var(--accent);\n  border-radius: var(--r-pill);\n  border: 2px solid var(--bg-alt);\n}\n.scroller::-webkit-scrollbar-track {\n  background: var(--bg-alt);\n}</code></pre>\n  <p class=\"t-small muted\">Result: a thin, theme-aware scrollbar that doesn't fight your layout.</p>\n</div>",
+   "title": "CSS scrollbar-width for slimmer scrollbars",
+   "user_requests": [
+    "how do i make scrollbars thinner in css",
+    "slim scrollbar styling css",
+    "scrollbar-width thin example",
+    "customize scrollbar css firefox chrome",
+    "css make scrollbar less chunky",
+    "my scrollbar is huge how to shrink css",
+    "scrollbar-width: thin usage"
+   ]
+  },
+  {
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">CSS scrollbar-gutter for stable layout</h4>\n  <p class=\"muted\">Hey <regex>user_name</regex>, this one stops the page from jumping when scrollbars appear.</p>\n  <pre class=\"code\"><code>/* Reserve space so content doesn't shift */\nhtml {\n  scrollbar-gutter: stable;\n}\n\n/* Or reserve on both sides (rarely needed) */\nhtml {\n  scrollbar-gutter: stable both-edges;\n}\n\n/* When overlay scrollbars are in play */\n@media (hover: hover) {\n  html {\n    scrollbar-gutter: stable;\n  }\n}</code></pre>\n  <p class=\"t-small muted\">Pro tip: pair with <code>overflow-y: scroll</code> on the container for full control.</p>\n</div>",
+   "title": "CSS scrollbar-gutter for stable layout",
+   "user_requests": [
+    "css stop page jumping when scrollbar appears",
+    "scrollbar-gutter stable example",
+    "prevent layout shift from scrollbar css",
+    "how to reserve scrollbar space css",
+    "scrollbar-gutter property explained",
+    "css avoid content jump on scroll",
+    "scrollbar gutter stable both-edges"
+   ]
+  },
+  {
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">CSS color-scheme for native form controls</h4>\n  <p class=\"muted\"><regex>user_name</regex>, tell the browser your theme so checkboxes and date pickers match.</p>\n  <pre class=\"code\"><code>/* Follow the OS preference */\n:root {\n  color-scheme: light dark;\n}\n\n/* Force one mode */\n.force-dark {\n  color-scheme: dark;\n}\n\n/* Per-element override */\ninput[type=\"date\"] {\n  color-scheme: dark;\n}</code></pre>\n  <p class=\"t-small muted\">That one line flips native scrollbars, form fields, and the default canvas background.</p>\n</div>",
+   "title": "CSS color-scheme for native form controls",
+   "user_requests": [
+    "css color-scheme for form controls",
+    "make native inputs match dark mode css",
+    "color-scheme light dark example",
+    "why are my checkboxes white in dark mode css",
+    "style native date picker dark css",
+    "color-scheme property usage",
+    "css force dark mode on inputs"
+   ]
+  },
+  {
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">CSS ::selection for custom text highlight</h4>\n  <p class=\"muted\">Hey <regex>user_name</regex>, make that selection highlight feel like yours.</p>\n  <pre class=\"code\"><code>::selection {\n  background: var(--accent-soft);\n  color: var(--ink);\n  text-shadow: none; /* clean it up */\n}\n\n/* Scope it to a section */\n.article ::selection {\n  background: var(--accent);\n  color: var(--bg);\n}</code></pre>\n  <p class=\"t-small muted\">Works in all modern browsers. Keep contrast high so the text stays readable.</p>\n</div>",
+   "title": "CSS ::selection for custom text highlight",
+   "user_requests": [
+    "css custom text selection color",
+    "style ::selection highlight",
+    "change highlight color when selecting text css",
+    "::selection background color example",
+    "css make selected text prettier",
+    "how to style text selection css",
+    "custom selection color on specific elements"
+   ]
+  },
+  {
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">CSS overscroll-behavior for no bounce</h4>\n  <p class=\"muted\"><regex>user_name</regex>, tame the rubber-band scroll and pull-to-refresh with one property.</p>\n  <pre class=\"code\"><code>/* Stop the page from bouncing past the edges */\nbody {\n  overscroll-behavior-y: none;\n}\n\n/* Inside a modal or drawer */\n.drawer {\n  overscroll-behavior: contain;\n  overflow-y: auto;\n}\n\n/* Only kill the horizontal chain */\n.carousel {\n  overscroll-behavior-x: none;\n}</code></pre>\n  <p class=\"t-small muted\">Great for drawers, modals, and horizontal carousels that shouldn't yank the page.</p>\n</div>",
+   "title": "CSS overscroll-behavior for no bounce",
+   "user_requests": [
+    "css stop pull to refresh on mobile",
+    "overscroll-behavior none example",
+    "disable rubber band scroll css",
+    "prevent scroll chaining in modal css",
+    "css overscroll behavior contain",
+    "stop page bounce on ios css",
+    "overscroll-behavior usage guide"
+   ]
+  },
+  {
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">CSS scroll-padding for anchored jumps</h4>\n  <p class=\"muted\">Hi <regex>user_name</regex>, keep your sticky header from eating anchor targets.</p>\n  <pre class=\"code\"><code>html {\n  scroll-padding-top: 5rem; /* matches your sticky header */\n  scroll-behavior: smooth;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  html {\n    scroll-behavior: auto;\n  }\n}</code></pre>\n  <p class=\"t-small muted\">Different from <code>scroll-margin-top</code>: this sets the safe zone for the scroll container itself.</p>\n</div>",
+   "title": "CSS scroll-padding for anchored jumps",
+   "user_requests": [
+    "css scroll-padding-top sticky header",
+    "anchor link hidden behind header fix css",
+    "scroll-padding vs scroll-margin css",
+    "how to offset anchor jumps css",
+    "scroll-padding-top example",
+    "smooth scroll with header offset css",
+    "css anchor scroll offset sticky nav"
+   ]
+  },
+  {
+   "title": "CSS aspect-ratio for media boxes",
+   "user_requests": [
+    "how do I keep an image box from jumping while it loads",
+    "css aspect-ratio please",
+    "stop layout shift on my video embeds",
+    "reserve space for thumbnails so the page doesn't jump",
+    "aspect ratio css quick answer",
+    "img placeholder height trick",
+    "make my cards same shape no matter the picture size"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Reserve the box, skip the jump</h4>\n  <p class=\"t-small muted\">Set the ratio once. The browser holds the space before the pixels arrive, so nothing below it shoves around.</p>\n  <pre class=\"code\"><code>.thumb {\n  aspect-ratio: 16 / 9;\n  width: 100%;\n  object-fit: cover;\n  border-radius: var(--r-md);\n  background: var(--bg-alt);\n  border: 1px solid var(--line);\n}\n\n/* a square avatar that never squashes */\n.avatar {\n  aspect-ratio: 1;\n  width: 48px;\n  border-radius: var(--r-pill);\n}</code></pre>\n  <div class=\"row\">\n    <span class=\"badge good\"><i class=\"dot\"></i>zero layout shift</span>\n    <span class=\"badge\">works on <code>img</code> and <code>div</code></span>\n  </div>\n  <details class=\"acc\">\n    <summary>Where the old padding hack went</summary>\n    <div class=\"body\">\n      <p class=\"t-small\">The 56.25% padding trick still works, but <code>aspect-ratio</code> says what it means and doesn't need an absolutely positioned child.</p>\n    </div>\n  </details>\n</div>"
+  },
+  {
+   "title": "CSS text-wrap: balance for headlines",
+   "user_requests": [
+    "headline breaks unevenly, any css fix",
+    "text-wrap balance",
+    "nice line breaks in my h1 without manual br",
+    "how to stop one word sitting alone on the last line",
+    "balance css headings",
+    "my title looks lopsided on mobile",
+    "css so titles wrap pretty"
+   ],
+   "html": "<p class=\"t-small muted\">Long headlines like to drop one lonely word onto the last line. Ask the browser to even the lines out.</p>\n<pre class=\"code\"><code>h1, h2 {\n  text-wrap: balance;\n  /* keep it to headings; long paragraphs\n     get expensive to balance */\n  max-inline-size: 22ch;\n}\n\np {\n  text-wrap: pretty;\n  /* the gentler sibling: fixes orphans\n     without reshuffling every line */\n}</code></pre>\n<div class=\"grid two\">\n  <div class=\"card flat\">\n    <p class=\"t-small\"><strong>balance</strong><br>headlines, captions<br>max ~6 lines</p>\n  </div>\n  <div class=\"card flat\">\n    <p class=\"t-small\"><strong>pretty</strong><br>body copy<br>cheap, safe</p>\n  </div>\n</div>\n<div class=\"callout info\">\n  <p class=\"t-small\">No support? Headlines just wrap the old way. Nothing breaks, which is the whole point.</p>\n</div>"
+  },
+  {
+   "title": "CSS inset shorthand for positioning",
+   "user_requests": [
+    "shorthand for top right bottom left css",
+    "inset property?",
+    "how do I pin a badge to a corner without four lines",
+    "replace top/left/right/bottom with one rule",
+    "css inset explain",
+    "corner badge css tip",
+    "stretch an overlay over the whole parent"
+   ],
+   "html": "<pre class=\"code\"><code>/* four values = top right bottom left,\n   same order as margin */\n.badge {\n  position: absolute;\n  inset: var(--s-2) var(--s-2) auto auto;\n}\n\n/* full stretch: stands in for\n   top:0; right:0; bottom:0; left:0 */\n.overlay {\n  position: absolute;\n  inset: 0;\n  background: color-mix(in oklab, var(--ink) 45%, transparent);\n  backdrop-filter: blur(2px);\n}\n\n/* just the top: bottom is auto,\n   so nothing gets stretched */\n.pinned {\n  inset: var(--s-3) auto auto var(--s-3);\n}</code></pre>\n<div class=\"row\">\n  <span class=\"badge accent\">one line, four edges</span>\n  <span class=\"badge\"><code>auto</code> leaves an edge alone</span>\n</div>\n<p class=\"t-small dim\">Old habit: <code>top/right/bottom/left</code>. New habit: one property the browser can read at a glance.</p>"
+  },
+  {
+   "title": "CSS ::selection for custom text highlight",
+   "user_requests": [
+    "change the highlight colour when people select text",
+    "::selection css",
+    "make selection match my brand",
+    "how to style selected text",
+    "blue highlight is ugly, fix it",
+    "css selection colour",
+    "highlighted text style"
+   ],
+   "html": "<pre class=\"code\"><code>::selection {\n  background: var(--accent-soft);\n  color: var(--ink);\n}\n\n/* a warmer one for code blocks */\npre ::selection,\ncode::selection {\n  background: var(--accent);\n  color: var(--panel);\n}\n\n/* keep the tint readable on tinted panels */\n.card ::selection {\n  background: color-mix(in oklab, var(--accent) 30%, transparent);\n  text-shadow: none;\n}</code></pre>\n<div class=\"card flat\">\n  <p class=\"t-small\">Select this sentence and see. Only <code>background</code> and <code>color</code> are dependable here; anything fancier gets quietly ignored.</p>\n</div>\n<p class=\"t-small dim\">Try selecting the snippet above too, <regex>user_name</regex>.</p>"
+  },
+  {
+   "title": "CSS scrollbar-width for slimmer scrollbars",
+   "user_requests": [
+    "make my scrollbar thinner chrome",
+    "scrollbar-width css",
+    "thin scrollbar without webkit hacks",
+    "slim scroll bars cross browser",
+    "scrollbar too chunky can I style it",
+    "css slim scrollbar",
+    "reduce scrollbar size"
+   ],
+   "html": "<pre class=\"code\"><code>/* standard property: Chrome 121+, Firefox */\n.scroll-pane {\n  overflow-y: auto;\n  scrollbar-width: thin;              /* or: auto | none */\n  scrollbar-color: var(--line-2) var(--bg-alt);\n}\n\n/* hide entirely \u2014 show a real affordance instead */\n.no-bar {\n  scrollbar-width: none;\n  overflow: auto;\n}</code></pre>\n<div class=\"grid two\">\n  <div class=\"card flat\">\n    <p class=\"t-small\"><strong>thin</strong><br>A slimmer bar, size controlled by the OS.</p>\n  </div>\n  <div class=\"card flat\">\n    <p class=\"t-small\"><strong>none</strong><br>Gone. Make sure the content still scrolls.</p>\n  </div>\n</div>\n<div class=\"callout warn\">\n  <p class=\"t-small\">Never hide the only bar on a page whose whole purpose is scrolling. That's not minimalism, that's a maze.</p>\n</div>"
+  },
+  {
+   "title": "CSS shape-outside for circular text wrap",
+   "user_requests": [
+    "make text wrap around a circle css",
+    "shape-outside",
+    "round image with text flowing around it",
+    "how to do magazine style text wrap",
+    "shape outside circle example",
+    "text around an avatar",
+    "css float on a shape"
+   ],
+   "html": "<pre class=\"code\"><code>.wrap-text {\n  padding: var(--s-3);\n}\n\n.round {\n  float: left;\n  width: 110px;\n  aspect-ratio: 1;\n  shape-outside: circle(50%);\n  margin-inline-end: var(--s-3);\n  background: radial-gradient(\n    circle at 35% 30%,\n    var(--accent-2),\n    var(--accent));\n  border-radius: 50%;\n}</code></pre>\n<div class=\"card flat\">\n  <div class=\"wrap-text t-small\">\n    <div class=\"round\" aria-hidden=\"true\"></div>\n    <p>Type flows around the shape instead of the invisible box, so the words tuck in close and the little round thing here finally looks like it belongs rather than sitting in an empty rectangle like a cat in a carrier. Resize the window and the lines re-wrap, which is the fun part.</p>\n  </div>\n</div>\n<div class=\"row\">\n  <span class=\"badge info\">float is required</span>\n  <span class=\"badge\">text stays selectable</span>\n</div>"
+  },
+  {
+   "title": "CSS :user-invalid for live validation",
+   "user_requests": [
+    "how to style invalid form fields with css",
+    "user-invalid pseudo class",
+    "css live validation without js",
+    "style form errors as you type",
+    "css invalid input styling",
+    "how do i use user-invalid in css?",
+    "css form validation pseudo class"
+   ],
+   "html": "<div class=\"card\">\n  <h4>CSS :user-invalid for live validation</h4>\n  <p class=\"muted\">Style fields after the user has interacted and left them invalid\u2014no JavaScript required.</p>\n  <div class=\"stack\" style=\"--s:var(--s-4)\">\n    <p><code>:user-invalid</code> matches an input only after the user has tried to submit or blurred it with invalid content. It's the polite sibling of <code>:invalid</code>, which fires too eagerly.</p>\n    <p>Use it to add a red border and a helper message. The browser won't show the message until the field is actually wrong.</p>\n  </div>\n  <pre class=\"code\"><code>input:user-invalid {\n  border-color: var(--bad);\n}\ninput:user-invalid + .hint {\n  display: block;\n  color: var(--bad);\n}\n.hint { display: none; }</code></pre>\n  <p class=\"t-small dim\">Supported in modern browsers as of 2023. Fall back to <code>:invalid</code> for older ones if you must.</p>\n</div>"
+  },
+  {
+   "title": "CSS text-emphasis for elegant emphasis",
+   "user_requests": [
+    "css text emphasis marks",
+    "how to add dots under text with css",
+    "css emphasis marks for japanese text",
+    "text-emphasis property",
+    "css ruby style emphasis",
+    "add emphasis marks to text css",
+    "css text-emphasis-style examples"
+   ],
+   "html": "<div class=\"card\">\n  <h4>CSS text-emphasis for elegant emphasis</h4>\n  <p class=\"muted\">Draw small marks above or below text\u2014great for East Asian typography or playful accents.</p>\n  <div class=\"stack\" style=\"--s:var(--s-4)\">\n    <p><code>text-emphasis</code> adds repeating symbols over each character. You control the mark with <code>text-emphasis-style</code> and its color with <code>text-emphasis-color</code>.</p>\n    <p>It's especially handy for Japanese emphasis dots, but works for any script. The marks won't affect line height.</p>\n  </div>\n  <pre class=\"code\"><code>em {\n  text-emphasis: dot var(--accent);\n  text-emphasis-position: under right;\n  font-style: normal; /* optional */\n}</code></pre>\n  <p class=\"t-small dim\">The <code>position</code> value controls where the mark appears\u2014above or below\u2014and its alignment.</p>\n</div>"
+  },
+  {
+   "title": "CSS caret-color for custom cursors",
+   "user_requests": [
+    "css caret color",
+    "change text cursor color css",
+    "caret-color property",
+    "how to style input caret",
+    "css custom text cursor",
+    "input caret color css",
+    "style the blinking cursor css"
+   ],
+   "html": "<div class=\"card\">\n  <h4>CSS caret-color for custom cursors</h4>\n  <p class=\"muted\">Tint the text insertion cursor to match your accent\u2014subtle but delightful.</p>\n  <div class=\"stack\" style=\"--s:var(--s-4)\">\n    <p>The <code>caret-color</code> property sets the color of the blinking cursor in inputs, textareas, and contenteditable elements. It defaults to the text color, but you can make it any color.</p>\n    <p>Set it to <code>auto</code> to keep the browser default, or to a custom value for a branded touch.</p>\n  </div>\n  <pre class=\"code\"><code>input, textarea {\n  caret-color: var(--accent);\n}\n\n/* Or match the text color for simplicity */\ninput { caret-color: currentColor; }</code></pre>\n  <p class=\"t-small dim\">Works everywhere except very old browsers. No fallback needed.</p>\n</div>"
+  },
+  {
+   "title": "CSS font-synthesis for faux bold prevention",
+   "user_requests": [
+    "css font synthesis",
+    "prevent fake bold css",
+    "font-synthesis property",
+    "how to stop faux italic",
+    "css synthetic bold fix",
+    "font-synthesis-weight none",
+    "disable fake font styles css"
+   ],
+   "html": "<div class=\"card\">\n  <h4>CSS font-synthesis for faux bold prevention</h4>\n  <p class=\"muted\">Stop browsers from faking bold or italic when a font lacks those faces.</p>\n  <div class=\"stack\" style=\"--s:var(--s-4)\">\n    <p>With <code>font-synthesis</code> you can tell the browser not to synthesize bold, italic, or small-caps. This keeps your typography true to the typeface, avoiding ugly faux styles.</p>\n    <p>Set it on the element or globally. It's a small win for design purists.</p>\n  </div>\n  <pre class=\"code\"><code>body {\n  font-synthesis: none; /* no faux bold/italic */\n}\n\n/* Or prevent only weight synthesis */\nh1 {\n  font-synthesis-weight: none;\n}</code></pre>\n  <p class=\"t-small dim\">If the font has a real bold, it will still be used. This only blocks fake ones.</p>\n</div>"
+  },
+  {
+   "title": "CSS all: unset for resetting styles",
+   "user_requests": [
+    "css all unset",
+    "reset all styles css",
+    "all property css",
+    "how to remove all styles from element",
+    "css all unset property",
+    "unset all css properties",
+    "css all: initial vs unset"
+   ],
+   "html": "<div class=\"card\">\n  <h4>CSS all: unset for resetting styles</h4>\n  <p class=\"muted\">Wipe an element's styles clean\u2014back to inherited or initial values.</p>\n  <div class=\"stack\" style=\"--s:var(--s-4)\">\n    <p><code>all</code> is a shorthand for every property. <code>all: unset</code> resets to inherited values if the property inherits, or initial if not. It's a sledgehammer for style isolation.</p>\n    <p>Commonly used on components that need to break free from parent styles, like a custom button inside a styled paragraph.</p>\n  </div>\n  <pre class=\"code\"><code>.clean-slate {\n  all: unset;\n}\n\n/* Or reset to initial values */\n.reset-to-initial {\n  all: initial;\n}</code></pre>\n  <p class=\"t-small dim\">Note: <code>all</code> doesn't affect custom properties or <code>direction</code>/<code>unicode-bidi</code>.</p>\n</div>"
+  },
+  {
+   "title": "CSS text-size-adjust for mobile legibility",
+   "user_requests": [
+    "css text size adjust",
+    "prevent text resizing on mobile css",
+    "text-size-adjust property",
+    "stop font inflation css",
+    "mobile text scaling css",
+    "disable text inflation on phones",
+    "css text-size-adjust: 100%"
+   ],
+   "html": "<div class=\"card\">\n  <h4>CSS text-size-adjust for mobile legibility</h4>\n  <p class=\"muted\">Control automatic text inflation on mobile devices\u2014keep your layout predictable.</p>\n  <div class=\"stack\" style=\"--s:var(--s-4)\">\n    <p>Mobile browsers sometimes enlarge text in wide blocks to make it readable. <code>text-size-adjust</code> lets you disable or customize that behaviour.</p>\n    <p>Set it to <code>100%</code> to prevent inflation, or <code>none</code> to disable entirely. Use sparingly\u2014it can harm accessibility.</p>\n  </div>\n  <pre class=\"code\"><code>body {\n  text-size-adjust: 100%;\n}\n\n/* For a specific container */\n.card {\n  text-size-adjust: none;\n}</code></pre>\n  <p class=\"t-small dim\">Best used on components where layout stability matters more than browser guessing.</p>\n</div>"
+  },
+  {
+   "user_requests": [
+    "how to make CSS variables fall back if they're not defined",
+    "fallback value for a css variable",
+    "css var fallback syntax?",
+    "my css custom property is empty on old browsers",
+    "how do I write a default for --accent",
+    "variable fallback css",
+    "css var() with fallback example"
+   ],
+   "title": "CSS variable fallback syntax",
+   "html": "<div class=\"card\"><h4>Fallback for custom properties</h4><pre class=\"code\"><code>.btn{\n  color:var(--btn-ink, var(--ink));\n  background:var(--btn-bg, var(--accent));\n}</code></pre><p class=\"muted t-small\">The second argument kicks in when <code>--btn-ink</code> is empty or missing. Nesting another <code>var()</code> keeps the fallback themeable.</p></div>"
+  },
+  {
+   "user_requests": [
+    "how to keep my page from bouncing when it hits the bottom",
+    "stop overscroll bounce css",
+    "disable rubber band scroll on mobile",
+    "overscroll-behavior contain vs none",
+    "css overscroll none",
+    "prevent pull to refresh inside a modal",
+    "no bounce scrolling css"
+   ],
+   "title": "CSS overscroll-behavior",
+   "html": "<div class=\"card\"><h4>Stop the rubber band</h4><pre class=\"code\"><code>.sheet{\n  overscroll-behavior:contain;\n}\nhtml{\n  overscroll-behavior-y:none;\n}</code></pre><p class=\"muted t-small\"><code>contain</code> keeps the scroll inside the sheet; <code>none</code> on <code>html</code> kills the whole-page bounce. Good for modals and drawers.</p></div>"
+  },
+  {
+   "user_requests": [
+    "prevent browser from faking bold and italic",
+    "font-synthesis css",
+    "my custom font looks fake-bold",
+    "stop faux bold on fallback fonts",
+    "css font synthesis none",
+    "fake bold prevention css",
+    "how to avoid synthetic bold"
+   ],
+   "title": "CSS font-synthesis",
+   "html": "<div class=\"card\"><h4>No faux bold</h4><pre class=\"code\"><code>body{\n  font-synthesis:none;\n}</code></pre><p class=\"muted t-small\">If a weight or style isn't loaded, the browser usually fakes it. This says: don't. Pick real faces instead.</p></div>"
+  },
+  {
+   "user_requests": [
+    "how to make checkboxes bigger and coloured",
+    "accent-color css",
+    "style native form controls",
+    "css accent color for radio",
+    "make checkbox match my theme",
+    "accent-color example",
+    "color form controls css"
+   ],
+   "title": "CSS accent-color",
+   "html": "<div class=\"card\"><h4>Tint the natives</h4><pre class=\"code\"><code>input[type=\"checkbox\"],\ninput[type=\"radio\"]{\n  accent-color:var(--accent);\n}</code></pre><p class=\"muted t-small\">One line, and checkboxes, radios and range sliders pick up your accent. Works with the system dark mode too.</p></div>"
+  },
+  {
+   "user_requests": [
+    "how to keep scrollbar from shifting my layout",
+    "scrollbar-gutter css",
+    "stop layout jump when scrollbar appears",
+    "reserve scrollbar space css",
+    "scrollbar gutter stable",
+    "css prevent scrollbar shift",
+    "scrollbar-gutter: stable both-edges"
+   ],
+   "title": "CSS scrollbar-gutter",
+   "html": "<div class=\"card\"><h4>Reserve the scrollbar</h4><pre class=\"code\"><code>html{\n  scrollbar-gutter:stable both-edges;\n}</code></pre><p class=\"muted t-small\">No more content shimmy when the page grows a scrollbar. <code>both-edges</code> keeps centred layouts centred.</p></div>"
+  },
+  {
+   "user_requests": [
+    "how to make selection colour match my brand",
+    "css ::selection custom colour",
+    "style text selection",
+    "change highlight color css",
+    "selection pseudo element",
+    "::selection example",
+    "custom text highlight css"
+   ],
+   "title": "CSS ::selection",
+   "html": "<div class=\"card\"><h4>Your highlight, your colour</h4><pre class=\"code\"><code>::selection{\n  background:var(--accent);\n  color:var(--bg);\n}</code></pre><p class=\"muted t-small\">Only background and colour are allowed here. Keep contrast high; some users select text to read it.</p></div>"
+  }
+ ]
+}

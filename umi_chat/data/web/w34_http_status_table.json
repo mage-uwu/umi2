@@ -1,0 +1,2393 @@
+{
+ "widget": "http_status_table",
+ "instances": [
+  {
+   "user_requests": [
+    "show me http status codes",
+    "list common HTTP response status codes and what they mean",
+    "i always forget 418 what is it",
+    "status code cheatsheet pls",
+    "what does 503 mean in http",
+    "can u give me a table of http error codes",
+    "http response codes quick reference for web dev",
+    "cheat sheet for http status codes",
+    "http status codes list",
+    "all http status codes",
+    "status codes http",
+    "http status codes quick reference",
+    "http status code chart"
+   ],
+   "title": "HTTP Status Codes Cheat Sheet",
+   "html": "<div class=\"card\"><div class=\"card-title\">HTTP status codes <span class=\"badge accent\">quick ref</span></div><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK</td></tr><tr><td>201</td><td>Created</td></tr><tr><td>204</td><td>No Content</td></tr><tr><td>301</td><td>Moved Permanently</td></tr><tr><td>302</td><td>Found (temporary redirect)</td></tr><tr><td>304</td><td>Not Modified</td></tr><tr><td>400</td><td>Bad Request</td></tr><tr><td>401</td><td>Unauthorized</td></tr><tr><td>403</td><td>Forbidden</td></tr><tr><td>404</td><td>Not Found</td></tr><tr><td>405</td><td>Method Not Allowed</td></tr><tr><td>409</td><td>Conflict</td></tr><tr><td>418</td><td>I'm a teapot</td></tr><tr><td>429</td><td>Too Many Requests</td></tr><tr><td>500</td><td>Internal Server Error</td></tr><tr><td>502</td><td>Bad Gateway</td></tr><tr><td>503</td><td>Service Unavailable</td></tr><tr><td>504</td><td>Gateway Timeout</td></tr></tbody></table></div><p class=\"muted t-small\">Handy when the network tab throws numbers at you. <regex>user_name</regex></p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "explain HTTP status codes like I'm 5",
+    "what do the different http codes mean?",
+    "i need a simple guide to http status codes",
+    "status codes for dummies",
+    "can you break down http response codes for me",
+    "http status codes explained simply",
+    "help me understand 4xx and 5xx codes",
+    "http codes for dummies",
+    "explain http status codes simply",
+    "http status codes in simple terms",
+    "http status codes easy explanation",
+    "http codes made easy",
+    "simple guide to http status codes"
+   ],
+   "title": "HTTP Status Codes, Simply",
+   "html": "<div class=\"card\"><div class=\"card-title\">HTTP status codes, simply</div><p class=\"muted\">Servers talk in numbers. Here's the gist.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>All good, here's your stuff</td></tr><tr><td>301</td><td>Moved forever, update your links</td></tr><tr><td>304</td><td>Nothing changed, use your cache</td></tr><tr><td>400</td><td>Your request was malformed</td></tr><tr><td>401</td><td>Who are you? Log in</td></tr><tr><td>403</td><td>I know who you are, but no</td></tr><tr><td>404</td><td>Can't find that page</td></tr><tr><td>418</td><td>I'm a teapot (an Easter egg)</td></tr><tr><td>429</td><td>Slow down, too many requests</td></tr><tr><td>500</td><td>Something broke on the server</td></tr><tr><td>503</td><td>Server's taking a nap, try later</td></tr></tbody></table></div><p class=\"muted t-small\"><regex>user_name</regex> 2xx good, 3xx redirect, 4xx you, 5xx them.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "what's the difference between 401 and 403",
+    "401 vs 403 http",
+    "when should I use 401 vs 403 in my API?",
+    "http status code 401 vs 403 difference",
+    "i keep mixing up 401 and 403",
+    "explain 401 and 403 status codes",
+    "which one is auth and which is permission",
+    "401 vs 403 difference",
+    "difference between 401 and 403",
+    "what does 401 mean vs 403",
+    "401 vs 403 error",
+    "http 401 vs 403",
+    "when to use 401 vs 403"
+   ],
+   "title": "401 vs 403: Auth vs Permission",
+   "html": "<div class=\"card\"><div class=\"card-title\">401 vs 403</div><p class=\"muted\">One is \"who are you?\", the other is \"I know you, but no.\"</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>401</td><td>Unauthorized \u2014 you're not authenticated (log in)</td></tr><tr><td>403</td><td>Forbidden \u2014 you're authenticated but not allowed</td></tr></tbody></table></div><div class=\"callout info\">401 often includes a <code>WWW-Authenticate</code> header. 403 means don't bother retrying with the same credentials.</div><p class=\"muted t-small\"><regex>user_name</regex> easy to mix up. 401 = missing key. 403 = wrong key.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "list all 2xx success codes",
+    "what are the 200-level http status codes?",
+    "2xx http status codes list",
+    "give me all the success status codes",
+    "http codes starting with 2",
+    "what does 201 202 203 mean",
+    "success codes cheat sheet",
+    "list of 2xx status codes",
+    "http 2xx codes",
+    "success http status codes",
+    "2xx response codes",
+    "what are 2xx codes",
+    "http status codes starting with 2"
+   ],
+   "title": "2xx Success Codes",
+   "html": "<div class=\"card\"><div class=\"card-title\">2xx \u2014 success</div><p class=\"muted\">The server did the thing. Here's the nuance.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK \u2014 standard success</td></tr><tr><td>201</td><td>Created \u2014 new resource made (send Location header)</td></tr><tr><td>202</td><td>Accepted \u2014 queued for processing</td></tr><tr><td>203</td><td>Non-Authoritative Information \u2014 proxy modified response</td></tr><tr><td>204</td><td>No Content \u2014 success, but nothing to return</td></tr><tr><td>205</td><td>Reset Content \u2014 clear the form</td></tr><tr><td>206</td><td>Partial Content \u2014 range request fulfilled</td></tr></tbody></table></div><p class=\"muted t-small\"><regex>user_name</regex> 204 is your friend for DELETE.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "what are the 3xx redirect codes?",
+    "explain 301 302 307 308",
+    "http redirect status codes",
+    "difference between 301 and 302",
+    "3xx status codes list",
+    "when to use 307 vs 308",
+    "redirect codes for SEO",
+    "http 3xx codes",
+    "redirect status codes",
+    "list of 3xx codes",
+    "3xx http status codes",
+    "what are 3xx status codes",
+    "http status codes for redirects"
+   ],
+   "title": "3xx Redirect Codes",
+   "html": "<div class=\"card\"><div class=\"card-title\">3xx \u2014 redirects</div><p class=\"muted\">Where to go next. Some are permanent, some are not.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>300</td><td>Multiple Choices \u2014 pick one</td></tr><tr><td>301</td><td>Moved Permanently \u2014 update your bookmarks</td></tr><tr><td>302</td><td>Found \u2014 temporary redirect (may change)</td></tr><tr><td>303</td><td>See Other \u2014 GET the other URL</td></tr><tr><td>304</td><td>Not Modified \u2014 use cached version</td></tr><tr><td>307</td><td>Temporary Redirect \u2014 keeps method and body</td></tr><tr><td>308</td><td>Permanent Redirect \u2014 keeps method and body</td></tr></tbody></table></div><div class=\"callout warn\">307 and 308 preserve the HTTP method. 301/302 sometimes get rewritten to GET.</div><p class=\"muted t-small\"><regex>user_name</regex> SEO rule of thumb: use 301 for permanent moves.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "list client error codes 4xx",
+    "what does 400 401 403 404 mean",
+    "4xx http status codes",
+    "client error codes cheat sheet",
+    "http codes 4xx list",
+    "what is 422 unprocessable entity",
+    "4xx codes and their meanings",
+    "list of 4xx codes",
+    "http 4xx status codes",
+    "client error codes http",
+    "4xx http codes",
+    "what are 4xx errors",
+    "http status codes 400"
+   ],
+   "title": "4xx Client Error Codes",
+   "html": "<div class=\"card\"><div class=\"card-title\">4xx \u2014 client errors</div><p class=\"muted\">The request had a problem. Usually fixable on your end.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>400</td><td>Bad Request \u2014 malformed syntax</td></tr><tr><td>401</td><td>Unauthorized \u2014 authentication required</td></tr><tr><td>403</td><td>Forbidden \u2014 no permission</td></tr><tr><td>404</td><td>Not Found \u2014 no such resource</td></tr><tr><td>405</td><td>Method Not Allowed \u2014 wrong verb</td></tr><tr><td>406</td><td>Not Acceptable \u2014 can't satisfy Accept header</td></tr><tr><td>408</td><td>Request Timeout \u2014 took too long</td></tr><tr><td>409</td><td>Conflict \u2014 state clash (e.g., duplicate)</td></tr><tr><td>410</td><td>Gone \u2014 permanently removed</td></tr><tr><td>413</td><td>Payload Too Large</td></tr><tr><td>415</td><td>Unsupported Media Type</td></tr><tr><td>418</td><td>I'm a teapot \u2014 joke code from RFC 2324</td></tr><tr><td>422</td><td>Unprocessable Entity \u2014 semantic errors</td></tr><tr><td>429</td><td>Too Many Requests \u2014 rate limited</td></tr></tbody></table></div><p class=\"muted t-small\"><regex>user_name</regex> 429 means back off, maybe check Retry-After.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http status codes cheat sheet",
+    "list of http status codes",
+    "http response codes explained",
+    "what do http status codes mean",
+    "http codes table",
+    "status codes for web dev",
+    "quick http status code reference",
+    "http status codes overview",
+    "quick http status codes",
+    "http status codes summary",
+    "http status codes glance",
+    "http status codes at glance",
+    "overview of http status codes"
+   ],
+   "title": "HTTP Status Codes at a Glance",
+   "html": "<div class=\"card\">\n  <h2 class=\"card-title\">HTTP Status Codes at a Glance</h2>\n  <p class=\"muted t-small\">Here\u2019s a quick table for <regex>user_name</regex>. Codes are grouped by class.</p>\n  <div class=\"table-wrap\">\n    <table>\n      <thead>\n        <tr><th>Code</th><th>Meaning</th></tr>\n      </thead>\n      <tbody>\n        <tr><td>200</td><td>OK \u2014 request succeeded</td></tr>\n        <tr><td>201</td><td>Created \u2014 new resource</td></tr>\n        <tr><td>301</td><td>Moved Permanently</td></tr>\n        <tr><td>304</td><td>Not Modified \u2014 cached</td></tr>\n        <tr><td>400</td><td>Bad Request</td></tr>\n        <tr><td>401</td><td>Unauthorized</td></tr>\n        <tr><td>403</td><td>Forbidden</td></tr>\n        <tr><td>404</td><td>Not Found</td></tr>\n        <tr><td>500</td><td>Internal Server Error</td></tr>\n        <tr><td>503</td><td>Service Unavailable</td></tr>\n      </tbody>\n    </table>\n  </div>\n  <details class=\"acc\">\n    <summary>What do the first digits mean?</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li><span class=\"badge accent\">2xx</span> Success</li>\n        <li><span class=\"badge info\">3xx</span> Redirection</li>\n        <li><span class=\"badge warn\">4xx</span> Client error</li>\n        <li><span class=\"badge bad\">5xx</span> Server error</li>\n      </ul>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http status code categories",
+    "understanding http status codes",
+    "http status classes explained",
+    "what are 2xx 3xx 4xx 5xx",
+    "http status code ranges",
+    "web dev status code guide",
+    "http status code cheat sheet pdf",
+    "http status code classes",
+    "categories of http status codes",
+    "http status code groups",
+    "what are the http status code categories",
+    "http status code ranges",
+    "http status code types"
+   ],
+   "title": "HTTP Status Code Categories",
+   "html": "<div class=\"card\">\n  <h2 class=\"card-title\">HTTP Status Code Categories</h2>\n  <p class=\"muted t-small\">For <regex>user_name</regex>, here\u2019s the big picture. Each class tells you who\u2019s responsible.</p>\n  <div class=\"table-wrap\">\n    <table>\n      <thead>\n        <tr><th>Class</th><th>Meaning</th><th>Example</th></tr>\n      </thead>\n      <tbody>\n        <tr><td>1xx</td><td>Informational</td><td>100 Continue</td></tr>\n        <tr><td>2xx</td><td>Success</td><td>200 OK</td></tr>\n        <tr><td>3xx</td><td>Redirection</td><td>301 Moved Permanently</td></tr>\n        <tr><td>4xx</td><td>Client error</td><td>404 Not Found</td></tr>\n        <tr><td>5xx</td><td>Server error</td><td>500 Internal Server Error</td></tr>\n      </tbody>\n    </table>\n  </div>\n  <div class=\"callout info\">\n    <p><strong>Tip:</strong> If you see a 4xx, check your request. A 5xx means the server stumbled.</p>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "common http status codes",
+    "most used http status codes",
+    "http status codes you should know",
+    "typical http response codes",
+    "http status code examples",
+    "http status codes for apis",
+    "http status codes list with meanings",
+    "most common http status codes",
+    "frequently used http status codes",
+    "http status codes you should know",
+    "common http codes",
+    "popular http status codes",
+    "http status codes list common"
+   ],
+   "title": "Common HTTP Status Codes",
+   "html": "<div class=\"card\">\n  <h2 class=\"card-title\">Common HTTP Status Codes</h2>\n  <p class=\"muted t-small\">These are the ones you\u2019ll bump into most, <regex>user_name</regex>.</p>\n  <div class=\"table-wrap\">\n    <table>\n      <thead>\n        <tr><th>Code</th><th>Name</th><th>When it happens</th></tr>\n      </thead>\n      <tbody>\n        <tr><td>200</td><td>OK</td><td>Everything worked</td></tr>\n        <tr><td>201</td><td>Created</td><td>New resource made</td></tr>\n        <tr><td>301</td><td>Moved Permanently</td><td>URL changed for good</td></tr>\n        <tr><td>304</td><td>Not Modified</td><td>Use your cache</td></tr>\n        <tr><td>400</td><td>Bad Request</td><td>Malformed request</td></tr>\n        <tr><td>401</td><td>Unauthorized</td><td>Need to log in</td></tr>\n        <tr><td>403</td><td>Forbidden</td><td>Logged in, but no access</td></tr>\n        <tr><td>404</td><td>Not Found</td><td>No such resource</td></tr>\n        <tr><td>500</td><td>Internal Server Error</td><td>Server crashed</td></tr>\n        <tr><td>503</td><td>Service Unavailable</td><td>Server overloaded or down</td></tr>\n      </tbody>\n    </table>\n  </div>\n  <details class=\"acc\">\n    <summary>Why 401 vs 403?</summary>\n    <div class=\"body\">\n      <p>401 means you haven\u2019t authenticated. 403 means you\u2019re authenticated but not allowed.</p>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http status codes for dummies",
+    "simple http status codes",
+    "http status codes explained simply",
+    "basic http status codes",
+    "http status codes easy guide",
+    "http status codes overview",
+    "http status codes quick reference",
+    "http codes for dummies",
+    "explain http status codes simply",
+    "http status codes in simple terms",
+    "http status codes easy explanation",
+    "http codes made easy",
+    "simple guide to http status codes"
+   ],
+   "title": "HTTP Status Codes, Simply",
+   "html": "<div class=\"card\">\n  <h2 class=\"card-title\">HTTP Status Codes, Simply</h2>\n  <p class=\"muted t-small\"><regex>user_name</regex>, here\u2019s a plain-English version.</p>\n  <div class=\"table-wrap\">\n    <table>\n      <thead>\n        <tr><th>Code</th><th>What it means</th></tr>\n      </thead>\n      <tbody>\n        <tr><td>200</td><td>All good</td></tr>\n        <tr><td>201</td><td>Made something new</td></tr>\n        <tr><td>301</td><td>Moved for good</td></tr>\n        <tr><td>304</td><td>Nothing changed</td></tr>\n        <tr><td>400</td><td>Your request was off</td></tr>\n        <tr><td>401</td><td>Who are you?</td></tr>\n        <tr><td>403</td><td>You can\u2019t do that</td></tr>\n        <tr><td>404</td><td>Not here</td></tr>\n        <tr><td>500</td><td>Our bad</td></tr>\n        <tr><td>503</td><td>Taking a break</td></tr>\n      </tbody>\n    </table>\n  </div>\n  <p class=\"t-small dim\">Remember: 4xx = you, 5xx = them.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http status code reference table",
+    "http status codes with descriptions",
+    "full list of http status codes",
+    "http status codes and their meanings",
+    "http status code list",
+    "http status codes guide",
+    "http response status codes",
+    "http status code list",
+    "reference for http status codes",
+    "http status codes table",
+    "complete http status code list",
+    "http status code documentation",
+    "http status codes reference guide"
+   ],
+   "title": "HTTP Status Code Reference",
+   "html": "<div class=\"card\">\n  <h2 class=\"card-title\">HTTP Status Code Reference</h2>\n  <p class=\"muted t-small\">A handy table for <regex>user_name</regex>. Bookmark it.</p>\n  <div class=\"table-wrap\">\n    <table>\n      <thead>\n        <tr><th>Code</th><th>Meaning</th><th>Class</th></tr>\n      </thead>\n      <tbody>\n        <tr><td>200</td><td>OK</td><td><span class=\"badge accent\">2xx</span></td></tr>\n        <tr><td>201</td><td>Created</td><td><span class=\"badge accent\">2xx</span></td></tr>\n        <tr><td>204</td><td>No Content</td><td><span class=\"badge accent\">2xx</span></td></tr>\n        <tr><td>301</td><td>Moved Permanently</td><td><span class=\"badge info\">3xx</span></td></tr>\n        <tr><td>302</td><td>Found</td><td><span class=\"badge info\">3xx</span></td></tr>\n        <tr><td>304</td><td>Not Modified</td><td><span class=\"badge info\">3xx</span></td></tr>\n        <tr><td>400</td><td>Bad Request</td><td><span class=\"badge warn\">4xx</span></td></tr>\n        <tr><td>401</td><td>Unauthorized</td><td><span class=\"badge warn\">4xx</span></td></tr>\n        <tr><td>403</td><td>Forbidden</td><td><span class=\"badge warn\">4xx</span></td></tr>\n        <tr><td>404</td><td>Not Found</td><td><span class=\"badge warn\">4xx</span></td></tr>\n        <tr><td>500</td><td>Internal Server Error</td><td><span class=\"badge bad\">5xx</span></td></tr>\n        <tr><td>503</td><td>Service Unavailable</td><td><span class=\"badge bad\">5xx</span></td></tr>\n      </tbody>\n    </table>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http status codes for web developers",
+    "http status codes cheat sheet 2025",
+    "http status codes explained with examples",
+    "http status codes and when to use them",
+    "http status code meanings",
+    "http status codes for rest apis",
+    "http status codes tutorial",
+    "http status codes for developers",
+    "developer guide to http status codes",
+    "http status codes quick guide for devs",
+    "http status codes for programmers",
+    "http status codes developer reference",
+    "http status codes guide for developers"
+   ],
+   "title": "HTTP Status Codes: Developer\u2019s Quick Guide",
+   "html": "<div class=\"card\">\n  <h2 class=\"card-title\">HTTP Status Codes: Developer\u2019s Quick Guide</h2>\n  <p class=\"muted t-small\">Here\u2019s a practical table for <regex>user_name</regex>, with examples.</p>\n  <div class=\"table-wrap\">\n    <table>\n      <thead>\n        <tr><th>Code</th><th>Meaning</th><th>Example use</th></tr>\n      </thead>\n      <tbody>\n        <tr><td>200</td><td>OK</td><td>GET request succeeds</td></tr>\n        <tr><td>201</td><td>Created</td><td>POST creates a resource</td></tr>\n        <tr><td>301</td><td>Moved Permanently</td><td>URL has changed</td></tr>\n        <tr><td>304</td><td>Not Modified</td><td>Client cache is fresh</td></tr>\n        <tr><td>400</td><td>Bad Request</td><td>Validation error</td></tr>\n        <tr><td>401</td><td>Unauthorized</td><td>Missing or bad token</td></tr>\n        <tr><td>403</td><td>Forbidden</td><td>User lacks permission</td></tr>\n        <tr><td>404</td><td>Not Found</td><td>Resource doesn\u2019t exist</td></tr>\n        <tr><td>500</td><td>Internal Server Error</td><td>Unhandled exception</td></tr>\n        <tr><td>503</td><td>Service Unavailable</td><td>Server under maintenance</td></tr>\n      </tbody>\n    </table>\n  </div>\n  <p class=\"t-small dim\">Pick the right code and your API will thank you.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "what do HTTP status codes mean",
+    "list of http status codes",
+    "http status codes meaning",
+    "status code 404 meaning",
+    "explain http codes",
+    "http codes cheat sheet",
+    "whut r http status codes",
+    "what are http status codes",
+    "http status codes meaning",
+    "explanation of http status codes",
+    "http status codes explained simply",
+    "understanding http status codes",
+    "http status codes and their meanings"
+   ],
+   "title": "HTTP Status Codes Explained",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK</td></tr><tr><td>301</td><td>Moved Permanently</td></tr><tr><td>400</td><td>Bad Request</td></tr><tr><td>401</td><td>Unauthorized</td></tr><tr><td>403</td><td>Forbidden</td></tr><tr><td>404</td><td>Not Found</td></tr><tr><td>500</td><td>Internal Server Error</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http status codes for api",
+    "rest api status codes",
+    "api response codes",
+    "what http code to return",
+    "api status code list",
+    "http codes for rest",
+    "api codes cheat sheet",
+    "api http status codes",
+    "http status codes for rest api",
+    "api response codes",
+    "http status codes api design",
+    "rest api status codes",
+    "http status codes for web apis"
+   ],
+   "title": "HTTP Status Codes for APIs",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK</td></tr><tr><td>201</td><td>Created</td></tr><tr><td>204</td><td>No Content</td></tr><tr><td>400</td><td>Bad Request</td></tr><tr><td>401</td><td>Unauthorized</td></tr><tr><td>403</td><td>Forbidden</td></tr><tr><td>404</td><td>Not Found</td></tr><tr><td>429</td><td>Too Many Requests</td></tr><tr><td>500</td><td>Internal Server Error</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http status codes for redirects",
+    "301 vs 302",
+    "redirect status codes",
+    "what does 301 mean",
+    "http redirect codes",
+    "301 302 307 308 difference",
+    "redirect codes cheat sheet",
+    "redirect http status codes",
+    "http status codes for redirection",
+    "301 302 307 308",
+    "redirect codes http",
+    "http redirect codes list",
+    "what are the redirect status codes"
+   ],
+   "title": "HTTP Redirect Status Codes",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>301</td><td>Moved Permanently</td></tr><tr><td>302</td><td>Found (Temporary Redirect)</td></tr><tr><td>303</td><td>See Other</td></tr><tr><td>307</td><td>Temporary Redirect</td></tr><tr><td>308</td><td>Permanent Redirect</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http client error codes",
+    "4xx status codes",
+    "what does 400 mean",
+    "http 4xx list",
+    "client error codes",
+    "400 vs 404",
+    "4xx codes cheat sheet",
+    "http 4xx errors",
+    "list of 4xx http status codes",
+    "client error status codes",
+    "4xx http errors",
+    "http status codes 4xx list",
+    "what are 4xx client errors"
+   ],
+   "title": "HTTP 4xx Client Error Codes",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>400</td><td>Bad Request</td></tr><tr><td>401</td><td>Unauthorized</td></tr><tr><td>403</td><td>Forbidden</td></tr><tr><td>404</td><td>Not Found</td></tr><tr><td>405</td><td>Method Not Allowed</td></tr><tr><td>408</td><td>Request Timeout</td></tr><tr><td>429</td><td>Too Many Requests</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http server error codes",
+    "5xx status codes",
+    "what does 500 mean",
+    "http 5xx list",
+    "server error codes",
+    "500 vs 502 vs 503",
+    "5xx codes cheat sheet",
+    "5xx status codes list",
+    "server side http errors",
+    "what do 500 502 503 mean",
+    "http codes that mean the server broke",
+    "500s http errs plz",
+    "list every 5 hundred http status"
+   ],
+   "title": "HTTP 5xx Server Error Codes",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>500</td><td>Internal Server Error</td></tr><tr><td>501</td><td>Not Implemented</td></tr><tr><td>502</td><td>Bad Gateway</td></tr><tr><td>503</td><td>Service Unavailable</td></tr><tr><td>504</td><td>Gateway Timeout</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http status code categories",
+    "1xx 2xx 3xx 4xx 5xx meaning",
+    "http status code ranges",
+    "what do http status codes mean",
+    "http code classes",
+    "status code groups",
+    "http code categories cheat sheet",
+    "what are the http code classes",
+    "1xx 2xx 3xx 4xx 5xx explained",
+    "http response code groupings",
+    "how r http status codes categorized",
+    "break down http codes by range",
+    "status code families in http"
+   ],
+   "title": "HTTP Status Code Categories",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code Range</th><th>Meaning</th></tr></thead><tbody><tr><td>1xx</td><td>Informational</td></tr><tr><td>2xx</td><td>Success</td></tr><tr><td>3xx</td><td>Redirection</td></tr><tr><td>4xx</td><td>Client Error</td></tr><tr><td>5xx</td><td>Server Error</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "give me the http status codes",
+    "status code list",
+    "what does 418 mean",
+    "http codes cheat sheet",
+    "list of http response codes",
+    "status codes pls",
+    "http status code reference",
+    "200 404 500 cheat sheet",
+    "most common http codes",
+    "quick http status code list",
+    "http codes i actually need to know",
+    "common response codes http",
+    "cheat sheet of http statuses"
+   ],
+   "title": "HTTP Status Codes, The Short List",
+   "html": "<div class=\"card\"><div class=\"card-title\">HTTP Status Codes</div><p class=\"muted\">The ones you'll actually see. Full set lives in the RFCs.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK \u2014 request worked.</td></tr><tr><td>201</td><td>Created \u2014 new thing exists.</td></tr><tr><td>204</td><td>No Content \u2014 success, nothing to return.</td></tr><tr><td>301</td><td>Moved Permanently.</td></tr><tr><td>302</td><td>Found \u2014 temporary detour.</td></tr><tr><td>304</td><td>Not Modified \u2014 cached copy is fine.</td></tr><tr><td>400</td><td>Bad Request \u2014 malformed.</td></tr><tr><td>401</td><td>Unauthorized \u2014 who are you?</td></tr><tr><td>403</td><td>Forbidden \u2014 I know you, still no.</td></tr><tr><td>404</td><td>Not Found.</td></tr><tr><td>429</td><td>Too Many Requests \u2014 slow down.</td></tr><tr><td>500</td><td>Internal Server Error.</td></tr><tr><td>502</td><td>Bad Gateway \u2014 upstream misbehaved.</td></tr><tr><td>503</td><td>Service Unavailable \u2014 try later.</td></tr></tbody></table></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "explain http status codes to me",
+    "what are the 5 classes of http status codes",
+    "http status code groups",
+    "i keep seeing 200 301 404 help",
+    "http codes explained simply",
+    "status code categories meaning",
+    "break down http codes",
+    "http codes organized by type",
+    "all http statuses grouped together",
+    "walk me thru http status codes",
+    "http status codes sorted by category",
+    "explain all the http response codes",
+    "status codes grouped please"
+   ],
+   "title": "HTTP Status Codes, Grouped",
+   "html": "<div class=\"card\"><div class=\"card-title\">HTTP Status Code Groups</div><p class=\"muted\">The first digit tells you who's talking.</p><div class=\"grid two\"><div class=\"stat\"><div class=\"label\">1xx</div><div class=\"value\">Info</div><div class=\"delta\">rare, chatty</div></div><div class=\"stat\"><div class=\"label\">2xx</div><div class=\"value\">Success</div><div class=\"delta\">good news</div></div><div class=\"stat\"><div class=\"label\">3xx</div><div class=\"value\">Redirect</div><div class=\"delta\">go here instead</div></div><div class=\"stat\"><div class=\"label\">4xx</div><div class=\"value\">Client</div><div class=\"delta\">you messed up</div></div><div class=\"stat\"><div class=\"label\">5xx</div><div class=\"value\">Server</div><div class=\"delta\">we messed up</div></div></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http 401 vs 403 difference",
+    "401 or 403 which one",
+    "why am i getting 401",
+    "403 forbidden meaning",
+    "unauthorized vs forbidden http",
+    "401 403 confusion",
+    "auth vs permission status codes",
+    "difference between 401 and 403",
+    "401 or 403 which one",
+    "unauthorized vs forbidden http",
+    "why do i get 401 instead of 403",
+    "http 401 vs 403 help",
+    "403 and 401 whats the diff"
+   ],
+   "title": "401 vs 403, Settled",
+   "html": "<div class=\"card\"><div class=\"card-title\">401 vs 403</div><p class=\"muted\">One is \"who are you?\" The other is \"I know you, and no.\"</p><div class=\"table-wrap\"><table><thead><tr><th></th><th>401</th><th>403</th></tr></thead><tbody><tr><td>Means</td><td>Unauthenticated</td><td>Unauthorized</td></tr><tr><td>Fix</td><td>Log in</td><td>Get permission</td></tr><tr><td>Analogy</td><td>No badge</td><td>Badge, wrong door</td></tr></tbody></table></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "what is a 301 redirect",
+    "301 vs 302 http",
+    "redirect status codes list",
+    "why does my site redirect",
+    "http 3xx codes",
+    "moved permanently code",
+    "redirect codes cheat sheet",
+    "301 vs 302 which to use",
+    "what does a 301 do",
+    "redirect codes http fast answer",
+    "307 308 meaning",
+    "http redirect codes quick",
+    "tell me about http redirects"
+   ],
+   "title": "HTTP Redirects, Quick",
+   "html": "<div class=\"card\"><div class=\"card-title\">Redirect Codes</div><p class=\"muted\">When the server says \"not here, over there.\"</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>301</td><td>Moved Permanently \u2014 update your links.</td></tr><tr><td>302</td><td>Found \u2014 temporary, keep the old URL.</td></tr><tr><td>303</td><td>See Other \u2014 GET that instead.</td></tr><tr><td>307</td><td>Temporary Redirect \u2014 method preserved.</td></tr><tr><td>308</td><td>Permanent Redirect \u2014 method preserved.</td></tr></tbody></table></div><p class=\"t-small dim\">301/302 often turn POST into GET. 307/308 keep the method.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http 500 error meaning",
+    "server error codes list",
+    "why 502 bad gateway",
+    "503 service unavailable fix",
+    "5xx status codes",
+    "internal server error code",
+    "what does 504 mean",
+    "500 internal server error meaning",
+    "why am i getting a 502",
+    "503 service unavailable what",
+    "whats a 504 gateway timeout",
+    "server error codes explained",
+    "5 hundred errors http"
+   ],
+   "title": "5xx Server Errors",
+   "html": "<div class=\"card\"><div class=\"card-title\">5xx Server Errors</div><p class=\"muted\">Not your fault. Probably.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>500</td><td>Internal Server Error \u2014 something broke.</td></tr><tr><td>501</td><td>Not Implemented \u2014 server can't do that.</td></tr><tr><td>502</td><td>Bad Gateway \u2014 upstream gave garbage.</td></tr><tr><td>503</td><td>Service Unavailable \u2014 overloaded or down.</td></tr><tr><td>504</td><td>Gateway Timeout \u2014 upstream too slow.</td></tr></tbody></table></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http 4xx errors list",
+    "why 404 not found",
+    "400 bad request meaning",
+    "429 too many requests",
+    "client error codes",
+    "http 418 teapot",
+    "4xx status codes cheat sheet",
+    "list of 4xx codes",
+    "400 401 403 404 explained",
+    "what are client error codes",
+    "i keep getting 4xx errors",
+    "429 too many requests meaning",
+    "4 hundred http errors"
+   ],
+   "title": "4xx Client Errors",
+   "html": "<div class=\"card\"><div class=\"card-title\">4xx Client Errors</div><p class=\"muted\">The request had a problem. Usually on your end.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>400</td><td>Bad Request \u2014 malformed syntax.</td></tr><tr><td>401</td><td>Unauthorized \u2014 log in first.</td></tr><tr><td>403</td><td>Forbidden \u2014 no access.</td></tr><tr><td>404</td><td>Not Found \u2014 no such resource.</td></tr><tr><td>405</td><td>Method Not Allowed \u2014 wrong verb.</td></tr><tr><td>408</td><td>Request Timeout \u2014 took too long.</td></tr><tr><td>409</td><td>Conflict \u2014 state clash.</td></tr><tr><td>418</td><td>I'm a teapot \u2014 joke code, real RFC.</td></tr><tr><td>429</td><td>Too Many Requests \u2014 rate limited.</td></tr></tbody></table></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "status codes when you're online shopping",
+    "what do HTTP statuses mean for a store checkout?",
+    "http status codes for e-commerce, pls",
+    "codes i might hit during a checkout flow",
+    "online shopping http codes explained",
+    "status codes for cart and payments",
+    "http codes for ecommerce sites, typos n all",
+    "http codes when buying stuff online",
+    "402 payment required shopping",
+    "status codes during checkout",
+    "what codes show up when i shop online",
+    "online store http status codes",
+    "http codes for ecommerce"
+   ],
+   "title": "HTTP Codes in Online Shopping",
+   "html": "<div class=\"card\"><h3 class=\"card-title\">HTTP Codes in Online Shopping</h3><p class=\"muted\">Your cart speaks HTTP. Here's the short dictionary.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Page loaded, cart visible</td></tr><tr><td>201</td><td>Order placed, new resource created</td></tr><tr><td>301</td><td>Product moved to a new URL</td></tr><tr><td>302</td><td>Temporary redirect after login</td></tr><tr><td>304</td><td>Cart unchanged, use cached copy</td></tr><tr><td>400</td><td>Bad request, maybe missing size</td></tr><tr><td>401</td><td>Not logged in, need credentials</td></tr><tr><td>403</td><td>Logged in but not allowed</td></tr><tr><td>404</td><td>Product no longer exists</td></tr><tr><td>429</td><td>Too many requests, slow down</td></tr><tr><td>500</td><td>Server hiccup on checkout</td></tr><tr><td>503</td><td>Store temporarily closed for maintenance</td></tr></tbody></table></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http statuses for file uploads",
+    "what codes do i get when uploading files?",
+    "status codes for upload endpoints",
+    "http codes when you post a file",
+    "upload http status codes, quick",
+    "codes for file upload responses",
+    "http codes for uploads, ty",
+    "what code for successful file upload",
+    "413 payload too large upload",
+    "upload failing 400 or 500",
+    "http codes when uploading files",
+    "status code for file too big",
+    "returns for file upload http"
+   ],
+   "title": "HTTP Status Codes for File Uploads",
+   "html": "<div class=\"card\"><h3 class=\"card-title\">HTTP Status Codes for File Uploads</h3><p class=\"muted\">Uploading a file? These are the server's replies.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Upload accepted and processed</td></tr><tr><td>201</td><td>File created successfully</td></tr><tr><td>202</td><td>Upload queued for processing</td></tr><tr><td>400</td><td>Bad request, maybe missing file</td></tr><tr><td>401</td><td>Unauthorized, login first</td></tr><tr><td>403</td><td>Forbidden, no upload rights</td></tr><tr><td>404</td><td>Upload endpoint not found</td></tr><tr><td>413</td><td>Payload too large, file too big</td></tr><tr><td>415</td><td>Unsupported media type</td></tr><tr><td>422</td><td>Unprocessable entity, bad data</td></tr><tr><td>500</td><td>Server error during save</td></tr><tr><td>503</td><td>Service unavailable, try later</td></tr></tbody></table></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http codes when i log in",
+    "status codes for authentication",
+    "what http statuses mean for login?",
+    "login http codes explained",
+    "auth status codes, pls",
+    "http codes for sign in and out",
+    "status codes for auth, typos ok",
+    "what code when login fails",
+    "401 on bad password",
+    "http codes for sign in",
+    "login auth status codes",
+    "code for session expired http",
+    "auth related http status codes"
+   ],
+   "title": "HTTP Status Codes for Authentication",
+   "html": "<div class=\"card\"><h3 class=\"card-title\">HTTP Status Codes for Authentication</h3><p class=\"muted\">Login, logout, and the codes in between.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Login successful, token issued</td></tr><tr><td>201</td><td>User account created</td></tr><tr><td>204</td><td>Logout successful, no content</td></tr><tr><td>400</td><td>Bad request, malformed credentials</td></tr><tr><td>401</td><td>Unauthorized, wrong password</td></tr><tr><td>403</td><td>Forbidden, account disabled</td></tr><tr><td>404</td><td>User not found</td></tr><tr><td>409</td><td>Conflict, username taken</td></tr><tr><td>422</td><td>Unprocessable, missing fields</td></tr><tr><td>429</td><td>Too many attempts, rate limited</td></tr><tr><td>500</td><td>Server error during auth</td></tr><tr><td>503</td><td>Auth service unavailable</td></tr></tbody></table></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http status codes when using apis",
+    "what codes do apis return?",
+    "api http status codes, quick",
+    "status codes for rest apis",
+    "http codes for api calls",
+    "api response codes explained",
+    "http codes for apis, ty",
+    "rest api status codes",
+    "what codes should my api return",
+    "api response codes list",
+    "http codes for api endpoints",
+    "best http codes for api design",
+    "api errors 4xx vs 5xx"
+   ],
+   "title": "HTTP Status Codes for APIs",
+   "html": "<div class=\"card\"><h3 class=\"card-title\">HTTP Status Codes for APIs</h3><p class=\"muted\">APIs talk in status codes. Here's the common dialect.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK, request succeeded</td></tr><tr><td>201</td><td>Created, new resource</td></tr><tr><td>204</td><td>No content, success with empty body</td></tr><tr><td>400</td><td>Bad request, client error</td></tr><tr><td>401</td><td>Unauthorized, missing or bad token</td></tr><tr><td>403</td><td>Forbidden, insufficient permissions</td></tr><tr><td>404</td><td>Not found, endpoint or resource missing</td></tr><tr><td>405</td><td>Method not allowed</td></tr><tr><td>409</td><td>Conflict, duplicate or state mismatch</td></tr><tr><td>429</td><td>Too many requests, rate limited</td></tr><tr><td>500</td><td>Internal server error</td></tr><tr><td>503</td><td>Service unavailable, try later</td></tr></tbody></table></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http status codes for redirects",
+    "what do 3xx codes mean?",
+    "redirect status codes, pls",
+    "http redirects explained",
+    "status codes when a page moves",
+    "http codes for moved pages",
+    "3xx codes, ty",
+    "301 302 307 308 comparison",
+    "all redirect status codes http",
+    "permanent vs temporary redirect codes",
+    "which http codes redirect",
+    "redirect status codes list",
+    "http codes that cause redirects"
+   ],
+   "title": "HTTP Redirect Status Codes",
+   "html": "<div class=\"card\"><h3 class=\"card-title\">HTTP Redirect Status Codes</h3><p class=\"muted\">When a page moves, the server says so with a 3xx.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>301</td><td>Moved Permanently, update your links</td></tr><tr><td>302</td><td>Found, temporary redirect</td></tr><tr><td>303</td><td>See Other, redirect after POST</td></tr><tr><td>304</td><td>Not Modified, use cached version</td></tr><tr><td>307</td><td>Temporary Redirect, keep method</td></tr><tr><td>308</td><td>Permanent Redirect, keep method</td></tr></tbody></table></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "what http codes mean for server errors",
+    "5xx status codes explained",
+    "server error codes, quick",
+    "http 500 series codes",
+    "status codes when server breaks",
+    "5xx codes for devs",
+    "server error http codes, ty",
+    "5xx status codes list",
+    "server side http errors",
+    "what do 500 502 503 mean",
+    "http codes that mean the server broke",
+    "500s http errs plz",
+    "list every 5 hundred http status"
+   ],
+   "title": "HTTP 5xx Server Error Codes",
+   "html": "<div class=\"card\"><h3 class=\"card-title\">HTTP 5xx Server Error Codes</h3><p class=\"muted\">When the server messes up, you get a 5xx.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>500</td><td>Internal Server Error, generic oops</td></tr><tr><td>501</td><td>Not Implemented, method unsupported</td></tr><tr><td>502</td><td>Bad Gateway, upstream issue</td></tr><tr><td>503</td><td>Service Unavailable, overloaded or down</td></tr><tr><td>504</td><td>Gateway Timeout, upstream too slow</td></tr><tr><td>505</td><td>HTTP Version Not Supported</td></tr></tbody></table></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "status codes for file uploads",
+    "which http codes matter when uploading files",
+    "upload status codes",
+    "what status should my upload endpoint return",
+    "http codes for file upload",
+    "status codes for multipart upload",
+    "file upload http responses",
+    "codes for upload endpoint",
+    "http code upload too large",
+    "what status for multipart upload",
+    "upload status codes http",
+    "file upload response codes",
+    "status codes when posting a file"
+   ],
+   "title": "HTTP Status Codes for Uploads",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK \u2014 file saved</td></tr><tr><td>201</td><td>Created \u2014 new resource</td></tr><tr><td>202</td><td>Accepted \u2014 queued for processing</td></tr><tr><td>204</td><td>No Content \u2014 saved, nothing to return</td></tr><tr><td>400</td><td>Bad Request \u2014 malformed multipart</td></tr><tr><td>401</td><td>Unauthorized \u2014 log in first</td></tr><tr><td>403</td><td>Forbidden \u2014 no upload permission</td></tr><tr><td>404</td><td>Not Found \u2014 upload endpoint missing</td></tr><tr><td>405</td><td>Method Not Allowed \u2014 use POST</td></tr><tr><td>408</td><td>Request Timeout \u2014 upload took too long</td></tr><tr><td>413</td><td>Content Too Large \u2014 file exceeds limit</td></tr><tr><td>415</td><td>Unsupported Media Type \u2014 bad file type</td></tr><tr><td>422</td><td>Unprocessable Content \u2014 validation failed</td></tr><tr><td>500</td><td>Internal Server Error \u2014 storage failure</td></tr><tr><td>502</td><td>Bad Gateway \u2014 upstream upload service down</td></tr><tr><td>503</td><td>Service Unavailable \u2014 try again later</td></tr><tr><td>507</td><td>Insufficient Storage \u2014 disk full</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http codes for online shopping",
+    "status codes when buying stuff online",
+    "shopping http status codes",
+    "ecommerce status codes",
+    "what status codes matter for online stores",
+    "http codes for checkout",
+    "status codes for shopping cart",
+    "http codes when buying stuff online",
+    "402 payment required shopping",
+    "status codes during checkout",
+    "what codes show up when i shop online",
+    "online store http status codes",
+    "http codes for ecommerce"
+   ],
+   "title": "HTTP Codes in Online Shopping",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK \u2014 product page loaded</td></tr><tr><td>201</td><td>Created \u2014 order placed</td></tr><tr><td>202</td><td>Accepted \u2014 payment processing</td></tr><tr><td>204</td><td>No Content \u2014 cart updated silently</td></tr><tr><td>301</td><td>Moved Permanently \u2014 product URL changed</td></tr><tr><td>302</td><td>Found \u2014 redirect to login</td></tr><tr><td>400</td><td>Bad Request \u2014 invalid checkout data</td></tr><tr><td>401</td><td>Unauthorized \u2014 session expired</td></tr><tr><td>403</td><td>Forbidden \u2014 account suspended</td></tr><tr><td>404</td><td>Not Found \u2014 product removed</td></tr><tr><td>409</td><td>Conflict \u2014 item already in cart</td></tr><tr><td>410</td><td>Gone \u2014 product discontinued</td></tr><tr><td>422</td><td>Unprocessable Content \u2014 payment declined</td></tr><tr><td>429</td><td>Too Many Requests \u2014 slow down</td></tr><tr><td>500</td><td>Internal Server Error \u2014 checkout failed</td></tr><tr><td>503</td><td>Service Unavailable \u2014 store under maintenance</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "status codes for authentication",
+    "http codes for login",
+    "auth status codes",
+    "what codes should my login endpoint return",
+    "http status codes for auth",
+    "login and auth http codes",
+    "authentication response codes",
+    "auth http status codes list",
+    "what http codes mean for auth",
+    "statuses when login fails",
+    "http code unauthorized vs forbidden",
+    "401 403 difference",
+    "codes for token auth"
+   ],
+   "title": "HTTP Status Codes for Auth",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK \u2014 login successful</td></tr><tr><td>201</td><td>Created \u2014 new account registered</td></tr><tr><td>204</td><td>No Content \u2014 logout done</td></tr><tr><td>400</td><td>Bad Request \u2014 missing credentials</td></tr><tr><td>401</td><td>Unauthorized \u2014 wrong password or token expired</td></tr><tr><td>403</td><td>Forbidden \u2014 account locked or 2FA required</td></tr><tr><td>409</td><td>Conflict \u2014 email already registered</td></tr><tr><td>422</td><td>Unprocessable Content \u2014 weak password</td></tr><tr><td>423</td><td>Locked \u2014 too many failed attempts</td></tr><tr><td>428</td><td>Precondition Required \u2014 2FA code needed</td></tr><tr><td>429</td><td>Too Many Requests \u2014 rate limited</td></tr><tr><td>431</td><td>Request Header Fields Too Large \u2014 token too big</td></tr><tr><td>500</td><td>Internal Server Error \u2014 auth service crashed</td></tr><tr><td>501</td><td>Not Implemented \u2014 method not supported</td></tr><tr><td>503</td><td>Service Unavailable \u2014 auth provider down</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http status codes for apis",
+    "what codes should my api return",
+    "api status codes",
+    "rest api http codes",
+    "status codes for rest apis",
+    "api response codes",
+    "http codes for api endpoints",
+    "api response codes cheat sheet",
+    "which http codes should my api return",
+    "rest api status code list",
+    "http codes for api endpoints",
+    "api error codes 4xx 5xx",
+    "status codes every api dev should know"
+   ],
+   "title": "HTTP Status Codes for APIs",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK \u2014 request succeeded</td></tr><tr><td>201</td><td>Created \u2014 resource created</td></tr><tr><td>202</td><td>Accepted \u2014 async job queued</td></tr><tr><td>204</td><td>No Content \u2014 success, no body</td></tr><tr><td>304</td><td>Not Modified \u2014 cached version valid</td></tr><tr><td>400</td><td>Bad Request \u2014 invalid JSON</td></tr><tr><td>401</td><td>Unauthorized \u2014 missing or bad token</td></tr><tr><td>403</td><td>Forbidden \u2014 insufficient scope</td></tr><tr><td>404</td><td>Not Found \u2014 no such endpoint</td></tr><tr><td>405</td><td>Method Not Allowed \u2014 wrong verb</td></tr><tr><td>409</td><td>Conflict \u2014 resource state clash</td></tr><tr><td>415</td><td>Unsupported Media Type \u2014 send JSON</td></tr><tr><td>422</td><td>Unprocessable Content \u2014 schema violation</td></tr><tr><td>429</td><td>Too Many Requests \u2014 rate limited</td></tr><tr><td>500</td><td>Internal Server Error \u2014 unhandled exception</td></tr><tr><td>502</td><td>Bad Gateway \u2014 upstream API failed</td></tr><tr><td>503</td><td>Service Unavailable \u2014 overloaded</td></tr><tr><td>504</td><td>Gateway Timeout \u2014 upstream timed out</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http redirect status codes",
+    "what are the redirect codes",
+    "status codes for redirects",
+    "redirect http codes",
+    "http codes for redirection",
+    "which http codes redirect",
+    "redirect status codes list",
+    "301 vs 302 vs 307",
+    "redirect codes explained",
+    "what http code is a redirect",
+    "temporary vs permanent redirect code",
+    "308 meaning http",
+    "list of 3xx codes"
+   ],
+   "title": "HTTP Redirect Status Codes",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>300</td><td>Multiple Choices \u2014 pick one</td></tr><tr><td>301</td><td>Moved Permanently \u2014 update your bookmarks</td></tr><tr><td>302</td><td>Found \u2014 temporary redirect</td></tr><tr><td>303</td><td>See Other \u2014 redirect with GET</td></tr><tr><td>304</td><td>Not Modified \u2014 use cache</td></tr><tr><td>305</td><td>Use Proxy \u2014 deprecated</td></tr><tr><td>307</td><td>Temporary Redirect \u2014 keep method</td></tr><tr><td>308</td><td>Permanent Redirect \u2014 keep method, permanent</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http 5xx server errors",
+    "what are the 5xx codes",
+    "server error status codes",
+    "list of 5xx http codes",
+    "http server errors",
+    "5xx status codes",
+    "server side http codes",
+    "500 502 503 504 meaning",
+    "server error codes list",
+    "why do i get 500 error",
+    "bad gateway vs service unavailable",
+    "5xx codes cheat sheet",
+    "internal server error codes"
+   ],
+   "title": "HTTP 5xx Server Errors",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>500</td><td>Internal Server Error \u2014 generic crash</td></tr><tr><td>501</td><td>Not Implemented \u2014 method not supported</td></tr><tr><td>502</td><td>Bad Gateway \u2014 invalid upstream response</td></tr><tr><td>503</td><td>Service Unavailable \u2014 overloaded or maintenance</td></tr><tr><td>504</td><td>Gateway Timeout \u2014 upstream timeout</td></tr><tr><td>505</td><td>HTTP Version Not Supported</td></tr><tr><td>506</td><td>Variant Also Negotiates \u2014 config error</td></tr><tr><td>507</td><td>Insufficient Storage \u2014 disk full</td></tr><tr><td>508</td><td>Loop Detected \u2014 infinite loop</td></tr><tr><td>510</td><td>Not Extended \u2014 more extensions needed</td></tr><tr><td>511</td><td>Network Authentication Required \u2014 log in to WiFi</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "HTTP status codes for file uploads",
+    "what code should I send back after an upload?",
+    "status codes for POST /upload",
+    "upload endpoint HTTP codes",
+    "file upload API status codes",
+    "http codes for multipart upload",
+    "what http status for successful file upload",
+    "413 payload too large upload",
+    "http code file too big",
+    "status codes when uploading files",
+    "what code for failed upload",
+    "multipart upload response codes",
+    "upload error http codes"
+   ],
+   "title": "HTTP Codes for File Uploads",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200 OK</td><td>Upload succeeded, response body included</td></tr><tr><td>201 Created</td><td>New file resource created</td></tr><tr><td>204 No Content</td><td>Upload succeeded, no response body</td></tr><tr><td>400 Bad Request</td><td>Malformed multipart or missing file part</td></tr><tr><td>401 Unauthorized</td><td>Missing or invalid credentials</td></tr><tr><td>403 Forbidden</td><td>Authenticated but not allowed to upload</td></tr><tr><td>413 Payload Too Large</td><td>File exceeds size limit</td></tr><tr><td>415 Unsupported Media Type</td><td>File type not accepted</td></tr><tr><td>422 Unprocessable Entity</td><td>File present but validation failed</td></tr><tr><td>500 Internal Server Error</td><td>Server failed while saving</td></tr><tr><td>507 Insufficient Storage</td><td>Server out of disk space</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "HTTP status codes for authentication",
+    "auth endpoint status codes",
+    "what codes for login API?",
+    "login HTTP status codes",
+    "status codes for auth",
+    "http codes for sign in endpoint",
+    "authentication status code list",
+    "http codes login failure",
+    "401 vs 403 authentication",
+    "what status code for invalid credentials",
+    "authentication error codes http",
+    "codes for expired session",
+    "http code for not logged in"
+   ],
+   "title": "HTTP Codes for Authentication",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200 OK</td><td>Login succeeded, token returned</td></tr><tr><td>201 Created</td><td>New account created</td></tr><tr><td>204 No Content</td><td>Logout succeeded</td></tr><tr><td>400 Bad Request</td><td>Missing or malformed credentials</td></tr><tr><td>401 Unauthorized</td><td>Invalid credentials or expired token</td></tr><tr><td>403 Forbidden</td><td>Account locked or disabled</td></tr><tr><td>409 Conflict</td><td>Email already registered</td></tr><tr><td>422 Unprocessable Entity</td><td>Validation failed (weak password, etc.)</td></tr><tr><td>429 Too Many Requests</td><td>Rate limit on login attempts</td></tr><tr><td>500 Internal Server Error</td><td>Server error during auth</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "HTTP status codes for APIs",
+    "REST API status codes",
+    "what codes should my API return?",
+    "API response codes",
+    "http status codes for REST",
+    "status codes for API endpoints",
+    "API status code cheat sheet",
+    "api http status code guide",
+    "codes for rest api responses",
+    "http status codes api best practices",
+    "what codes to return from api",
+    "api error status codes list",
+    "http codes for api validation"
+   ],
+   "title": "HTTP Codes for APIs",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200 OK</td><td>Standard success</td></tr><tr><td>201 Created</td><td>Resource created (POST)</td></tr><tr><td>204 No Content</td><td>Success, no body (DELETE, PUT)</td></tr><tr><td>400 Bad Request</td><td>Malformed request syntax</td></tr><tr><td>401 Unauthorized</td><td>Missing or invalid auth token</td></tr><tr><td>403 Forbidden</td><td>Insufficient permissions</td></tr><tr><td>404 Not Found</td><td>Resource does not exist</td></tr><tr><td>409 Conflict</td><td>State conflict (duplicate, version)</td></tr><tr><td>422 Unprocessable Entity</td><td>Semantic validation error</td></tr><tr><td>429 Too Many Requests</td><td>Rate limit exceeded</td></tr><tr><td>500 Internal Server Error</td><td>Unexpected server failure</td></tr><tr><td>503 Service Unavailable</td><td>Server overloaded or down</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "HTTP redirect status codes",
+    "what are the redirect codes?",
+    "301 vs 302 vs 307",
+    "redirect http status codes",
+    "list of redirect codes",
+    "http status codes for redirects",
+    "when to use 301 or 302",
+    "3xx status codes meaning",
+    "redirect http codes list",
+    "301 302 303 307 308",
+    "what code for url redirect",
+    "permanent redirect code",
+    "http code moved permanently"
+   ],
+   "title": "HTTP Redirect Codes",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>301 Moved Permanently</td><td>Resource moved forever; update bookmarks</td></tr><tr><td>302 Found</td><td>Temporary redirect; may change</td></tr><tr><td>303 See Other</td><td>Redirect after POST to a GET page</td></tr><tr><td>307 Temporary Redirect</td><td>Temporary; preserve method and body</td></tr><tr><td>308 Permanent Redirect</td><td>Permanent; preserve method and body</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "HTTP 5xx server error codes",
+    "what are 5xx codes?",
+    "server error status codes",
+    "list of 500 errors",
+    "5xx http status codes",
+    "server side http codes",
+    "http 500 series codes",
+    "500 502 503 504 meaning",
+    "server error codes list",
+    "why do i get 500 error",
+    "bad gateway vs service unavailable",
+    "5xx codes cheat sheet",
+    "internal server error codes"
+   ],
+   "title": "HTTP 5xx Server Errors",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>500 Internal Server Error</td><td>Generic server failure</td></tr><tr><td>501 Not Implemented</td><td>Server does not support the request method</td></tr><tr><td>502 Bad Gateway</td><td>Invalid response from upstream server</td></tr><tr><td>503 Service Unavailable</td><td>Server overloaded or under maintenance</td></tr><tr><td>504 Gateway Timeout</td><td>Upstream server did not respond in time</td></tr><tr><td>505 HTTP Version Not Supported</td><td>HTTP version not supported by server</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "HTTP 4xx client error codes",
+    "what are 4xx codes?",
+    "client error status codes",
+    "list of 400 errors",
+    "4xx http status codes",
+    "client side http codes",
+    "http 400 series codes",
+    "400 401 403 404 meaning",
+    "client error codes list",
+    "4xx status codes explained",
+    "what does 400 bad request mean",
+    "http 404 vs 410",
+    "list of 4xx codes"
+   ],
+   "title": "HTTP 4xx Client Errors",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>400 Bad Request</td><td>Malformed request syntax</td></tr><tr><td>401 Unauthorized</td><td>Authentication required</td></tr><tr><td>403 Forbidden</td><td>Insufficient permissions</td></tr><tr><td>404 Not Found</td><td>Resource does not exist</td></tr><tr><td>405 Method Not Allowed</td><td>HTTP method not allowed for this resource</td></tr><tr><td>408 Request Timeout</td><td>Client took too long to send request</td></tr><tr><td>409 Conflict</td><td>Request conflicts with current state</td></tr><tr><td>410 Gone</td><td>Resource permanently removed</td></tr><tr><td>413 Payload Too Large</td><td>Request body exceeds limit</td></tr><tr><td>418 I'm a teapot</td><td>April Fools' joke (RFC 2324)</td></tr><tr><td>429 Too Many Requests</td><td>Rate limit exceeded</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "HTTP codes for login problems",
+    "what status is auth fail",
+    "401 vs 403 meaning",
+    "status code for wrong password",
+    "login error http code",
+    "why am i getting 401",
+    "auth status codes",
+    "login failed http status code",
+    "codes for authentication errors",
+    "what code when password wrong",
+    "http code for locked account",
+    "session expired status code",
+    "login http codes list"
+   ],
+   "title": "HTTP Codes for Login & Auth",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK \u2014 login succeeded</td></tr><tr><td>201</td><td>Created \u2014 account registered</td></tr><tr><td>400</td><td>Bad Request \u2014 missing fields</td></tr><tr><td>401</td><td>Unauthorized \u2014 bad or missing token</td></tr><tr><td>403</td><td>Forbidden \u2014 valid token, wrong role</td></tr><tr><td>409</td><td>Conflict \u2014 email already used</td></tr><tr><td>422</td><td>Unprocessable \u2014 password too weak</td></tr><tr><td>429</td><td>Too Many Requests \u2014 slow down</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http codes when uploading a file",
+    "file upload status codes",
+    "what does 413 mean upload",
+    "image upload failed http code",
+    "status code for file too large",
+    "upload error codes",
+    "multipart http status",
+    "413 payload too large upload",
+    "http code file too big",
+    "status codes when uploading files",
+    "what code for failed upload",
+    "multipart upload response codes",
+    "upload error http codes"
+   ],
+   "title": "HTTP Codes for File Uploads",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK \u2014 upload finished</td></tr><tr><td>201</td><td>Created \u2014 file stored</td></tr><tr><td>202</td><td>Accepted \u2014 queued for processing</td></tr><tr><td>400</td><td>Bad Request \u2014 malformed form</td></tr><tr><td>401</td><td>Unauthorized \u2014 no session</td></tr><tr><td>403</td><td>Forbidden \u2014 no write permission</td></tr><tr><td>409</td><td>Conflict \u2014 duplicate filename</td></tr><tr><td>413</td><td>Payload Too Large \u2014 file too big</td></tr><tr><td>415</td><td>Unsupported Media Type \u2014 wrong format</td></tr><tr><td>422</td><td>Unprocessable \u2014 invalid image data</td></tr><tr><td>500</td><td>Server Error \u2014 storage failed</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http codes for online store",
+    "shopping cart error codes",
+    "what does 402 mean",
+    "checkout status code",
+    "payment failed http code",
+    "ecommerce status codes",
+    "http code when item out of stock",
+    "http codes for ecommerce",
+    "checkout error status codes",
+    "payment failed http code",
+    "shopping cart http codes",
+    "http codes for online store checkout",
+    "ecommerce api status codes"
+   ],
+   "title": "HTTP Codes in Online Shopping",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK \u2014 page loaded</td></tr><tr><td>201</td><td>Created \u2014 order placed</td></tr><tr><td>204</td><td>No Content \u2014 item removed from cart</td></tr><tr><td>400</td><td>Bad Request \u2014 invalid coupon</td></tr><tr><td>401</td><td>Unauthorized \u2014 please log in</td></tr><tr><td>402</td><td>Payment Required \u2014 card declined</td></tr><tr><td>403</td><td>Forbidden \u2014 region not served</td></tr><tr><td>404</td><td>Not Found \u2014 product gone</td></tr><tr><td>409</td><td>Conflict \u2014 item out of stock</td></tr><tr><td>410</td><td>Gone \u2014 discontinued</td></tr><tr><td>429</td><td>Too Many Requests \u2014 bot protection</td></tr><tr><td>503</td><td>Service Unavailable \u2014 checkout down</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http codes for rest api",
+    "api status codes cheat sheet",
+    "what status to return from api",
+    "rest api error codes",
+    "http status codes for crud",
+    "api response codes list",
+    "best http codes for api",
+    "rest api status codes cheat sheet",
+    "http codes for rest endpoints",
+    "rest api error codes list",
+    "which status code for rest api",
+    "rest api response codes best practices",
+    "http status codes restful"
+   ],
+   "title": "HTTP Codes for REST APIs",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK \u2014 GET success</td></tr><tr><td>201</td><td>Created \u2014 POST success</td></tr><tr><td>204</td><td>No Content \u2014 DELETE success</td></tr><tr><td>400</td><td>Bad Request \u2014 invalid JSON</td></tr><tr><td>401</td><td>Unauthorized \u2014 missing API key</td></tr><tr><td>403</td><td>Forbidden \u2014 key lacks scope</td></tr><tr><td>404</td><td>Not Found \u2014 no such resource</td></tr><tr><td>405</td><td>Method Not Allowed \u2014 wrong verb</td></tr><tr><td>409</td><td>Conflict \u2014 version mismatch</td></tr><tr><td>422</td><td>Unprocessable Entity \u2014 semantic error</td></tr><tr><td>429</td><td>Too Many Requests \u2014 rate limited</td></tr><tr><td>500</td><td>Internal Server Error \u2014 bug</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http redirect codes",
+    "301 vs 302",
+    "what does 301 mean",
+    "redirect status codes list",
+    "http 301 302 307 308",
+    "permanent vs temporary redirect",
+    "redirect code for seo",
+    "3xx status codes meaning",
+    "redirect http codes list",
+    "301 302 303 307 308",
+    "what code for url redirect",
+    "permanent redirect code",
+    "http code moved permanently"
+   ],
+   "title": "HTTP Redirect Codes",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>300</td><td>Multiple Choices \u2014 pick one</td></tr><tr><td>301</td><td>Moved Permanently \u2014 update bookmarks</td></tr><tr><td>302</td><td>Found \u2014 temporary move</td></tr><tr><td>303</td><td>See Other \u2014 GET the new URL</td></tr><tr><td>304</td><td>Not Modified \u2014 use cache</td></tr><tr><td>307</td><td>Temporary Redirect \u2014 keep method</td></tr><tr><td>308</td><td>Permanent Redirect \u2014 keep method</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http 500 error",
+    "server error codes list",
+    "what does 503 mean",
+    "5xx status codes",
+    "http codes for server down",
+    "503 vs 504",
+    "internal server error code",
+    "500 error meaning",
+    "http 502 bad gateway",
+    "503 service unavailable code",
+    "504 gateway timeout",
+    "5xx status codes list",
+    "server error http codes"
+   ],
+   "title": "HTTP 5xx Server Error Codes",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>500</td><td>Internal Server Error \u2014 generic bug</td></tr><tr><td>501</td><td>Not Implemented \u2014 unsupported method</td></tr><tr><td>502</td><td>Bad Gateway \u2014 upstream bad reply</td></tr><tr><td>503</td><td>Service Unavailable \u2014 overload or maintenance</td></tr><tr><td>504</td><td>Gateway Timeout \u2014 upstream too slow</td></tr><tr><td>505</td><td>HTTP Version Not Supported</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http status codes for coffee orders pls",
+    "Coffee HTTP codes?",
+    "status codes if my coffee order was a server",
+    "what http code is coffee brewing",
+    "http codes for baristas",
+    "coffee shop http status",
+    "give me http codes for ordering coffee",
+    "coffee order http status codes",
+    "what http codes match my espresso order",
+    "status codes for when the barista messes up my latte",
+    "http codes for coffee shop orders plz",
+    "mapping http responses to coffee orders??",
+    "http codes but for ordering a flat white"
+   ],
+   "title": "HTTP Codes for Coffee Orders",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>100</td><td>Continue \u2014 keep sipping, refill coming</td></tr><tr><td>200</td><td>OK \u2014 order up, enjoy</td></tr><tr><td>202</td><td>Accepted \u2014 barista nodded, beans grinding</td></tr><tr><td>204</td><td>No Content \u2014 cup is empty</td></tr><tr><td>301</td><td>Moved Permanently \u2014 you're at the wrong caf\u00e9</td></tr><tr><td>402</td><td>Payment Required \u2014 that'll be $4.50</td></tr><tr><td>418</td><td>I'm a teapot \u2014 we don't do tea</td></tr><tr><td>429</td><td>Too Many Requests \u2014 one at a time, please</td></tr><tr><td>503</td><td>Service Unavailable \u2014 espresso machine down</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http codes when my wifi is bad",
+    "weak signal http status",
+    "what status code for bad wifi",
+    "http codes for slow internet",
+    "wifi problems http codes",
+    "status codes for when the internet is flaky",
+    "http codes for bad connection",
+    "http codes when internet is spotty",
+    "bad wifi http status codes",
+    "what codes represent poor wifi connection",
+    "http codes for when my wifi drops",
+    "status codes for crappy internet",
+    "wifi issues as http status codes"
+   ],
+   "title": "HTTP Codes for Bad Wi-Fi",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>408</td><td>Request Timeout \u2014 your router gave up waiting</td></tr><tr><td>502</td><td>Bad Gateway \u2014 the router passed it to nobody</td></tr><tr><td>503</td><td>Service Unavailable \u2014 the whole block is offline</td></tr><tr><td>504</td><td>Gateway Timeout \u2014 the internet didn't answer in time</td></tr><tr><td>599</td><td>Network Connect Timeout \u2014 not official, but you'll see it</td></tr><tr><td>0</td><td>No Response \u2014 browser couldn't even reach the server</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http codes for dating apps",
+    "status codes for tinder lol",
+    "what http code is a left swipe",
+    "dating app http status",
+    "http codes for getting ghosted",
+    "swipe left http status code",
+    "http codes for online dating",
+    "http codes for tinder and bumble",
+    "status codes for online dating",
+    "what http codes fit dating app problems",
+    "dating app http response codes",
+    "http codes for when you get ghosted on a dating app",
+    "match.com http status codes"
+   ],
+   "title": "HTTP Codes for Dating Apps",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK \u2014 you matched</td></tr><tr><td>201</td><td>Created \u2014 you sent the first message</td></tr><tr><td>204</td><td>No Content \u2014 they read it and said nothing</td></tr><tr><td>301</td><td>Moved Permanently \u2014 they changed cities</td></tr><tr><td>401</td><td>Unauthorized \u2014 you're not logged in (yet)</td></tr><tr><td>403</td><td>Forbidden \u2014 they blocked you</td></tr><tr><td>404</td><td>Not Found \u2014 profile deleted</td></tr><tr><td>410</td><td>Gone \u2014 they left the app for good</td></tr><tr><td>429</td><td>Too Many Requests \u2014 slow down, Romeo</td></tr><tr><td>503</td><td>Service Unavailable \u2014 the app is down, not you</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http codes for video games",
+    "status codes for online gaming",
+    "what http code is a game crash",
+    "gaming http status codes",
+    "http codes for lag in games",
+    "video game http status",
+    "http codes for game servers",
+    "video game http status codes",
+    "http codes for gaming issues",
+    "status codes for when your game lags",
+    "http response codes for gamers",
+    "what http codes match gaming problems",
+    "http codes for game servers"
+   ],
+   "title": "HTTP Codes for Gaming",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK \u2014 you're in the lobby</td></tr><tr><td>206</td><td>Partial Content \u2014 match loaded halfway</td></tr><tr><td>301</td><td>Moved Permanently \u2014 server migrated, new IP</td></tr><tr><td>400</td><td>Bad Request \u2014 your controller sent garbage</td></tr><tr><td>401</td><td>Unauthorized \u2014 login expired</td></tr><tr><td>403</td><td>Forbidden \u2014 banned</td></tr><tr><td>404</td><td>Not Found \u2014 match ended, server gone</td></tr><tr><td>408</td><td>Request Timeout \u2014 you lagged out</td></tr><tr><td>429</td><td>Too Many Requests \u2014 spamming the chat</td></tr><tr><td>500</td><td>Internal Server Error \u2014 game crashed</td></tr><tr><td>502</td><td>Bad Gateway \u2014 matchmaking hiccup</td></tr><tr><td>503</td><td>Service Unavailable \u2014 servers full</td></tr><tr><td>504</td><td>Gateway Timeout \u2014 server didn't respond, you got kicked</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http codes for smart home devices",
+    "iot http status codes",
+    "status code when my lightbulb is offline",
+    "http codes for alexa",
+    "smart home http status",
+    "http codes for wifi plugs",
+    "http status for iot devices",
+    "http codes for smart home gadgets",
+    "status codes for alexa and google home",
+    "smart device http responses",
+    "http codes for when my smart bulb won't connect",
+    "iot device http status codes",
+    "http codes for smart home fails"
+   ],
+   "title": "HTTP Codes for Smart Home Devices",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK \u2014 light turned on</td></tr><tr><td>201</td><td>Created \u2014 new device added</td></tr><tr><td>204</td><td>No Content \u2014 command accepted, nothing to show</td></tr><tr><td>400</td><td>Bad Request \u2014 malformed command</td></tr><tr><td>401</td><td>Unauthorized \u2014 wrong Wi-Fi password</td></tr><tr><td>403</td><td>Forbidden \u2014 device locked by another user</td></tr><tr><td>404</td><td>Not Found \u2014 device offline</td></tr><tr><td>408</td><td>Request Timeout \u2014 device didn't respond in time</td></tr><tr><td>429</td><td>Too Many Requests \u2014 you're spamming the API</td></tr><tr><td>500</td><td>Internal Server Error \u2014 device firmware glitch</td></tr><tr><td>503</td><td>Service Unavailable \u2014 hub is rebooting</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http codes for food delivery",
+    "status codes for doordash",
+    "what http code is my food late",
+    "food delivery http status",
+    "http codes for uber eats",
+    "delivery app http codes",
+    "http status for missing food",
+    "http codes for doordash and uber eats",
+    "food delivery http status codes",
+    "status codes for when my order is late",
+    "http response codes for food delivery apps",
+    "what http codes represent food delivery issues",
+    "http codes for missing food delivery"
+   ],
+   "title": "HTTP Codes for Food Delivery",
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK \u2014 food delivered</td></tr><tr><td>201</td><td>Created \u2014 order placed</td></tr><tr><td>202</td><td>Accepted \u2014 restaurant confirmed</td></tr><tr><td>204</td><td>No Content \u2014 driver arrived, no food</td></tr><tr><td>301</td><td>Moved Permanently \u2014 driver took wrong turn</td></tr><tr><td>400</td><td>Bad Request \u2014 wrong address</td></tr><tr><td>401</td><td>Unauthorized \u2014 payment failed</td></tr><tr><td>403</td><td>Forbidden \u2014 restaurant closed</td></tr><tr><td>404</td><td>Not Found \u2014 order lost in transit</td></tr><tr><td>408</td><td>Request Timeout \u2014 driver stuck in traffic</td></tr><tr><td>429</td><td>Too Many Requests \u2014 you ordered five times</td></tr><tr><td>500</td><td>Internal Server Error \u2014 kitchen on fire</td></tr><tr><td>503</td><td>Service Unavailable \u2014 all drivers busy</td></tr><tr><td>504</td><td>Gateway Timeout \u2014 driver never picked up</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http codes for my coffee order",
+    "coffee shop http status codes",
+    "http status codes explained with coffee",
+    "what do http codes mean in coffee terms?",
+    "coffee order http codes",
+    "http codes for coffee runs",
+    "coffee shop api codes",
+    "coffee order http status codes",
+    "what http codes match my espresso order",
+    "status codes for when the barista messes up my latte",
+    "http codes for coffee shop orders plz",
+    "mapping http responses to coffee orders??",
+    "http codes but for ordering a flat white"
+   ],
+   "title": "HTTP Codes for Coffee Orders",
+   "html": "<div class=\"card\"><h3 class=\"card-title\">HTTP Codes for Coffee Orders</h3><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK \u2013 your latte is ready</td></tr><tr><td>201</td><td>Created \u2013 custom drink added to menu</td></tr><tr><td>204</td><td>No Content \u2013 you drank it already</td></tr><tr><td>400</td><td>Bad Request \u2013 barista didn't understand</td></tr><tr><td>401</td><td>Unauthorized \u2013 you need to pay first</td></tr><tr><td>403</td><td>Forbidden \u2013 decaf only, sorry</td></tr><tr><td>404</td><td>Not Found \u2013 we're out of oat milk</td></tr><tr><td>408</td><td>Request Timeout \u2013 you took too long to order</td></tr><tr><td>429</td><td>Too Many Requests \u2013 easy on the espresso</td></tr><tr><td>500</td><td>Internal Server Error \u2013 espresso machine broke</td></tr><tr><td>503</td><td>Service Unavailable \u2013 closed for cleaning</td></tr></tbody></table></div><p class=\"muted t-small\">Just a playful take on HTTP status codes for coffee lovers.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http codes for bad wifi",
+    "wifi http status codes",
+    "internet down http codes",
+    "http status codes when wifi is bad",
+    "bad wifi http codes",
+    "http codes for no internet",
+    "wifi error http codes",
+    "http codes when internet is spotty",
+    "bad wifi http status codes",
+    "what codes represent poor wifi connection",
+    "http codes for when my wifi drops",
+    "status codes for crappy internet",
+    "wifi issues as http status codes"
+   ],
+   "title": "HTTP Codes for Bad Wi-Fi",
+   "html": "<div class=\"card\"><h3 class=\"card-title\">HTTP Codes for Bad Wi-Fi</h3><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK \u2013 you're online, enjoy</td></tr><tr><td>301</td><td>Moved Permanently \u2013 router moved to a better spot</td></tr><tr><td>400</td><td>Bad Request \u2013 your device sent gibberish</td></tr><tr><td>401</td><td>Unauthorized \u2013 wrong Wi-Fi password</td></tr><tr><td>403</td><td>Forbidden \u2013 parental controls block this site</td></tr><tr><td>404</td><td>Not Found \u2013 that page is gone</td></tr><tr><td>408</td><td>Request Timeout \u2013 too far from the router</td></tr><tr><td>429</td><td>Too Many Requests \u2013 everyone streaming at once</td></tr><tr><td>500</td><td>Internal Server Error \u2013 router needs a reboot</td></tr><tr><td>502</td><td>Bad Gateway \u2013 modem and router not talking</td></tr><tr><td>503</td><td>Service Unavailable \u2013 ISP outage</td></tr><tr><td>504</td><td>Gateway Timeout \u2013 DNS not responding</td></tr></tbody></table></div><p class=\"muted t-small\">A fun way to remember HTTP status codes when your Wi-Fi acts up.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http codes for dating apps",
+    "dating app http status codes",
+    "http status codes dating",
+    "what http codes mean in dating apps",
+    "dating app error codes",
+    "http codes for online dating",
+    "dating http codes",
+    "http codes for tinder and bumble",
+    "status codes for online dating",
+    "what http codes fit dating app problems",
+    "dating app http response codes",
+    "http codes for when you get ghosted on a dating app",
+    "match.com http status codes"
+   ],
+   "title": "HTTP Codes for Dating Apps",
+   "html": "<div class=\"card\"><h3 class=\"card-title\">HTTP Codes for Dating Apps</h3><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK \u2013 you got a match</td></tr><tr><td>201</td><td>Created \u2013 profile successfully updated</td></tr><tr><td>204</td><td>No Content \u2013 you left them on read</td></tr><tr><td>301</td><td>Moved Permanently \u2013 you changed cities</td></tr><tr><td>400</td><td>Bad Request \u2013 your pickup line failed</td></tr><tr><td>401</td><td>Unauthorized \u2013 you need to verify your account</td></tr><tr><td>403</td><td>Forbidden \u2013 you're blocked</td></tr><tr><td>404</td><td>Not Found \u2013 they deleted their profile</td></tr><tr><td>408</td><td>Request Timeout \u2013 you took too long to reply</td></tr><tr><td>429</td><td>Too Many Requests \u2013 you swiped right on everyone</td></tr><tr><td>500</td><td>Internal Server Error \u2013 the app crashed on your date</td></tr><tr><td>503</td><td>Service Unavailable \u2013 servers down on Valentine's Day</td></tr></tbody></table></div><p class=\"muted t-small\">Because sometimes love feels like a server error.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http codes for gaming",
+    "gaming http status codes",
+    "http status codes in video games",
+    "game server http codes",
+    "http codes for online games",
+    "gaming error codes",
+    "http status codes gaming",
+    "video game http status codes",
+    "http codes for gaming issues",
+    "status codes for when your game lags",
+    "http response codes for gamers",
+    "what http codes match gaming problems",
+    "http codes for game servers"
+   ],
+   "title": "HTTP Codes for Gaming",
+   "html": "<div class=\"card\"><h3 class=\"card-title\">HTTP Codes for Gaming</h3><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK \u2013 game loaded</td></tr><tr><td>201</td><td>Created \u2013 new character made</td></tr><tr><td>204</td><td>No Content \u2013 you're AFK</td></tr><tr><td>301</td><td>Moved Permanently \u2013 server migration</td></tr><tr><td>400</td><td>Bad Request \u2013 invalid cheat code</td></tr><tr><td>401</td><td>Unauthorized \u2013 you need to log in</td></tr><tr><td>403</td><td>Forbidden \u2013 banned for cheating</td></tr><tr><td>404</td><td>Not Found \u2013 that level doesn't exist</td></tr><tr><td>408</td><td>Request Timeout \u2013 lag spike</td></tr><tr><td>429</td><td>Too Many Requests \u2013 spamming the chat</td></tr><tr><td>500</td><td>Internal Server Error \u2013 game crashed</td></tr><tr><td>502</td><td>Bad Gateway \u2013 matchmaking failed</td></tr><tr><td>503</td><td>Service Unavailable \u2013 maintenance break</td></tr><tr><td>504</td><td>Gateway Timeout \u2013 server not responding</td></tr></tbody></table></div><p class=\"muted t-small\">For when your game is more broken than your code.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http codes for smart home",
+    "smart home http status codes",
+    "http status codes for iot",
+    "smart device http codes",
+    "http codes for smart devices",
+    "iot http status codes",
+    "smart home error codes",
+    "http codes for smart home gadgets",
+    "status codes for alexa and google home",
+    "smart device http responses",
+    "http codes for when my smart bulb won't connect",
+    "iot device http status codes",
+    "http codes for smart home fails"
+   ],
+   "title": "HTTP Codes for Smart Home Devices",
+   "html": "<div class=\"card\"><h3 class=\"card-title\">HTTP Codes for Smart Home Devices</h3><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK \u2013 lights turned on</td></tr><tr><td>201</td><td>Created \u2013 new device paired</td></tr><tr><td>204</td><td>No Content \u2013 device is idle</td></tr><tr><td>301</td><td>Moved Permanently \u2013 device relocated</td></tr><tr><td>400</td><td>Bad Request \u2013 invalid command</td></tr><tr><td>401</td><td>Unauthorized \u2013 wrong Wi-Fi password</td></tr><tr><td>403</td><td>Forbidden \u2013 parental lock enabled</td></tr><tr><td>404</td><td>Not Found \u2013 device offline</td></tr><tr><td>408</td><td>Request Timeout \u2013 device didn't respond</td></tr><tr><td>429</td><td>Too Many Requests \u2013 too many routines at once</td></tr><tr><td>500</td><td>Internal Server Error \u2013 firmware bug</td></tr><tr><td>503</td><td>Service Unavailable \u2013 cloud service down</td></tr></tbody></table></div><p class=\"muted t-small\">When your smart home isn't so smart.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http codes for food delivery",
+    "food delivery http status codes",
+    "http status codes for food apps",
+    "food delivery error codes",
+    "http codes for doordash",
+    "food delivery http codes",
+    "http status codes food delivery",
+    "http codes for doordash and uber eats",
+    "food delivery http status codes",
+    "status codes for when my order is late",
+    "http response codes for food delivery apps",
+    "what http codes represent food delivery issues",
+    "http codes for missing food delivery"
+   ],
+   "title": "HTTP Codes for Food Delivery",
+   "html": "<div class=\"card\"><h3 class=\"card-title\">HTTP Codes for Food Delivery</h3><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK \u2013 order delivered</td></tr><tr><td>201</td><td>Created \u2013 order placed</td></tr><tr><td>204</td><td>No Content \u2013 you ate it all</td></tr><tr><td>301</td><td>Moved Permanently \u2013 restaurant closed</td></tr><tr><td>400</td><td>Bad Request \u2013 wrong address</td></tr><tr><td>401</td><td>Unauthorized \u2013 payment failed</td></tr><tr><td>403</td><td>Forbidden \u2013 outside delivery zone</td></tr><tr><td>404</td><td>Not Found \u2013 driver can't find you</td></tr><tr><td>408</td><td>Request Timeout \u2013 driver took too long</td></tr><tr><td>429</td><td>Too Many Requests \u2013 too many orders at peak</td></tr><tr><td>500</td><td>Internal Server Error \u2013 kitchen overwhelmed</td></tr><tr><td>502</td><td>Bad Gateway \u2013 restaurant not responding</td></tr><tr><td>503</td><td>Service Unavailable \u2013 no drivers available</td></tr></tbody></table></div><p class=\"muted t-small\">Because sometimes your food is a 404.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http codes for coffee orders pls",
+    "coffee shop http statuses",
+    "what status code is my latte",
+    "http codes for baristas",
+    "coffee order status codes",
+    "status codes for coffee orders",
+    "coffee http codes",
+    "coffee order http status codes",
+    "what http codes match my espresso order",
+    "status codes for when the barista messes up my latte",
+    "http codes for coffee shop orders plz",
+    "mapping http responses to coffee orders??",
+    "http codes but for ordering a flat white"
+   ],
+   "title": "HTTP Codes for Coffee Orders",
+   "html": "<div class=\"stack\"><p class=\"t-small muted\">Your order, but as HTTP. Baristas would love this.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Order up. Enjoy.</td></tr><tr><td>201</td><td>Order created. Barista is on it.</td></tr><tr><td>202</td><td>Accepted. Beans are grinding.</td></tr><tr><td>204</td><td>Done. No receipt needed.</td></tr><tr><td>400</td><td>Bad request. What size is \"medium-ish\"?</td></tr><tr><td>401</td><td>Unauthorized. Loyalty card required.</td></tr><tr><td>402</td><td>Payment required. Card declined.</td></tr><tr><td>403</td><td>Forbidden. Decaf after 10am.</td></tr><tr><td>404</td><td>Not found. We're out of oat milk.</td></tr><tr><td>409</td><td>Conflict. You already ordered.</td></tr><tr><td>418</td><td>I'm a teapot. We don't do tea.</td></tr><tr><td>429</td><td>Too many requests. One latte at a time.</td></tr><tr><td>500</td><td>Server error. Espresso machine is down.</td></tr><tr><td>503</td><td>Service unavailable. Line out the door.</td></tr></tbody></table></div><details class=\"acc\"><summary>Which one is your Monday?</summary><div class=\"body\"><p class=\"t-small muted\">Mine's a 429 before 9am. Every time.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http statuses for bad wifi",
+    "wifi error codes http",
+    "why is my wifi always 503",
+    "http codes when internet dies",
+    "bad wifi http codes",
+    "status codes for flaky wifi",
+    "wifi http codes",
+    "http codes when internet is spotty",
+    "bad wifi http status codes",
+    "what codes represent poor wifi connection",
+    "http codes for when my wifi drops",
+    "status codes for crappy internet",
+    "wifi issues as http status codes"
+   ],
+   "title": "HTTP Codes for Bad Wi-Fi",
+   "html": "<div class=\"stack\"><p class=\"t-small muted\">When the router is having a day.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK. You're online. Bask in it.</td></tr><tr><td>301</td><td>Moved permanently. To the coffee shop.</td></tr><tr><td>302</td><td>Found. Briefly. Then lost again.</td></tr><tr><td>400</td><td>Bad request. Did you try turning it off and on?</td></tr><tr><td>401</td><td>Unauthorized. Wrong password, again.</td></tr><tr><td>403</td><td>Forbidden. Guest network says no.</td></tr><tr><td>404</td><td>Not found. Router is hiding.</td></tr><tr><td>408</td><td>Request timeout. Buffering forever.</td></tr><tr><td>429</td><td>Too many requests. Everyone streaming.</td></tr><tr><td>500</td><td>Internal server error. Router needs a nap.</td></tr><tr><td>502</td><td>Bad gateway. Modem and router not speaking.</td></tr><tr><td>503</td><td>Service unavailable. Classic.</td></tr><tr><td>504</td><td>Gateway timeout. It gave up.</td></tr></tbody></table></div><div class=\"callout warn\"><p class=\"t-small\">If you see 502 or 504 a lot, it's usually the modem-router handshake. Unplug both, wait 30 seconds, plug back in.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http codes for dating apps",
+    "dating app status codes",
+    "swipe http statuses",
+    "what http code is a ghost",
+    "http codes for tinder",
+    "dating http codes",
+    "status codes for dating",
+    "http codes for tinder and bumble",
+    "status codes for online dating",
+    "what http codes fit dating app problems",
+    "dating app http response codes",
+    "http codes for when you get ghosted on a dating app",
+    "match.com http status codes"
+   ],
+   "title": "HTTP Codes for Dating Apps",
+   "html": "<div class=\"stack\"><p class=\"t-small muted\">Swiping, but make it HTTP.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK. They swiped right too.</td></tr><tr><td>201</td><td>Created. Match made.</td></tr><tr><td>204</td><td>No content. Opener was \"hey\".</td></tr><tr><td>301</td><td>Moved permanently. They deleted the app.</td></tr><tr><td>401</td><td>Unauthorized. You're not their type.</td></tr><tr><td>403</td><td>Forbidden. They're taken.</td></tr><tr><td>404</td><td>Not found. Profile vanished.</td></tr><tr><td>408</td><td>Timeout. Left on read for 3 days.</td></tr><tr><td>409</td><td>Conflict. You both matched with the same person.</td></tr><tr><td>410</td><td>Gone. Ghosted.</td></tr><tr><td>429</td><td>Too many requests. Slow your roll.</td></tr><tr><td>503</td><td>Service unavailable. They're \"focusing on themselves\".</td></tr></tbody></table></div><details class=\"acc\"><summary>Which is the worst?</summary><div class=\"body\"><p class=\"t-small muted\">410 is brutal. 408 is just rude.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http codes for gaming",
+    "gaming status codes",
+    "multiplayer http statuses",
+    "what http code is lag",
+    "http codes for gamers",
+    "game server http codes",
+    "status codes for gaming",
+    "video game http status codes",
+    "http codes for gaming issues",
+    "status codes for when your game lags",
+    "http response codes for gamers",
+    "what http codes match gaming problems",
+    "http codes for game servers"
+   ],
+   "title": "HTTP Codes for Gaming",
+   "html": "<div class=\"stack\"><p class=\"t-small muted\">When the server is the final boss.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK. You're in the lobby.</td></tr><tr><td>201</td><td>Created. Character made.</td></tr><tr><td>202</td><td>Accepted. Matchmaking...</td></tr><tr><td>204</td><td>No content. No loot dropped.</td></tr><tr><td>400</td><td>Bad request. Invalid loadout.</td></tr><tr><td>401</td><td>Unauthorized. Login expired.</td></tr><tr><td>403</td><td>Forbidden. Banned for 24h.</td></tr><tr><td>404</td><td>Not found. Map not in rotation.</td></tr><tr><td>408</td><td>Timeout. AFK kicked.</td></tr><tr><td>429</td><td>Too many requests. Spamming emotes.</td></tr><tr><td>500</td><td>Internal server error. Patch broke everything.</td></tr><tr><td>503</td><td>Service unavailable. Maintenance.</td></tr><tr><td>504</td><td>Gateway timeout. Lag spike.</td></tr></tbody></table></div><div class=\"callout info\"><p class=\"t-small\">If you see 504 in a game, it's not your ping. It's the server's.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http codes for smart home",
+    "smart home status codes",
+    "iot http statuses",
+    "what http code is my light",
+    "http codes for smart devices",
+    "smart home http codes",
+    "status codes for iot",
+    "smart home http statuses",
+    "what http errors do smart devices return",
+    "http codes for alexa and google home",
+    "smart bulb http status codes",
+    "status codes smart home hub",
+    "http responses from smart home gadgets"
+   ],
+   "title": "HTTP Codes for Smart Home Devices",
+   "html": "<div class=\"stack\"><p class=\"t-small muted\">When your lights are smarter than your router.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK. Light turned on.</td></tr><tr><td>201</td><td>Created. New scene saved.</td></tr><tr><td>202</td><td>Accepted. Command queued.</td></tr><tr><td>204</td><td>No content. Nothing to dim.</td></tr><tr><td>400</td><td>Bad request. \"Set mood to cozy\" not valid.</td></tr><tr><td>401</td><td>Unauthorized. Hub not paired.</td></tr><tr><td>403</td><td>Forbidden. Guest mode on.</td></tr><tr><td>404</td><td>Not found. That bulb is offline.</td></tr><tr><td>408</td><td>Timeout. Device didn't respond.</td></tr><tr><td>429</td><td>Too many requests. Stop spamming the app.</td></tr><tr><td>500</td><td>Internal error. Firmware bug.</td></tr><tr><td>503</td><td>Service unavailable. Cloud is down.</td></tr></tbody></table></div><details class=\"acc\"><summary>Why does my bulb say 503?</summary><div class=\"body\"><p class=\"t-small muted\">Usually the manufacturer's cloud. Your local network is fine. Try local control if your hub supports it.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http codes for food delivery",
+    "food delivery status codes",
+    "doordash http statuses",
+    "what http code is my order",
+    "http codes for delivery apps",
+    "food delivery http codes",
+    "status codes for food delivery",
+    "food delivery app http statuses",
+    "http codes when my doordash order fails",
+    "what status code means food delivery is late",
+    "grubhub http error codes",
+    "delivery service http response codes",
+    "http codes for uber eats orders"
+   ],
+   "title": "HTTP Codes for Food Delivery",
+   "html": "<div class=\"stack\"><p class=\"t-small muted\">Your dinner, as HTTP.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK. Order delivered.</td></tr><tr><td>201</td><td>Created. Order placed.</td></tr><tr><td>202</td><td>Accepted. Restaurant confirmed.</td></tr><tr><td>204</td><td>No content. Bag is empty.</td></tr><tr><td>400</td><td>Bad request. Address incomplete.</td></tr><tr><td>401</td><td>Unauthorized. Payment failed.</td></tr><tr><td>403</td><td>Forbidden. Restaurant closed.</td></tr><tr><td>404</td><td>Not found. Driver can't find you.</td></tr><tr><td>408</td><td>Timeout. Driver stuck in traffic.</td></tr><tr><td>409</td><td>Conflict. Order already picked up.</td></tr><tr><td>429</td><td>Too many requests. Peak hours.</td></tr><tr><td>500</td><td>Internal error. Kitchen overwhelmed.</td></tr><tr><td>503</td><td>Service unavailable. No drivers nearby.</td></tr></tbody></table></div><div class=\"callout good\"><p class=\"t-small\">A 200 is the best notification. Enjoy your meal.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "HTTP Codes at the Coffee Shop",
+   "user_requests": [
+    "http codes for coffee orders??",
+    "what status code is my latte",
+    "coffee shop http errors lol",
+    "status codes for barista problems",
+    "my coffee order returns 418?",
+    "http codes but make it coffee",
+    "what code means the espresso machine died",
+    "coffee shop http codes",
+    "http statuses for ordering coffee",
+    "what http code when coffee machine is broken",
+    "cafe http error codes",
+    "starbucks mobile order http codes",
+    "http codes for barista orders"
+   ],
+   "html": "<div class=\"stack\"><p class=\"muted\">Your morning order, as the server sees it.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Coffee served, exactly as ordered</td></tr><tr><td>204</td><td>You asked for decaf. Nothing happened.</td></tr><tr><td>301</td><td>Barista moved to the other counter</td></tr><tr><td>401</td><td>Loyalty card not recognized</td></tr><tr><td>403</td><td>You ordered the secret menu item</td></tr><tr><td>404</td><td>Oat milk not found</td></tr><tr><td>408</td><td>You took too long at the register</td></tr><tr><td>418</td><td>The espresso machine is a teapot</td></tr><tr><td>429</td><td>Slow down, that's your fourth refill</td></tr><tr><td>503</td><td>Barista on break, try again shortly</td></tr></tbody></table></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "HTTP Codes When Wi-Fi Hates You",
+   "user_requests": [
+    "wifi http status codes",
+    "why does my wifi give me http errors",
+    "bad wifi http codes",
+    "status codes for flaky internet",
+    "my wifi keeps dropping http codes",
+    "http status codes for connection problems",
+    "what http code means my wifi sucks",
+    "http codes for bad wifi",
+    "wifi hates me http statuses",
+    "what http errors when wifi drops",
+    "http codes for flaky internet",
+    "unstable wifi http response codes",
+    "http statuses for poor connection"
+   ],
+   "html": "<div class=\"stack\"><p class=\"muted\">When the signal flickers, the code tells the story.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Page loaded, Wi-Fi behaving</td></tr><tr><td>301</td><td>Router redirected you to the login page</td></tr><tr><td>403</td><td>Captive portal says no</td></tr><tr><td>408</td><td>Request timed out waiting for signal</td></tr><tr><td>429</td><td>Too many devices on this network</td></tr><tr><td>502</td><td>Router got a bad response from the modem</td></tr><tr><td>503</td><td>Network temporarily unavailable</td></tr><tr><td>504</td><td>Modem never replied</td></tr></tbody></table></div><p class=\"t-small dim\">Tip: 502/504 often mean the router is fine but the modem is napping.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "HTTP Codes for Dating Apps",
+   "user_requests": [
+    "dating app http codes",
+    "http status codes for tinder",
+    "why does my dating app keep failing http",
+    "status codes for dating apps",
+    "http codes for swipe apps",
+    "dating app http errors",
+    "what http code is a ghost",
+    "tinder http status codes",
+    "http errors on dating apps",
+    "what http code when match fails",
+    "bumble http response codes",
+    "dating app http statuses",
+    "http codes for swipe apps"
+   ],
+   "html": "<div class=\"stack\"><p class=\"muted\">Love, punctuated by status codes.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Match! Cartoon noises.</td></tr><tr><td>201</td><td>Profile created, ready to swipe</td></tr><tr><td>301</td><td>They moved to a new city</td></tr><tr><td>401</td><td>You're not logged in to flirt</td></tr><tr><td>403</td><td>Blocked by the algorithm</td></tr><tr><td>404</td><td>Their profile vanished</td></tr><tr><td>408</td><td>They took too long to reply</td></tr><tr><td>429</td><td>Too many swipes, slow down</td></tr><tr><td>503</td><td>App is down for everyone</td></tr></tbody></table></div><p class=\"t-small dim\">Yes, 404 after a date is a whole mood.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "HTTP Codes for Gaming Sessions",
+   "user_requests": [
+    "gaming http status codes",
+    "http codes for video games",
+    "status codes in online games",
+    "why does my game give http errors",
+    "http codes for game servers",
+    "game server http codes",
+    "what http code is lag",
+    "gaming http status codes",
+    "http errors during online games",
+    "what http code when game server down",
+    "multiplayer game http codes",
+    "http statuses for gaming",
+    "xbox live http error codes"
+   ],
+   "html": "<div class=\"stack\"><p class=\"muted\">When the lobby is a battlefield of errors.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Match found, good luck</td></tr><tr><td>301</td><td>You were moved to the naughty lobby</td></tr><tr><td>401</td><td>Login session expired</td></tr><tr><td>403</td><td>Banned from the server</td></tr><tr><td>404</td><td>Game mode not found</td></tr><tr><td>408</td><td>You timed out mid-fight</td></tr><tr><td>429</td><td>Too many requests, stop spamming</td></tr><tr><td>500</td><td>Server threw an exception</td></tr><tr><td>503</td><td>Server is down for maintenance</td></tr><tr><td>504</td><td>Gateway didn't respond, blame lag</td></tr></tbody></table></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "HTTP Codes for Smart Home Devices",
+   "user_requests": [
+    "smart home http codes",
+    "http status codes for iot devices",
+    "why is my smart bulb failing http",
+    "status codes for smart home",
+    "http codes for smart plugs",
+    "smart device http errors",
+    "what http code means my lights are offline",
+    "smart home http statuses",
+    "what http errors do smart devices return",
+    "http codes for alexa and google home",
+    "smart bulb http status codes",
+    "status codes smart home hub",
+    "http responses from smart home gadgets"
+   ],
+   "html": "<div class=\"stack\"><p class=\"muted\">Your house, as a web server.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Lights turned on, as commanded</td></tr><tr><td>202</td><td>Command accepted, bulb thinking</td></tr><tr><td>301</td><td>Device moved to new IP</td></tr><tr><td>401</td><td>Invalid API key</td></tr><tr><td>403</td><td>You don't have permission for this room</td></tr><tr><td>404</td><td>Smart plug not found on network</td></tr><tr><td>408</td><td>Device took too long to respond</td></tr><tr><td>429</td><td>Too many commands too fast</td></tr><tr><td>500</td><td>Firmware error</td></tr><tr><td>503</td><td>Device offline, check power</td></tr></tbody></table></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "HTTP Codes for Food Delivery",
+   "user_requests": [
+    "food delivery http codes",
+    "http status codes for doordash",
+    "why is my food delivery app failing http",
+    "status codes for food delivery",
+    "http codes for uber eats",
+    "food delivery http errors",
+    "what http code means my order is cancelled",
+    "food delivery app http statuses",
+    "http codes when my doordash order fails",
+    "what status code means food delivery is late",
+    "grubhub http error codes",
+    "delivery service http response codes",
+    "http codes for uber eats orders"
+   ],
+   "html": "<div class=\"stack\"><p class=\"muted\">From kitchen to doorstep, via HTTP.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Order confirmed and on its way</td></tr><tr><td>201</td><td>Order placed, restaurant notified</td></tr><tr><td>301</td><td>Driver reassigned to another order</td></tr><tr><td>401</td><td>Payment method declined</td></tr><tr><td>403</td><td>Restaurant not accepting orders</td></tr><tr><td>404</td><td>Item out of stock</td></tr><tr><td>408</td><td>Restaurant didn't accept in time</td></tr><tr><td>429</td><td>Too many orders, slow down</td></tr><tr><td>500</td><td>Kitchen error, order failed</td></tr><tr><td>503</td><td>Delivery service temporarily unavailable</td></tr></tbody></table></div></div>",
+   "augmented": true
+  },
+  {
+   "html": "<div class=\"stack\">\n<p class=\"muted\">Hey <regex>user_name</regex> \u2014 here's what your kitchen gadgets are secretly yelling at the cloud.</p>\n<div class=\"table-wrap\">\n<table>\n<thead><tr><th>Code</th><th>Smart-home meaning</th></tr></thead>\n<tbody>\n<tr><td>200</td><td>Light obeyed. Living room is glowing.</td></tr>\n<tr><td>401</td><td>Fridge doesn't recognise your login anymore.</td></tr>\n<tr><td>403</td><td>Guest account tried to unlock the front door.</td></tr>\n<tr><td>408</td><td>Thermostat went quiet mid-command.</td></tr>\n<tr><td>409</td><td>Two scenes fought over the same bulb.</td></tr>\n<tr><td>429</td><td>Too many voice commands, too fast.</td></tr>\n<tr><td>503</td><td>Vendor cloud is napping. Your plug waits.</td></tr>\n</tbody>\n</table>\n</div>\n<details class=\"acc\">\n<summary>Why does my plug show 503 but still work?</summary>\n<div class=\"body\"><p>Many plugs keep a local schedule. The cloud is down, the timer isn't. That's a small mercy.</p></div>\n</details>\n</div>",
+   "title": "HTTP Codes for Smart Home Gadgets",
+   "user_requests": [
+    "smart home http codes",
+    "why does my bulb say 503",
+    "http codes for smart plugs",
+    "my thermostat keeps failing what code is that",
+    "iot device http status meanings",
+    "smart home errors explained simply",
+    "why 401 on my fridge app",
+    "smart gadget http codes",
+    "http statuses for iot devices",
+    "what http errors from smart devices",
+    "smart home device http responses",
+    "http codes for smart plugs",
+    "iot http status codes"
+   ],
+   "augmented": true
+  },
+  {
+   "html": "<div class=\"stack\">\n<p class=\"muted\">Order placed, <regex>user_name</regex>. Here's the code your burrito travels through.</p>\n<div class=\"table-wrap\">\n<table>\n<thead><tr><th>Code</th><th>Delivery meaning</th></tr></thead>\n<tbody>\n<tr><td>200</td><td>Order accepted. Kitchen is on it.</td></tr>\n<tr><td>201</td><td>New order created \u2014 confirmation sent.</td></tr>\n<tr><td>402</td><td>Card declined at checkout.</td></tr>\n<tr><td>404</td><td>That restaurant is gone from the app.</td></tr>\n<tr><td>409</td><td>You already have this order in the cart.</td></tr>\n<tr><td>422</td><td>Address looks off \u2014 no such street.</td></tr>\n<tr><td>503</td><td>Every courier is busy. Try again soon.</td></tr>\n</tbody>\n</table>\n</div>\n<div class=\"callout info\"><p class=\"t-small\">A 201 means something new was born. A 200 just means the server nodded.</p></div>\n</div>",
+   "title": "HTTP Codes for Food Delivery Orders",
+   "user_requests": [
+    "food delivery http codes",
+    "why did my order fail 503",
+    "http status codes for takeout apps",
+    "what does 402 mean on delivery app",
+    "doordash error codes explained",
+    "order stuck what http code",
+    "delivery app says 422 help",
+    "food order http statuses",
+    "http codes for delivery orders",
+    "what http code when food order fails",
+    "delivery order http errors",
+    "http responses for food delivery",
+    "status codes for online food orders"
+   ],
+   "augmented": true
+  },
+  {
+   "html": "<div class=\"stack\">\n<p class=\"muted\">Bad Wi-Fi is a mood, <regex>user_name</regex>. The codes agree.</p>\n<div class=\"table-wrap\">\n<table>\n<thead><tr><th>Code</th><th>What your router is feeling</th></tr></thead>\n<tbody>\n<tr><td>408</td><td>Request timed out. Packet gave up waiting.</td></tr>\n<tr><td>429</td><td>Too many devices, too little patience.</td></tr>\n<tr><td>502</td><td>Bad gateway \u2014 router talked to nobody.</td></tr>\n<tr><td>504</td><td>Gateway timeout. Upstream never answered.</td></tr>\n<tr><td>511</td><td>Captive portal wants you to log in first.</td></tr>\n</tbody>\n</table>\n</div>\n<details class=\"acc\">\n<summary>Why 511 at the caf\u00e9?</summary>\n<div class=\"body\"><p>That's the login wall. Accept the terms, then the real internet opens up.</p></div>\n</details>\n</div>",
+   "title": "HTTP Codes for Terrible Wi-Fi",
+   "user_requests": [
+    "bad wifi http codes",
+    "why 408 timeout",
+    "http codes when internet is bad",
+    "what is 511 captive portal",
+    "router keeps timing out code",
+    "why 502 bad gateway at home",
+    "slow wifi status codes",
+    "terrible wifi http codes",
+    "http statuses for awful wifi",
+    "what http errors with bad wifi",
+    "http codes for wifi problems",
+    "poor wifi http response codes",
+    "http statuses for weak signal"
+   ],
+   "augmented": true
+  },
+  {
+   "html": "<div class=\"stack\">\n<p class=\"muted\">Swiping, <regex>user_name</regex>? Your dating app speaks in codes too.</p>\n<div class=\"table-wrap\">\n<table>\n<thead><tr><th>Code</th><th>Dating app meaning</th></tr></thead>\n<tbody>\n<tr><td>200</td><td>Match loaded. Say something clever.</td></tr>\n<tr><td>401</td><td>Session expired. Log back in.</td></tr>\n<tr><td>403</td><td>You've been blocked. It's not a glitch.</td></tr>\n<tr><td>404</td><td>Profile deleted or never existed.</td></tr>\n<tr><td>429</td><td>Too many swipes. Slow down, tiger.</td></tr>\n<tr><td>451</td><td>Unavailable for legal reasons \u2014 region locked.</td></tr>\n</tbody>\n</table>\n</div>\n<div class=\"callout warn\"><p class=\"t-small\">429 is real. The app is telling you to breathe, not that you're unlucky.</p></div>\n</div>",
+   "title": "HTTP Codes for Dating Apps",
+   "user_requests": [
+    "dating app error codes",
+    "why 429 on tinder",
+    "http codes for match apps",
+    "what does 451 mean dating app",
+    "profile not loading code",
+    "swipe limit error code",
+    "403 blocked on dating app",
+    "tinder http status codes",
+    "http errors on dating apps",
+    "what http code when match fails",
+    "bumble http response codes",
+    "dating app http statuses",
+    "http codes for swipe apps"
+   ],
+   "augmented": true
+  },
+  {
+   "html": "<div class=\"stack\">\n<p class=\"muted\">Ranked match, <regex>user_name</regex>? The server has opinions.</p>\n<div class=\"table-wrap\">\n<table>\n<thead><tr><th>Code</th><th>Gaming meaning</th></tr></thead>\n<tbody>\n<tr><td>200</td><td>Match found. Loading arena.</td></tr>\n<tr><td>401</td><td>Login token expired mid-session.</td></tr>\n<tr><td>403</td><td>Banned or region blocked.</td></tr>\n<tr><td>404</td><td>Match room no longer exists.</td></tr>\n<tr><td>429</td><td>Rate limited \u2014 you're spamming join.</td></tr>\n<tr><td>500</td><td>Game server crashed. Everyone's out.</td></tr>\n<tr><td>503</td><td>Servers full. Queue is long.</td></tr>\n</tbody>\n</table>\n</div>\n<details class=\"acc\">\n<summary>500 vs 503 \u2014 which one is my fault?</summary>\n<div class=\"body\"><p>Neither. 500 is a crash, 503 is a full house. You just showed up at a bad time.</p></div>\n</details>\n</div>",
+   "title": "HTTP Codes for Gaming Sessions",
+   "user_requests": [
+    "gaming http status codes",
+    "why 503 servers full",
+    "game server crash code",
+    "http codes for multiplayer games",
+    "matchmaking error codes",
+    "why 429 join spam",
+    "banned 403 gaming meaning",
+    "gaming http status codes",
+    "http errors during online games",
+    "what http code when game server down",
+    "multiplayer game http codes",
+    "http statuses for gaming",
+    "xbox live http error codes"
+   ],
+   "augmented": true
+  },
+  {
+   "html": "<div class=\"stack\">\n<p class=\"muted\">Morning, <regex>user_name</regex>. Your coffee order has a status code before it has caffeine.</p>\n<div class=\"table-wrap\">\n<table>\n<thead><tr><th>Code</th><th>Coffee meaning</th></tr></thead>\n<tbody>\n<tr><td>200</td><td>Order accepted. Barista nods.</td></tr>\n<tr><td>201</td><td>New order created \u2014 cup is queued.</td></tr>\n<tr><td>202</td><td>Accepted but still brewing. Hang tight.</td></tr>\n<tr><td>402</td><td>Payment required. Tap your card.</td></tr>\n<tr><td>404</td><td>That syrup is out of stock.</td></tr>\n<tr><td>409</td><td>Duplicate order \u2014 you tapped twice.</td></tr>\n<tr><td>418</td><td>I'm a teapot. The espresso machine is not.</td></tr>\n</tbody>\n</table>\n</div>\n<div class=\"callout good\"><p class=\"t-small\">202 is the honest one: yes, we heard you, no, it's not ready.</p></div>\n</div>",
+   "title": "HTTP Codes for Coffee Orders",
+   "user_requests": [
+    "coffee order http codes",
+    "what does 418 teapot mean",
+    "http status codes for cafes",
+    "why 202 not 200 coffee",
+    "coffee app error codes",
+    "duplicate order 409 meaning",
+    "barista http codes",
+    "coffee order http statuses",
+    "http codes when ordering coffee",
+    "what http code for coffee order fail",
+    "coffee shop order http errors",
+    "http responses for coffee orders",
+    "status codes for coffee app"
+   ],
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http status codes for sending an email",
+    "what do status codes mean when my email won't send",
+    "email send errors http codes",
+    "codes for email delivery failures",
+    "http codes for mail servers",
+    "help with email status codes",
+    "why does my email bounce with a code",
+    "email sending http codes",
+    "http statuses for sending email",
+    "what http code when email fails",
+    "smtp http status codes",
+    "http errors for email delivery",
+    "status codes for email api"
+   ],
+   "title": "HTTP Codes for Email Sending",
+   "html": "<div class=\"umi-page\"><div class=\"stack\"><p class=\"muted\">Email is fussy. Here's what those codes mean when a send fails.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>250</td><td>Message accepted for delivery</td></tr><tr><td>421</td><td>Service not available, try again later</td></tr><tr><td>450</td><td>Mailbox busy, temporary failure</td></tr><tr><td>550</td><td>Mailbox unavailable, message rejected</td></tr><tr><td>554</td><td>Transaction failed, no valid recipients</td></tr></tbody></table></div><p class=\"t-small dim\">Not all are HTTP, but they act like it. Same idea: the server tells you what went wrong.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "status codes for online banking",
+    "what does 403 mean in banking app",
+    "banking app error codes",
+    "http codes when paying a bill",
+    "why does my bank show error 500",
+    "codes for bank transactions",
+    "online banking http status",
+    "online banking http codes",
+    "http statuses for banking apps",
+    "what http code when bank site down",
+    "banking http error codes",
+    "http responses from online banking",
+    "status codes for bank transactions"
+   ],
+   "title": "HTTP Codes in Online Banking",
+   "html": "<div class=\"umi-page\"><div class=\"stack\"><p class=\"muted\">When your bank app acts up, it's often one of these.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Transaction processed successfully</td></tr><tr><td>401</td><td>Session expired, please log in again</td></tr><tr><td>403</td><td>Access denied, insufficient permissions</td></tr><tr><td>409</td><td>Conflict, duplicate transaction detected</td></tr><tr><td>500</td><td>Internal server error, try later</td></tr></tbody></table></div><p class=\"t-small dim\">If you see 409, check your recent transactions first. Double payments are no fun.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http status codes for weather apps",
+    "weather api error codes",
+    "why does weather app show 503",
+    "codes for weather data",
+    "weather app not loading code",
+    "http codes for forecast",
+    "weather service status codes",
+    "wx app http statuses plz",
+    "what http codes show up when weather api messes up",
+    "http codes used by weather apps",
+    "weather app error codes like 404 and stuff",
+    "my weather app says 503 what does that mean",
+    "status codes for weather forecast api"
+   ],
+   "title": "HTTP Codes for Weather Apps",
+   "html": "<div class=\"umi-page\"><div class=\"stack\"><p class=\"muted\">Weather apps are mostly API calls. Here's what they shout when things go wrong.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Forecast retrieved successfully</td></tr><tr><td>400</td><td>Bad request, check location format</td></tr><tr><td>404</td><td>Location not found</td></tr><tr><td>429</td><td>Too many requests, slow down</td></tr><tr><td>503</td><td>Service unavailable, try again later</td></tr></tbody></table></div><p class=\"t-small dim\">429 means you're refreshing too often. The weather isn't changing that fast.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http status codes for music streaming",
+    "spotify error codes",
+    "why does my music stop playing code",
+    "streaming service status codes",
+    "codes for music apps",
+    "http codes for streaming",
+    "music app error 403",
+    "spotify-ish http codes?",
+    "http status codes music streaming services",
+    "what codes does a music app return",
+    "music streaming api response codes",
+    "why does my music app keep getting 429",
+    "http codes for song playback errors"
+   ],
+   "title": "HTTP Codes for Music Streaming",
+   "html": "<div class=\"umi-page\"><div class=\"stack\"><p class=\"muted\">When the music stops, these codes often explain why.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Track playing</td></tr><tr><td>401</td><td>Unauthorized, check subscription</td></tr><tr><td>403</td><td>Forbidden, region locked</td></tr><tr><td>404</td><td>Track not found</td></tr><tr><td>429</td><td>Too many requests, pause a moment</td></tr></tbody></table></div><p class=\"t-small dim\">403 often means the song isn't available in your country. VPN won't help.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http status codes for social media",
+    "why can't i post on social media code",
+    "social media error codes",
+    "http codes for posting",
+    "instagram error codes",
+    "social app status codes",
+    "twitter error 429",
+    "social media http status codes list",
+    "what http codes do social apps throw",
+    "twitter type api codes",
+    "http codes for posting to social media failing",
+    "ig http response codes",
+    "status codes social network api"
+   ],
+   "title": "HTTP Codes for Social Media",
+   "html": "<div class=\"umi-page\"><div class=\"stack\"><p class=\"muted\">Ever tried to post and got a weird error? Here's the translation.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Post published</td></tr><tr><td>401</td><td>Not logged in</td></tr><tr><td>403</td><td>Blocked or muted</td></tr><tr><td>404</td><td>User or post not found</td></tr><tr><td>429</td><td>Too many posts, slow down</td></tr></tbody></table></div><p class=\"t-small dim\">429 is the code for \"you're posting too much.\" Take a breath.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http status codes for fitness apps",
+    "why won't my workout sync code",
+    "fitness tracker error codes",
+    "http codes for workout data",
+    "garmin error codes",
+    "fitness app status codes",
+    "sync error 500 fitness",
+    "fitness tracker http codes",
+    "workout app http status codes",
+    "http codes for step counting api errors",
+    "why does my fitness app return 401",
+    "gym app http response codes",
+    "status codes for health sync failures"
+   ],
+   "title": "HTTP Codes for Fitness Apps",
+   "html": "<div class=\"umi-page\"><div class=\"stack\"><p class=\"muted\">Your workout didn't save? These codes might be why.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Workout saved</td></tr><tr><td>401</td><td>Unauthorized, re-login</td></tr><tr><td>409</td><td>Conflict, duplicate activity</td></tr><tr><td>422</td><td>Unprocessable, bad data</td></tr><tr><td>500</td><td>Server error, try later</td></tr></tbody></table></div><p class=\"t-small dim\">422 often means your device sent weird numbers. Restart the app.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "HTTP Codes for Coffee Orders",
+   "user_requests": [
+    "http codes coffee order",
+    "what status for latte?",
+    "coffee shop http status",
+    "<regex>user_name</regex> what code for espresso",
+    "htp codes for coffee",
+    "barista http codes",
+    "coffee order status codes",
+    "coffee shop app http codes",
+    "ordering coffee online http statuses",
+    "http codes for latte orders failing",
+    "what code when coffee order cant process",
+    "espresso api status codes lol",
+    "http codes for mobile coffee ordering"
+   ],
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Order up! Your coffee is ready.</td></tr><tr><td>202</td><td>Order accepted, barista is on it.</td></tr><tr><td>204</td><td>Order served, no receipt.</td></tr><tr><td>400</td><td>Bad request: wrong milk.</td></tr><tr><td>401</td><td>Unauthorized: you didn't pay.</td></tr><tr><td>403</td><td>Forbidden: decaf only.</td></tr><tr><td>404</td><td>Not found: out of beans.</td></tr><tr><td>418</td><td>I'm a teapot, not a coffee machine.</td></tr><tr><td>429</td><td>Too many orders, please wait.</td></tr><tr><td>500</td><td>Server error: espresso machine broke.</td></tr><tr><td>503</td><td>Service unavailable: closed for cleaning.</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "title": "HTTP Codes for Bad Wi-Fi",
+   "user_requests": [
+    "wifi http codes",
+    "bad wifi status codes",
+    "http codes for no internet",
+    "<regex>user_name</regex> wifi error codes",
+    "htp wifi codes",
+    "wifi connection http status",
+    "codes when wifi sucks",
+    "wifi keeps dropping what http codes",
+    "http status codes when internet is bad",
+    "codes for poor wifi connection",
+    "why do i get 408 on bad wifi",
+    "http codes for network timeouts wifi",
+    "bad wifi http error codes list"
+   ],
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Connected, all good.</td></tr><tr><td>301</td><td>Redirect: try the other network.</td></tr><tr><td>400</td><td>Bad request: wrong password.</td></tr><tr><td>401</td><td>Unauthorized: captive portal login.</td></tr><tr><td>403</td><td>Forbidden: router blocks you.</td></tr><tr><td>404</td><td>Not found: SSID not in range.</td></tr><tr><td>408</td><td>Request timeout: slow connection.</td></tr><tr><td>429</td><td>Too many devices on network.</td></tr><tr><td>500</td><td>Internal server error: router needs restart.</td></tr><tr><td>502</td><td>Bad gateway: modem offline.</td></tr><tr><td>503</td><td>Service unavailable: ISP down.</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "title": "HTTP Codes for Dating Apps",
+   "user_requests": [
+    "dating app http codes",
+    "http status for dating",
+    "code for swipe right",
+    "<regex>user_name</regex> dating codes",
+    "htp dating app",
+    "match http status",
+    "dating app error codes",
+    "tinder type http codes",
+    "dating app api status codes",
+    "http codes for swipe failures",
+    "why does my dating app return 403",
+    "http response codes dating apps",
+    "codes when dating app server is down"
+   ],
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>It's a match!</td></tr><tr><td>201</td><td>Profile created.</td></tr><tr><td>204</td><td>No content: blank profile.</td></tr><tr><td>301</td><td>Moved permanently: deleted app.</td></tr><tr><td>400</td><td>Bad request: cheesy pickup line.</td></tr><tr><td>401</td><td>Unauthorized: not logged in.</td></tr><tr><td>403</td><td>Forbidden: blocked.</td></tr><tr><td>404</td><td>Not found: no matches.</td></tr><tr><td>410</td><td>Gone: ghosted.</td></tr><tr><td>429</td><td>Too many swipes, slow down.</td></tr><tr><td>500</td><td>Server error: app crashed on date night.</td></tr><tr><td>503</td><td>Service unavailable: servers overloaded.</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "title": "HTTP Codes for Gaming Sessions",
+   "user_requests": [
+    "gaming http codes",
+    "http status for games",
+    "code for lag",
+    "<regex>user_name</regex> gaming codes",
+    "htp gaming",
+    "multiplayer http status",
+    "game server codes",
+    "online gaming http codes",
+    "http status codes during game sessions",
+    "game server response codes",
+    "what http code when game session expires",
+    "multiplayer game http codes",
+    "codes for gaming connection lost"
+   ],
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Game on! Connected.</td></tr><tr><td>101</td><td>Switching protocols: changing servers.</td></tr><tr><td>301</td><td>Redirect: server moved.</td></tr><tr><td>400</td><td>Bad request: invalid move.</td></tr><tr><td>401</td><td>Unauthorized: need to log in.</td></tr><tr><td>403</td><td>Forbidden: banned.</td></tr><tr><td>404</td><td>Not found: lobby doesn't exist.</td></tr><tr><td>408</td><td>Request timeout: lag spike.</td></tr><tr><td>429</td><td>Too many requests: spamming.</td></tr><tr><td>500</td><td>Internal server error: game crashed.</td></tr><tr><td>502</td><td>Bad gateway: matchmaking failed.</td></tr><tr><td>503</td><td>Service unavailable: servers full.</td></tr><tr><td>504</td><td>Gateway timeout: connection lost.</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "title": "HTTP Codes for Smart Home Devices",
+   "user_requests": [
+    "smart home http codes",
+    "http status for iot",
+    "code for smart bulb",
+    "<regex>user_name</regex> smart home codes",
+    "htp smart home",
+    "iot http status",
+    "smart device error codes",
+    "smart home api http codes",
+    "http codes for smart bulbs and thermostats",
+    "why does my smart plug return 500",
+    "iot device http status codes",
+    "http codes for alexa type devices",
+    "home automation http response codes"
+   ],
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK: light turned on.</td></tr><tr><td>201</td><td>Created: new device added.</td></tr><tr><td>202</td><td>Accepted: command received.</td></tr><tr><td>204</td><td>No content: no update needed.</td></tr><tr><td>301</td><td>Moved: device reconnected.</td></tr><tr><td>400</td><td>Bad request: invalid command.</td></tr><tr><td>401</td><td>Unauthorized: not paired.</td></tr><tr><td>403</td><td>Forbidden: access denied.</td></tr><tr><td>404</td><td>Not found: device offline.</td></tr><tr><td>408</td><td>Timeout: device not responding.</td></tr><tr><td>500</td><td>Server error: hub malfunction.</td></tr><tr><td>503</td><td>Service unavailable: cloud down.</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "title": "HTTP Codes for Food Delivery",
+   "user_requests": [
+    "food delivery http codes",
+    "http status for delivery",
+    "code for order delivered",
+    "<regex>user_name</regex> food delivery codes",
+    "htp food delivery",
+    "delivery app http status",
+    "food order status codes",
+    "doordash-ish http codes",
+    "food delivery app status codes",
+    "http codes when order cant be delivered",
+    "why does food delivery app show 503",
+    "http response codes for restaurant api",
+    "codes for food delivery driver app errors"
+   ],
+   "html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Order delivered.</td></tr><tr><td>201</td><td>Order placed.</td></tr><tr><td>202</td><td>Order accepted by restaurant.</td></tr><tr><td>204</td><td>Order picked up, no updates.</td></tr><tr><td>301</td><td>Order moved to another driver.</td></tr><tr><td>400</td><td>Bad request: wrong address.</td></tr><tr><td>401</td><td>Unauthorized: payment failed.</td></tr><tr><td>403</td><td>Forbidden: restaurant closed.</td></tr><tr><td>404</td><td>Not found: item out of stock.</td></tr><tr><td>408</td><td>Timeout: driver delayed.</td></tr><tr><td>429</td><td>Too many orders, slow down.</td></tr><tr><td>500</td><td>Server error: kitchen overwhelmed.</td></tr><tr><td>503</td><td>Service unavailable: no drivers.</td></tr></tbody></table></div>",
+   "augmented": true
+  },
+  {
+   "title": "HTTP Codes in Online Gaming Stores",
+   "user_requests": [
+    "http status codes for buying games online",
+    "what do the codes mean when a game store checkout fails",
+    "game store http codes",
+    "codes when steam-ish store errors out",
+    "why 402 when I buy a game?",
+    "http codes digital game purchases",
+    "status codes for game store checkout pls",
+    "steam type http codes",
+    "http codes for buying games online",
+    "online game store status codes",
+    "why does game store checkout return 402",
+    "http codes for digital game purchases",
+    "codes when game store cart fails"
+   ],
+   "html": "<div class=\"stack\">\n<p class=\"t-small muted\">Buying games, <regex>user_name</regex>? Here's what the server is mumbling behind the checkout curtain.</p>\n<div class=\"table-wrap\">\n<table>\n<thead><tr><th>Code</th><th class=\"num\">Meaning</th></tr></thead>\n<tbody>\n<tr><td>200</td><td>OK \u2014 order placed, key on its way</td></tr>\n<tr><td>201</td><td>Created \u2014 account or preorder born</td></tr>\n<tr><td>400</td><td>Bad Request \u2014 malformed cart, check the JSON</td></tr>\n<tr><td>402</td><td>Payment Required \u2014 card said no, store says pay</td></tr>\n<tr><td>403</td><td>Forbidden \u2014 region-locked, sorry</td></tr>\n<tr><td>404</td><td>Not Found \u2014 that SKU vanished</td></tr>\n<tr><td>409</td><td>Conflict \u2014 already owned / duplicate order</td></tr>\n<tr><td>410</td><td>Gone \u2014 delisted game</td></tr>\n<tr><td>429</td><td>Too Many Requests \u2014 slow down, flash sale</td></tr>\n<tr><td>500</td><td>Server Error \u2014 their fault, retry later</td></tr>\n</tbody>\n</table>\n</div>\n<details class=\"acc\"><summary>Region lock vs payment fail</summary><div class=\"body\"><p class=\"t-small\">403 means the store knows you but won't sell. 402 means the money step rejected you. Different fix.</p></div></details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "HTTP Codes for Cloud Storage Sync",
+   "user_requests": [
+    "http codes for dropbox-ish file sync",
+    "why does my cloud drive say 409",
+    "sync error status codes",
+    "codes when cloud storage won't sync",
+    "what does 507 mean on cloud drive",
+    "http codes file sync services",
+    "status codes for cloud sync conflicts",
+    "dropbox google drive http codes",
+    "cloud sync http status codes",
+    "http codes when file sync fails",
+    "why does cloud storage return 507",
+    "codes for cloud backup errors",
+    "http response codes for syncing files"
+   ],
+   "html": "<div class=\"stack\">\n<p class=\"t-small muted\">When your files ghost the cloud, <regex>user_name</regex>, these are the numbers in the logs.</p>\n<div class=\"table-wrap\">\n<table>\n<thead><tr><th>Code</th><th>Meaning</th></tr></thead>\n<tbody>\n<tr><td>200</td><td>OK \u2014 file synced cleanly</td></tr>\n<tr><td>201</td><td>Created \u2014 new folder or file uploaded</td></tr>\n<tr><td>204</td><td>No Content \u2014 delete succeeded, nothing to return</td></tr>\n<tr><td>304</td><td>Not Modified \u2014 unchanged, skip the transfer</td></tr>\n<tr><td>401</td><td>Unauthorized \u2014 token expired, re-login</td></tr>\n<tr><td>403</td><td>Forbidden \u2014 shared folder permissions</td></tr>\n<tr><td>409</td><td>Conflict \u2014 two devices edited same file</td></tr>\n<tr><td>413</td><td>Payload Too Large \u2014 file over quota</td></tr>\n<tr><td>423</td><td>Locked \u2014 file checked out elsewhere</td></tr>\n<tr><td>507</td><td>Insufficient Storage \u2014 cloud is full</td></tr>\n</tbody>\n</table>\n</div>\n<details class=\"acc\"><summary>Why 409 is the scary one</summary><div class=\"body\"><p class=\"t-small\">It means two truths exist at once. Your client has to pick a winner or merge. Check the conflict copy.</p></div></details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "HTTP Codes for Podcast Downloads",
+   "user_requests": [
+    "http codes podcast download errors",
+    "why won't podcast episode download",
+    "codes for podcast rss 404",
+    "status codes for podcast apps",
+    "podcast feed http errors meaning",
+    "what does 206 mean for podcasts",
+    "codes when podcast won't stream offline",
+    "podcast app http codes",
+    "http status codes for downloading podcasts",
+    "why does podcast download return 404",
+    "podcast rss http codes",
+    "codes for podcast streaming errors",
+    "http codes when podcast wont download"
+   ],
+   "html": "<div class=\"stack\">\n<p class=\"t-small muted\">Podcast queue stuck, <regex>user_name</regex>? The feed is speaking HTTP at you.</p>\n<div class=\"table-wrap\">\n<table>\n<thead><tr><th>Code</th><th>Meaning</th></tr></thead>\n<tbody>\n<tr><td>200</td><td>OK \u2014 feed or MP3 delivered</td></tr>\n<tr><td>206</td><td>Partial Content \u2014 resumed download after pause</td></tr>\n<tr><td>301</td><td>Moved Permanently \u2014 feed URL changed, update it</td></tr>\n<tr><td>304</td><td>Not Modified \u2014 no new episodes, cache is fine</td></tr>\n<tr><td>404</td><td>Not Found \u2014 episode pulled or feed moved</td></tr>\n<tr><td>410</td><td>Gone \u2014 show ended, feed retired</td></tr>\n<tr><td>416</td><td>Range Not Satisfiable \u2014 bad seek offset</td></tr>\n<tr><td>429</td><td>Too Many Requests \u2014 CDN throttling binge downloads</td></tr>\n<tr><td>503</td><td>Service Unavailable \u2014 host overloaded at drop time</td></tr>\n</tbody>\n</table>\n</div>\n<details class=\"acc\"><summary>206 in plain words</summary><div class=\"body\"><p class=\"t-small\">It's the thumbs-up for \"finish what you started.\" Your app asked for bytes 400000\u2013800000 and got exactly that.</p></div></details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "HTTP Codes for Hotel Booking APIs",
+   "user_requests": [
+    "http status codes hotel booking",
+    "why does booking site show 409",
+    "codes for hotel reservation api",
+    "status codes for room booking errors",
+    "what does 422 mean booking a room",
+    "http codes travel booking",
+    "codes when hotel checkout fails",
+    "hotel api http status codes",
+    "http codes for booking a hotel room",
+    "why does hotel booking return 409",
+    "codes for hotel reservation api errors",
+    "http response codes for travel booking",
+    "status codes hotel availability api"
+   ],
+   "html": "<div class=\"stack\">\n<p class=\"t-small muted\">Booking a room, <regex>user_name</regex>? Here's what the hotel's backend tries to tell the front desk.</p>\n<div class=\"table-wrap\">\n<table>\n<thead><tr><th>Code</th><th>Meaning</th></tr></thead>\n<tbody>\n<tr><td>200</td><td>OK \u2014 availability returned</td></tr>\n<tr><td>201</td><td>Created \u2014 reservation confirmed</td></tr>\n<tr><td>200</td><td>No Content \u2014 cancellation succeeded</td></tr>\n<tr><td>400</td><td>Bad Request \u2014 dates backwards or missing guest</td></tr>\n<tr><td>401</td><td>Unauthorized \u2014 loyalty token expired</td></tr>\n<tr><td>409</td><td>Conflict \u2014 room taken between quote and book</td></tr>\n<tr><td>422</td><td>Unprocessable \u2014 past check-in date</td></tr>\n<tr><td>429</td><td>Too Many Requests \u2014 rate limit on search endpoint</td></tr>\n<tr><td>503</td><td>Service Unavailable \u2014 PMS down during peak</td></tr>\n</tbody>\n</table>\n</div>\n<details class=\"acc\"><summary>409 is the cruel one</summary><div class=\"body\"><p class=\"t-small\">The room existed when you looked, vanished when you clicked. Re-check availability before charging.</p></div></details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "HTTP Codes for Package Tracking",
+   "user_requests": [
+    "http codes package tracking",
+    "why tracking says 404",
+    "status codes for shipment tracker",
+    "codes shipping carrier api",
+    "what does 410 mean for tracking",
+    "http codes logistics tracking",
+    "codes when tracking number invalid",
+    "ups fedex http codes",
+    "http status codes for tracking packages",
+    "why does package tracking return 404",
+    "codes for shipment tracking api errors",
+    "http codes when tracking number invalid",
+    "package tracking api response codes"
+   ],
+   "html": "<div class=\"stack\">\n<p class=\"t-small muted\">Chasing a parcel, <regex>user_name</regex>? The carrier API answers in numbers, not feelings.</p>\n<div class=\"table-wrap\">\n<table>\n<thead><tr><th>Code</th><th>Meaning</th></tr></thead>\n<tbody>\n<tr><td>200</td><td>OK \u2014 tracking events returned</td></tr>\n<tr><td>304</td><td>Not Modified \u2014 no new scans since last check</td></tr>\n<tr><td>400</td><td>Bad Request \u2014 malformed tracking number</td></tr>\n<tr><td>401</td><td>Unauthorized \u2014 API key missing</td></tr>\n<tr><td>404</td><td>Not Found \u2014 number not in system yet</td></tr>\n<tr><td>410</td><td>Gone \u2014 label voided or archived</td></tr>\n<tr><td>429</td><td>Too Many Requests \u2014 you're polling too hard</td></tr>\n<tr><td>503</td><td>Service Unavailable \u2014 carrier status page is down</td></tr>\n</tbody>\n</table>\n</div>\n<details class=\"acc\"><summary>404 vs 410 for tracking</summary><div class=\"body\"><p class=\"t-small\">404 means \"maybe soon.\" 410 means \"this label is dead.\" One you wait on, one you call about.</p></div></details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "HTTP Codes for Job Application Portals",
+   "user_requests": [
+    "http codes job application",
+    "why does application portal say 403",
+    "status codes workday-ish portals",
+    "codes when resume upload fails job site",
+    "what does 409 mean on job portal",
+    "http codes career websites",
+    "codes for job submission errors",
+    "job portal http codes",
+    "http status codes for applying to jobs",
+    "why does job application return 422",
+    "codes for career site api errors",
+    "http response codes for resume upload",
+    "status codes job application submission"
+   ],
+   "html": "<div class=\"stack\">\n<p class=\"t-small muted\">Applying for a job, <regex>user_name</regex>? Sometimes the portal itself needs a resume.</p>\n<div class=\"table-wrap\">\n<table>\n<thead><tr><th>Code</th><th>Meaning</th></tr></thead>\n<tbody>\n<tr><td>200</td><td>OK \u2014 application page loaded</td></tr>\n<tr><td>201</td><td>Created \u2014 application submitted</td></tr>\n<tr><td>400</td><td>Bad Request \u2014 missing field the form didn't flag</td></tr>\n<tr><td>401</td><td>Unauthorized \u2014 session timed out mid-apply</td></tr>\n<tr><td>403</td><td>Forbidden \u2014 posting closed to external candidates</td></tr>\n<tr><td>404</td><td>Not Found \u2014 job filled and removed</td></tr>\n<tr><td>409</td><td>Conflict \u2014 you already applied to this posting</td></tr>\n<tr><td>413</td><td>Payload Too Large \u2014 resume PDF over the cap</td></tr>\n<tr><td>429</td><td>Too Many Requests \u2014 bot protection triggered</td></tr>\n<tr><td>500</td><td>Server Error \u2014 their side, not your cover letter</td></tr>\n</tbody>\n</table>\n</div>\n<details class=\"acc\"><summary>If you see 500</summary><div class=\"body\"><p class=\"t-small\">Screenshot the timestamp. Recruiters genuinely want proof when the portal eats an application.</p></div></details>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "http codes for food delivery apps",
+    "food delivery http errors",
+    "what do 409 and 429 mean in a delivery app",
+    "http codes when my burrito is late",
+    "status codes for delivery order tracking",
+    "codes for food delivery API",
+    "delivery app http responses"
+   ],
+   "title": "HTTP Codes for Food Delivery Apps",
+   "html": "<div class=\"card\"><h3 class=\"card-title\">Delivery status codes</h3><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Order placed. Your dumplings are officially on a journey.</td></tr><tr><td>201</td><td>New order created. Kitchen has been notified.</td></tr><tr><td>409</td><td>Conflict: driver already assigned to this order.</td></tr><tr><td>429</td><td>Too many requests: you refreshed the tracking map 47 times.</td></tr><tr><td>503</td><td>Service unavailable: restaurant is slammed, try again.</td></tr><tr><td>404</td><td>Not found: that promo code is a ghost.</td></tr></tbody></table></div><p class=\"muted t-small\">Tip for <regex>user_name</regex>: if you see 429, put the phone down. The food will come.</p></div>"
+  },
+  {
+   "user_requests": [
+    "http codes for online banking",
+    "banking api status codes",
+    "what does 401 mean in banking app",
+    "http errors in my bank",
+    "status codes for bank transfers",
+    "banking http responses",
+    "why do i get 503 in my banking app"
+   ],
+   "title": "HTTP Codes in Online Banking",
+   "html": "<div class=\"card\"><h3 class=\"card-title\">Banking HTTP codes</h3><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Balance retrieved. Your money is still there, mostly.</td></tr><tr><td>201</td><td>Transfer created. Funds are on the move.</td></tr><tr><td>401</td><td>Unauthorized. That's not your account, friend.</td></tr><tr><td>403</td><td>Forbidden. You lack permission to view this.</td></tr><tr><td>429</td><td>Too many requests. Stop hitting refresh, the server is tired.</td></tr><tr><td>503</td><td>Service unavailable. Bank's servers are having a moment.</td></tr></tbody></table></div><p class=\"muted t-small\">If you see 401, double-check your login. If you see 503, maybe go outside.</p></div>"
+  },
+  {
+   "user_requests": [
+    "http codes for weather apps",
+    "weather api status codes",
+    "what does 429 mean in weather app",
+    "http errors in weather apps",
+    "status codes for weather data",
+    "why does my weather app say 503",
+    "weather app http responses"
+   ],
+   "title": "HTTP Codes for Weather Apps",
+   "html": "<div class=\"card\"><h3 class=\"card-title\">Weather HTTP codes</h3><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Forecast retrieved. Sun or rain, we've got you.</td></tr><tr><td>429</td><td>Too many requests. You're checking the radar like it's a soap opera.</td></tr><tr><td>503</td><td>Service unavailable. The weather service is under the weather.</td></tr><tr><td>404</td><td>Not found. That city doesn't exist, or you misspelled it.</td></tr><tr><td>500</td><td>Internal server error. Even the clouds are confused.</td></tr></tbody></table></div><p class=\"muted t-small\">Pro tip: if you get 429, wait a minute. The sky isn't going anywhere.</p></div>"
+  },
+  {
+   "user_requests": [
+    "http codes for music streaming",
+    "streaming api status codes",
+    "what does 416 mean in music app",
+    "http errors in spotify",
+    "status codes for music streaming",
+    "why does my music app say 503",
+    "music streaming http responses"
+   ],
+   "title": "HTTP Codes for Music Streaming",
+   "html": "<div class=\"card\"><h3 class=\"card-title\">Streaming HTTP codes</h3><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Track playing. Enjoy the vibes.</td></tr><tr><td>206</td><td>Partial content. Buffering the next chorus.</td></tr><tr><td>416</td><td>Range not satisfiable. You tried to skip past the end.</td></tr><tr><td>429</td><td>Too many requests. You're skipping songs like a DJ on caffeine.</td></tr><tr><td>503</td><td>Service unavailable. The server is taking a nap.</td></tr></tbody></table></div><p class=\"muted t-small\">If you see 416, you're at the end of the playlist. Time to make a new one.</p></div>"
+  },
+  {
+   "user_requests": [
+    "http codes for social media",
+    "social media api status codes",
+    "what does 429 mean on twitter",
+    "http errors in social apps",
+    "status codes for social media",
+    "why does my feed say 503",
+    "social media http responses"
+   ],
+   "title": "HTTP Codes for Social Media",
+   "html": "<div class=\"card\"><h3 class=\"card-title\">Social HTTP codes</h3><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Feed loaded. Scroll away.</td></tr><tr><td>201</td><td>Post created. Your hot take is live.</td></tr><tr><td>401</td><td>Unauthorized. Log in first, lurker.</td></tr><tr><td>403</td><td>Forbidden. You've been blocked, or you blocked them.</td></tr><tr><td>429</td><td>Too many requests. You're refreshing like it's election night.</td></tr><tr><td>503</td><td>Service unavailable. The servers are overwhelmed by memes.</td></tr></tbody></table></div><p class=\"muted t-small\">If you see 429, step away. The timeline will still be there.</p></div>"
+  },
+  {
+   "user_requests": [
+    "http codes for fitness apps",
+    "fitness api status codes",
+    "what does 409 mean in fitness app",
+    "http errors in workout apps",
+    "status codes for fitness tracking",
+    "why does my fitness app say 503",
+    "fitness app http responses"
+   ],
+   "title": "HTTP Codes for Fitness Apps",
+   "html": "<div class=\"card\"><h3 class=\"card-title\">Fitness HTTP codes</h3><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Workout logged. You're officially sore.</td></tr><tr><td>201</td><td>New personal record created. Show-off.</td></tr><tr><td>409</td><td>Conflict: you already logged a run at this time.</td></tr><tr><td>429</td><td>Too many requests. Slow down, speedy.</td></tr><tr><td>503</td><td>Service unavailable. The app is catching its breath.</td></tr></tbody></table></div><p class=\"muted t-small\">If you see 409, you double-booked your workout. Rest day?</p></div>"
+  },
+  {
+   "user_requests": [
+    "what do http codes mean for sending emails",
+    "email server status codes cheat sheet",
+    "why did my email bounce http 550",
+    "smtp http error codes list",
+    "http codes for email delivery",
+    "explain 250 550 421 for mail",
+    "email api status codes meaning"
+   ],
+   "title": "HTTP Codes for Email Sending",
+   "html": "<div class=\"card\"><div class=\"card-title\">Email Sending Status Codes</div><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>250</td><td>Message accepted for delivery</td></tr><tr><td>550</td><td>Mailbox unavailable (rejected)</td></tr><tr><td>421</td><td>Service not available, try later</td></tr><tr><td>451</td><td>Server error, message not sent</td></tr><tr><td>554</td><td>Transaction failed (spam block)</td></tr></tbody></table></div><p class=\"muted t-small\">These are SMTP-style codes, but they show up in email APIs too.</p></div>"
+  },
+  {
+   "user_requests": [
+    "http codes for online banking errors",
+    "banking app http status codes",
+    "what does 401 mean in banking",
+    "why 403 forbidden on bank transfer",
+    "online banking http codes list",
+    "explain 500 503 for banking",
+    "bank api error codes"
+   ],
+   "title": "HTTP Codes in Online Banking",
+   "html": "<div class=\"card\"><div class=\"card-title\">Online Banking Codes</div><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK \u2014 request succeeded</td></tr><tr><td>401</td><td>Unauthorized \u2014 login required</td></tr><tr><td>403</td><td>Forbidden \u2014 insufficient permissions</td></tr><tr><td>429</td><td>Too Many Requests \u2014 slow down</td></tr><tr><td>500</td><td>Internal Server Error \u2014 bank's issue</td></tr><tr><td>503</td><td>Service Unavailable \u2014 maintenance</td></tr></tbody></table></div><p class=\"muted t-small\">If you see 500 or 503, it's not you \u2014 it's them.</p></div>"
+  },
+  {
+   "user_requests": [
+    "weather app http status codes",
+    "why weather api returns 429",
+    "http codes for weather data",
+    "weather service error codes",
+    "explain 503 for weather api",
+    "weather app not loading http code",
+    "http codes weather api meaning"
+   ],
+   "title": "HTTP Codes for Weather Apps",
+   "html": "<div class=\"card\"><div class=\"card-title\">Weather App Status Codes</div><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK \u2014 forecast retrieved</td></tr><tr><td>400</td><td>Bad Request \u2014 invalid location</td></tr><tr><td>401</td><td>Unauthorized \u2014 missing API key</td></tr><tr><td>429</td><td>Too Many Requests \u2014 rate limit</td></tr><tr><td>503</td><td>Service Unavailable \u2014 data source down</td></tr></tbody></table></div><p class=\"muted t-small\">429 often means you've hit the free tier limit.</p></div>"
+  },
+  {
+   "user_requests": [
+    "music streaming http codes",
+    "spotify api status codes",
+    "why 403 on music streaming",
+    "http codes for music apps",
+    "explain 206 partial content music",
+    "music streaming error codes list",
+    "http codes for audio streaming"
+   ],
+   "title": "HTTP Codes for Music Streaming",
+   "html": "<div class=\"card\"><div class=\"card-title\">Music Streaming Codes</div><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK \u2014 track data ready</td></tr><tr><td>206</td><td>Partial Content \u2014 streaming chunk</td></tr><tr><td>403</td><td>Forbidden \u2014 region locked</td></tr><tr><td>404</td><td>Not Found \u2014 track removed</td></tr><tr><td>429</td><td>Too Many Requests \u2014 skip limit</td></tr><tr><td>503</td><td>Service Unavailable \u2014 high load</td></tr></tbody></table></div><p class=\"muted t-small\">206 is normal for streaming \u2014 it means \"here's a piece.\"</p></div>"
+  },
+  {
+   "user_requests": [
+    "social media http status codes",
+    "why 429 on twitter api",
+    "http codes for social apps",
+    "explain 403 404 for social media",
+    "social media api error codes",
+    "http codes social media meaning",
+    "social app http codes list"
+   ],
+   "title": "HTTP Codes for Social Media",
+   "html": "<div class=\"card\"><div class=\"card-title\">Social Media Status Codes</div><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK \u2014 post loaded</td></tr><tr><td>401</td><td>Unauthorized \u2014 token expired</td></tr><tr><td>403</td><td>Forbidden \u2014 blocked by user</td></tr><tr><td>404</td><td>Not Found \u2014 post deleted</td></tr><tr><td>429</td><td>Too Many Requests \u2014 rate limited</td></tr><tr><td>500</td><td>Internal Server Error \u2014 platform issue</td></tr></tbody></table></div><p class=\"muted t-small\">403 on social media often means you've been blocked.</p></div>"
+  },
+  {
+   "user_requests": [
+    "fitness app http status codes",
+    "why 401 on fitness tracker",
+    "http codes for workout apps",
+    "fitness api error codes",
+    "explain 503 for fitness app",
+    "http codes fitness app meaning",
+    "fitness tracking http codes"
+   ],
+   "title": "HTTP Codes for Fitness Apps",
+   "html": "<div class=\"card\"><div class=\"card-title\">Fitness App Status Codes</div><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK \u2014 workout synced</td></tr><tr><td>401</td><td>Unauthorized \u2014 re-login needed</td></tr><tr><td>404</td><td>Not Found \u2014 activity missing</td></tr><tr><td>429</td><td>Too Many Requests \u2014 sync limit</td></tr><tr><td>503</td><td>Service Unavailable \u2014 server busy</td></tr></tbody></table></div><p class=\"muted t-small\">If sync fails with 503, try again after your cooldown.</p></div>"
+  },
+  {
+   "title": "HTTP Codes for Laundry Day",
+   "user_requests": [
+    "http codes but for laundry lol",
+    "what HTTP status codes match my laundry situation",
+    "make a table of http codes for doing laundry",
+    "laundry day as http status codes",
+    "explain laundry problems with http codes",
+    "need a funny http code chart about laundry",
+    "codes for when the washing machine eats a sock?"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">HTTP Codes for Laundry Day</div><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>All socks matched. Miracle.</td></tr><tr><td>202</td><td>Machine accepted, cycle pending.</td></tr><tr><td>204</td><td>Drawer emptied. No output.</td></tr><tr><td>301</td><td>Moved permanently to the floordrobe.</td></tr><tr><td>403</td><td>Whites forbidden from the red load.</td></tr><tr><td>404</td><td>The other sock cannot be found.</td></tr><tr><td>409</td><td>Conflict: brights and darks in one basket.</td></tr><tr><td>410</td><td>Sock gone. Presumed sucked into the void.</td></tr><tr><td>413</td><td>Load too large for the drum.</td></tr><tr><td>423</td><td>Locked. The machine is mid-spin.</td></tr><tr><td>429</td><td>Too many loads. Slow down.</td></tr><tr><td>503</td><td>Dryer unavailable. Try again after dinner.</td></tr></tbody></table></div><p class=\"muted t-small\">A wink for <regex>user_name</regex>. May your 404s be few.</p></div>"
+  },
+  {
+   "title": "HTTP Codes for Parked Cars",
+   "user_requests": [
+    "http codes for parking a car",
+    "status codes for finding street parking",
+    "http code table about parking tickets",
+    "how would http codes describe parking?",
+    "make http codes for parallel parking fail",
+    "parking garage as http status codes pls",
+    "codes for when someone steals your spot"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">HTTP Codes for Parked Cars</div><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Parked. Legally. First try.</td></tr><tr><td>201</td><td>Spot created where none appeared to be.</td></tr><tr><td>204</td><td>Spot exists, but gives you no room.</td></tr><tr><td>301</td><td>Car towed permanently elsewhere.</td></tr><tr><td>401</td><td>Permit required to park here.</td></tr><tr><td>402</td><td>Payment needed. Meter says so.</td></tr><tr><td>403</td><td>Residents only. You live across town.</td></tr><tr><td>404</td><td>Parking spot not found for six blocks.</td></tr><tr><td>409</td><td>Conflict: your bumper, their bumper.</td></tr><tr><td>423</td><td>Locked behind a gate that never opens.</td></tr><tr><td>429</td><td>Too many laps around the block.</td></tr><tr><td>503</td><td>Garage full. Full of cars, and feelings.</td></tr></tbody></table></div><p class=\"muted t-small\">Meter aside, <regex>user_name</regex>, 200 is earned, not given.</p></div>"
+  },
+  {
+   "title": "HTTP Codes for Group Chats",
+   "user_requests": [
+    "http codes for group chats",
+    "status codes that describe texting my friends",
+    "make a http code chart for group chat chaos",
+    "why is my group chat like http errors",
+    "group chat as http status codes",
+    "codes for being left on read?",
+    "http codes for when the gc goes silent"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">HTTP Codes for Group Chats</div><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>100</td><td>Someone is typing. Still typing. Forever typing.</td></tr><tr><td>200</td><td>Message delivered. Everyone laughs. Rare.</td></tr><tr><td>201</td><td>You created a new group. Bold move.</td></tr><tr><td>204</td><td>Read receipt sent, nothing said.</td></tr><tr><td>304</td><td>No new messages since you last looked.</td></tr><tr><td>400</td><td>Bad request: you sent a wall of text at 2am.</td></tr><tr><td>401</td><td>Unauthorized: you were removed from the chat.</td></tr><tr><td>404</td><td>The inside joke is not found. You missed it.</td></tr><tr><td>409</td><td>Conflict: two plans for the same Friday.</td></tr><tr><td>429</td><td>Too many memes. Cool down requested.</td></tr><tr><td>451</td><td>Unavailable for legal reasons: screenshots leaked.</td></tr><tr><td>503</td><td>Chat unavailable. Everyone is asleep.</td></tr></tbody></table></div><p class=\"muted t-small\">May your <regex>user_name</regex> chats stay at 200.</p></div>"
+  },
+  {
+   "title": "HTTP Codes for Cooking Dinner",
+   "user_requests": [
+    "http status codes for cooking",
+    "codes that explain my dinner disaster",
+    "make a funny http table about cooking",
+    "cooking as http response codes",
+    "http codes for burning dinner",
+    "what code is when the recipe fails?",
+    "kitchen http codes for recipes gone wrong"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">HTTP Codes for Cooking Dinner</div><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>100</td><td>Water is boiling. Allegedly.</td></tr><tr><td>200</td><td>Dinner is ready and nothing burned.</td></tr><tr><td>201</td><td>You invented a recipe. It worked.</td></tr><tr><td>202</td><td>Oven accepted the tray. Waiting.</td></tr><tr><td>204</td><td>Fridge raided. Nothing left.</td></tr><tr><td>301</td><td>Recipe moved permanently to takeout.</td></tr><tr><td>403</td><td>Forbidden: no more garlic until you taste it.</td></tr><tr><td>404</td><td>That key ingredient is not found.</td></tr><tr><td>408</td><td>Request timeout: pasta sat in water too long.</td></tr><tr><td>413</td><td>Payload too large for one pan.</td></tr><tr><td>418</td><td>I'm a teapot. I cannot roast chicken.</td></tr><tr><td>500</td><td>Internal error: smoke alarm joined in.</td></tr></tbody></table></div><p class=\"muted t-small\">Here's to a 200, <regex>user_name</regex>. Butter helps.</p></div>"
+  },
+  {
+   "title": "HTTP Codes for Gym Membership",
+   "user_requests": [
+    "http codes for going to the gym",
+    "status codes about gym memberships",
+    "make http codes for skipping leg day",
+    "gym as http status codes funny chart",
+    "codes for when the treadmill is taken",
+    "http codes for new year gym crowds",
+    "why does my gym feel like http errors"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">HTTP Codes for Gym Membership</div><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Workout complete and you feel great.</td></tr><tr><td>201</td><td>New personal best created.</td></tr><tr><td>204</td><td>Checked in. Walked past every machine.</td></tr><tr><td>301</td><td>Your routine moved permanently to the smoothie bar.</td></tr><tr><td>401</td><td>Membership expired. Card declined at the door.</td></tr><tr><td>402</td><td>Payment required for the good towels.</td></tr><tr><td>403</td><td>Forbidden: squat rack reserved by a guy stretching.</td></tr><tr><td>404</td><td>Free treadmill not found. Ever.</td></tr><tr><td>409</td><td>Conflict: your water bottle vs. the shared bench.</td></tr><tr><td>429</td><td>Too many requests: it is January 3rd.</td></tr><tr><td>451</td><td>Unavailable for legal reasons: injury waiver unsigned.</td></tr><tr><td>503</td><td>Service unavailable. You went home instead.</td></tr></tbody></table></div><p class=\"muted t-small\">Reps count, <regex>user_name</regex>. Status codes do not.</p></div>"
+  },
+  {
+   "title": "HTTP Codes for Morning Commute",
+   "user_requests": [
+    "http codes for my commute",
+    "making a http code list for getting to work",
+    "status codes for missed trains",
+    "http codes for rush hour traffic",
+    "commute as http response codes",
+    "what http code is traffic jam?",
+    "codes for the bus being late again"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">HTTP Codes for Morning Commute</div><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Made it to your desk on time.</td></tr><tr><td>202</td><td>Train accepted you. Doors closing.</td></tr><tr><td>204</td><td>Seat found, then taken. No content.</td></tr><tr><td>301</td><td>Route changed permanently. Signal works again.</td></tr><tr><td>302</td><td>Found elsewhere: tube detour to a bus.</td></tr><tr><td>304</td><td>No change: the same traffic as yesterday.</td></tr><tr><td>401</td><td>Unauthorized: forgot the office badge.</td></tr><tr><td>403</td><td>Forbidden: platform closed, no reason given.</td></tr><tr><td>404</td><td>Bus not found. The app lied.</td></tr><tr><td>408</td><td>Timeout: waited ten minutes for a ghost train.</td></tr><tr><td>429</td><td>Too many commuters. Wait for the next one.</td></tr><tr><td>503</td><td>Service unavailable. Leaves everywhere.</td></tr></tbody></table></div><p class=\"muted t-small\">Safe travels, <regex>user_name</regex>. Aim for 200.</p></div>"
+  },
+  {
+   "title": "HTTP Codes for Parking Meters",
+   "user_requests": [
+    "http codes for parking meters",
+    "what status codes would a parking meter api return",
+    "parking meter http codes pls",
+    "http codes for paying for parking",
+    "parkin meter api status codes",
+    "make me an http code table for parking meters",
+    "parking meter http statuses?"
+   ],
+   "html": "<div class=\"stack\"><p class=\"muted\">A meter is just a tiny API with a coin slot. Here's the vocabulary it mutters back at you, <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td class=\"num\">200</td><td>OK \u2014 meter accepts your card, time begins ticking</td></tr><tr><td class=\"num\">201</td><td>Created \u2014 new parking session opened for this spot</td></tr><tr><td class=\"num\">202</td><td>Accepted \u2014 payment pending, don't drive off yet</td></tr><tr><td class=\"num\">402</td><td>Payment Required \u2014 card declined, coins please</td></tr><tr><td class=\"num\">403</td><td>Forbidden \u2014 that's a permit-only zone</td></tr><tr><td class=\"num\">409</td><td>Conflict \u2014 someone already paid for this space</td></tr><tr><td class=\"num\">410</td><td>Gone \u2014 the meter was removed years ago</td></tr><tr><td class=\"num\">429</td><td>Too Many Requests \u2014 slow down, you've swiped five times</td></tr><tr><td class=\"num\">503</td><td>Service Unavailable \u2014 out of tickets for the kiosk</td></tr><tr><td class=\"num\">504</td><td>Gateway Timeout \u2014 the app never reached the meter</td></tr></tbody></table></div><details class=\"acc\"><summary>The one that actually costs you money</summary><div class=\"body\"><p>504. The app shrugs, you assume you paid, the warden reads the tape. Screenshot everything.</p></div></details></div>"
+  },
+  {
+   "title": "HTTP Codes for Haircuts",
+   "user_requests": [
+    "http codes for haircuts",
+    "status codes a barber shop app might use",
+    "http codes for booking a haircut",
+    "barber api http codes",
+    "http codes for bad haircuts lol",
+    "haircut booking status codes",
+    "whats the 404 of haircuts"
+   ],
+   "html": "<div class=\"stack\"><p class=\"muted\">Your booking app talks in codes too. Here's what the chair tells you, <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td class=\"num\">200</td><td>OK \u2014 slot confirmed, see you at 4:15</td></tr><tr><td class=\"num\">204</td><td>No Content \u2014 booked, but the stylist list is empty</td></tr><tr><td class=\"num\">301</td><td>Moved Permanently \u2014 your usual chair moved across town</td></tr><tr><td class=\"num\">402</td><td>Payment Required \u2014 deposit holds the slot</td></tr><tr><td class=\"num\">404</td><td>Not Found \u2014 no 4:15 on Fridays, ever</td></tr><tr><td class=\"num\">408</td><td>Request Timeout \u2014 you were three minutes late to the call</td></tr><tr><td class=\"num\">409</td><td>Conflict \u2014 two people, one chair, same minute</td></tr><tr><td class=\"num\">415</td><td>Unsupported Media Type \u2014 that reference photo won't load</td></tr><tr><td class=\"num\">451</td><td>Unavailable For Legal Reasons \u2014 the shop's closed for the day</td></tr></tbody></table></div><div class=\"callout info\"><p><kbd>415</kbd> is the tragic one. Pinterest link, dead image, and you walk out with \"something sharp and kind of short.\"</p></div></div>"
+  },
+  {
+   "title": "HTTP Codes for Baggage Claims",
+   "user_requests": [
+    "http codes for lost luggage",
+    "airport baggage status codes",
+    "http codes for baggage claim",
+    "what codes would a baggage tracker use",
+    "lost bag http status codes",
+    "baggage claim api codes pls",
+    "http codes for delayed luggage"
+   ],
+   "html": "<div class=\"stack\"><p class=\"muted\">The baggage carousel speaks fluent HTTP. It's just rarely good news, <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td class=\"num\">200</td><td>OK \u2014 bag on belt three, second lap</td></tr><tr><td class=\"num\">302</td><td>Found \u2014 rerouted to a different carousel, no notice</td></tr><tr><td class=\"num\">404</td><td>Not Found \u2014 tracking says \"loaded,\" belt says otherwise</td></tr><tr><td class=\"num\">408</td><td>Request Timeout \u2014 it'll \"be on the next flight\"</td></tr><tr><td class=\"num\">429</td><td>Too Many Requests \u2014 everyone's bag is missing at once</td></tr><tr><td class=\"num\">500</td><td>Internal Server Error \u2014 the scanner jammed</td></tr><tr><td class=\"num\">502</td><td>Bad Gateway \u2014 your bag went through a partner airline</td></tr><tr><td class=\"num\">503</td><td>Service Unavailable \u2014 claim office closed till 6 a.m.</td></tr></tbody></table></div><details class=\"acc\"><summary>Which one gets you reimbursed?</summary><div class=\"body\"><p>502. A handoff to another carrier is where bags vanish and where the paperwork gets real.</p></div></details></div>"
+  },
+  {
+   "title": "HTTP Codes for Board Games",
+   "user_requests": [
+    "http codes for board games",
+    "status codes for board game night",
+    "http codes for monopoly",
+    "board game api codes",
+    "http codes for game night disasters",
+    "what are the http codes of board games",
+    "board game http statuses"
+   ],
+   "html": "<div class=\"stack\"><p class=\"muted\">Board game night is a distributed system with snacks. Here's the error log, <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td class=\"num\">200</td><td>OK \u2014 your turn, dice agree</td></tr><tr><td class=\"num\">301</td><td>Moved Permanently \u2014 that piece lives on the floor now</td></tr><tr><td class=\"num\">403</td><td>Forbidden \u2014 house rules say no trading after dark</td></tr><tr><td class=\"num\">409</td><td>Conflict \u2014 two players reach the same square</td></tr><tr><td class=\"num\">413</td><td>Payload Too Large \u2014 the box no longer closes</td></tr><tr><td class=\"num\">418</td><td>I'm a Teapot \u2014 house rule #12, nobody remembers it</td></tr><tr><td class=\"num\">422</td><td>Unprocessable \u2014 legal move, but the table disputes it</td></tr><tr><td class=\"num\">503</td><td>Service Unavailable \u2014 someone flipped the board</td></tr></tbody></table></div><div class=\"callout warn\"><p><kbd>418</kbd> is the traditional code for that one house rule everyone argued about in 2011.</p></div></div>"
+  },
+  {
+   "title": "HTTP Codes for Plant Care",
+   "user_requests": [
+    "http codes for plant care",
+    "status codes for my houseplants",
+    "http codes for killing plants",
+    "plant watering api codes",
+    "http codes for plant apps",
+    "my plants http status codes",
+    "http codes of sad houseplants"
+   ],
+   "html": "<div class=\"stack\"><p class=\"muted\">Plants don't complain out loud. They emit status codes, <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td class=\"num\">200</td><td>OK \u2014 soil moist, leaves up, all good</td></tr><tr><td class=\"num\">204</td><td>No Content \u2014 nothing new since last week, thriving quietly</td></tr><tr><td class=\"num\">301</td><td>Moved Permanently \u2014 leaning hard toward the window</td></tr><tr><td class=\"num\">402</td><td>Payment Required \u2014 it wants water and it wants it now</td></tr><tr><td class=\"num\">410</td><td>Gone \u2014 crispy brown, no coming back</td></tr><tr><td class=\"num\">429</td><td>Too Many Requests \u2014 you've watered it four times this week</td></tr><tr><td class=\"num\">500</td><td>Internal Server Error \u2014 root rot, invisible until too late</td></tr><tr><td class=\"num\">507</td><td>Insufficient Storage \u2014 pot too small, roots circling</td></tr></tbody></table></div><details class=\"acc\"><summary>Read the leaves, not the schedule</summary><div class=\"body\"><p>Most watering apps over-report. Check the soil an inch down before you trust any alert.</p></div></details></div>"
+  },
+  {
+   "title": "HTTP Codes for Video Calls",
+   "user_requests": [
+    "http codes for video calls",
+    "zoom status codes",
+    "http codes for bad video calls",
+    "what codes would a video call app use",
+    "http codes for meeting tech problems",
+    "video call http statuses pls",
+    "http codes when the call freezes"
+   ],
+   "html": "<div class=\"stack\"><p class=\"muted\">Your call app has a whole vocabulary for awkward silence, <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td class=\"num\">200</td><td>OK \u2014 camera on, audio fine, everyone heard you</td></tr><tr><td class=\"num\">204</td><td>No Content \u2014 you're on mute and you don't know it</td></tr><tr><td class=\"num\">401</td><td>Unauthorized \u2014 waiting room, host hasn't let you in</td></tr><tr><td class=\"num\">403</td><td>Forbidden \u2014 that meeting link expired an hour ago</td></tr><tr><td class=\"num\">408</td><td>Request Timeout \u2014 your \"hi\" arrived eight seconds late</td></tr><tr><td class=\"num\">409</td><td>Conflict \u2014 two people talking, neither hears the other</td></tr><tr><td class=\"num\">413</td><td>Payload Too Large \u2014 screen share of a 4K monitor on hotel wi-fi</td></tr><tr><td class=\"num\">502</td><td>Bad Gateway \u2014 you froze mid-sentence, face preserved forever</td></tr></tbody></table></div><div class=\"callout bad\"><p><kbd>204</kbd> is the most common code in the world. Nobody ever gets the notification.</p></div></div>"
+  },
+  {
+   "title": "HTTP Codes for Airport Security",
+   "user_requests": [
+    "http status codes but for airport security",
+    "what http codes map to going through TSA",
+    "airport security http codes pls",
+    "make me a table of status codes for the security line",
+    "tsa but as http",
+    "codes for airport security queue",
+    "http codes for airport security line"
+   ],
+   "html": "<div class=\"umi-page\"><h3 class=\"card-title\">Security, but with status codes</h3><p class=\"muted\">Here's the checkpoint, translated, <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Clear \u2014 shoes on, belt back, dignity intact.</td></tr><tr><td>202</td><td>Accepted for extra screening. Please step aside.</td></tr><tr><td>400</td><td>Liquids over 100ml. Request malformed.</td></tr><tr><td>401</td><td>Boarding pass unreadable. Who even are you?</td></tr><tr><td>403</td><td>No liquids, no belt, no pocket lint.</td></tr><tr><td>408</td><td>Pat-down timed out. Nobody moved.</td></tr><tr><td>418</td><td>You are a teapot. Also, remove the laptop.</td></tr><tr><td>429</td><td>Pre-check lane busy. Slow down your walk.</td></tr><tr><td>503</td><td>Scanner down. Everyone breathe.</td></tr></tbody></table></div><details class=\"acc\"><summary>Why 418 shows up here</summary><div class=\"body\"><p class=\"t-small\">Because someone always jokes about it in the line. Mostly a real scanner-down week, though.</p></div></details></div>"
+  },
+  {
+   "title": "HTTP Codes for Returning Online Orders",
+   "user_requests": [
+    "http codes for returning stuff i bought online",
+    "what status codes fit the returns process",
+    "returns but as http status codes",
+    "make a table for online returns with http codes",
+    "codes for shipping a return back",
+    "http codes for refunds and returns",
+    "return an item \u2014 which http code is that"
+   ],
+   "html": "<div class=\"umi-page\"><h3 class=\"card-title\">The return label, coded</h3><p class=\"muted\">Refunds are just a very slow 202, <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Return accepted at the counter. Receipt printed.</td></tr><tr><td>202</td><td>Refund queued. 5\u20137 business days, allegedly.</td></tr><tr><td>204</td><td>Returned, no receipt. Silent success.</td></tr><tr><td>301</td><td>Shipped to the wrong warehouse. Redirected.</td></tr><tr><td>400</td><td>Missing tags, original box, or your best intentions.</td></tr><tr><td>409</td><td>Already returned. Twice. Somehow.</td></tr><tr><td>410</td><td>Return window gone forever.</td></tr><tr><td>413</td><td>Item too large for the drop-off box.</td></tr><tr><td>504</td><td>Tracking never updated again.</td></tr></tbody></table></div><div class=\"callout info\"><p class=\"t-small\">410 is the honest one. It just says what customer service won't.</p></div></div>"
+  },
+  {
+   "title": "HTTP Codes for a Bad Haircut",
+   "user_requests": [
+    "http codes for getting a bad haircut",
+    "haircut disaster as http status codes",
+    "status codes for the barber chair",
+    "table of codes for a bad cut",
+    "what code is \"just take a little off the top\"",
+    "bad haircut http codes plz",
+    "http status code for regretting a haircut"
+   ],
+   "html": "<div class=\"umi-page\"><h3 class=\"card-title\">The chair, in status codes</h3><p class=\"muted\">You said \"a little off the top.\" That was the request, <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Exactly what you asked for. Rare, but real.</td></tr><tr><td>206</td><td>Partial trim. One side got more attention.</td></tr><tr><td>302</td><td>Found a new style you didn't request.</td></tr><tr><td>400</td><td>\"Just a little off\" was too vague to parse.</td></tr><tr><td>401</td><td>Barber didn't believe you meant it.</td></tr><tr><td>403</td><td>You are not allowed to keep the fringe.</td></tr><tr><td>416</td><td>Requested range exceeded head length.</td></tr><tr><td>503</td><td>Clippers died mid-cut. Wear a hat.</td></tr></tbody></table></div>"
+  },
+  {
+   "title": "HTTP Codes for Finding a Parking Spot",
+   "user_requests": [
+    "http codes for finding parking",
+    "parking garage as status codes",
+    "what code means no parking spaces",
+    "status codes for circling the lot",
+    "parking lot http codes table",
+    "codes for parking garage levels",
+    "findin a parkin spot as http"
+   ],
+   "html": "<div class=\"umi-page\"><h3 class=\"card-title\">Circling the structure</h3><p class=\"muted\">Level 2 is always full, <regex>user_name</regex>. That's just physics.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Spot found. Pull in before anyone else does.</td></tr><tr><td>301</td><td>Moved to level 3. Moved again.</td></tr><tr><td>304</td><td>Same spot you passed ten minutes ago.</td></tr><tr><td>403</td><td>Reserved. Permit only. Not you.</td></tr><tr><td>404</td><td>Left the garage and never found one.</td></tr><tr><td>405</td><td>Spot exists but you can't park there yet.</td></tr><tr><td>408</td><td>Someone is idling, signaling, waiting. Forever.</td></tr><tr><td>429</td><td>Too many cars, same aisle, same hope.</td></tr><tr><td>507</td><td>Structure full. Turn around.</td></tr></tbody></table></div><details class=\"acc\"><summary>Best time to enter</summary><div class=\"body\"><p class=\"t-small\">Weekday mornings. Less 429, more 200.</p></div></details></div>"
+  },
+  {
+   "title": "HTTP Codes for Doing Laundry",
+   "user_requests": [
+    "http codes for laundry",
+    "laundry day as status codes",
+    "what status code is a missing sock",
+    "codes for the washing machine",
+    "laundry but as http codes table",
+    "http code for the dryer eating socks",
+    "status codes for laundry mishaps"
+   ],
+   "html": "<div class=\"umi-page\"><h3 class=\"card-title\">Load one: socks, in codes</h3><p class=\"muted\">The dryer didn't eat it, <regex>user_name</regex>. It was absorbed.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Cycle finished. Clothes clean.</td></tr><tr><td>202</td><td>Load accepted. Still spinning.</td></tr><tr><td>204</td><td>Washed, dried, folded \u2014 and you never saw it happen.</td></tr><tr><td>304</td><td>Same red shirt, same lint trap.</td></tr><tr><td>404</td><td>One sock from the pair is gone.</td></tr><tr><td>409</td><td>Too full. Drum refuses to turn.</td></tr><tr><td>410</td><td>Sock permanently lost. Not in the drum.</td></tr><tr><td>413</td><td>Overloaded. Door won't even close.</td></tr><tr><td>503</td><td>Machine down. Try the laundromat.</td></tr></tbody></table></div><div class=\"callout warn\"><p class=\"t-small\">409 is the load that causes 404.</p></div></div>"
+  },
+  {
+   "title": "HTTP Codes for Waiting in Line",
+   "user_requests": [
+    "http codes for waiting in line",
+    "queue as status codes",
+    "what code means the line isn't moving",
+    "status codes for a long queue",
+    "http codes for standing in line",
+    "line at the store but http codes",
+    "make codes for queuing"
+   ],
+   "html": "<div class=\"umi-page\"><h3 class=\"card-title\">The line, coded</h3><p class=\"muted\">Six people ahead. You're already at 408, <regex>user_name</regex>.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>You reached the counter. It's your turn.</td></tr><tr><td>202</td><td>In queue. Someone will see you eventually.</td></tr><tr><td>301</td><td>They opened a new register. Everyone moved.</td></tr><tr><td>304</td><td>Line hasn't budged. Same people, same shuffling.</td></tr><tr><td>408</td><td>You waited. Nothing happened.</td></tr><tr><td>409</td><td>Two lines merged. You lost your place.</td></tr><tr><td>429</td><td>Too many people wanting the same thing.</td></tr><tr><td>503</td><td>Cashier on break. Line frozen.</td></tr></tbody></table></div><details class=\"acc\"><summary>Why 304 is so common</summary><div class=\"body\"><p class=\"t-small\">Not moving isn't the same as closed. It's just not moving.</p></div></details></div>"
+  },
+  {
+   "title": "HTTP Codes for Hiking Trails",
+   "user_requests": [
+    "HTTP status codes but for hiking trails",
+    "map http codes onto a hike pls",
+    "status codes explained with trail metaphors",
+    "whats a 404 on a hiking trail lol",
+    "hiking version of http codes",
+    "http codes for when u get lost on a hike",
+    "trail hiking http response codes table"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">HTTP Codes for Hiking Trails</div><p class=\"muted\">Hey <regex>user_name</regex> \u2014 every trail is a request. Here's what the mountain replies with.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200 OK</td><td>You reached the summit. Trail delivered exactly what it promised.</td></tr><tr><td>301 Moved Permanently</td><td>The old path is closed for regrowth. Take the reroute, it's better anyway.</td></tr><tr><td>304 Not Modified</td><td>Same view as last time, clouds didn't move. Still worth it.</td></tr><tr><td>400 Bad Request</td><td>You started at noon in flip-flops. The trail is confused.</td></tr><tr><td>401 Unauthorized</td><td>Posted. You need a permit, friend.</td></tr><tr><td>403 Forbidden</td><td>Private land. The cows have right of way, not you.</td></tr><tr><td>404 Not Found</td><td>The trailhead sign said \"easy loop.\" It lied. Or you missed the turn.</td></tr><tr><td>408 Request Timeout</td><td>You stopped for a snack. The daylight left without you.</td></tr><tr><td>413 Payload Too Large</td><td>That pack. Ten liters of water and a cast-iron pan?</td></tr><tr><td>429 Too Many Requests</td><td>Popular trail on a Saturday. Everyone gets throttled.</td></tr><tr><td>500 Internal Server Error</td><td>You forgot matches, map, and common sense. The trail can't help with that.</td></tr><tr><td>502 Bad Gateway</td><td>Bridge is out. The far side is unreachable from here.</td></tr><tr><td>503 Service Unavailable</td><td>Trail closed for mud season. Come back in May.</td></tr><tr><td>504 Gateway Timeout</td><td>You waited for the summit view. The fog never cleared.</td></tr></tbody></table></div></div>"
+  },
+  {
+   "title": "HTTP Codes for Board Game Night",
+   "user_requests": [
+    "http codes but for board game night",
+    "status codes for playing monopoly with friends",
+    "board game night http response codes table",
+    "whats a 503 in board game terms",
+    "explain http codes using board games lol",
+    "http codes for game night disasters",
+    "board game night as http status codes"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">HTTP Codes for Board Game Night</div><p class=\"muted\"><regex>user_name</regex>, the table is a server. Your friends are clients. One of them keeps timing out.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>100 Continue</td><td>Everyone agreed on a game. Progress! For now.</td></tr><tr><td>200 OK</td><td>Rules explained, snacks out, nobody flipped the board.</td></tr><tr><td>201 Created</td><td>New house rule invented: no alliances in Catan. It's law now.</td></tr><tr><td>204 No Content</td><td>You won. Nobody wants to talk about it.</td></tr><tr><td>301 Moved Permanently</td><td>Game night relocated to the kitchen table. The good table.</td></tr><tr><td>400 Bad Request</td><td>Someone tried to play a blue card in Uno. The rules committee objects.</td></tr><tr><td>401 Unauthorized</td><td>You want to be the banker? Show me your credentials.</td></tr><tr><td>403 Forbidden</td><td>No, you cannot \"just take one more turn.\"</td></tr><tr><td>404 Not Found</td><td>Where did the last Catan sheep go? Nobody knows.</td></tr><tr><td>409 Conflict</td><td>Two players both declare the same territory. Blood feud begins.</td></tr><tr><td>410 Gone</td><td>The piece you needed rolled under the couch. Accept it.</td></tr><tr><td>429 Too Many Requests</td><td>You've asked to trade wheat four times this round. Enough.</td></tr><tr><td>500 Internal Server Error</td><td>Rules dispute. The rulebook is lost. Chaos is now canon.</td></tr><tr><td>503 Service Unavailable</td><td>Someone's phone died and they left to charge it. Game paused indefinitely.</td></tr></tbody></table></div></div>"
+  },
+  {
+   "title": "HTTP Codes for Public Transit",
+   "user_requests": [
+    "http status codes but for the bus",
+    "explain http codes with public transit",
+    "bus schedule http response codes",
+    "whats a 404 on the subway",
+    "http codes for when the bus is late",
+    "transit version of http status codes",
+    "delay codes as http status codes pls"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">HTTP Codes for Public Transit</div><p class=\"muted\">Here you go, <regex>user_name</regex>. The bus is a server. You are a polite little request packet.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>100 Continue</td><td>Bus is approaching. Keep standing at the curb. Keep hoping.</td></tr><tr><td>200 OK</td><td>You boarded. You found a seat. The driver smiled. A miracle.</td></tr><tr><td>301 Moved Permanently</td><td>Stop relocated due to construction. Forever. Get used to it.</td></tr><tr><td>304 Not Modified</td><td>Same crowded bus as yesterday. Nothing has improved.</td></tr><tr><td>307 Temporary Redirect</td><td>Detour. You'll get where you're going. Eventually.</td></tr><tr><td>400 Bad Request</td><td>You tried to board with exact change. The machine only takes cards today.</td></tr><tr><td>403 Forbidden</td><td>Bus full. The driver won't even make eye contact.</td></tr><tr><td>404 Not Found</td><td>Stop not on this route. You're on the express. It's not your express.</td></tr><tr><td>408 Request Timeout</td><td>You waited twenty minutes. The app said \"arriving now\" twenty minutes ago.</td></tr><tr><td>410 Gone</td><td>That route was discontinued in 2019. The sign is still up. Nobody told it.</td></tr><tr><td>429 Too Many Requests</td><td>Everyone trying to board at once. Polite pushing ensues.</td></tr><tr><td>500 Internal Server Error</td><td>Signal failure. Nobody knows anything. We all stare at the tracks.</td></tr><tr><td>502 Bad Gateway</td><td>Transfer station closed. You cannot reach your connecting line.</td></tr><tr><td>503 Service Unavailable</td><td>Strike day. The bus is a rumor.</td></tr><tr><td>504 Gateway Timeout</td><td>Bus was supposed to arrive at 8:04. It is now 8:41.</td></tr></tbody></table></div></div>"
+  },
+  {
+   "title": "HTTP Codes for Grocery Shopping",
+   "user_requests": [
+    "http status codes for grocery shopping",
+    "explain http codes with supermarket stuff",
+    "groceru store http response codes",
+    "whats a 404 in the supermarket",
+    "http codes for when the store is out of stuff",
+    "supermarket status codes table",
+    "http codes but I'm at the grocery store"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">HTTP Codes for Grocery Shopping</div><p class=\"muted\"><regex>user_name</regex>, the grocery store is a server with terrible inventory management.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200 OK</td><td>Everything on your list. In stock. On sale. You are unstoppable.</td></tr><tr><td>206 Partial Content</td><td>Got the eggs and milk. The bread was a lie.</td></tr><tr><td>301 Moved Permanently</td><td>They rearranged the whole store again. Nothing is where it was.</td></tr><tr><td>304 Not Modified</td><td>Same sad produce section as last week. The lettuce hasn't forgiven you.</td></tr><tr><td>400 Bad Request</td><td>You brought a basket to a big-shop run. Rookie move.</td></tr><tr><td>401 Unauthorized</td><td>Loyalty card required for that price. You forgot yours. Again.</td></tr><tr><td>403 Forbidden</td><td>Self-checkout flagged you for \"unexpected item in bagging area.\"</td></tr><tr><td>404 Not Found</td><td>The specific brand you came for no longer exists. Sorry.</td></tr><tr><td>408 Request Timeout</td><td>You spent forty minutes comparing pasta sauces. Your ice cream is melting.</td></tr><tr><td>409 Conflict</td><td>You and another shopper both reached for the last rotisserie chicken.</td></tr><tr><td>410 Gone</td><td>They discontinued your favorite yogurt. No warning. No mercy.</td></tr><tr><td>429 Too Many Requests</td><td>Sunday afternoon. Everyone is here. The aisles are a mosh pit.</td></tr><tr><td>500 Internal Server Error</td><td>Register crashed mid-scan. The cashier sighs deeply.</td></tr><tr><td>503 Service Unavailable</td><td>Store closed for restocking. Come back at 6am like a gremlin.</td></tr></tbody></table></div></div>"
+  },
+  {
+   "title": "HTTP Codes for Online Dating Messages",
+   "user_requests": [
+    "http codes for dating app messages",
+    "what happens when u send a message and get no reply http code",
+    "explain http status codes using dating dms",
+    "404 on a dating app message??",
+    "http codes but for texting someone u like",
+    "dating message status codes",
+    "whats the http code for getting left on read"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">HTTP Codes for Online Dating Messages</div><p class=\"muted\">The hardest API, <regex>user_name</regex>. Every message is a request. Not every request gets a response.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>100 Continue</td><td>They replied \"haha.\" Not a full response, but the connection is still open.</td></tr><tr><td>200 OK</td><td>They matched your energy. Conversation flowing. Plans vaguely mentioned.</td></tr><tr><td>202 Accepted</td><td>They saw it, hearted it, and are composing something. Give it time.</td></tr><tr><td>204 No Content</td><td>Left on read. No reply. Just the little gray timestamp mocking you.</td></tr><tr><td>301 Moved Permanently</td><td>They moved the chat to another app. \"This one's glitchy.\" Sure it is.</td></tr><tr><td>304 Not Modified</td><td>Same \"hey how's your week going\" as last time. No new information.</td></tr><tr><td>401 Unauthorized</td><td>You asked for their number too soon. Access denied.</td></tr><tr><td>403 Forbidden</td><td>You've been unmatched. No further communication is permitted.</td></tr><tr><td>404 Not Found</td><td>Their profile disappeared. They either deleted it or blocked you. Mystery.</td></tr><tr><td>408 Request Timeout</td><td>Three weeks since your last message. The conversation has quietly expired.</td></tr><tr><td>409 Conflict</td><td>You both tried to plan a date at the same time. Now it's awkward.</td></tr><tr><td>429 Too Many Requests</td><td>You double-texted. Then triple-texted. They're overwhelmed.</td></tr><tr><td>500 Internal Server Error</td><td>You sent a long paragraph about your ex. The app cannot process this.</td></tr><tr><td>503 Service Unavailable</td><td>They're \"taking a break from dating apps.\" We've all said that.</td></tr></tbody></table></div></div>"
+  },
+  {
+   "title": "HTTP Codes for Cooking Dinner",
+   "user_requests": [
+    "http codes for cooking dinner",
+    "explain http status codes with cooking stuff",
+    "what http code is burnt dinner",
+    "cooking dinner as http response codes",
+    "status codes for when dinner goes wrong",
+    "http codes but im making pasta",
+    "whats a 500 in the kitchen"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">HTTP Codes for Cooking Dinner</div><p class=\"muted\">Hey <regex>user_name</regex>, dinner is a request to the kitchen. The kitchen does not always cooperate.</p><div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>100 Continue</td><td>Onions are saut\u00e9ing. The kitchen is still with you.</td></tr><tr><td>200 OK</td><td>Everything came together. You even plated it nicely. Framed it for the group chat.</td></tr><tr><td>201 Created</td><td>You invented a new dish by accident. It's actually good. Write it down.</td></tr><tr><td>204 No Content</td><td>You forgot to actually eat. Just cooked and stared into the middle distance.</td></tr><tr><td>301 Moved Permanently</td><td>Recipe said bake, but the oven's broken. The stove is your new oven.</td></tr><tr><td>400 Bad Request</td><td>You added salt instead of sugar. The cookies are ruined. Ruined.</td></tr><tr><td>401 Unauthorized</td><td>You don't have the right pan. You need the right pan. You improvise badly.</td></tr><tr><td>403 Forbidden</td><td>The smoke alarm disagrees with your stir-fry technique.</td></tr><tr><td>404 Not Found</td><td>The key ingredient isn't in the fridge. It was never in the fridge.</td></tr><tr><td>408 Request Timeout</td><td>You got distracted and the garlic burned. Start over.</td></tr><tr><td>413 Payload Too Large</td><td>You filled the pot too high. It is now boiling over onto the stove.</td></tr><tr><td>429 Too Many Requests</td><td>Too many things on the stove at once. Something is definitely burning.</td></tr><tr><td>500 Internal Server Error</td><td>You forgot to set a timer. Dinner is now charcoal. The smoke alarm is unimpressed.</td></tr><tr><td>503 Service Unavailable</td><td>The kitchen is closed. You ordered takeout. No shame in that.</td></tr></tbody></table></div></div>"
+  }
+ ]
+}

@@ -1,0 +1,2349 @@
+{
+ "widget": "checklist",
+ "instances": [
+  {
+   "title": "Trip packing checklist",
+   "user_requests": [
+    "make me a packing checklist for a weekend trip",
+    "weekend trip packing list pls",
+    "packing checklist",
+    "what should i pack for 3 days away",
+    "help me not forget stuff for my trip",
+    "packing list for short trip",
+    "i always forget chargers. packing checklist?",
+    "packing list for a 10 day trip to spain?",
+    "gimme a checklist so i dont forget stuff when i travel",
+    "what should i pack for 4 days in the mountains",
+    "holiday suitcase checklist pls",
+    "packing checklist for me + 2 kids",
+    "need help packing for a road trip next week"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Weekend trip packing</h4>\n  <p class=\"muted t-small\">Two nights, one bag. <regex>user_name</regex>, tick as you go.</p>\n  <ul class=\"list\">\n    <li>Clothes: 2 tops, 1 spare trousers, socks + undies for 3 days</li>\n    <li>Toothbrush, deodorant, any meds you actually take</li>\n    <li>Phone charger <em>and</em> the cable that fits your bag's power bank</li>\n    <li>ID, cards, a little cash</li>\n    <li>Headphones, book or e-reader</li>\n    <li>Refillable water bottle</li>\n    <li>Something warm for the evening</li>\n    <li>Snacks for the journey</li>\n  </ul>\n  <div class=\"callout info\">Pack the charger first. It's always the charger.</div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "New flat move-in checklist",
+   "user_requests": [
+    "moving into a new apartment checklist",
+    "what do i need to do when i move in",
+    "first week in new flat checklist",
+    "moving checklist for renters",
+    "help me sort out my new place",
+    "new apartment to-dos",
+    "just got keys to a flat. now what?",
+    "stuff to do before i move into my first place",
+    "just got keys, now what checklist",
+    "moving house to-do list for the first week",
+    "new apartment setup list, im overwhelmed lol",
+    "what do i do the day i move in",
+    "checklist for settling into a rented flat"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Move-in, first 48 hours</h4>\n  <p class=\"muted t-small\">A calm start for <regex>user_name</regex>.</p>\n  <ul class=\"list\">\n    <li>Photograph every room before unpacking \u2014 meter readings too</li>\n    <li>Locate the stopcock, fuse box and gas shut-off</li>\n    <li>Test smoke alarms; note any dead ones for the landlord</li>\n    <li>Wipe kitchen cupboards and fridge before food goes in</li>\n    <li>Set up Wi-Fi, then change the router's default password</li>\n    <li>Register your address for post and bills</li>\n    <li>Find the nearest bin day and pharmacy</li>\n  </ul>\n  <details class=\"acc\">\n    <summary>Nice-to-have, not urgent</summary>\n    <div class=\"body\"><p class=\"muted\">A doorstop, a spare bulb, and one good kitchen knife. The rest can wait.</p></div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Job interview prep checklist",
+   "user_requests": [
+    "interview prep checklist",
+    "how do i get ready for an interview",
+    "job interview to-do list",
+    "prep for interview tomorrow",
+    "interview day checklist",
+    "help me prep for a job interview",
+    "got an interview help",
+    "big interview tmrw, what should i prep",
+    "things to do night before an interview",
+    "help me get ready for a zoom interview",
+    "interview tomorrow morning and im nervous, checklist?",
+    "prep list for a second round interview",
+    "what should i research before interviewing at a company"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Interview prep</h4>\n  <p class=\"muted t-small\">Do these once, then rest, <regex>user_name</regex>.</p>\n  <ul class=\"list\">\n    <li>Re-read the job ad; highlight the three things they repeat</li>\n    <li>Match each one to a story you can tell in 90 seconds</li>\n    <li>Look up the interviewer and the team's recent work</li>\n    <li>Prepare two questions <em>you</em> want answered</li>\n    <li>Plan the route, or test the video link a day early</li>\n    <li>Lay out clothes and print a spare copy of your CV</li>\n    <li>Sleep. Turn up curious, not perfect</li>\n  </ul>\n  <div class=\"callout good\">\"Tell me about yourself\" is just the warm-up. Keep it to a minute.</div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Winter car readiness checklist",
+   "user_requests": [
+    "winter car checklist",
+    "car prep for cold weather",
+    "what should be in my car for winter",
+    "getting car ready for snow",
+    "winter driving checklist",
+    "cold weather car to-dos",
+    "car stuff before winter",
+    "getting my car ready for cold weather",
+    "what to keep in the trunk during winter",
+    "car prep before snow season?",
+    "do i need winter tires, and what else",
+    "freezing temps coming, car checklist",
+    "prepping the car for a ski trip drive"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Winter car check</h4>\n  <p class=\"muted t-small\">Ten minutes now saves a cold hour later, <regex>user_name</regex>.</p>\n  <ul class=\"list\">\n    <li>Tyre tread: at least 3mm, and check pressures cold</li>\n    <li>Antifreeze strength and screen-wash rated below freezing</li>\n    <li>Battery health \u2014 cold mornings are where old ones die</li>\n    <li>Wipers and all lights working</li>\n    <li>Keep an ice scraper, de-icer and a torch inside the car</li>\n    <li>Blanket, gloves, and a charged power bank in the boot</li>\n    <li>Top up fuel before it dips below a quarter tank</li>\n  </ul>\n  <details class=\"acc\">\n    <summary>If you get stuck</summary>\n    <div class=\"body\"><p class=\"muted\">Stay with the car, keep the exhaust clear of snow, and run the engine in short bursts.</p></div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Monthly money admin checklist",
+   "user_requests": [
+    "monthly money checklist",
+    "personal finance to-dos",
+    "what should i do with money each month",
+    "budget check in checklist",
+    "money admin list",
+    "monthly finance routine",
+    "help me stay on top of my money",
+    "my end of month finance routine",
+    "payday admin tasks list",
+    "what should i check on my accounts every month",
+    "budget review checklist pls",
+    "money stuff i keep forgetting to do monthly",
+    "end of month bill and savings checklist"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Monthly money tidy</h4>\n  <p class=\"muted t-small\">Fifteen minutes, once a month, <regex>user_name</regex>.</p>\n  <ul class=\"list\">\n    <li>Check last month's spending against your rough budget</li>\n    <li>Move anything spare into savings, even a little</li>\n    <li>Review subscriptions \u2014 cancel one you forgot about</li>\n    <li>Pay the card that costs you most interest first</li>\n    <li>Log in and skim statements for odd charges</li>\n    <li>Confirm upcoming bills won't land before payday</li>\n  </ul>\n  <div class=\"callout warn\">A budget you never look at is just a wish. Skim it monthly.</div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Kitchen deep-clean checklist",
+   "user_requests": [
+    "kitchen deep clean checklist",
+    "how to deep clean my kitchen",
+    "kitchen cleaning to-do list",
+    "spring clean the kitchen",
+    "cleaning checklist for kitchen",
+    "deep clean kitchen help",
+    "kitchen is gross where do i start",
+    "deep cleaning the kitchen this weekend, where do i start",
+    "how to clean an absolutely gross kitchen",
+    "kitchen spring clean list",
+    "oven and fridge deep clean checklist",
+    "full kitchen scrub down steps",
+    "my kitchen needs a reset, checklist?"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Kitchen deep clean</h4>\n  <p class=\"muted t-small\">Top to bottom, so dirt falls onto what you've already done, <regex>user_name</regex>.</p>\n  <ol class=\"list\">\n    <li>Clear counters and soak the hob grates in hot water</li>\n    <li>Dust the tops of cupboards and the extractor filter</li>\n    <li>Wipe cupboard doors, handles and light switches</li>\n    <li>Spray the hob, leave it a minute, then scrub</li>\n    <li>Pull out the fridge, clean behind it, then the shelves inside</li>\n    <li>Run a hot cycle through the dishwasher or drain</li>\n    <li>Mop the floor last, corners included</li>\n  </ol>\n  <details class=\"acc\">\n    <summary>Order matters</summary>\n    <div class=\"body\"><p class=\"muted\">Any time you clean a wall, clean upward. Gravity is not on your side.</p></div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Camping trip gear checklist",
+   "user_requests": [
+    "camping checklist",
+    "what to pack for camping",
+    "camping trip gear list",
+    "going camping this weekend need a list",
+    "campin stuff i need",
+    "tent trip packing list",
+    "what do i need to bring camping for 2 nights",
+    "what to bring for 2 nights in a tent",
+    "first time camping, what do i need",
+    "car camping essentials list",
+    "camping with the family this weekend, checklist",
+    "gear list for backcountry camping",
+    "dont wanna forget anything camping, help"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Camping trip gear \u2014 2 nights, one car</h4>\n  <p class=\"muted t-small\">Pack by pile: sleep, cook, wear, fix. Lay it all out first, then load.</p>\n  <ul class=\"list\">\n    <li>Tent, poles, pegs <span class=\"badge good\"><i class=\"dot\"></i>check poles</span></li>\n    <li>Sleeping bag + mat (rated for the low, not the average)</li>\n    <li>Head torch, plus a spare set of batteries</li>\n    <li>Stove, fuel, lighter that actually sparks</li>\n    <li>Pot, mug, spork, small bottle of washing-up liquid</li>\n    <li>Water \u2014 2 litres per person per day, filled before you leave</li>\n    <li>Food in one box: porridge, pasta, snacks, coffee</li>\n    <li>Layers: fleece, rain shell, dry socks, beanie</li>\n    <li>Boots broken in, sandals for the tent door</li>\n    <li>Bin bags (rubbish + wet clothes), kitchen roll, tape</li>\n    <li>First aid: plasters, painkillers, tick tweezers, antihistamine</li>\n    <li>Power bank, charged the night before</li>\n  </ul>\n  <details class=\"acc\">\n    <summary>Things people forget</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Pillow \u2014 a stuff sack of clothes works</li>\n        <li>Mallet for stubborn pegs, or a flat rock</li>\n        <li>Cash for the honesty box at the farm gate</li>\n      </ul>\n    </div>\n  </details>\n  <div class=\"callout info\">Tents get cold at 3am. One extra layer beats one extra gadget, <regex>user_name</regex>.</div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "New puppy first week checklist",
+   "user_requests": [
+    "new puppy checklist",
+    "first week with a puppy what do i need",
+    "puppy supplies list",
+    "got a puppy tomorrow help",
+    "puppy essentials before pickup",
+    "what to buy for a new puppy",
+    "first week puppy to do list",
+    "just brought home a puppy, what now",
+    "puppy coming home in 3 days, prep list",
+    "first time dog owner checklist for week one",
+    "new pup essentials and to-dos",
+    "house training and vet stuff for a new puppy",
+    "what do i need before my puppy arrives"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">New puppy \u2014 the first week</h4>\n  <p class=\"muted t-small\">Buy less than you think. The first week is mostly routine and towels.</p>\n  <ul class=\"list\">\n    <li>Same food the breeder was feeding \u2014 swap brands slowly over 7 days</li>\n    <li>Crate or bed in a quiet corner, not the busiest room</li>\n    <li>Collar + tag, and a lead you can hold with one hand</li>\n    <li>Two bowls, one for water that stays full</li>\n    <li>Enzyme cleaner for accidents \u2014 normal cleaner leaves the scent mark</li>\n    <li>Old towels by the door for wet paws</li>\n    <li>Chew toy and a soft toy. Not your slippers.</li>\n  </ul>\n  <div class=\"divider\"></div>\n  <p class=\"muted t-small\"><strong>First 48 hours</strong></p>\n  <ol class=\"list\">\n    <li>Let the pup explore one room. No crowds of visitors.</li>\n    <li>Vet booked within 3 days for a check + vaccination plan.</li>\n    <li>Out to toilet every 90 minutes, and after every nap, meal, play.</li>\n    <li>Praise the second it finishes outside. Ten seconds late and it means nothing to them.</li>\n  </ol>\n  <div class=\"callout warn\">No dog parks until the vet says the vaccines are done.</div>\n  <div class=\"callout good\">Sleep is training. A tired puppy is a biting puppy, <regex>user_name</regex>.</div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Exam revision week checklist",
+   "user_requests": [
+    "exam revision checklist",
+    "how to revise for exams",
+    "revision week plan",
+    "exam in 7 days help",
+    "study checklist for finals",
+    "revison timetable help",
+    "what should i do the week before an exam",
+    "finals next week, how should i study",
+    "revision plan for the week before exams",
+    "cramming checklist for 5 exams",
+    "study timetable help for exam week",
+    "i have 7 days to revise everything",
+    "exam prep to-do list, no more procrastinating"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Exam revision week</h4>\n  <p class=\"muted t-small\">Seven days. Recall beats rereading \u2014 test yourself or it doesn't count.</p>\n  <ul class=\"list\">\n    <li>Past papers printed, ideally three of them</li>\n    <li>One page of formulas or key facts, written by hand</li>\n    <li>Topic list with weak spots starred</li>\n    <li>Timer \u2014 25 minutes on, 5 off</li>\n    <li>Phone in another room during blocks</li>\n    <li>Water bottle on the desk, snacks that aren't crisps</li>\n    <li>Sleep before midnight. Cramming at 2am costs you marks at 9am.</li>\n  </ul>\n  <div class=\"divider\"></div>\n  <details class=\"acc\">\n    <summary>The seven-day shape</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li><strong>Days 1\u20132:</strong> cover weak topics, make short notes</li>\n        <li><strong>Days 3\u20134:</strong> past paper, mark it, list every mistake</li>\n        <li><strong>Day 5:</strong> fix those mistakes, then a second paper</li>\n        <li><strong>Day 6:</strong> light review, only your one-pagers</li>\n        <li><strong>Day 7:</strong> bag packed, route checked, early night</li>\n      </ul>\n    </div>\n  </details>\n  <div class=\"callout info\">Teaching a topic out loud to an empty room is the fastest way to find the hole, <regex>user_name</regex>.</div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Wedding guest checklist",
+   "user_requests": [
+    "wedding guest checklist",
+    "what to bring to a wedding",
+    "wedding day guest list of things",
+    "going to a wedding what do i need",
+    "wedding guest prep",
+    "wedding invite said black tie help",
+    "how early should i arrive at a wedding",
+    "im a plus one at a wedding, what do i do",
+    "what to bring and wear to a wedding",
+    "wedding this saturday, guest prep list",
+    "destination wedding guest checklist",
+    "gift, outfit, travel... wedding checklist?",
+    "attending my friends wedding, anything i shouldnt forget"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Wedding guest \u2014 before you leave the house</h4>\n  <ul class=\"list\">\n    <li>RSVP sent, meal choice confirmed</li>\n    <li>Outfit tried on, not just ironed</li>\n    <li>Shoes broken in or blister plasters in the bag</li>\n    <li>Card and cash, or the gift, written and wrapped</li>\n    <li>Confetti \u2014 check the venue allows it, paper only</li>\n    <li>Tissues. You will need tissues.</li>\n    <li>Phone charged, car parking or train times checked</li>\n  </ul>\n  <div class=\"divider\"></div>\n  <p class=\"muted t-small\"><strong>Timing</strong></p>\n  <ul class=\"list\">\n    <li>Arrive 30 minutes before the ceremony \u2014 late guests wait outside</li>\n    <li>Phones silent, camera down during vows</li>\n    <li>Aim to leave the ceremony spot among the first, not the last, for the group photo</li>\n  </ul>\n  <div class=\"callout good\">Dress code is a hint, not a riddle. If unsure, ask the couple, not the group chat.</div>\n  <div class=\"callout info\">Eat breakfast, <regex>user_name</regex>. Speeches run long and the canap\u00e9s are tiny.</div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Bike commute checklist",
+   "user_requests": [
+    "cycling to work checklist",
+    "bike commute prep",
+    "commute by bike what i need",
+    "first week cycling to work",
+    "bicycle safety check list",
+    "what to take cycling to the office",
+    "help me start biking to work",
+    "starting to cycle to work, what do i need",
+    "commuting by bike daily, checklist",
+    "what to keep in my bag for bike commuting",
+    "bike to work prep for rainy days",
+    "gear and habit checklist for cycling to the office",
+    "new to bike commuting, help me get set up"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Bike commute \u2014 kit and quick check</h4>\n  <p class=\"muted t-small\">One minute before you ride: ABC. Air, Brakes, Chain.</p>\n  <ul class=\"list\">\n    <li>Tyres firm when you squeeze them</li>\n    <li>Brakes grip before the lever hits the bar</li>\n    <li>Chain clean, lightly oiled, not dry-squeaking</li>\n    <li>Lights on, both ends \u2014 even in daylight</li>\n    <li>Helmet sits level, strap snug under the chin</li>\n  </ul>\n  <div class=\"divider\"></div>\n  <p class=\"muted t-small\"><strong>In the bag</strong></p>\n  <ul class=\"list\">\n    <li>Spare inner tube, tyre levers, mini pump</li>\n    <li>Small lock \u2014 a good one if you leave it outside all day</li>\n    <li>Waterproof jacket that folds into nothing</li>\n    <li>Work clothes in a dry bag, inside the pack</li>\n    <li>Phone charged, plus a bus fare for the flat-tyre days</li>\n  </ul>\n  <div class=\"callout warn\">Ride a lap of the car park first, <regex>user_name</regex>. Two minutes now saves a wobbly first mile.</div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Birthday party host checklist",
+   "user_requests": [
+    "birthday party checklist",
+    "hosting a birthday what do i need",
+    "party planning list",
+    "kids birthday party prep",
+    "saturday party help",
+    "party host to do list",
+    "what to sort before guests arrive for a party",
+    "hosting my kids bday party, what do i do",
+    "party in 2 weeks, planning checklist",
+    "throwing a surprise bday, to-do list",
+    "food, drinks, decorations... birthday checklist",
+    "my first time hosting a birthday, help",
+    "bday party timeline for the day of"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Hosting a birthday \u2014 the day before and the day of</h4>\n  <ul class=\"list\">\n    <li>Guest list confirmed, any allergies noted</li>\n    <li>Invites said a time; you decide the real end time</li>\n    <li>Ice, plus a bowl for it</li>\n    <li>Cups, plates, napkins \u2014 count double the guests</li>\n    <li>Bin bags and a roll of kitchen roll within reach</li>\n    <li>Music playlist downloaded, not streamed on dodgy wifi</li>\n    <li>Candles, matches, a lighter that isn't out of gas</li>\n    <li>Emergency snacks for the picky eaters</li>\n  </ul>\n  <div class=\"divider\"></div>\n  <details class=\"acc\">\n    <summary>An hour before they arrive</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Clear a drop zone for coats and bags</li>\n        <li>Bathroom stocked: soap, hand towel, bin, spare loo roll</li>\n        <li>Drinks in one spot, glasses next to them</li>\n        <li>Lights on, music low, candles waiting</li>\n      </ul>\n    </div>\n  </details>\n  <div class=\"callout good\">Ask one friend to be the cake-and-candles person, <regex>user_name</regex>. You'll be busy being everywhere else.</div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "First apartment utility setup checklist",
+   "user_requests": [
+    "what do I need to do to set up utilities in a new apartment",
+    "utility setup checklist new place",
+    "moving to first apt, how do i get electric and internet on",
+    "new apartment utilities checklist",
+    "how to set up utilities when moving",
+    "first apartment utility hookup list",
+    "need help setting up utilities for new apartment",
+    "how do i get electricity turned on at my new place",
+    "setting up internet and water in a new apartment",
+    "utilities checklist for moving into my own place",
+    "who do i call to set up power and gas",
+    "first apartment, need wifi and everything, list",
+    "utility transfer checklist when moving"
+   ],
+   "html": "<div class=\"card\"><h4>First apartment utility setup checklist</h4><ul class=\"list\"><li>Electricity: call provider, give move-in date, ask about deposit</li><li>Gas: confirm if separate provider or bundled with electric</li><li>Water/sewer: often billed via landlord or city; confirm before you panic</li><li>Internet: check available ISPs, book install 2\u20133 weeks ahead</li><li>Renters insurance: get a quote before move-in (usually cheap)</li><li>Trash pickup: ask landlord if included or if you set up city service</li><li>Update address: bank, subscriptions, driver's license, voter registration</li></ul><p class=\"t-small muted\">Tip: keep confirmation numbers in one note. The internet installer will ask for them.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Grocery run healthy-ish checklist",
+   "user_requests": [
+    "grocery list for healthy eating",
+    "what to buy at grocery store for the week",
+    "healthy grocery checklist",
+    "grocery shopping list for meals",
+    "how to shop healthy at grocery store",
+    "weekly grocery list ideas",
+    "help me make a grocery list that's not all junk",
+    "healthy groceries to buy this week",
+    "what to put on a clean eating shopping list",
+    "trying to eat better, grocery ideas",
+    "shopping list for meal prep sunday",
+    "buy healthy stuff without breaking the bank, list",
+    "grocery checklist for someone who hates cooking"
+   ],
+   "html": "<div class=\"card\"><h4>Grocery run healthy-ish checklist</h4><ul class=\"list\"><li>Produce: 2\u20133 veggies you'll actually cook (broccoli, peppers, spinach)</li><li>Protein: eggs, chicken or tofu, canned beans</li><li>Grains: rice, oats, whole wheat pasta</li><li>Dairy/alt: yogurt or plant milk</li><li>Fruit: apples, bananas, berries</li><li>Snacks: nuts, hummus, popcorn</li><li>Frozen: peas, berries, veggie mix for lazy nights</li><li>Pantry top-up: olive oil, garlic, spices you ran out of</li></ul><p class=\"t-small muted\">Rule of thumb: half the cart fresh, half shelf-stable. You'll eat better and waste less.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Before a long flight checklist",
+   "user_requests": [
+    "what to do before a long flight",
+    "long flight prep checklist",
+    "how to prepare for international flight",
+    "long haul flight checklist",
+    "things to do before flying long distance",
+    "packing for a long flight list",
+    "prep for 10 hour flight",
+    "flying to tokyo in 2 days, what should i do",
+    "pre-flight to-do list for international travel",
+    "what to sort before a 12 hour flight",
+    "long haul flight prep, help",
+    "things to download and pack before flying",
+    "checklist the day before an overseas flight"
+   ],
+   "html": "<div class=\"card\"><h4>Before a long flight checklist</h4><ul class=\"list\"><li>Check passport expiry (6+ months from travel)</li><li>Confirm visa requirements for destination and layovers</li><li>Download offline maps, boarding passes, entertainment</li><li>Pack a small pouch: charger, earbuds, eye mask, toothbrush</li><li>Wear compression socks and loose layers</li><li>Hydrate: buy water after security, skip the free airport wine</li><li>Set phone to airline mode but keep alarms on</li><li>Note local arrival time and how you'll get to lodging</li></ul><p class=\"t-small muted\">Pro tip: set your watch to destination time as soon as you board. Helps with jet lag.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Dinner party prep checklist",
+   "user_requests": [
+    "dinner party planning checklist",
+    "how to prep for a dinner party",
+    "hosting dinner party to do list",
+    "dinner party checklist",
+    "what to do before guests come for dinner",
+    "dinner party prep list",
+    "help me plan a dinner party",
+    "having 6 people over saturday, help me plan",
+    "dinner party timeline and to-dos",
+    "cooking for guests for the first time, checklist",
+    "menu, shopping, cleaning... dinner party list",
+    "hosting supper club, what should i prep",
+    "getting ready to host dinner, countdown checklist"
+   ],
+   "html": "<div class=\"card\"><h4>Dinner party prep checklist</h4><ul class=\"list\"><li>Confirm guest count and any allergies/dietary needs</li><li>Plan menu: one main, two sides, one dessert. Keep it simple.</li><li>Shop 1\u20132 days ahead; chop what you can early</li><li>Clean bathrooms and clear clutter from common areas</li><li>Set table or buffet station with plates, cutlery, napkins</li><li>Chill drinks and prep water pitcher</li><li>Make a playlist (low volume, good background)</li><li>Light candles or dim lights 10 min before arrival</li></ul><p class=\"t-small muted\">Don't aim for perfect. Aim for fed and happy.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Backyard BBQ checklist",
+   "user_requests": [
+    "bbq party checklist",
+    "how to host a backyard bbq",
+    "bbq prep list",
+    "backyard cookout checklist",
+    "things to do for a bbq",
+    "bbq party planning",
+    "help me host a bbq this weekend",
+    "cookout prep list",
+    "what to do before a backyard barbecue",
+    "bbq to-do list for hosting",
+    "getting ready for a grill party",
+    "backyard cookout checklist",
+    "barbecue party checklist"
+   ],
+   "html": "<div class=\"card\"><h4>Backyard BBQ checklist</h4><ul class=\"list\"><li>Clean grill grates and check propane/charcoal supply</li><li>Plan menu: burgers, dogs, one veggie option, sides</li><li>Buy ice, drinks, and cooler</li><li>Prep toppings: lettuce, tomato, onion, pickles, sauces</li><li>Set up shade, seating, and trash/recycling bins</li><li>Bug spray and sunscreen on a side table</li><li>Music and lawn games ready</li><li>Have a rain plan (canopy or move inside)</li></ul><p class=\"t-small muted\">Cook burgers to 160\u00b0F. No one wants to remember your BBQ for the wrong reason.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "New job first week checklist",
+   "user_requests": [
+    "first week at new job checklist",
+    "what to do first week of new job",
+    "new job checklist",
+    "starting a new job tips",
+    "first week new job to do list",
+    "how to prepare for first day at work",
+    "new job first week prep",
+    "first week at work checklist",
+    "what to do when starting a new job",
+    "new job orientation checklist",
+    "first day and week at new job",
+    "starting new job checklist",
+    "new hire first week to-dos"
+   ],
+   "html": "<div class=\"card\"><h4>New job first week checklist</h4><ul class=\"list\"><li>Confirm start time, location, and who to ask for</li><li>Plan outfit and commute route (test it if you can)</li><li>Bring ID, bank details for payroll, and a notebook</li><li>Set up email signature and calendar blocks</li><li>Learn names: write them down, use them</li><li>Ask your manager: what does success look like in 30 days?</li><li>Find the coffee, bathroom, and snack spots</li><li>Schedule a short check-in with your manager for end of week</li></ul><p class=\"t-small muted\">You're not expected to know everything. Asking good questions is the job.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Road trip day-of checklist",
+   "user_requests": [
+    "road trip checklist before we leave",
+    "what should I check the morning of a long drive?",
+    "roadd trip day of stuff to do",
+    "going on a roadtrip tmrw, what do i need to do first",
+    "car trip departure checklist",
+    "checklist for starting a big drive",
+    "last minute road trip prep",
+    "last minute road trip checklist",
+    "what to do before leaving for a road trip",
+    "day of road trip checklist",
+    "road trip departure checklist",
+    "things to check before road trip",
+    "pre-road trip checklist"
+   ],
+   "html": "<div class=\"card\"><h4>Road trip day-of</h4><ul class=\"list\"><li>Tire pressure and tread</li><li>Oil, coolant, washer fluid</li><li>Phone mount + charger</li><li>Snacks and a full water bottle</li><li>Download offline maps</li><li>Cash for tolls or parking</li><li>Emergency kit: blanket, torch, first aid</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Garden spring wake-up checklist",
+   "user_requests": [
+    "what to do in the garden when spring starts",
+    "garden spring checklist",
+    "spring garden wake up list",
+    "how do i get my garden ready for spring?",
+    "early spring gardening tasks",
+    "garden spring cleaning checklist",
+    "when spring comes what should i do in my yard",
+    "spring garden prep list",
+    "what to do in the garden in spring",
+    "spring gardening checklist",
+    "garden wake up checklist",
+    "getting garden ready for spring",
+    "spring garden tasks"
+   ],
+   "html": "<div class=\"card\"><h4>Garden spring wake-up</h4><ul class=\"list\"><li>Clear winter debris and dead leaves</li><li>Prune dead or damaged branches</li><li>Test soil pH and add compost</li><li>Start seeds indoors if needed</li><li>Clean and sharpen tools</li><li>Check irrigation for leaks</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Job application tracker checklist",
+   "user_requests": [
+    "how to keep track of job applications",
+    "job application tracking checklist",
+    "i keep losing track of jobs i applied to help",
+    "checklist for managing job applications",
+    "job search organization tips",
+    "what to track when applying for jobs",
+    "keeping track of job apps",
+    "job application tracking checklist",
+    "how to organize job applications",
+    "job hunt tracker checklist",
+    "keeping track of job applications",
+    "job application log checklist",
+    "application tracker to-dos"
+   ],
+   "html": "<div class=\"card\"><h4>Job application tracker</h4><ul class=\"list\"><li>Create a spreadsheet: company, role, date, status</li><li>Tailor resume and cover letter for each</li><li>Save the job description as PDF</li><li>Set follow-up reminders after one week</li><li>Log interview dates and contacts</li><li>Review and update weekly</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "New baby hospital bag checklist",
+   "user_requests": [
+    "what to pack in hospital bag for baby",
+    "hospital bag checklist for new mom",
+    "baby hospital bag list",
+    "packing for the hospital when having a baby",
+    "what do i need in my hospital bag for labor?",
+    "hospital bag essentials for baby and me",
+    "childbirth hospital bag checklist",
+    "hospital bag checklist for baby",
+    "what to pack for baby in hospital bag",
+    "baby delivery bag checklist",
+    "newborn hospital bag checklist",
+    "packing hospital bag for baby",
+    "baby hospital bag list"
+   ],
+   "html": "<div class=\"card\"><h4>New baby hospital bag</h4><ul class=\"list\"><li>Comfortable robe and socks</li><li>Toiletries and hair ties</li><li>Phone charger with long cable</li><li>Baby onesie and going-home outfit</li><li>Swaddle blanket and hat</li><li>Car seat installed and checked</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Before a job interview checklist",
+   "user_requests": [
+    "what to do before a job interview",
+    "job interview prep checklist",
+    "interview day checklist",
+    "how to get ready for an interview tomorrow",
+    "job interview do's before the call",
+    "last minute interview prep tips",
+    "getting ready for interview",
+    "job interview prep checklist",
+    "what to do before interview",
+    "interview preparation checklist",
+    "getting ready for a job interview",
+    "interview day checklist",
+    "pre-interview checklist"
+   ],
+   "html": "<div class=\"card\"><h4>Before a job interview</h4><ul class=\"list\"><li>Research the company and role</li><li>Practice answers to common questions</li><li>Prepare your own questions to ask</li><li>Print copies of your resume</li><li>Plan outfit and route (or test video call)</li><li>Get a good night's sleep</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Safe summer picnic checklist",
+   "user_requests": [
+    "picnic checklist for summer",
+    "what to bring on a picnic",
+    "summer picnic packing list",
+    "going on a picnic what do i need",
+    "picnic essentials",
+    "how to pack for a picnic",
+    "summer outdoor lunch checklist",
+    "summer picnic checklist",
+    "picnic safety checklist",
+    "what to bring for a summer picnic",
+    "picnic prep checklist",
+    "safe picnic checklist",
+    "summer picnic to-do list"
+   ],
+   "html": "<div class=\"card\"><h4>Summer picnic</h4><ul class=\"list\"><li>Blanket or chairs</li><li>Cooler with ice packs</li><li>Plates, cups, cutlery (reusable)</li><li>Sunscreen and hats</li><li>Bug spray</li><li>Trash bag for cleanup</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "New cycling route first ride checklist",
+   "user_requests": [
+    "first ride on a new cycling route, what should I check?",
+    "new bike route checklist",
+    "what to bring for first time riding a new route",
+    "cycling new route prep",
+    "prep for first ride on unfamiliar roads",
+    "first time bike route checklist",
+    "cycling route first ride essentials",
+    "first ride on new route checklist",
+    "what to check before cycling a new route",
+    "new bike route first ride checklist",
+    "cycling new route checklist",
+    "pre-ride checklist for new route",
+    "first time cycling a route checklist"
+   ],
+   "html": "<div class=\"card\"><h4>New cycling route first ride</h4><ul class=\"list\"><li>Plan route and note water stops</li><li>Charge phone and bike lights</li><li>Bring spare tube, tyre levers, mini pump</li><li>Check tyre pressure and brakes</li><li>Pack snacks and two bottles</li><li>Wear helmet and bright layer</li><li>Tell someone your route and ETA</li><li>Carry ID, cash, and a card</li><li>Know the bail-out points (train stations)</li><li>Ride easy and enjoy the new view</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Backyard bird feeding station setup checklist",
+   "user_requests": [
+    "how to set up a bird feeder in my yard",
+    "backyard bird feeding station checklist",
+    "bird feeder setup steps",
+    "what do I need to start feeding birds",
+    "set up bird feeders in garden",
+    "bird feeding station checklist",
+    "first time bird feeder setup",
+    "bird feeder setup checklist",
+    "how to set up backyard bird feeder",
+    "backyard bird feeding station checklist",
+    "bird feeding station setup",
+    "setting up a bird feeder checklist",
+    "bird feeder installation checklist"
+   ],
+   "html": "<div class=\"card\"><h4>Backyard bird feeding station setup</h4><ul class=\"list\"><li>Pick a quiet spot away from windows</li><li>Mount feeder on a pole or hang from a branch</li><li>Add a baffle to keep squirrels out</li><li>Fill with fresh seed suited to local birds</li><li>Provide a shallow water dish</li><li>Keep a field guide or app handy</li><li>Clean feeder monthly with mild soap</li><li>Refresh seed after rain</li><li>Note which birds visit and when</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Beginner home workout routine checklist",
+   "user_requests": [
+    "starting a home workout routine, what do I need?",
+    "beginner home workout checklist",
+    "home exercise routine setup",
+    "what to prepare for home workouts",
+    "first home workout plan",
+    "home gym starter checklist",
+    "beginner workout at home essentials",
+    "home workout checklist for beginners",
+    "starting home workout routine checklist",
+    "beginner home exercise checklist",
+    "home fitness routine checklist",
+    "new to home workouts checklist",
+    "beginner workout at home checklist"
+   ],
+   "html": "<div class=\"card\"><h4>Beginner home workout routine</h4><ul class=\"list\"><li>Clear a space about 2m x 2m</li><li>Get a mat or non-slip surface</li><li>Fill a water bottle</li><li>Wear comfortable clothes</li><li>Choose 3 bodyweight exercises to start</li><li>Set a timer for 20 minutes</li><li>Warm up with marching and arm circles</li><li>Cool down with stretches</li><li>Schedule workouts in your calendar</li><li>Track how you feel, not just reps</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "New houseplant care checklist",
+   "user_requests": [
+    "I just got a new houseplant, what do I do?",
+    "new houseplant care checklist",
+    "first week with a new plant",
+    "how to care for a new indoor plant",
+    "houseplant setup checklist",
+    "bringing home a new plant",
+    "new plant parent checklist",
+    "houseplant care checklist",
+    "new plant care checklist",
+    "what to do with a new houseplant",
+    "caring for new houseplant checklist",
+    "houseplant setup checklist",
+    "new houseplant checklist"
+   ],
+   "html": "<div class=\"card\"><h4>New houseplant care</h4><ul class=\"list\"><li>Find a spot with the right light</li><li>Check soil moisture before watering</li><li>Water only if top inch is dry</li><li>Remove any damaged leaves</li><li>Keep away from cold draughts</li><li>Mist if humidity-loving</li><li>Wait a week before fertilising</li><li>Watch for pests for the first month</li><li>Rotate the pot weekly for even growth</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Weekend DIY home repair checklist",
+   "user_requests": [
+    "planning a weekend DIY repair, what should I do?",
+    "weekend home repair checklist",
+    "DIY home fix prep list",
+    "before starting a DIY repair",
+    "weekend DIY project checklist",
+    "home repair prep steps",
+    "DIY repair weekend planner",
+    "weekend home repair checklist",
+    "DIY repair weekend checklist",
+    "planning a DIY home repair checklist",
+    "home repair to-do list for weekend",
+    "weekend DIY project checklist",
+    "diy home repair checklist"
+   ],
+   "html": "<div class=\"card\"><h4>Weekend DIY home repair</h4><ul class=\"list\"><li>Identify the repair and watch a tutorial</li><li>Gather tools and materials</li><li>Turn off water or power if needed</li><li>Clear the work area and protect floors</li><li>Take before photos for reference</li><li>Work in good light</li><li>Keep a bucket and rags handy</li><li>Test your fix before tidying up</li><li>Dispose of waste responsibly</li><li>Update your home maintenance log</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "New library card setup checklist",
+   "user_requests": [
+    "how to get a library card and what to do after",
+    "new library card checklist",
+    "first time library card setup",
+    "library card registration steps",
+    "getting a library card what next",
+    "library card starter checklist",
+    "new library card what to do",
+    "library card checklist",
+    "how to set up a library card",
+    "getting a library card checklist",
+    "new library card to-dos",
+    "library card setup checklist",
+    "what to do after getting library card"
+   ],
+   "html": "<div class=\"card\"><h4>New library card setup</h4><ul class=\"list\"><li>Find your nearest library branch</li><li>Check what ID or proof of address is needed</li><li>Fill out the registration form</li><li>Get your card and note the PIN</li><li>Ask about loan periods and renewals</li><li>Browse the shelves or catalogue</li><li>Borrow your first book or two</li><li>Save the library's website for renewals</li><li>Ask about e-books and audiobooks</li><li>Note the return date</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Balcony vegetable patch checklist",
+   "user_requests": [
+    "how do I set up a balcony veggie garden",
+    "balcony vegetable garden checklist pls",
+    "want to grow veg on my balcony what do i need",
+    "help me start a little balcony garden",
+    "balcony veg patch checklist",
+    "container vegging on a balcony \u2014 where do I start",
+    "what should I do first for a balcony vegetable garden",
+    "balcony veggie garden checklist",
+    "setting up balcony vegetable garden",
+    "balcony vegetable garden checklist",
+    "how to start a balcony veg patch",
+    "balcony veg patch checklist",
+    "balcony gardening checklist"
+   ],
+   "html": "<div class=\"card\"><h4>Balcony vegetable patch checklist</h4><p class=\"muted t-small\">A patch the size of a doormat still counts. Start here.</p><ul class=\"list\"><li>Measure the sun \u2014 6+ hours means tomatoes, 3\u20134 means greens.</li><li>Check your rail or wall can take weight before pots go up.</li><li>Pick pots 30cm+ deep with drainage holes; saucers for the neighbours below.</li><li>Use fresh potting mix, not garden soil \u2014 it's lighter and sterile.</li><li>Plant easy starters: herbs, lettuce, radish, then cherry tomatoes.</li><li>Water in the morning; balcony pots dry twice as fast as beds.</li><li>Feed every two weeks once flowers show up.</li><li>Watch for whitefly and aphids \u2014 one squirt of soapy water, repeat weekly.</li></ul><div class=\"callout info\"><p class=\"t-small\"><b>Small tip:</b> group thirstier pots together so you're not guessing which one looks sad.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Before a tattoo appointment checklist",
+   "user_requests": [
+    "tattoo appointment prep checklist",
+    "what do I do before getting a tattoo",
+    "getting my first tattoo \u2014 what should I know beforehand",
+    "tattoo day checklist",
+    "how to prepare for a tattoo session",
+    "pre-tattoo checklist pls",
+    "got a tattoo appt tomorrow what do i bring",
+    "tattoo prep checklist",
+    "what to do before tattoo appointment",
+    "getting ready for tattoo appointment",
+    "tattoo appointment preparation checklist",
+    "pre-tattoo checklist",
+    "tattoo session prep checklist"
+   ],
+   "html": "<div class=\"card\"><h4>Before a tattoo appointment checklist</h4><p class=\"muted t-small\">The art lasts forever. The prep lasts a day.</p><ul class=\"list\"><li>Sleep properly the night before \u2014 tired skin hurts more.</li><li>Eat a real meal an hour before; low blood sugar is the enemy.</li><li>Hydrate, but not so much you're up mid-session.</li><li>Skip alcohol and painkillers that thin blood for 24 hours.</li><li>Wear loose clothing that leaves the area easy to reach.</li><li>Bring comfy layers, water, and a snack if it's a long session.</li><li>Shower, but no lotion or oils on the spot.</li><li>Confirm the design and placement with your artist once more.</li></ul><div class=\"callout warn\"><p class=\"t-small\"><b>Near miss:</b> don't shave the area yourself unless asked \u2014 artists usually do it to avoid nicks.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sourdough starter first week checklist",
+   "user_requests": [
+    "sourdough starter first week",
+    "how to start a sourdough starter",
+    "sourdough starter day by day",
+    "starting sourdough from scratch \u2014 what do I do",
+    "sourdough starter checklist",
+    "help me grow a sourdough starter",
+    "new sourdough starter what should i expect",
+    "my sourdough starter is 3 days old and smells like acetone, is that normal?",
+    "sour dough starter day 1 thru 7 help",
+    "why is my starter not rising yet?",
+    "new sourdough starter, what do i feed it?",
+    "sour dough starter first wk",
+    "i just mixed flour and water for sourdough, now what?"
+   ],
+   "html": "<div class=\"card\"><h4>Sourdough starter first week checklist</h4><p class=\"muted t-small\">Flour, water, patience. Mostly patience.</p><ul class=\"list\"><li><b>Day 1:</b> mix 50g wholemeal flour with 50g warm water in a jar.</li><li><b>Day 2:</b> stir, look for tiny bubbles. Nothing? Normal.</li><li><b>Day 3\u20134:</b> it may smell like socks or nail polish. Also normal.</li><li><b>Day 3 onward:</b> discard all but 50g, feed 50g flour + 50g water daily.</li><li><b>Day 5\u20137:</b> watch for it doubling 4\u20138 hours after feeding.</li><li>Keep it somewhere 22\u201326\u00b0C, out of direct sun.</li><li>Use a loose lid \u2014 it needs to breathe, not explode.</li><li>Ready when it doubles reliably and smells like yogurt.</li></ul><div class=\"callout good\"><p class=\"t-small\"><b>Good sign:</b> a domed top and a web of bubbles underneath. Bake something.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Chess tournament day checklist",
+   "user_requests": [
+    "chess tournament day prep",
+    "what to bring to a chess tournament",
+    "first chess tournament checklist",
+    "chess tourney tomorrow help",
+    "preparing for a chess tournament",
+    "chess tournament checklist pls",
+    "how do i get ready for my first chess comp",
+    "got my first chess tourney tomorrow, what do i bring?",
+    "chess competition day prep list",
+    "what should i pack for a chess tournament?",
+    "chess tournament checklist for beginners",
+    "chess tourn day",
+    "im playing in a chess tourney this weekend, any advice?"
+   ],
+   "html": "<div class=\"card\"><h4>Chess tournament day checklist</h4><p class=\"muted t-small\">Your brain plays. Your bag should have its back.</p><ul class=\"list\"><li>Print or screenshot the schedule \u2014 phone batteries die at round four.</li><li>Bring a pen and a small scorebook or sheets if not provided.</li><li>Pack water, a light snack, and something with slow carbs.</li><li>Know the time control and whether increment applies.</li><li>Arrive 20\u201330 minutes early to find your board and settle.</li><li>Silence your phone; vibrations count as noise to some.</li><li>Review your openings once, not for an hour.</li><li>After each game, note one thing you'd do differently.</li></ul><div class=\"callout info\"><p class=\"t-small\"><b>Small tip:</b> between rounds, walk and breathe. Sitting still for six hours is its own opponent.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Hosting a board game night checklist",
+   "user_requests": [
+    "board game night checklist",
+    "hosting game night what do i need",
+    "how to host a board game night",
+    "game night prep",
+    "board game night with friends checklist",
+    "what should i set up for games night",
+    "first board game night at my place",
+    "having friends over for board games, what do i need?",
+    "board game night prep",
+    "what snacks for game night?",
+    "boardgame night checklist",
+    "hosting a game night, help",
+    "how to plan a board game party"
+   ],
+   "html": "<div class=\"card\"><h4>Hosting a board game night checklist</h4><p class=\"muted t-small\">Rule one: nobody reads the manual out loud for 40 minutes.</p><ul class=\"list\"><li>Pick 2\u20133 games: one warm-up, one main, one filler for late leavers.</li><li>Learn the rules beforehand. Yes, actually.</li><li>Set a table with room for cards, drinks, and elbows.</li><li>Provide coasters, napkins, and somewhere for phones to live.</li><li>Snacks that don't grease your fingers: pretzels, grapes, popcorn.</li><li>Water and something fizzy. Keep the strong stuff for after.</li><li>Decide the vibe: competitive, casual, or co-op.</li><li>Have a 'next game' ready so there's no dead air.</li></ul><div class=\"callout warn\"><p class=\"t-small\"><b>Near miss:</b> check your group can actually play the main game in under 2 hours. Nobody wants to start a 3-hour epic at 10pm.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Preparing for a heavy rainstorm checklist",
+   "user_requests": [
+    "storm prep checklist",
+    "heavy rain coming what should i do",
+    "getting ready for a big storm",
+    "rainstorm prep",
+    "how to prepare for a storm at home",
+    "storm checklist before it hits",
+    "big rain forecast help me prep",
+    "big storm coming, what should i do?",
+    "heavy rain prep list",
+    "flood warning, what to do before storm?",
+    "storm preperation checklist",
+    "prepping for a rainstorm",
+    "how to get ready for a downpour"
+   ],
+   "html": "<div class=\"card\"><h4>Preparing for a heavy rainstorm checklist</h4><p class=\"muted t-small\">A little prep now beats a wet surprise later.</p><ul class=\"list\"><li>Clear gutters and drains so water has somewhere to go.</li><li>Move anything loose from the balcony or garden inside.</li><li>Check windows close properly; fix that one sticky latch.</li><li>Charge power banks and phones; dig out a torch and batteries.</li><li>Fill a couple of bottles with drinking water.</li><li>Park the car away from trees and low spots if you can.</li><li>Bring pets in and set up a dry spot for them.</li><li>Save your power company's outage number offline.</li></ul><div class=\"callout info\"><p class=\"t-small\"><b>Small tip:</b> if you're in a flood-prone area, move valuables off the floor now, not when the water's rising.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Balcony herb garden start checklist",
+   "user_requests": [
+    "Help me start an herb garden on my balcony",
+    "what do I need for a balcony herb garden",
+    "Starting herbs outside, checklist please?",
+    "I have a small balcony and want herbs",
+    "balcony herb garden setup list",
+    "How to begin growing herbs on a balcony",
+    "give me a checklist for balcony herbs",
+    "want to grow herbs on my balcony, where do i start?",
+    "balcony herb garden setup",
+    "what herbs can i grow on a balcony?",
+    "starting an herb garden on my apartment balcony",
+    "balcony herb garden",
+    "herb garden on balcony help"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"stack\"><h2>Balcony herb garden start</h2><p class=\"muted\">A small green corner, no big commitment. <regex>user_name</regex>, let's get you growing.</p><div class=\"card\"><h4>Prep & plants</h4><ul class=\"list\"><li>Check sunlight hours: most herbs want 4\u20136.</li><li>Pick pots with drainage holes; terracotta is forgiving.</li><li>Use potting mix, not garden soil\u2014lighter and cleaner.</li><li>Start with hardy trio: basil, mint, chives.</li></ul></div><div class=\"card\"><h4>Ongoing care</h4><ul class=\"list\"><li>Water when top inch of soil is dry.</li><li>Pinch basil tips to keep it bushy.</li><li>Rotate pots weekly for even growth.</li><li>Harvest little and often\u2014it encourages more.</li></ul></div><div class=\"callout info\"><p>Wind dries out pots fast. A simple screen helps.</p></div></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Day hike essentials checklist",
+   "user_requests": [
+    "What should I pack for a day hike?",
+    "day hike packing list",
+    "going hiking tomorrow, checklist?",
+    "Essentials for a hike in the hills",
+    "hike day pack list",
+    "What to bring on a day hike",
+    "quick checklist for hiking",
+    "what to bring on a day hike?",
+    "hiking day pack list",
+    "day hike packing list",
+    "essentials for a day hike",
+    "day hike gear",
+    "going on a hike for a day, what do i need?"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"stack\"><h2>Day hike essentials</h2><p class=\"muted\">Pack light, but pack smart. <regex>user_name</regex>, here's your day pack.</p><div class=\"card\"><h4>Gear</h4><ul class=\"list\"><li>Comfortable shoes with grip.</li><li>Water: 1\u20132 litres depending on heat.</li><li>Snacks: nuts, fruit, something salty.</li><li>Weather layer\u2014even if it's sunny now.</li><li>Map or offline trail download.</li></ul></div><div class=\"card\"><h4>Just in case</h4><ul class=\"list\"><li>Small first-aid kit with blister plasters.</li><li>Headlamp or phone light.</li><li>Whistle or emergency contact card.</li><li>Sunscreen and a hat.</li></ul></div><div class=\"callout good\"><p>Tell someone your route and expected return time. Simple, and it matters.</p></div></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "New laptop setup checklist",
+   "user_requests": [
+    "Setting up a new laptop, what should I do first?",
+    "new laptop checklist",
+    "Just got a new computer, help",
+    "what to install on a new laptop",
+    "laptop initial setup steps",
+    "checklist for new computer setup",
+    "how to set up a new laptop properly",
+    "just got a new laptop, what should i install first?",
+    "new laptop setup steps",
+    "setting up a new computer",
+    "first things to do with a new laptop",
+    "new laptop checklist",
+    "how to set up a new laptop"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"stack\"><h2>New laptop setup</h2><p class=\"muted\">The unboxing high fades fast. <regex>user_name</regex>, let's make it a smooth start.</p><div class=\"card\"><h4>First hour</h4><ul class=\"list\"><li>Charge fully while you set up.</li><li>Run system updates\u2014yes, all of them.</li><li>Sign in to your main account.</li><li>Enable automatic backups (cloud or external).</li></ul></div><div class=\"card\"><h4>Security & comfort</h4><ul class=\"list\"><li>Turn on disk encryption if available.</li><li>Install a password manager.</li><li>Set up two-factor for key accounts.</li><li>Adjust display scaling and night light.</li><li>Uninstall bloatware you'll never touch.</li></ul></div><details class=\"acc\"><summary>Nice extras</summary><div class=\"body\"><p>A proper mouse, a laptop stand, and a cable organiser. Small joys.</p></div></details><div class=\"callout info\"><p>Create a restore point or system image once it's clean and working. Future you will cheer.</p></div></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "First-time blood donation checklist",
+   "user_requests": [
+    "I'm donating blood for the first time, what should I know?",
+    "blood donation checklist",
+    "how to prepare for donating blood",
+    "first blood donation tips",
+    "what to do before and after blood donation",
+    "checklist for blood donation day",
+    "donating blood soon, prep list",
+    "donating blood for the first time, what should i do?",
+    "first blood donation prep",
+    "what to expect when donating blood first time?",
+    "blood donation first time checklist",
+    "first time giving blood",
+    "how to prepare for first blood donation"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"stack\"><h2>First-time blood donation</h2><p class=\"muted\">It's a kind thing to do. <regex>user_name</regex>, a little prep makes it easy.</p><div class=\"card\"><h4>Before</h4><ul class=\"list\"><li>Eat a good meal\u2014iron-rich if possible.</li><li>Drink plenty of water in the hours before.</li><li>Bring ID and a list of medications.</li><li>Wear sleeves that roll up easily.</li><li>Sleep well the night before.</li></ul></div><div class=\"card\"><h4>After</h4><ul class=\"list\"><li>Rest for 10\u201315 minutes and have a snack.</li><li>Keep the bandage on for a few hours.</li><li>Drink extra fluids for the rest of the day.</li><li>Avoid heavy lifting or intense exercise.</li></ul></div><div class=\"callout good\"><p>Feeling lightheaded? Sit or lie down, raise your feet, and tell a staff member. It passes.</p></div></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Before a dentist appointment checklist",
+   "user_requests": [
+    "What should I do before a dentist appointment?",
+    "dentist visit checklist",
+    "prep for dentist appointment",
+    "dentist appointment soon, what to do",
+    "checklist for dental checkup",
+    "how to get ready for the dentist",
+    "dentist day prep list",
+    "what should i do before going to the dentist?",
+    "dentist appointment prep",
+    "getting ready for a dentist visit",
+    "pre dentist appointment checklist",
+    "dentist appt prep",
+    "how to prepare for a dental appointment"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"stack\"><h2>Before a dentist appointment</h2><p class=\"muted\">A little prep makes it smoother. <regex>user_name</regex>, here's your checklist.</p><div class=\"card\"><h4>At home</h4><ul class=\"list\"><li>Brush and floss gently\u2014no need to overdo it.</li><li>Write down any sensitivity or pain you've noticed.</li><li>List medications and allergies.</li><li>Confirm appointment time and location.</li><li>Eat lightly if you're prone to gagging.</li></ul></div><div class=\"card\"><h4>In the chair</h4><ul class=\"list\"><li>Mention if you're anxious\u2014they can adjust.</li><li>Agree on a hand signal if you need a pause.</li><li>Ask about anything you don't understand.</li></ul></div><div class=\"callout info\"><p>Skip the coffee right before. It can make you jittery and your mouth dry.</p></div></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "New phone setup checklist",
+   "user_requests": [
+    "Got a new phone, what should I do first?",
+    "new phone checklist",
+    "how to set up a new smartphone",
+    "smartphone setup steps",
+    "just got a new phone, help",
+    "checklist for new phone",
+    "setting up new phone properly",
+    "just got a new phone, what should i do first?",
+    "new phone setup steps",
+    "setting up a new smartphone",
+    "first things to do with a new phone",
+    "new phone checklist",
+    "how to set up a new phone"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"stack\"><h2>New phone setup</h2><p class=\"muted\">Shiny. Let's get it sorted. <regex>user_name</regex>, a few steps now save hassle later.</p><div class=\"card\"><h4>Basics</h4><ul class=\"list\"><li>Charge it up while you transfer data.</li><li>Install updates before adding accounts.</li><li>Sign in and restore from backup if you have one.</li><li>Set up Wi-Fi and mobile data.</li></ul></div><div class=\"card\"><h4>Make it yours</h4><ul class=\"list\"><li>Set a strong passcode and enable biometrics.</li><li>Turn on find-my-phone features.</li><li>Adjust text size and brightness for comfort.</li><li>Organise home screen: essentials first.</li><li>Silence notifications you don't need.</li></ul></div><details class=\"acc\"><summary>Extra touches</summary><div class=\"body\"><p>Set up emergency contacts, add a medical ID, and check your voicemail. Boring but useful.</p></div></details><div class=\"callout good\"><p>Take a moment to check privacy settings for location and app permissions. Your future self will thank you.</p></div></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Beach day checklist",
+   "user_requests": [
+    "beach day checklist",
+    "what to bring to the beach",
+    "heading to the beach tomorrow, help",
+    "beach pack list",
+    "i always forget something at the beach",
+    "beach day essentials",
+    "what should i pack for a beach trip",
+    "what to bring to the beach?",
+    "beach trip packing list",
+    "beach essentials",
+    "going to the beach, what do i need?",
+    "beach day prep",
+    "things to pack for a beach day"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"card\"><h4>Beach day checklist</h4><p class=\"muted\">Sun, sand, and a little planning. Here's what to toss in the bag so you can actually relax.</p><ul class=\"list\"><li><strong>Sunscreen</strong> \u2014 SPF 30+, water-resistant. Reapply every 2 hours.</li><li><strong>Towel</strong> \u2014 one for sitting, one for drying off. Quick-dry if you have it.</li><li><strong>Water bottle</strong> \u2014 freeze it overnight for a cold drink all day.</li><li><strong>Snacks</strong> \u2014 fruit, nuts, or a sandwich. Avoid melty chocolate.</li><li><strong>Hat & sunglasses</strong> \u2014 shade for your face and eyes.</li><li><strong>Flip-flops or sandals</strong> \u2014 for hot sand and rocky bits.</li><li><strong>Book or podcast</strong> \u2014 downtime is the point.</li><li><strong>Small cash</strong> \u2014 for parking, ice cream, or that beach chair rental.</li><li><strong>Zip bag</strong> \u2014 keeps phone and keys sand-free.</li><li><strong>After-sun lotion</strong> \u2014 aloe vera feels like a hug.</li></ul><div class=\"callout info\"><p class=\"t-small\">Pro tip: pack a spare plastic bag for wet swimsuits. Your car seats will thank you.</p></div></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Weekly meal prep checklist",
+   "user_requests": [
+    "meal prep checklist",
+    "how to meal prep for the week",
+    "meal prep sunday checklist",
+    "what to do for weekly meal prep",
+    "i want to start meal prepping",
+    "meal prep steps",
+    "help me plan meals for the week",
+    "how to meal prep for the week?",
+    "weekly meal prep list",
+    "meal prep sunday checklist",
+    "prepping meals for the week",
+    "meal prep for week",
+    "what to do for weekly meal prep"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"card\"><h4>Weekly meal prep checklist</h4><p class=\"muted\">A little Sunday effort saves you from the 6pm \"what's for dinner\" panic.</p><ul class=\"list\"><li><strong>Plan your menu</strong> \u2014 pick 3\u20134 recipes. Variety is nice, but repetition is easier.</li><li><strong>Check your pantry</strong> \u2014 use what you have before buying more.</li><li><strong>Make a grocery list</strong> \u2014 organized by aisle. You'll shop faster.</li><li><strong>Shop</strong> \u2014 stick to the list, but grab a treat. You're human.</li><li><strong>Wash and chop veggies</strong> \u2014 do it all at once. Future you says thanks.</li><li><strong>Cook grains and proteins</strong> \u2014 batch-cook rice, quinoa, chicken, or beans.</li><li><strong>Portion into containers</strong> \u2014 glass or BPA-free. Label with dates.</li><li><strong>Store smart</strong> \u2014 fridge for 3\u20134 days, freezer for longer.</li><li><strong>Clean as you go</strong> \u2014 a tidy kitchen makes the week feel lighter.</li></ul><div class=\"callout good\"><p class=\"t-small\">Start with just two lunches. Momentum beats perfection.</p></div></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "New bike helmet fit checklist",
+   "user_requests": [
+    "bike helmet fit checklist",
+    "how to fit a bike helmet",
+    "helmet fit check",
+    "is my bike helmet on right",
+    "bike helmet sizing",
+    "make sure helmet fits",
+    "helmet adjustment steps",
+    "how should a bike helmet fit?",
+    "adjusting my bike helmet",
+    "bike helmet fit guide",
+    "making sure my helmet fits right",
+    "bike helmet fit",
+    "new helmet, how to fit it?"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"card\"><h4>New bike helmet fit checklist</h4><p class=\"muted\">A helmet only works if it sits right. Five minutes now saves your noggin later.</p><ul class=\"list\"><li><strong>Level it</strong> \u2014 front rim just above eyebrows, back covers the base of your skull.</li><li><strong>Dial the fit</strong> \u2014 turn the rear adjuster until it's snug but not pinching.</li><li><strong>Check side straps</strong> \u2014 they should form a V just below your ears.</li><li><strong>Adjust chin strap</strong> \u2014 one finger should fit between strap and chin.</li><li><strong>Do the shake test</strong> \u2014 open your mouth wide; helmet should press down slightly.</li><li><strong>Wear it on every ride</strong> \u2014 even the quick ones. Especially the quick ones.</li><li><strong>Replace after a crash</strong> \u2014 or every 5 years, whichever comes first.</li></ul><div class=\"callout warn\"><p class=\"t-small\">If it slides around or feels loose, keep adjusting. A wobbly helmet is barely better than none.</p></div></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Emergency car kit checklist",
+   "user_requests": [
+    "emergency car kit checklist",
+    "what to keep in car for emergencies",
+    "car emergency supplies",
+    "roadside emergency kit",
+    "car safety kit list",
+    "what should be in my car emergency kit",
+    "prepare car for emergencies",
+    "what should be in my car emergency kit?",
+    "car emergency kit list",
+    "building an emergency car kit",
+    "essentials for car emergency kit",
+    "emergency car kit",
+    "what to put in a car emergency kit"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"card\"><h4>Emergency car kit checklist</h4><p class=\"muted\">Hopefully you'll never need it. But if you do, you'll be really glad it's there.</p><ul class=\"list\"><li><strong>Jumper cables</strong> \u2014 or a portable jump starter. Know how to use them.</li><li><strong>Flashlight</strong> \u2014 with extra batteries. A headlamp is even better.</li><li><strong>First aid kit</strong> \u2014 bandages, antiseptic wipes, pain relievers.</li><li><strong>Blanket</strong> \u2014 thermal or wool. Also good for picnics.</li><li><strong>Water and non-perishable snacks</strong> \u2014 rotate every six months.</li><li><strong>Basic tools</strong> \u2014 screwdrivers, pliers, duct tape, multi-tool.</li><li><strong>Tire pressure gauge</strong> \u2014 and know your car's recommended PSI.</li><li><strong>Reflective triangles or flares</strong> \u2014 visibility if you're stuck on the road.</li><li><strong>Phone charger</strong> \u2014 car adapter or power bank.</li><li><strong>Rain poncho</strong> \u2014 changing a tire in the rain is no fun.</li></ul><div class=\"callout info\"><p class=\"t-small\">Check your kit twice a year. Batteries die, snacks expire, and seasons change.</p></div></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "First day of school checklist",
+   "user_requests": [
+    "first day of school checklist",
+    "what to do before school starts",
+    "back to school checklist",
+    "prepare for first day of school",
+    "school morning routine",
+    "first day school prep",
+    "get ready for school",
+    "what to do the night before first day of school?",
+    "first day of school prep",
+    "getting ready for first day of school",
+    "first day school checklist",
+    "first day of school",
+    "how to prepare for first day of school"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"card\"><h4>First day of school checklist</h4><p class=\"muted\">New year, new routine. A little prep tonight makes tomorrow smooth.</p><ul class=\"list\"><li><strong>Backpack ready</strong> \u2014 pencils, notebooks, folder, and any forms.</li><li><strong>Lunch packed</strong> \u2014 or lunch money in a safe pocket.</li><li><strong>Outfit chosen</strong> \u2014 laid out, including socks and shoes.</li><li><strong>Water bottle filled</strong> \u2014 label it with your name.</li><li><strong>Alarm set</strong> \u2014 give yourself extra time for first-day hiccups.</li><li><strong>Breakfast plan</strong> \u2014 something easy and filling.</li><li><strong>Emergency contact info</strong> \u2014 in the backpack or memorized.</li><li><strong>Route to school</strong> \u2014 know how you're getting there and when to leave.</li><li><strong>Early bedtime</strong> \u2014 rest makes everything better.</li></ul><div class=\"callout good\"><p class=\"t-small\">You've got this. First days are a little scary for everyone\u2014even the teachers.</p></div></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Pet sitter instructions checklist",
+   "user_requests": [
+    "pet sitter instructions checklist",
+    "what to tell pet sitter",
+    "pet sitter info sheet",
+    "leaving pets with sitter",
+    "pet sitter checklist",
+    "prepare for pet sitter",
+    "pet care instructions for sitter",
+    "what to tell my pet sitter?",
+    "pet sitter instructions template",
+    "info for pet sitter",
+    "leaving my pet with a sitter, what to include?",
+    "pet sitter checklist",
+    "how to prepare instructions for pet sitter"
+   ],
+   "html": "<div class=\"umi-page\"><div class=\"card\"><h4>Pet sitter instructions checklist</h4><p class=\"muted\">Heading out? Make sure your sitter has everything they need to keep tails wagging.</p><ul class=\"list\"><li><strong>Feeding schedule</strong> \u2014 exact amounts, times, and where food is kept.</li><li><strong>Medication</strong> \u2014 dosage, timing, and how to administer (with treats if needed).</li><li><strong>Vet contact</strong> \u2014 name, number, and address. Also an emergency vet.</li><li><strong>Behavior notes</strong> \u2014 shy? escape artist? loves belly rubs? Include it.</li><li><strong>Walk routine</strong> \u2014 route, duration, leash habits.</li><li><strong>House rules</strong> \u2014 off-limits rooms, furniture, or treats.</li><li><strong>Emergency contact</strong> \u2014 you, plus a backup person.</li><li><strong>Supply location</strong> \u2014 extra leashes, poop bags, cleaning supplies.</li><li><strong>Wi-Fi password</strong> \u2014 for sending you photos, obviously.</li></ul><div class=\"callout info\"><p class=\"t-small\">A quick meet-and-greet before you leave helps everyone feel calmer.</p></div></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "New mattress first week checklist",
+   "user_requests": [
+    "help me break in my new mattress",
+    "new mattress first week what should I do",
+    "how to care for a new mattress first 7 days",
+    "mattr ess first wk checklist",
+    "i just got a new bed, now what",
+    "new mattress setup and care tips",
+    "break in new mattress properly",
+    "got a brand new bed, what now",
+    "broke in my mattress yet? tips pls",
+    "rotation schedule for a fresh mattress??",
+    "how long til my new mattress feels normal",
+    "just unboxed a memory foam bed, day 1 stuff",
+    "new bed smell + first week to-do's"
+   ],
+   "html": "<div class=\"card\"><h4>New mattress first week</h4><ul class=\"list\"><li>Leave it to expand for 24 hours before sleeping on it.</li><li>Air it out with windows open to let off that new-foam smell.</li><li>Rotate head-to-foot once, around day three.</li><li>Put on a waterproof protector before any spills happen.</li><li>Give your body a few nights to adjust to the new support.</li><li>Note how it feels each morning. If you wake up sore, use the trial period.</li><li>Wash sheets before first use if they're new too.</li></ul><p class=\"muted t-small\">A mattress adjusts to you, but only if you give it a minute.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Coffee shop work session checklist",
+   "user_requests": [
+    "what to bring for working at a coffee shop",
+    "coffee shop work checklist",
+    "working from a cafe essentials",
+    "cafe work session prep",
+    "what to pack for remote work at starbucks",
+    "checklist for working at a coffee shop all day",
+    "coffee shop laptop work tips",
+    "wfh at starbucks, what do i need",
+    "laptop cafe setup essentials",
+    "heading to a cafe to grind, pack list?",
+    "coffee shop wifi warrior kit",
+    "whats in my bag for a cafe work day",
+    "cafe workday must-haves so i dont look lost"
+   ],
+   "html": "<div class=\"card\"><h4>Coffee shop work session</h4><ul class=\"list\"><li>Charge laptop and phone fully before you leave.</li><li>Pack headphones (over-ear if you get distracted).</li><li>Bring a power strip if you need an outlet and want to make friends.</li><li>Buy something every couple of hours. It's just polite.</li><li>Sit away from the door and the espresso machine if you can.</li><li>Have a backup plan for Wi-Fi flakiness, like a phone hotspot.</li><li>Set a timer so you actually leave when you meant to.</li></ul><p class=\"muted t-small\">A good cafe is a background, not a bedroom. Keep it tidy.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "First day at a new gym checklist",
+   "user_requests": [
+    "first day at new gym what to do",
+    "gym first day checklist",
+    "new gym membership first visit",
+    "what to bring to gym first time",
+    "first time at gym tips",
+    "gym orientation checklist",
+    "how to not feel awkward at new gym",
+    "joined a gym, day 1 nerves help",
+    "new gym orientation, what do i bring",
+    "first time at planet fitness, checklist??",
+    "gym newbie day one to-do",
+    "i signed up, whats the plan for day 1",
+    "show up to a new gym prepared"
+   ],
+   "html": "<div class=\"card\"><h4>First day at a new gym</h4><ul class=\"list\"><li>Bring a lock if lockers aren't digital, and a water bottle.</li><li>Wear clothes you can move in. No need for matching sets.</li><li>Do the tour or orientation if they offer one. It's not a trap.</li><li>Start with 20 minutes on something easy. You're just showing up.</li><li>Wipe down machines after use. The spray bottles are your friend.</li><li>Ask staff where things live if you can't find them. That's what they're for.</li><li>Leave before you're exhausted. You want to come back tomorrow.</li></ul><p class=\"muted t-small\">Nobody is watching you. They're all busy checking their own form.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Making a budget spreadsheet checklist",
+   "user_requests": [
+    "how to start a budget spreadsheet",
+    "budget spreadsheet checklist",
+    "creating a budget in google sheets",
+    "first budget spreadsheet steps",
+    "budget tracker setup",
+    "simple budget spreadsheet for beginners",
+    "how to make a monthly budget sheet",
+    "startin a spreadsheet for my money",
+    "budget sheet setup steps",
+    "how do i even begin budgeting in excel",
+    "money spreadsheet from scratch",
+    "track my spending in a sheet, where do i start",
+    "budget template how-to for dummies"
+   ],
+   "html": "<div class=\"card\"><h4>Making a budget spreadsheet</h4><ul class=\"list\"><li>List all income sources for a typical month.</li><li>List fixed expenses: rent, utilities, subscriptions, loan payments.</li><li>Estimate variable expenses: groceries, gas, fun money.</li><li>Subtract expenses from income. If negative, trim the fun first.</li><li>Add a column for actual spending to compare later.</li><li>Color-code or bold the categories that matter most to you.</li><li>Set a date to review it, like the first Sunday of each month.</li></ul><p class=\"muted t-small\">A budget is just a plan you can edit. No shame in revisions.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Monthly car maintenance checklist",
+   "user_requests": [
+    "monthly car maintenance checklist",
+    "what to check on my car every month",
+    "car upkeep monthly routine",
+    "monthly auto maintenance tasks",
+    "simple monthly car checks",
+    "car care schedule monthly",
+    "monthly vehicle inspection at home",
+    "car checkup every month list",
+    "what to check on my car monthly",
+    "monthly car to-dos",
+    "keep my ride healthy, monthly tasks",
+    "30 day car maintenance rundown",
+    "car care once a month, what all"
+   ],
+   "html": "<div class=\"card\"><h4>Monthly car maintenance</h4><ul class=\"list\"><li>Check tire pressure, including the spare.</li><li>Top off windshield washer fluid if low.</li><li>Look at oil level with the engine cool.</li><li>Test all lights: headlights, brake lights, turn signals.</li><li>Check wiper blades for cracks or streaks.</li><li>Clear out trash and anything rolling around.</li><li>Note any new noises or dashboard lights for your mechanic.</li></ul><p class=\"muted t-small\">Five minutes a month saves a lot of roadside waiting.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Before a phone repair appointment checklist",
+   "user_requests": [
+    "what to do before phone repair",
+    "phone repair appointment checklist",
+    "prep for phone screen repair",
+    "before iphone repair steps",
+    "phone repair prep",
+    "how to get ready for phone fix",
+    "what to back up before phone repair",
+    "dropping my iphone at the shop tomorrow",
+    "prep for phone fixer visit",
+    "phone repair appt, what should i do first",
+    "before i hand over my phone for repair",
+    "cracked screen appointment prep",
+    "get my phone ready for the repair guy"
+   ],
+   "html": "<div class=\"card\"><h4>Before a phone repair</h4><ul class=\"list\"><li>Back up photos, contacts, and messages to the cloud or a computer.</li><li>Note your passcode and Apple ID or Google password somewhere safe.</li><li>Sign out of banking and payment apps if you can.</li><li>Remove the SIM card and any case or screen protector.</li><li>Write down the exact problem, including when it started.</li><li>Bring your charger and cable to test after the fix.</li><li>Ask for a time estimate and warranty details before you leave.</li></ul><p class=\"muted t-small\">A backup is the only thing standing between you and a very quiet week.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Morning routine reset checklist",
+   "user_requests": [
+    "reset my mornings, they're chaos",
+    "morning routine checklist pls",
+    "how do I stop rushing every morning",
+    "need a better am routine",
+    "morning checklist that actually works",
+    "help me fix my mornings",
+    "wake up earlier and not hate it checklist",
+    "my am routine is a disaster, fix it",
+    "reboot my mornings plz",
+    "mornings are wrecked, need a do-over",
+    "reset my a.m. habits",
+    "help me start mornings over fresh",
+    "morning chaos to calm, steps?"
+   ],
+   "html": "<div class=\"card\"><h4>Morning routine reset</h4><p class=\"muted t-small\">Small moves, big mornings. Tick as you go, <regex>user_name</regex>.</p><ul class=\"list\"><li>Phone out of arm's reach last night</li><li>Glass of water before coffee</li><li>Two minutes of stretching, no heroics</li><li>Look at one thing you're looking forward to</li><li>Pick clothes the night before</li><li>Five-minute tidy: dishes, bag, keys</li><li>Eat something with protein</li><li>Leave ten minutes earlier than you think</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Laundry day survival checklist",
+   "user_requests": [
+    "laundry day checklist",
+    "how to not ruin my clothes in the wash",
+    "laundry routine for busy people",
+    "checklist for doing laundry properly",
+    "my laundry piles are out of control",
+    "help me streamline laundry",
+    "laundry checklist so I stop shrinking stuff",
+    "got a mountain of laundry, help",
+    "laundry day, send tips",
+    "how do i get through all this washing",
+    "laundry marathon survival guide",
+    "dirty clothes everywhere, checklist?",
+    "wash day checklist so i dont ruin stuff"
+   ],
+   "html": "<div class=\"card\"><h4>Laundry day survival</h4><p class=\"muted t-small\">Less chaos, more clean socks.</p><ul class=\"list\"><li>Sort lights, darks, delicates</li><li>Check pockets: coins, receipts, rogue pens</li><li>Zip zippers, button buttons</li><li>Read care labels on anything new</li><li>Wash cold when in doubt</li><li>Use mesh bags for bras and tiny socks</li><li>Shake out before drying to reduce wrinkles</li><li>Fold or hang straight away if you want to skip ironing</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Desk reset end-of-day checklist",
+   "user_requests": [
+    "end of day desk reset",
+    "make tomorrow easier at work",
+    "desk reset checklist",
+    "how to leave work at work",
+    "checklist to tidy my desk before logging off",
+    "reset my workspace for tomorrow",
+    "work shutdown ritual checklist",
+    "clear my desk before logging off",
+    "eod desk tidy ritual",
+    "shutting down for the day, desk stuff",
+    "reset workspace at 5pm",
+    "end of workday desk cleanup steps",
+    "desk declutter before i clock out"
+   ],
+   "html": "<div class=\"card\"><h4>Desk reset, end of day</h4><p class=\"muted t-small\">A clean desk is a quiet flex. Future you says thanks.</p><ul class=\"list\"><li>Close all browser tabs you're done with</li><li>Write down top three for tomorrow</li><li>File papers or bin them</li><li>Wipe crumbs and smudges</li><li>Refill water bottle for the morning</li><li>Put pens back in their spot</li><li>Log off and step away</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sunday evening wind-down checklist",
+   "user_requests": [
+    "Sunday night wind down checklist",
+    "help me relax before the week starts",
+    "Sunday evening routine",
+    "how to beat the Sunday scaries",
+    "checklist for a calm Sunday night",
+    "wind down for the week ahead",
+    "Sunday reset checklist",
+    "sunday scaries routine",
+    "prep for monday on sunday night",
+    "sun night chill checklist",
+    "get ready for the week sunday eve",
+    "wind down before the workweek",
+    "sunday night reset so monday doesnt suck"
+   ],
+   "html": "<div class=\"card\"><h4>Sunday evening wind-down</h4><p class=\"muted t-small\">Close the week gently. The list can wait till morning.</p><ul class=\"list\"><li>Look at the week ahead, pick three priorities</li><li>Lay out clothes or at least decide on shoes</li><li>Make lunch if you're taking it</li><li>Dim the lights an hour before bed</li><li>Charge devices outside the bedroom</li><li>Read or stretch instead of scrolling</li><li>Set a realistic alarm</li><li>Say one good thing about the weekend</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Rainy day at-home checklist",
+   "user_requests": [
+    "things to do on a rainy day at home",
+    "rainy day checklist",
+    "stuck inside, what now",
+    "cozy rainy day activities checklist",
+    "make the most of a rainy day",
+    "indoor checklist for bad weather",
+    "rainy day bucket list",
+    "stuck inside cause of rain, ideas?",
+    "wet weather stay-in list",
+    "rainy afternoon at home, what to do",
+    "cozy rainy day activities",
+    "its pouring, keep me busy indoors",
+    "rain day bucket list for home"
+   ],
+   "html": "<div class=\"card\"><h4>Rainy day at home</h4><p class=\"muted t-small\">Cancel plans, embrace puddles. Here's your menu.</p><ul class=\"list\"><li>Make a warm drink, take your time</li><li>Put on socks and something soft</li><li>Start a puzzle, book, or easy game</li><li>Bake something simple if you feel like it</li><li>Call a friend you owe a chat</li><li>Do one small home reset: blanket, dishes, candle</li><li>Watch the rain for five minutes doing nothing else</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Gym bag packing checklist",
+   "user_requests": [
+    "gym bag checklist",
+    "what to pack in my gym bag",
+    "pack for the gym without forgetting stuff",
+    "gym bag essentials",
+    "help me remember everything for the gym",
+    "workout bag packing list",
+    "don't forget these gym items",
+    "what goes in my gym bag",
+    "packing for the gym, dont forget stuff",
+    "gym bag essentials??",
+    "what to stuff in my workout bag",
+    "hitting the gym after work, pack what",
+    "gym bag list so i stop forgetting socks"
+   ],
+   "html": "<div class=\"card\"><h4>Gym bag packing</h4><p class=\"muted t-small\">Lace up, <regex>user_name</regex>. No midnight locker runs.</p><ul class=\"list\"><li>Gym clothes: top, bottoms, socks</li><li>Trainers or specialised shoes</li><li>Water bottle, filled</li><li>Towel, small one for face</li><li>Toiletries: deodorant, hair tie, flip-flops if showering</li><li>Padlock for the locker</li><li>Headphones, charged</li><li>Post-workout snack if you'll be hungry</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sick day recovery checklist",
+   "user_requests": [
+    "I feel awful, help me get through today",
+    "sick day checklist pls",
+    "what should I do when I'm sick at home",
+    "feeling rough, need a plan for the day",
+    "cold/flu survival checklist",
+    "how to take care of myself when sick",
+    "sick day self care checklist",
+    "im down bad with a cold, help",
+    "feeling terrible, how to survive today",
+    "sick in bed, what should i do",
+    "under the weather, checklist pls",
+    "got the flu, get me through the day",
+    "recovery mode when im ill"
+   ],
+   "html": "<div class=\"card\"><h4>Sick day recovery checklist</h4><p class=\"muted\">Rest is the main event. Everything else is supporting cast.</p><ul class=\"list\"><li>Take your temperature and note it</li><li>Set a water bottle within arm's reach</li><li>Take any meds on schedule</li><li>Queue up something low-effort to watch</li><li>Text one person so they know you're down</li><li>Cancel or reschedule today's obligations</li><li>Nap without guilt</li><li>Eat something bland if you can</li><li>Check in with yourself after 4 hours</li><li>Plan a slow re-entry tomorrow</li></ul><details class=\"acc\"><summary>Emergency signs\ud83d\udea8</summary><div class=\"body\"><p>Difficulty breathing, chest pain, confusion, or a fever that won't budge \u2014 get medical help, don't wait.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Public speaking practice checklist",
+   "user_requests": [
+    "help me prep for a talk",
+    "public speaking checklist",
+    "how to practice a presentation",
+    "nervous about speaking, need a plan",
+    "speech rehearsal checklist",
+    "prep for big presentation",
+    "presentation practice routine",
+    "got a presentation coming, prep help",
+    "rehearse for my speech",
+    "talk in front of people soon, practice tips",
+    "presentation prep checklist",
+    "nervous about a talk, how to practice",
+    "get ready for a speaking gig"
+   ],
+   "html": "<div class=\"card\"><h4>Public speaking practice checklist</h4><p class=\"muted\">Confidence is built in the run-through, not the moment.</p><ul class=\"list\"><li>Write your opening line word-for-word</li><li>Outline three main beats</li><li>Record yourself once and watch it back</li><li>Time the whole thing</li><li>Mark spots to pause or breathe</li><li>Practice out loud standing up</li><li>Trim any slide that needs explaining</li><li>Rehearse the closing line until it's automatic</li><li>Do a final run in the actual room if possible</li><li>Pick one friendly face to start with</li></ul><details class=\"acc\"><summary>If you freeze\ud83e\uddca</summary><div class=\"body\"><p>Pause. Take a breath. Say \u201cLet me put that another way.\u201d Then repeat your last point. The audience won't mind.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Morning stretch routine checklist",
+   "user_requests": [
+    "easy morning stretch routine",
+    "wake up my body checklist",
+    "quick stretches before work",
+    "stretching for stiff mornings",
+    "5 min morning stretch",
+    "help me loosen up in the morning",
+    "morning mobility checklist",
+    "quick stretches when i wake up",
+    "am stretching for stiff bodies",
+    "wake up with a stretch plan",
+    "simple stretches before coffee",
+    "loosen up in the morning, routine?",
+    "morning mobility checklist"
+   ],
+   "html": "<div class=\"card\"><h4>Morning stretch routine checklist</h4><p class=\"muted\">Five minutes now saves your neck from a long day later.</p><ul class=\"list\"><li>Stand and reach tall for 10 seconds</li><li>Neck rolls: slow, both directions</li><li>Shoulder shrugs \u2014 up, back, down</li><li>Side bend left, hold, then right</li><li>Gentle forward fold, knees soft</li><li>Cat-cow on all fours, 5 rounds</li><li>Seated spinal twist each side</li><li>Hip flexor stretch, 30 sec per leg</li><li>Ankle circles, both feet</li><li>Deep breath in, big sigh out \u2014 done</li></ul><details class=\"acc\"><summary>Make it stick\ud83d\udccc</summary><div class=\"body\"><p>Pair it with something you already do \u2014 after brushing teeth, before coffee. Same trigger, same routine.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Email inbox zero checklist",
+   "user_requests": [
+    "how to clear my inbox",
+    "inbox zero checklist",
+    "email overload help",
+    "get to zero emails",
+    "email triage plan",
+    "clean up inbox checklist",
+    "stop drowning in email",
+    "inbox is at 4000, save me",
+    "clear out my emails finally",
+    "zero out my inbox steps",
+    "email overload, where to start",
+    "getting to inbox zero, game plan",
+    "declutter gmail, checklist??"
+   ],
+   "html": "<div class=\"card\"><h4>Email inbox zero checklist</h4><p class=\"muted\">You're not filing; you're deciding. Every message gets a verb.</p><ul class=\"list\"><li>Sort by sender to batch similar emails</li><li>Delete or archive anything you'll never need</li><li>Unsubscribe from three lists you ignore</li><li>Reply if it takes under two minutes</li><li>Turn longer replies into a task with a due date</li><li>Forward anything that belongs to someone else</li><li>Star the ones waiting on a reply from others</li><li>Empty your trash and spam folders</li><li>Repeat until inbox shows zero unread</li><li>Set a time tomorrow for the next pass</li></ul><details class=\"acc\"><summary>If it feels endless\ud83c\udf00</summary><div class=\"body\"><p>Do it in 15-minute sprints. Progress beats perfection. A smaller inbox tomorrow is still a win.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Digital declutter checklist",
+   "user_requests": [
+    "my phone is a mess, help",
+    "digital declutter checklist",
+    "clean up my digital life",
+    "organize files and photos",
+    "digital cleanup plan",
+    "declutter apps and desktop",
+    "tech spring cleaning checklist",
+    "my phone is a disaster, help me clean it up",
+    "too many apps and photos, need to declutter digitally",
+    "how do i organize all my digital files and emails",
+    "clean up my digital life checklist",
+    "digital clutter is driving me crazy",
+    "help me tidy my computer and phone"
+   ],
+   "html": "<div class=\"card\"><h4>Digital declutter checklist</h4><p class=\"muted\">Less digital noise, more brain space.</p><ul class=\"list\"><li>Delete apps you haven't opened in a month</li><li>Unsubscribe from five email lists</li><li>Clear your downloads folder</li><li>Organize photos into year folders</li><li>Back up important files to cloud or drive</li><li>Empty your desktop into a single folder</li><li>Turn off non-essential notifications</li><li>Unfollow three accounts that drain you</li><li>Clear browser bookmarks bar of dead links</li><li>Set a weekly 10-minute tidy reminder</li></ul><details class=\"acc\"><summary>Start with one device\ud83d\udcf1</summary><div class=\"body\"><p>Pick your phone first \u2014 it's where the clutter hurts most. Then move to laptop if you have energy left.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Decluttering one room checklist",
+   "user_requests": [
+    "help me declutter my room",
+    "one room declutter checklist",
+    "where do I start decluttering",
+    "declutter my space checklist",
+    "room reset checklist",
+    "clutter busting plan",
+    "simple declutter routine",
+    "my room is a disaster, where do i start",
+    "need a plan to declutter my bedroom",
+    "how to organize one messy room",
+    "help me clean out my room step by step",
+    "i want to declutter my living room",
+    "room declutter plan please"
+   ],
+   "html": "<div class=\"card\"><h4>Decluttering one room checklist</h4><p class=\"muted\">One room, one afternoon. You've got this.</p><ul class=\"list\"><li>Pick a single room and set a timer for 30 minutes</li><li>Grab three bags: keep, donate, toss</li><li>Clear one surface completely first</li><li>Work top to bottom, left to right</li><li>Ask \u201cused in the last year?\u201d for each item</li><li>Put donate bag in your car immediately</li><li>Wipe down surfaces you uncover</li><li>Find a home for everything you keep</li><li>Take out trash and recycling</li><li>Notice the space and breathe</li></ul><details class=\"acc\"><summary>If you get stuck\ud83e\udd14</summary><div class=\"body\"><p>Start with trash. It's the easiest decision and it builds momentum.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Moving out of a rental checklist",
+   "user_requests": [
+    "checklist for moving out of my apartment",
+    "moving out of a rental checklist",
+    "what do i do before handing back keys rental",
+    "end of lease checklist for tenants",
+    "stuff to do when moving out of rented flat",
+    "moving out to do list",
+    "checklist handing back keys landlord",
+    "moving out of my apartment soon, what do i do",
+    "need a checklist for moving out of my rental",
+    "landlord wants me out, help me plan",
+    "what to do before moving out of a rented place",
+    "moving out checklist for renters",
+    "help me get ready to move out of my rental"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Moving out of a rental checklist</h4>\n  <p class=\"muted t-small\">Deep clean first, photos second, keys last. Deposit back before the nostalgia hits.</p>\n  <details class=\"acc\" open>\n    <summary>Four weeks out</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Read the lease: notice period, cleaning standard, pet clauses</li>\n        <li>Give written notice, dated, keep the reply</li>\n        <li>Book movers or a van early, end of month is brutal</li>\n        <li>Cancel or transfer utilities, internet, council tax</li>\n      </ul>\n    </div>\n  </details>\n  <details class=\"acc\">\n    <summary>Final week</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Fill nail holes, buff scuffs, replace dead bulbs</li>\n        <li>Defrost the freezer 24h ahead, towels underneath</li>\n        <li>Clear every cupboard, shelf, and mystery drawer</li>\n        <li>Return borrowed items and spare keys to neighbours</li>\n      </ul>\n    </div>\n  </details>\n  <details class=\"acc\">\n    <summary>Handover day</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Photograph each room, plus meters and the oven inside</li>\n        <li>Note the meter readings and pass them on</li>\n        <li>Walk the flat with the landlord or agent, agree any deductions</li>\n        <li>Hand back keys, get the deposit return in writing</li>\n      </ul>\n    </div>\n  </details>\n  <p class=\"muted t-small\">Thanks for checking in, <regex>user_name</regex>. If nothing else sticks: photos, meters, keys, in that order.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Before a haircut appointment checklist",
+   "user_requests": [
+    "what to do before a haircut appointment",
+    "checklist before getting hair cut",
+    "prep for hair salon visit",
+    "how should i get ready for a haircut",
+    "haircut appointment checklist",
+    "before hair appointment do list",
+    "getting a haircut tomorrow what do i do",
+    "what should i do before i get a haircut",
+    "prep for my haircut appointment",
+    "how to get ready for a salon visit",
+    "haircut appointment prep checklist",
+    "things to do before getting hair cut",
+    "getting a haircut soon, what to prepare"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Before a haircut appointment checklist</h4>\n  <p class=\"muted t-small\">Bring photos, bring honesty, skip the mystery products.</p>\n  <ul class=\"list\">\n    <li>Save two or three reference photos, including one you don't want</li>\n    <li>Wash hair the day before, not the morning of, so it settles</li>\n    <li>Come with hair dry, not tied up in a wet bun</li>\n    <li>Know your routine: how long you'll actually style it</li>\n    <li>Mention scalp sensitivity, cowlicks, or thinning up front</li>\n    <li>Say the words \"take two inches off\" out loud, then agree on a length</li>\n    <li>Ask what to say to the next stylist so it's repeatable</li>\n    <li>Book the next appointment before you leave if you like it</li>\n  </ul>\n  <p class=\"muted t-small\">One tip, <regex>user_name</regex>: if the brief is vague, the result is a surprise. Speak up early, it's your head.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Preparing for a video call interview checklist",
+   "user_requests": [
+    "video interview checklist",
+    "how to prep for a zoom interview",
+    "checklist before online interview",
+    "video call job interview prep",
+    "what to do before a virtual interview",
+    "remote interview setup checklist",
+    "preparing for zoom interview tomorrow",
+    "got a video interview coming up, help me prep",
+    "what to do before a zoom interview",
+    "prepare for online job interview checklist",
+    "video call interview prep list",
+    "how to get ready for a virtual interview",
+    "need checklist for video job interview"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Preparing for a video call interview checklist</h4>\n  <p class=\"muted t-small\">Test the tech early, then forget it exists.</p>\n  <details class=\"acc\" open>\n    <summary>The day before</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Confirm the link, time zone, and who's on the call</li>\n        <li>Install or update the app, join a test room</li>\n        <li>Charge laptop, find the charger, plug it in anyway</li>\n        <li>Rehearse two stories: one win, one mess you fixed</li>\n      </ul>\n    </div>\n  </details>\n  <details class=\"acc\">\n    <summary>Ten minutes before</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Camera at eye level, light in front of you, not behind</li>\n        <li>Mute notifications, close extra tabs</li>\n        <li>Water nearby, phone on silent but visible for backup</li>\n        <li>Background tidy, door shut, housemates warned</li>\n        <li>Notes on paper beside the screen, not on it</li>\n      </ul>\n    </div>\n  </details>\n  <p class=\"muted t-small\">You've got this, <regex>user_name</regex>. Talk a touch slower than feels natural, cameras eat the pauses.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Starting a small compost bin checklist",
+   "user_requests": [
+    "how to start composting at home",
+    "compost bin beginner checklist",
+    "starting a compost checklist",
+    "kitchen compost setup",
+    "beginner compost do list",
+    "how do i start a compost bin",
+    "composting basics checklist",
+    "want to start composting, where do i begin",
+    "how to make a small compost bin",
+    "beginner composting checklist",
+    "help me set up compost at home",
+    "starting a compost pile for beginners",
+    "what do i need to start a compost bin"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Starting a small compost bin checklist</h4>\n  <p class=\"muted t-small\">Greens smell, browns save you. Balance is the whole game.</p>\n  <ul class=\"list\">\n    <li>Pick a spot: shade, drainage, reachable in the rain</li>\n    <li>Get a lidded bin or a sturdy corner pile</li>\n    <li>Keep a small caddy in the kitchen with a liner</li>\n    <li>Add greens: veg scraps, coffee grounds, grass clippings</li>\n    <li>Add browns: cardboard, dry leaves, egg cartons, paper</li>\n    <li>Aim for roughly two parts brown to one part green</li>\n    <li>Turn or poke it weekly so it can breathe</li>\n    <li>Keep out: meat, dairy, oils, pet waste, treated wood</li>\n  </ul>\n  <div class=\"callout info\">\n    <p>If it smells sour, add browns and turn it. If it's bone dry, add a splash of water. That's the whole troubleshooting guide.</p>\n  </div>\n  <p class=\"muted t-small\">Good luck, <regex>user_name</regex>. First bucket of finished compost feels like finding money in a coat pocket.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Preparing for a power outage checklist",
+   "user_requests": [
+    "power outage prep checklist",
+    "what to do before a blackout",
+    "checklist for power cut",
+    "getting ready for power outage",
+    "blackout preparation list",
+    "storm power outage checklist",
+    "prep for outage at home",
+    "blackout coming, how do i get ready",
+    "prepare for power outage checklist",
+    "what to do before the power goes out",
+    "emergency power outage prep list",
+    "getting ready for a blackout",
+    "power cut coming, help me prepare"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Preparing for a power outage checklist</h4>\n  <p class=\"muted t-small\">Charge everything now, thank yourself later.</p>\n  <div class=\"row between\">\n    <span class=\"badge accent\"><i class=\"dot\"></i>before it hits</span>\n    <span class=\"badge info\"><i class=\"dot\"></i>cached match</span>\n  </div>\n  <details class=\"acc\" open>\n    <summary>Power and light</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Charge phones, power banks, laptop, and any medical devices</li>\n        <li>Find torches and headlamps, test the batteries</li>\n        <li>Keep candles and a lighter together, away from curtains</li>\n        <li>Set fridge and freezer to their coldest setting</li>\n      </ul>\n    </div>\n  </details>\n  <details class=\"acc\">\n    <summary>Warmth, water, and info</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Fill bottles and the kettle with water</li>\n        <li>Gather blankets, layers, and dry socks</li>\n        <li>Write down the utility outage number on paper</li>\n        <li>Keep one radio or a battery pack for news</li>\n        <li>Plan how to open an electric garage door manually</li>\n      </ul>\n    </div>\n  </details>\n  <p class=\"muted t-small\">Stay warm out there, <regex>user_name</regex>. Keep the freezer shut and it'll forgive you for days.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Volunteering at an animal shelter checklist",
+   "user_requests": [
+    "first day volunteering at animal shelter checklist",
+    "what to do before volunteering at a shelter",
+    "animal shelter volunteer checklist",
+    "how to prep for shelter volunteer shift",
+    "volunteering with dogs checklist",
+    "shelter volunteer first day",
+    "before my volunteer shift at shelter",
+    "volunteering at an animal shelter soon, what do i need",
+    "first time volunteering at animal shelter, help",
+    "animal shelter volunteer prep checklist",
+    "what to bring for animal shelter volunteering",
+    "help me get ready to volunteer at a shelter",
+    "shelter volunteer first day checklist"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Volunteering at an animal shelter checklist</h4>\n  <p class=\"muted t-small\">Wear the clothes you don't love. Every shift finds a way to test that.</p>\n  <ul class=\"list\">\n    <li>Confirm your shift time, entrance, and who to ask for</li>\n    <li>Wear closed shoes, long trousers, and nothing precious</li>\n    <li>Bring a spare t-shirt in a bag, just in case</li>\n    <li>Fill in any health forms, allergies, or tetanus status</li>\n    <li>Expect an induction: hygiene, handover, no wandering alone</li>\n    <li>Learn the hand-washing and sanitiser routine properly</li>\n    <li>Ask which animals you may handle and which you may not</li>\n    <li>Follow staff on behaviour calls, don't improvise</li>\n    <li>Tie long hair back, remove loose jewellery and dangling straps</li>\n    <li>Leave a bag of towels or old blankets if they're welcome</li>\n  </ul>\n  <div class=\"callout warn\">\n    <p>Feeling emotional on day one is normal. Step away, breathe, then go back gently. The animals notice calm.</p>\n  </div>\n  <p class=\"muted t-small\">Nice one, <regex>user_name</regex>. Shelters run on people who show up twice.</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "make me a checklist for planting my first balcony rose bush",
+    "i bought a rose for the balcony, what now",
+    "rose care checklist for containers please",
+    "starting a mini rose garden on my balcony",
+    "new balcony rose bush checklist",
+    "what do I need to do after bringing home a rose bush?",
+    "first rose on the balcony help me keep it alive",
+    "planting my first rose bush on a balcony, need checklist",
+    "how to grow roses on a balcony for beginners",
+    "balcony rose bush care checklist",
+    "first time growing a rose bush on balcony",
+    "help me plant a rose bush on my balcony",
+    "rose bush balcony setup guide"
+   ],
+   "title": "First balcony rose bush checklist",
+   "html": "<div class=\"card\"><h4>First balcony rose bush checklist</h4><p class=\"muted\">Roses are dramatic, but they\u2019re not hard. They just want sun, water, and a little air around their roots.</p><ul class=\"list\"><li>Choose a spot with at least 6 hours of direct sun.</li><li>Use a pot at least 45 cm wide with drainage holes.</li><li>Plant in quality potting mix, not garden soil.</li><li>Water deeply when the top 2 cm of soil feels dry.</li><li>Feed with rose fertiliser every 4\u20136 weeks during growing season.</li><li>Prune dead or crossing canes in late winter.</li><li>Check for aphids weekly; blast them off with water.</li><li>Move the pot slightly if leaves scorch in peak afternoon heat.</li></ul><p class=\"t-small dim\">A rose in a pot is basically a thirsty houseplant with opinions. You\u2019ve got this.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "make a checklist for adopting a rescue dog",
+    "what to do before bringing home a rescue dog",
+    "rescue dog adoption checklist",
+    "i'm adopting a dog this weekend, what should i prep?",
+    "first week with a rescue dog checklist",
+    "prep list for new rescue pup",
+    "adopting a dog help me get ready",
+    "adopting a rescue dog, what do i need to do",
+    "getting a rescue dog, help me prepare",
+    "rescue dog adoption checklist",
+    "what to do before bringing home a rescue dog",
+    "prepare for adopting a dog from a shelter",
+    "first rescue dog checklist"
+   ],
+   "title": "Rescue dog adoption prep checklist",
+   "html": "<div class=\"card\"><h4>Rescue dog adoption prep checklist</h4><p class=\"muted\">A rescue dog doesn\u2019t need a perfect home. It needs a quiet one, at first.</p><ul class=\"list\"><li>Buy a crate or bed and set it up before the dog arrives.</li><li>Stock the same food the shelter was using.</li><li>Get a martingale collar and a 2 m leash.</li><li>Pick a quiet room for the first few days, no visitors.</li><li>Dog-proof cables, shoes, and bin lids.</li><li>Find a vet and book a check-up for week one.</li><li>Keep a simple routine: same walk times, same feeding times.</li><li>Give space. Let the dog come to you.</li></ul><p class=\"t-small dim\">The first 3 days are decompression, not a test. Go slow.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "checklist for setting up a home weather station",
+    "i want to track my local weather, where do i start",
+    "home weather station setup guide",
+    "weather station setup checklist",
+    "personal weather station first steps",
+    "how to set up a home weather station",
+    "starting a weather station help",
+    "setting up a home weather station, need checklist",
+    "how to install a personal weather station",
+    "weather station setup guide",
+    "help me set up my home weather station",
+    "what do i need to set up a weather station at home",
+    "beginner weather station setup checklist"
+   ],
+   "title": "Home weather station setup checklist",
+   "html": "<div class=\"card\"><h4>Home weather station setup checklist</h4><p class=\"muted\">You\u2019re about to become the person who checks the sky before the forecast does.</p><ul class=\"list\"><li>Choose a spot away from buildings and trees, ideally 2 m above ground.</li><li>Mount the anemometer higher if you want accurate wind speed.</li><li>Keep the rain gauge level and clear of overhangs.</li><li>Place the thermometer in shade, not direct sun.</li><li>Connect the station to your Wi-Fi and check the signal.</li><li>Register with a weather network if you want to share data.</li><li>Log the first week\u2019s readings to spot any oddities.</li><li>Clean the rain gauge monthly.</li></ul><p class=\"t-small dim\">You\u2019ll never look at a cloudy sky the same way again.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "first time at a farmers market checklist",
+    "farmers market tips for beginners",
+    "what to bring to a farmers market",
+    "farmers market checklist first visit",
+    "going to a farmers market for the first time",
+    "farmers market shopping list",
+    "help me prep for a farmers market run",
+    "going to a farmers market for the first time, what to know",
+    "first farmers market trip checklist",
+    "what to bring to a farmers market",
+    "help me plan my first farmers market visit",
+    "farmers market newbie checklist",
+    "first time at farmers market, need tips"
+   ],
+   "title": "First farmers market visit checklist",
+   "html": "<div class=\"card\"><h4>First farmers market visit checklist</h4><p class=\"muted\">Go early for the best picks, bring cash, and don\u2019t be shy about asking what\u2019s good today.</p><ul class=\"list\"><li>Bring a reusable tote and a small cooler bag.</li><li>Carry small bills and coins for easy transactions.</li><li>Walk the whole market once before buying.</li><li>Ask vendors what\u2019s in season and what they\u2019d buy.</li><li>Check for a market map or info stall if it\u2019s a big one.</li><li>Buy delicate greens last so they don\u2019t get squished.</li><li>Note stall names you liked for next time.</li><li>Don\u2019t overbuy. You can always come back next week.</li></ul><p class=\"t-small dim\">The tomatoes will tell you when they\u2019re ready. Trust your nose.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "checklist for starting a bullet journal",
+    "how to set up a bullet journal",
+    "bullet journal beginner checklist",
+    "i want to try bullet journaling, what do i need",
+    "bullet journal setup first time",
+    "starting a bujo checklist",
+    "bullet journal newbie help",
+    "starting a bullet journal, need checklist",
+    "how to set up a bullet journal for beginners",
+    "bullet journal setup guide",
+    "help me start my bullet journal",
+    "what do i need to begin a bullet journal",
+    "bullet journal beginner checklist"
+   ],
+   "title": "Bullet journal setup checklist",
+   "html": "<div class=\"card\"><h4>Bullet journal setup checklist</h4><p class=\"muted\">A bullet journal is just a notebook with a plan. You can\u2019t do it wrong.</p><ul class=\"list\"><li>Pick a notebook you actually like holding.</li><li>Use a pen that doesn\u2019t bleed through the pages.</li><li>Create an index page at the front.</li><li>Set up a future log for the next 6 months.</li><li>Add a monthly log with dates and key tasks.</li><li>Make a daily log for today only.</li><li>Use simple symbols: \u2022 task, \u2717 done, \u2192 migrated.</li><li>Review and migrate unfinished tasks at month\u2019s end.</li></ul><p class=\"t-small dim\">Start ugly. You can make it pretty once it\u2019s useful.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "checklist for learning to roller skate",
+    "roller skating beginner checklist",
+    "i just got roller skates, what do i do first",
+    "roller skating first steps",
+    "starting roller skating checklist",
+    "how to begin roller skating safely",
+    "roller skate newbie tips",
+    "learning to roller skate, need checklist",
+    "beginner roller skating tips and checklist",
+    "how to start roller skating safely",
+    "help me prepare for my first roller skating session",
+    "roller skating for beginners checklist",
+    "what to know before learning to roller skate"
+   ],
+   "title": "Beginner roller skating checklist",
+   "html": "<div class=\"card\"><h4>Beginner roller skating checklist</h4><p class=\"muted\">Everyone wobbles at first. The trick is to wobble forward.</p><ul class=\"list\"><li>Wear a helmet and wrist guards, always.</li><li>Knee pads and elbow pads are worth the bulk.</li><li>Find a smooth, flat surface with a rail or wall nearby.</li><li>Start by standing still and shifting weight side to side.</li><li>Learn to fall forward onto your pads, not backward.</li><li>Practice gliding with feet in a V shape.</li><li>Keep sessions short and frequent rather than long and rare.</li><li>Check your skates\u2019 toe stops and wheel tightness before each session.</li></ul><p class=\"t-small dim\">Your first goal isn\u2019t speed. It\u2019s not falling. Then it\u2019s falling well.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "checklist for going to the DMV",
+    "what do I need to bring to the DMV",
+    "dmv trip checklist",
+    "help me prep for dmv visit",
+    "DMV appointment checklist",
+    "things to bring to the dmv",
+    "dmv visit to do list",
+    "going to the dmv, what do i need to bring",
+    "dmv visit preparation checklist",
+    "help me get ready for the dmv",
+    "what to bring to dmv appointment",
+    "dmv trip checklist",
+    "preparing for a visit to the dmv"
+   ],
+   "title": "DMV visit checklist",
+   "html": "<div class=\"card\"><h4>DMV visit checklist</h4><p class=\"muted t-small\">Paper beats waiting rooms. Bring more than you think you need.</p><ul class=\"list\"><li>Appointment confirmation (printed or on phone)</li><li>Driver's license or state ID</li><li>Proof of identity: birth certificate or passport</li><li>Proof of residency: utility bill or lease (two if possible)</li><li>Social Security card or W-2</li><li>Filled-out form (if you can print it ahead)</li><li>Payment: card, check, or exact cash</li><li>Glasses or contacts if you need them for the eye test</li><li>Snack and water (wait times are real)</li><li>Book or podcast for the queue</li></ul><p class=\"muted t-small\">Leave the expired documents at home. They won't help.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "first day of work checklist",
+    "what to bring to new job",
+    "new job first day prep",
+    "starting a new job checklist",
+    "first day work must-haves",
+    "things for first day at work",
+    "new job day one checklist",
+    "first day at new job, help me prepare",
+    "what to do before first day of work",
+    "new job first day checklist",
+    "getting ready for my first day at work",
+    "first day of work prep list",
+    "help me plan my first day at a new job"
+   ],
+   "title": "First day of work checklist",
+   "html": "<div class=\"card\"><h4>First day of work checklist</h4><p class=\"muted t-small\">Show up curious. The rest sorts itself out.</p><ul class=\"list\"><li>ID and any onboarding paperwork</li><li>Notebook and pen (phones die, paper doesn't)</li><li>Laptop or bag if you're bringing your own</li><li>Water bottle and a snack</li><li>Layers\u2014office AC is a mystery</li><li>Parking pass or transit card ready</li><li>Phone charger</li><li>A few questions written down</li><li>Emergency contact info filled out</li><li>Your best first-day smile</li></ul><p class=\"muted t-small\">You don't need to know everything today. You just need to show up.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "checklist for going to the beach with kids",
+    "beach day with kids checklist",
+    "family beach trip prep",
+    "what to pack for beach with kids",
+    "kids beach day checklist",
+    "beach outing with children checklist",
+    "beach with toddlers checklist",
+    "need a list for beach trip w/ the little ones",
+    "what to pack for a family beach day",
+    "beach outing with children checklist",
+    "going to the shore with kids, what do I bring?",
+    "prep list for beach day with toddlers",
+    "beach trip checklist for parents"
+   ],
+   "title": "Beach day with kids checklist",
+   "html": "<div class=\"card\"><h4>Beach day with kids checklist</h4><p class=\"muted t-small\">Sand will get everywhere. Prepare for that, and you'll be fine.</p><ul class=\"list\"><li>Sunscreen (SPF 30+, reapply every two hours)</li><li>Hats and sunglasses for everyone</li><li>Swimsuits + a dry change of clothes</li><li>Towels (one per kid, plus one for the car)</li><li>Water and juice boxes\u2014lots</li><li>Snacks: fruit, crackers, anything not melty</li><li>Beach toys: buckets, shovels, ball</li><li>Umbrella or pop-up shade</li><li>Wet wipes and hand sanitizer</li><li>A plastic bag for wet stuff</li><li>Fully charged phone + portable charger</li></ul><p class=\"muted t-small\">Set a meeting spot in case anyone wanders. Then relax\u2014a little.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "checklist for going to the library",
+    "what to bring to library",
+    "library visit checklist",
+    "library trip prep",
+    "things to do at library",
+    "library day checklist",
+    "prep for library visit",
+    "what to bring to the library",
+    "library trip checklist",
+    "getting ready for a library visit",
+    "things to remember for library",
+    "library run list",
+    "prepare for library visit"
+   ],
+   "title": "Library visit checklist",
+   "html": "<div class=\"card\"><h4>Library visit checklist</h4><p class=\"muted t-small\">Quiet, free, and full of answers. Bring a tote.</p><ul class=\"list\"><li>Library card (or ID to get one)</li><li>Tote bag for books</li><li>List of books or topics you're after</li><li>Returns from last time (avoid fines)</li><li>Headphones if you'll use computers</li><li>Notebook for call numbers</li><li>Water bottle</li><li>Phone charger</li><li>Library app loaded (if you use one)</li><li>A little patience for the self-checkout</li></ul><p class=\"muted t-small\">Ask a librarian. It's literally their job and they're good at it.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "checklist for going to a concert",
+    "concert prep checklist",
+    "what to bring to a concert",
+    "concert day checklist",
+    "concert essentials",
+    "preparing for a concert",
+    "concert going checklist",
+    "what to bring to a concert",
+    "concert preparation list",
+    "getting ready for a concert",
+    "concert essentials checklist",
+    "things to pack for a concert",
+    "concert night prep"
+   ],
+   "title": "Concert night checklist",
+   "html": "<div class=\"card\"><h4>Concert night checklist</h4><p class=\"muted t-small\">Loud, bright, and over too soon. Plan the small stuff.</p><ul class=\"list\"><li>Tickets (digital or printed)</li><li>ID if venue requires it</li><li>Earplugs\u2014your future self says thanks</li><li>Small bag within venue rules</li><li>Cash or card for merch and drinks</li><li>Phone charged + portable battery</li><li>Comfortable shoes for standing</li><li>Weather layer for the walk out</li><li>Ride plan: transit, parking, or pickup spot</li><li>Meet-up point for your group</li></ul><p class=\"muted t-small\">Check the venue's bag policy before you leave. Some are strict.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "checklist for going to the post office",
+    "post office trip checklist",
+    "what to bring to post office",
+    "mailing a package checklist",
+    "post office errand list",
+    "shipping package checklist",
+    "post office visit prep",
+    "what to take to the post office",
+    "post office errand list",
+    "things to bring to post office",
+    "post office trip checklist",
+    "prep for post office visit",
+    "post office to-do list"
+   ],
+   "title": "Post office run checklist",
+   "html": "<div class=\"card\"><h4>Post office run checklist</h4><p class=\"muted t-small\">The line is long. The satisfaction of sending it is worth it.</p><ul class=\"list\"><li>Package(s) sealed and addressed</li><li>Return address written or label ready</li><li>Contents secured (tape, bubble wrap)</li><li>Addresses double-checked</li><li>Payment method</li><li>Tracking numbers if printing online</li><li>Any return slips or customs forms</li><li>Envelope for documents</li><li>Phone with the address you're sending to</li><li>Patience for the queue</li></ul><p class=\"muted t-small\">Weigh it at home if you can. Saves a trip to the counter scale.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "First day of a new remote job checklist",
+    "new remote job starting tomorrow",
+    "work from home setup first day",
+    "remote onboarding checklist",
+    "help me get ready for day 1 remote work",
+    "starting remote job, what do i do",
+    "first day wfh job checklist",
+    "remote job first day prep",
+    "new remote job checklist",
+    "what to do on first day of remote job",
+    "starting a remote job checklist",
+    "first day remote work setup",
+    "remote job onboarding checklist"
+   ],
+   "title": "First day of a new remote job checklist",
+   "html": "<div class=\"card\"><h4>First day of a new remote job checklist</h4><p class=\"t-small muted\">Hello <regex>user_name</regex> \u2014 deep breath. You've got this.</p><ul class=\"list\"><li>Test your video call app and mic</li><li>Set up your workspace: chair, light, water</li><li>Log in to email and team chat</li><li>Read your onboarding docs</li><li>Say hi in the team channel</li><li>Schedule a 1:1 with your manager</li><li>Block lunch on your calendar</li><li>Write down three questions</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "Before a job interview checklist",
+    "job interview prep list",
+    "what to do before an interview",
+    "interview day checklist",
+    "help me prep for my interview tomorrow",
+    "first interview in years",
+    "job interview to-do",
+    "job interview prep list",
+    "what to do before an interview",
+    "interview preparation checklist",
+    "getting ready for a job interview",
+    "interview day checklist",
+    "things to prepare for interview"
+   ],
+   "title": "Before a job interview checklist",
+   "html": "<div class=\"card\"><h4>Before a job interview checklist</h4><ul class=\"list\"><li>Research the company: mission, recent news</li><li>Re-read the job description and match your skills</li><li>Prepare three stories using STAR method</li><li>Test your tech: video, mic, lighting</li><li>Print or save your resume and questions</li><li>Plan your outfit and route (or clear your desk)</li><li>Get a good night's sleep</li><li>Arrive 10 minutes early or log in early</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "First apartment move-in checklist",
+    "moving into first apartment",
+    "new apartment setup list",
+    "what to do when you move in",
+    "first apartment checklist",
+    "moving day checklist for renters",
+    "help me move into my first place",
+    "moving into first apartment checklist",
+    "new apartment move-in list",
+    "first apartment essentials",
+    "what to do when moving into first apartment",
+    "first apartment setup checklist",
+    "apartment move-in prep"
+   ],
+   "title": "First apartment move-in checklist",
+   "html": "<div class=\"card\"><h4>First apartment move-in checklist</h4><ul class=\"list\"><li>Take photos of the empty apartment for condition</li><li>Locate the fuse box, water shut-off, and thermostat</li><li>Test smoke detectors and replace batteries</li><li>Change the locks or ask landlord to</li><li>Clean before unpacking: kitchen, bathroom, floors</li><li>Set up utilities: electric, gas, internet</li><li>Unpack essentials: bedding, toiletries, one pot</li><li>Meet a neighbor or introduce yourself</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "First time at a laundromat checklist",
+    "laundromat visit checklist",
+    "how to use a laundromat",
+    "first laundromat trip",
+    "what to bring to laundromat",
+    "laundromat newbie guide",
+    "laundry mat checklist",
+    "what to bring to laundromat",
+    "laundromat visit checklist",
+    "first laundromat trip prep",
+    "laundry mat essentials",
+    "going to laundromat for first time",
+    "laundromat checklist"
+   ],
+   "title": "First time at a laundromat checklist",
+   "html": "<div class=\"card\"><h4>First time at a laundromat checklist</h4><ul class=\"list\"><li>Sort clothes: lights, darks, delicates</li><li>Bring quarters, detergent, dryer sheets</li><li>Check machine capacity and load size</li><li>Choose water temperature and cycle</li><li>Set a timer and don't leave clothes unattended</li><li>Clean lint trap before drying</li><li>Fold or hang immediately to avoid wrinkles</li><li>Wipe down the folding table when done</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "First time camping checklist",
+    "camping trip checklist",
+    "beginner camping list",
+    "what to pack for camping",
+    "camping essentials for first timers",
+    "help me plan a camping trip",
+    "camping gear checklist",
+    "camping for beginners checklist",
+    "first camping trip list",
+    "what to pack for first camping trip",
+    "camping essentials for newbies",
+    "beginner camping checklist",
+    "first time camping prep"
+   ],
+   "title": "First time camping checklist",
+   "html": "<div class=\"card\"><h4>First time camping checklist</h4><ul class=\"list\"><li>Tent, stakes, and mallet</li><li>Sleeping bag and pad</li><li>Headlamp or flashlight with extra batteries</li><li>First aid kit and any medications</li><li>Water, food, and a cooler</li><li>Fire starter, matches, or lighter</li><li>Layers for cold and rain</li><li>Map, compass, or charged phone</li><li>Trash bags to pack out everything</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "First day of a new semester checklist",
+    "new semester prep list",
+    "college semester start checklist",
+    "what to do before classes start",
+    "first week of semester checklist",
+    "semester kickoff checklist",
+    "back to school semester checklist",
+    "new semester prep list",
+    "first day of school checklist",
+    "semester start checklist",
+    "what to do before new semester",
+    "back to school checklist",
+    "first day of college checklist"
+   ],
+   "title": "First day of a new semester checklist",
+   "html": "<div class=\"card\"><h4>First day of a new semester checklist</h4><ul class=\"list\"><li>Print or download your class schedule</li><li>Check room locations and walking times</li><li>Buy or rent textbooks</li><li>Set up a planner or calendar</li><li>Charge your laptop and pack chargers</li><li>Get your student ID ready</li><li>Introduce yourself to one person in each class</li><li>Write down office hours and key dates</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "packing list for a week in a van",
+    "van trip packing checklist",
+    "what to bring on a campervan road trip",
+    "van life packing list for beginners",
+    "checklist for packing a van for a trip",
+    "road trip van packing essentials",
+    "help me pack for van trip",
+    "what to pack for van life",
+    "van trip essentials",
+    "packing for a van road trip",
+    "van travel checklist",
+    "van camping packing list",
+    "road trip van packing"
+   ],
+   "title": "Van trip packing checklist",
+   "html": "<div class=\"card\"><h4>Van trip packing checklist</h4><p class=\"muted\">Home on wheels, minus the kitchen sink. <regex>user_name</regex>, tick as you toss.</p><ul class=\"list\"><li><details class=\"acc\"><summary>Sleep system</summary><div class=\"body\"><ul><li>Fitted sheet + duvet or sleeping bag</li><li>Pillows (two, if you hog)</li><li>Eye mask and earplugs</li></ul></div></details></li><li><details class=\"acc\"><summary>Kitchen kit</summary><div class=\"body\"><ul><li>Camp stove + fuel</li><li>Pot, pan, spatula</li><li>Plates, bowls, cutlery for two</li><li>Sponge, soap, tea towel</li></ul></div></details></li><li><details class=\"acc\"><summary>Power and water</summary><div class=\"body\"><ul><li>Power bank (fully charged)</li><li>12V charger and cables</li><li>5L water container</li></ul></div></details></li><li><details class=\"acc\"><summary>Clothes and shoes</summary><div class=\"body\"><ul><li>Layers: tee, fleece, rain shell</li><li>Two pairs socks per day</li><li>Slides for midnight loo runs</li></ul></div></details></li><li><details class=\"acc\"><summary>Van bits</summary><div class=\"body\"><ul><li>Levelling blocks</li><li>Head torch</li><li>Duct tape and multi-tool</li></ul></div></details></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how to pack a hospital bag",
+    "hospital bag checklist for birth",
+    "what to pack in hospital bag for labor",
+    "maternity hospital bag list",
+    "hospital bag essentials for delivery",
+    "packing list for hospital birth",
+    "help packing hospital bag",
+    "what to pack in hospital bag",
+    "hospital bag essentials",
+    "maternity hospital bag checklist",
+    "packing for hospital stay",
+    "hospital go bag list",
+    "what to bring to hospital for delivery"
+   ],
+   "title": "Hospital bag checklist",
+   "html": "<div class=\"card\"><h4>Hospital bag checklist</h4><p class=\"muted\">For the big day. Pack by 36 weeks, <regex>user_name</regex>.</p><ul class=\"list\"><li><details class=\"acc\"><summary>For you</summary><div class=\"body\"><ul><li>ID, insurance, birth plan</li><li>Robe, slippers, socks</li><li>Toiletries, hair ties, lip balm</li><li>Phone + long charger cable</li></ul></div></details></li><li><details class=\"acc\"><summary>For baby</summary><div class=\"body\"><ul><li>Onesies (2-3), hat, socks</li><li>Swaddle blankets</li><li>Diapers, wipes, cream</li><li>Car seat installed</li></ul></div></details></li><li><details class=\"acc\"><summary>For partner</summary><div class=\"body\"><ul><li>Snacks, water, change of clothes</li><li>Pillow, blanket</li><li>Cash for parking</li></ul></div></details></li><li><details class=\"acc\"><summary>Extras</summary><div class=\"body\"><ul><li>Going-home outfit</li><li>Nursing bra and pads</li><li>Camera or phone with space</li></ul></div></details></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how to prepare for a marathon",
+    "marathon training checklist",
+    "checklist for first marathon",
+    "what to do before a marathon",
+    "marathon prep list",
+    "race day checklist for marathon",
+    "help me prep for marathon",
+    "marathon prep list",
+    "what to do before first marathon",
+    "marathon day checklist",
+    "first marathon preparation",
+    "marathon training checklist",
+    "things to prepare for marathon"
+   ],
+   "title": "First marathon checklist",
+   "html": "<div class=\"card\"><h4>First marathon checklist</h4><p class=\"muted\">26.2 miles. You've got this, <regex>user_name</regex>.</p><ul class=\"list\"><li><details class=\"acc\"><summary>Training</summary><div class=\"body\"><ul><li>Follow a 16-20 week plan</li><li>Long runs on weekends</li><li>One rest day per week</li></ul></div></details></li><li><details class=\"acc\"><summary>Gear</summary><div class=\"body\"><ul><li>Broken-in running shoes</li><li>Moisture-wicking clothes</li><li>Anti-chafe balm</li></ul></div></details></li><li><details class=\"acc\"><summary>Fuel</summary><div class=\"body\"><ul><li>Energy gels or chews</li><li>Water bottle or hydration vest</li><li>Electrolyte tabs</li></ul></div></details></li><li><details class=\"acc\"><summary>Race day</summary><div class=\"body\"><ul><li>Pin race bib</li><li>Body glide on hot spots</li><li>Start slow, finish strong</li></ul></div></details></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how to prepare for a podcast interview",
+    "podcast interview checklist",
+    "what to do before a podcast interview",
+    "guest podcast prep list",
+    "first podcast interview checklist",
+    "prepare for podcast interview",
+    "help me prep for podcast",
+    "podcast interview prep",
+    "what to do before podcast interview",
+    "podcast guest checklist",
+    "interview preparation for podcast",
+    "podcast appearance checklist",
+    "getting ready for podcast interview"
+   ],
+   "title": "Podcast interview checklist",
+   "html": "<div class=\"card\"><h4>Podcast interview checklist</h4><p class=\"muted\">Sound like a pro, <regex>user_name</regex>.</p><ul class=\"list\"><li><details class=\"acc\"><summary>Before</summary><div class=\"body\"><ul><li>Research host and show</li><li>Prepare 3 key talking points</li><li>Test mic and headphones</li></ul></div></details></li><li><details class=\"acc\"><summary>Setup</summary><div class=\"body\"><ul><li>Quiet room, soft surfaces</li><li>USB mic, not laptop mic</li><li>Close other apps</li></ul></div></details></li><li><details class=\"acc\"><summary>During</summary><div class=\"body\"><ul><li>Speak slowly, pause</li><li>Use host's name</li><li>Share stories, not just facts</li></ul></div></details></li><li><details class=\"acc\"><summary>After</summary><div class=\"body\"><ul><li>Thank host by email</li><li>Share episode when live</li><li>Ask for feedback</li></ul></div></details></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how to prepare for a video shoot",
+    "video shoot checklist",
+    "what to do before a video shoot",
+    "first video shoot checklist",
+    "video production prep list",
+    "prepare for video shoot",
+    "help me prep for video shoot",
+    "video shoot prep list",
+    "what to prepare for video shoot",
+    "first video production checklist",
+    "video shoot day checklist",
+    "preparing for a video shoot",
+    "video shoot essentials"
+   ],
+   "title": "First video shoot checklist",
+   "html": "<div class=\"card\"><h4>First video shoot checklist</h4><p class=\"muted\">Lights, camera, action plan, <regex>user_name</regex>.</p><ul class=\"list\"><li><details class=\"acc\"><summary>Pre-production</summary><div class=\"body\"><ul><li>Write script or outline</li><li>Scout location</li><li>Gather props and wardrobe</li></ul></div></details></li><li><details class=\"acc\"><summary>Gear</summary><div class=\"body\"><ul><li>Camera, tripod, batteries</li><li>SD cards with space</li><li>External mic</li></ul></div></details></li><li><details class=\"acc\"><summary>Lighting</summary><div class=\"body\"><ul><li>Natural light or softbox</li><li>Reflector for fill</li><li>Avoid harsh overheads</li></ul></div></details></li><li><details class=\"acc\"><summary>On the day</summary><div class=\"body\"><ul><li>Arrive early</li><li>Test audio levels</li><li>Shoot extra B-roll</li></ul></div></details></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how to prepare for a music festival",
+    "music festival checklist",
+    "what to bring to a festival",
+    "first festival checklist",
+    "festival packing list",
+    "prepare for music festival",
+    "help me prep for festival",
+    "what to bring to music festival",
+    "festival packing list",
+    "music festival essentials",
+    "preparing for a music festival",
+    "festival checklist",
+    "music festival prep"
+   ],
+   "title": "Music festival checklist",
+   "html": "<div class=\"card\"><h4>Music festival checklist</h4><p class=\"muted\">Dance, hydrate, repeat, <regex>user_name</regex>.</p><ul class=\"list\"><li><details class=\"acc\"><summary>Tickets and entry</summary><div class=\"body\"><ul><li>Ticket printed or on phone</li><li>ID and cash</li><li>Festival map and schedule</li></ul></div></details></li><li><details class=\"acc\"><summary>What to wear</summary><div class=\"body\"><ul><li>Comfortable shoes, broken in</li><li>Layers for day to night</li><li>Rain poncho</li></ul></div></details></li><li><details class=\"acc\"><summary>Essentials</summary><div class=\"body\"><ul><li>Water bottle (empty if required)</li><li>Sunscreen and hat</li><li>Portable charger</li></ul></div></details></li><li><details class=\"acc\"><summary>Extras</summary><div class=\"body\"><ul><li>Earplugs</li><li>Small backpack</li><li>Meet-up point with friends</li></ul></div></details></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "First time at a farmers market checklist",
+   "user_requests": [
+    "going to a farmers market for the first time what do i bring",
+    "farmers market first visit checklist",
+    "how do i shop at a farmers market? never been",
+    "first time at a farmers market tips",
+    "farmers mkt newbie checklist pls",
+    "what should I know before my first farmers market trip",
+    "farmers market shopping list for beginners",
+    "whats good to carry when u go to a farmers market first time",
+    "farmers market newbie items to bring??",
+    "heading to a farmers mkrt tmrw wat do i need",
+    "never been to a farmers market before, what should i have on me",
+    "farmers market first visit essentials list",
+    "do i need cash or bags for the farmers market"
+   ],
+   "html": "<div class=\"card\"><h4>First farmers market visit</h4><p class=\"muted t-small\">Go early for the good stuff, <regex>user_name</regex>. Bring a tote and small bills.</p><ul class=\"list\"><li>Cash in small bills, plus a card just in case</li><li>Reusable tote or two, plus a cooler bag for eggs and cheese</li><li>Walk the whole loop first, then buy</li><li>Ask the vendor what's peaking this week</li><li>Bring a list but stay open to what looks best</li><li>Note the stall names you liked for next time</li><li>Go early, before the crowd and the heat</li></ul><div class=\"callout info\">Many stalls sell out by 11am. If you see one perfect tomato, buy it now, not on the way back.</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Before a root canal appointment checklist",
+   "user_requests": [
+    "root canal tomorrow what do i do to prep",
+    "getting a root canal checklist",
+    "prep for root canal appointment",
+    "what to do before a root canal",
+    "root canal tomorrow kinda nervous checklist",
+    "how do i get ready for a root canal procedure",
+    "root canal prep list pls",
+    "got a root canal scheduled, how do i get ready",
+    "wat do i eat before root canal",
+    "prep list for root canal appt??",
+    "root canal in 2 days need to know what to do",
+    "is there anything i should do the night before a root canal",
+    "root canal appointment tips to prepare"
+   ],
+   "html": "<div class=\"card\"><h4>Root canal prep</h4><p class=\"muted t-small\">Deep breath, <regex>user_name</regex>. The buildup is worse than the thing itself.</p><ul class=\"list\"><li>Eat a real meal beforehand unless told otherwise</li><li>Take any premedication exactly as instructed</li><li>Arrange a ride if you're getting sedation</li><li>Skip alcohol and caffeine the night before</li><li>Brush and floss, but go easy right around the tooth</li><li>Bring your insurance card and a list of meds</li><li>Charge your phone for the waiting room</li></ul><div class=\"callout good\">Plan something soft for dinner. Soup, eggs, yogurt. Your jaw will thank you.</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Changing a flat tire checklist",
+   "user_requests": [
+    "how do i change a flat tire step by step",
+    "flat tire what do i do checklist",
+    "changing a tire checklist",
+    "got a flat on the highway help",
+    "flat tire emergency checklist",
+    "can you walk me through changing a flat tire",
+    "tire change steps pls",
+    "flat tire on the highway help step by step",
+    "wat tools do i need to change a tire",
+    "how to swap a flat for the spare, quick guide",
+    "tire blew out what do i do first",
+    "can i change a flat myself? steps",
+    "changing a tire for dummies checklist"
+   ],
+   "html": "<div class=\"card\"><h4>Flat tire, step by step</h4><p class=\"muted t-small\">Pull as far off the road as you can, <regex>user_name</regex>. Hazards on first.</p><ol class=\"list\"><li>Park on flat ground, hazards on, parking brake up</li><li>Get the spare, jack, and wrench out of the trunk</li><li>Loosen the lug nuts a quarter turn before lifting</li><li>Jack the car up until the flat clears the ground</li><li>Remove the lug nuts, then the wheel</li><li>Mount the spare, hand-tighten the nuts in a star pattern</li><li>Lower, then tighten firmly with the wrench</li></ol><div class=\"callout warn\">Donut spares are usually good for about 50 miles at 50 mph. Get the real tire fixed soon.</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "First day of a new job checklist",
+   "user_requests": [
+    "first day at new job what do i bring",
+    "new job first day checklist",
+    "starting a new job tomorrow help",
+    "first day new job prep list",
+    "what should i do the night before a new job",
+    "new job day 1 checklist pls",
+    "nervous about first day at new job checklist",
+    "starting a new job monday what should i pack",
+    "new job day 1 must bring items??",
+    "what do ppl bring on their first day at work",
+    "first day work jitters, what do i need in my bag",
+    "new job orientation checklist",
+    "things to have ready for first day of work"
+   ],
+   "html": "<div class=\"card\"><h4>First day at a new job</h4><p class=\"muted t-small\">You already got the job, <regex>user_name</regex>. Today is just showing up.</p><ul class=\"list\"><li>Confirm start time and where to go</li><li>Lay out your outfit the night before</li><li>Pack your ID, tax forms, and bank details if needed</li><li>Bring a notebook and pen (yes, the analog kind)</li><li>Plan your route with 15 minutes of buffer</li><li>Prep two questions to ask your manager</li><li>Save the front desk or HR number in your phone</li></ul><div class=\"callout info\">Learn three names today. Coworkers remember the person who asked theirs first.</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Hosting a dinner party checklist",
+   "user_requests": [
+    "hosting first dinner party what do i do",
+    "dinner party checklist",
+    "having people over for dinner help",
+    "dinner party prep list",
+    "first dinner party for friends checklist",
+    "how do i host a dinner party without losing it",
+    "dinner party to-do list pls",
+    "throwing a dinner party for the first time, help",
+    "dinner party prep list for beginners",
+    "wat do i need to do before guests arrive for dinner",
+    "hosting dinner at my place first time, checklist",
+    "dinner party timeline and to-dos",
+    "having people over for dinner, what should i prep"
+   ],
+   "html": "<div class=\"card\"><h4>Dinner party, the calm version</h4><p class=\"muted t-small\">Pick one dish you've made before, <regex>user_name</regex>. Experiments are for Tuesdays.</p><ul class=\"list\"><li>Confirm the guest count and any allergies</li><li>Choose a menu you can mostly make ahead</li><li>Shop two days before, not the day of</li><li>Set the table the night before if you can</li><li>Chill drinks early so you're not scrambling</li><li>Have a playlist ready and the volume low</li><li>Aim to be done cooking 20 minutes before they arrive</li></ul><div class=\"callout good\">Nobody remembers the garnish. They remember whether you sat down with them.</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Buying a used car checklist",
+   "user_requests": [
+    "buying a used car what do i check",
+    "used car inspection checklist",
+    "looking at a used car tomorrow checklist",
+    "used car buying tips",
+    "what to look for in a used car",
+    "first time buying a used car checklist",
+    "used car checklist pls",
+    "used car buying guide what to inspect",
+    "checking out a used car this weekend, what to look for",
+    "wat questions to ask when buying a used car",
+    "used car checklist before i hand over cash",
+    "how to not get ripped off buying a used car",
+    "inspecting a secondhand car checklist"
+   ],
+   "html": "<div class=\"card\"><h4>Used car walk-around</h4><p class=\"muted t-small\">Trust the VIN more than the seller, <regex>user_name</regex>.</p><ul class=\"list\"><li>Run a VIN history report before you go</li><li>Check tire tread depth and manufacture date</li><li>Look for matching paint and panel gaps</li><li>Cold-start the engine, listen for rough idle</li><li>Test every button, window, and the AC</li><li>Check for rust in wheel wells and under the trunk mat</li><li>Ask when the timing belt, brakes, and fluids were last done</li></ul><div class=\"callout warn\">\"Runs great, no issues\" from a seller is a rumor, not a fact. Get a mechanic to look it over before you pay.</div></div>",
+   "augmented": true
+  },
+  {
+   "title": "First aquarium setup checklist",
+   "user_requests": [
+    "checklist for setting up my first fish tank",
+    "brand new aquarium, what do i need before i add fish",
+    "first fish tank setup steps pls",
+    "how do I cycle a new aquarium, checklist?",
+    "tank setup list for beginners? goldfish",
+    "starting a 10 gallon tank, help",
+    "new aquarium day checklist",
+    "new fish tank, what do i need to buy first",
+    "setting up a 10 gallon tank for beginners",
+    "first fish tank setup steps??",
+    "just got an aquarium, where do i start",
+    "fish tank cycling and setup checklist",
+    "what equipment for a starter aquarium"
+   ],
+   "html": "<div class=\"card\"><h4>First aquarium setup</h4><p class=\"muted t-small\">Fish come last, <regex>user_name</regex>. The water needs a job first.</p><ul class=\"list\"><li><details class=\"acc\"><summary>Pick the spot</summary><div class=\"body\">Away from windows and vents. Steady temperature beats a pretty view.</div></details></li><li><details class=\"acc\"><summary>Wash substrate and decor</summary><div class=\"body\">Rinse gravel in a bucket until the water runs clear. Hot water only, no soap, ever.</div></details></li><li><details class=\"acc\"><summary>Fill and dechlorinate</summary><div class=\"body\">Tap water is fine once treated. Dose for the full tank volume, not just what you pour.</div></details></li><li><details class=\"acc\"><summary>Start the filter and heater</summary><div class=\"body\">Let both run 24 hours before anything living goes in.</div></details></li><li><details class=\"acc\"><summary>Test water daily</summary><div class=\"body\">Ammonia and nitrite should climb, then fall to zero. That's the cycle doing its work.</div></details></li><li><details class=\"acc\"><summary>Add fish slowly</summary><div class=\"body\">Float the bag 15 minutes, then net the fish in. Skip the shop water.</div></details></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "First time at a pick-your-own farm checklist",
+   "user_requests": [
+    "what to bring to a u-pick berry farm?",
+    "pick your own strawberries this weekend, checklist",
+    "going fruit picking with the family, what do i need",
+    "u-pick farm tips checklist",
+    "first time apple picking, help",
+    "checklist for berry picking trip?",
+    "what should I wear to pick your own farm",
+    "u-pick farm first time, what should i wear/bring",
+    "going strawberry picking wat do i need",
+    "pick your own fruit farm tips for newbies",
+    "what to take to a you-pick orchard",
+    "first time berry picking checklist",
+    "prep for a u-pick farm visit"
+   ],
+   "html": "<div class=\"card\"><h4>Pick-your-own farm day</h4><p class=\"muted t-small\">Dress like the field will win, <regex>user_name</regex>.</p><ul class=\"list\"><li><details class=\"acc\"><summary>Call ahead or check the site</summary><div class=\"body\">Fruit ripens on its own schedule. Weeds and weather close fields without notice.</div></details></li><li><details class=\"acc\"><summary>Bring your own containers</summary><div class=\"body\">Shallow buckets and berry baskets beat deep bags. Farm-supplied containers often cost extra.</div></details></li><li><details class=\"acc\"><summary>Wear closed-toe shoes</summary><div class=\"body\">Straw stubble and mud are the whole experience.</div></details></li><li><details class=\"acc\"><summary>Pack water, hats, sunscreen</summary><div class=\"body\">Fields have no shade and rarely a drinking fountain.</div></details></li><li><details class=\"acc\"><summary>Ask where the ripe rows are</summary><div class=\"body\">Staff know exactly which section was picked last. It saves twenty minutes of wandering.</div></details></li><li><details class=\"acc\"><summary>Weigh and pay before you snack</summary><div class=\"body\">Eating in the field is usually fine, but it still gets weighed.</div></details></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "First time using an instant pot checklist",
+   "user_requests": [
+    "just got an instant pot, where do i start",
+    "instant pot first use checklist?",
+    "pressure cooker beginner list pls",
+    "how to do the water test on a new instant pot",
+    "new electric pressure cooker, help me not blow it up",
+    "first instant pot meal checklist",
+    "instant pot setup steps?",
+    "instant pot newbie, first things to do",
+    "just unboxed an instant pot, how do i start",
+    "instant pot initial setup and first recipe",
+    "wat do i need to know before using an instant pot",
+    "instant pot beginner checklist",
+    "first time pressure cooking, help"
+   ],
+   "html": "<div class=\"card\"><h4>Instant Pot first run</h4><p class=\"muted t-small\">It's a pressure cooker, <regex>user_name</regex>. Respect the valve and it's just a very patient kettle.</p><ul class=\"list\"><li><details class=\"acc\"><summary>Read the valve, not the manual</summary><div class=\"body\">Find Sealing and Venting on the lid. That one switch explains most scary stories.</div></details></li><li><details class=\"acc\"><summary>Run the water test</summary><div class=\"body\">Two cups of water, Manual 5 minutes, natural release. It proves the seal works and rinses the factory smell.</div></details></li><li><details class=\"acc\"><summary>Never fill past two-thirds</summary><div class=\"body\">Half full for anything that foams, like beans or pasta.</div></details></li><li><details class=\"acc\"><summary>Use at least one cup of liquid</summary><div class=\"body\">The pot needs steam to build pressure. Dry grains will scorch.</div></details></li><li><details class=\"acc\"><summary>Plan the release</summary><div class=\"body\">Quick release for veg, natural for meat. Ten minutes of natural release is a good default.</div></details></li><li><details class=\"acc\"><summary>Hand wash the lid and ring</summary><div class=\"body\">The silicone ring holds onto strong smells. Soak it in vinegar water now and then.</div></details></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "First time hosting a dinner party checklist",
+   "user_requests": [
+    "hosting my first dinner party, checklist",
+    "dinner party prep list?",
+    "i'm cooking for 8 people saturday, help",
+    "first time hosting, what do i do before guests arrive",
+    "dinner party timeline checklist pls",
+    "what to prep the day before a dinner party",
+    "hosting tips checklist for beginners",
+    "my first ever dinner party, what do i do",
+    "hosting debut dinner party checklist",
+    "first time having friends over for dinner, need a plan",
+    "dinner party hosting for the first time tips",
+    "wat to prep for my first dinner party",
+    "beginner dinner party host checklist"
+   ],
+   "html": "<div class=\"card\"><h4>First dinner party</h4><p class=\"muted t-small\">You're not cooking a menu, <regex>user_name</regex>. You're hosting a room.</p><ul class=\"list\"><li><details class=\"acc\"><summary>Pick one dish you've made before</summary><div class=\"body\">New recipes are for Tuesdays. Guests are for showing off the thing you already nail.</div></details></li><li><details class=\"acc\"><summary>Ask about diets when you invite</summary><div class=\"body\">Not the night of. And keep one plain, safe dish on the table.</div></details></li><li><details class=\"acc\"><summary>Write a backward timeline</summary><div class=\"body\">Serve at 7 means oven at 5:40 and a shower at 4. Write it down.</div></details></li><li><details class=\"acc\"><summary>Chill drinks and clear the fridge</summary><div class=\"body\">You need a shelf for the food you just made. Do this the day before.</div></details></li><li><details class=\"acc\"><summary>Set the table early</summary><div class=\"body\">Plates, glasses, water pitcher. It's one thing you can't do while stirring.</div></details></li><li><details class=\"acc\"><summary>Light, music, candles by the door</summary><div class=\"body\">Two minutes of fuss that makes the whole night feel planned.</div></details></li><li><details class=\"acc\"><summary>Accept every offer of help</summary><div class=\"body\">Guests like a job. Say yes to ice, bread, and dish duty.</div></details></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "First time knitting a scarf checklist",
+   "user_requests": [
+    "learn to knit a scarf checklist?",
+    "knitting beginner steps, scarf",
+    "what do i need to knit my first scarf",
+    "yarn and needles for a beginner scarf, help",
+    "first knitting project checklist pls",
+    "how to start knitting, complete beginner",
+    "scarf knitting plan?",
+    "knitting a scarf for the first time, what do i need",
+    "learn to knit scarf beginner supplies",
+    "just got knitting needles, how do i make a scarf",
+    "scarf knitting first project checklist",
+    "what yarn and needles for a first scarf",
+    "knitting newbie scarf steps"
+   ],
+   "html": "<div class=\"card\"><h4>First scarf, start to finish</h4><p class=\"muted t-small\">One stitch until it stops being interesting, <regex>user_name</regex>. Then it gets good.</p><ul class=\"list\"><li><details class=\"acc\"><summary>Buy chunky yarn and size 8-10 needles</summary><div class=\"body\">Thin yarn and tiny needles make everything harder. Save them for scarf two.</div></details></li><li><details class=\"acc\"><summary>Knit a practice square first</summary><div class=\"body\">Twenty rows you'll throw away teaches cast-on, knitting, and tension.</div></details></li><li><details class=\"acc\"><summary>Learn cast-on and knit stitch only</summary><div class=\"body\">Garter stitch is just knitting every row. That's a whole scarf. You don't need more yet.</div></details></li><li><details class=\"acc\"><summary>Cast on 20-30 stitches</summary><div class=\"body\">Chunky yarn, that's roughly a scarf. Count twice before row one.</div></details></li><li><details class=\"acc\"><summary>Knit until it's as long as your person</summary><div class=\"body\">Six feet is generous. Five is fine. Stop when the yarn runs low.</div></details></li><li><details class=\"acc\"><summary>Cast off loosely and weave in the tails</summary><div class=\"body\">Too tight and the edge puckers. Leave long tails, you'll thank yourself.</div></details></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "First day with a new houseplant checklist",
+   "user_requests": [
+    "just brought home a new houseplant, now what",
+    "new plant care checklist?",
+    "houseplant first week tips",
+    "how do i not kill this plant i just bought",
+    "checklist for a new indoor plant",
+    "repot a new plant or wait? checklist",
+    "new houseplant checklist for beginners",
+    "just got a new plant, what do i do first",
+    "new houseplant care first day steps",
+    "brought home a monstera, now what",
+    "first 24 hours with a new plant checklist",
+    "how to not kill my new houseplant day 1",
+    "new plant parent checklist"
+   ],
+   "html": "<div class=\"card\"><h4>New houseplant, first week</h4><p class=\"muted t-small\">Most new plants die of enthusiasm, <regex>user_name</regex>. Do less than you want to.</p><ul class=\"list\"><li><details class=\"acc\"><summary>Quarantine it for a week</summary><div class=\"body\">Check the undersides of leaves for bugs before it meets your collection.</div></details></li><li><details class=\"acc\"><summary>Wait on repotting</summary><div class=\"body\">Let it settle. Repot only if roots are circling out of the drainage holes.</div></details></li><li><details class=\"acc\"><summary>Find its light level</summary><div class=\"body\">Bright indirect for most. Right up against a window is direct, and it burns leaves.</div></details></li><li><details class=\"acc\"><summary>Water only when the top inch is dry</summary><div class=\"body\">Stick a finger in. Schedules kill plants, fingertips don't.</div></details></li><li><details class=\"acc\"><summary>Empty the saucer</summary><div class=\"body\">Standing water rots roots. No saucer? Water in the sink and let it drip.</div></details></li><li><details class=\"acc\"><summary>Keep the nursery tag</summary><div class=\"body\">That little stick is your plant's name. You'll forget it by Friday.</div></details></li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "first time going to a drive-in movie checklist",
+    "drive in movie night checklist",
+    "what to bring to a drive-in theater",
+    "drive-in movie tips",
+    "help me prep for drive-in cinema",
+    "first drive-in movie experience checklist",
+    "drive-in movie what do i need",
+    "drive in theater first time what to bring",
+    "going to a drive-in movie, need a checklist",
+    "wat do i need for a drive in movie night",
+    "drive-in movie newbie tips",
+    "first drive in experience checklist",
+    "what to pack for drive in theater"
+   ],
+   "title": "First drive-in movie checklist",
+   "html": "<div class=\"card\"><h4>First drive-in movie checklist</h4><p class=\"muted t-small\">Roll in early, tune in, and don't let the battery die during the credits.</p><ul class=\"list\"><li>Check showtime &amp; gate open time (arrive 45+ min early for a good spot)</li><li>Portable FM radio or car radio \u2014 sound comes through your stereo</li><li>Jumper cables or a portable jump starter (idling for 2 hours is a battery gamble)</li><li>Blankets, pillows, or camp chairs if you're sitting outside</li><li>Snacks and drinks \u2014 most drive-ins allow outside food</li><li>Bug spray (dusk = mosquitoes)</li><li>Trash bag for your spot \u2014 leave it cleaner than you found it</li><li>Cash or card for the snack bar, because nostalgia popcorn hits different</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "how to prepare for a first therapy session",
+    "therapy intake checklist",
+    "first counseling appointment prep",
+    "what to bring to therapy",
+    "prep for first therapist visit",
+    "therapy first session checklist",
+    "help me get ready for therapy",
+    "first counseling appointment, how to prep",
+    "what do i bring to my first therapy session",
+    "nervous about first therapy session, checklist",
+    "therapy intake prep list",
+    "first time seeing a therapist what to expect to do",
+    "how to get ready for therapy session 1"
+   ],
+   "title": "First therapy session checklist",
+   "html": "<div class=\"card\"><h4>First therapy session checklist</h4><p class=\"muted t-small\">You don't need a speech. Just a few notes and an open mind.</p><ul class=\"list\"><li>Jot down 2\u20133 things you want to talk about (bullet points are fine)</li><li>Note any major life events or stressors from the past year</li><li>List current medications and dosages</li><li>Insurance card and ID, if you're using coverage</li><li>Arrive 10\u201315 min early for paperwork</li><li>Bring water and a tissue \u2014 emotions sneak up</li><li>Decide what you're comfortable sharing, and what you're not (yet)</li><li>Give yourself permission to not click with the first therapist</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "preparing for a job fair checklist",
+    "job fair tips",
+    "what to bring to a career fair",
+    "career fair prep",
+    "first job fair checklist",
+    "job fair what do i need",
+    "how to get ready for a job fair",
+    "job fair tomorrow, what do i bring",
+    "career fair prep checklist",
+    "what to wear and bring to a job fair",
+    "first job fair tips and checklist",
+    "job fair must do's before i go",
+    "how to prepare for a career fair"
+   ],
+   "title": "Job fair checklist",
+   "html": "<div class=\"card\"><h4>Job fair checklist</h4><p class=\"muted t-small\">Print r\u00e9sum\u00e9s, wear comfortable shoes, and have a 30-second intro ready.</p><ul class=\"list\"><li>Update and print 10\u201315 copies of your r\u00e9sum\u00e9</li><li>Research the companies attending (pick your top 5)</li><li>Prepare a 30-second elevator pitch</li><li>Dress business casual \u2014 layers, because conference halls are unpredictable</li><li>Bring a padfolio or folder for business cards and notes</li><li>Write down 2\u20133 questions per target company</li><li>Charge your phone and bring a portable battery</li><li>Follow up with a thank-you email within 24 hours</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "first time at a casino checklist",
+    "casino night prep",
+    "what to know before going to a casino",
+    "casino first visit tips",
+    "prep for casino trip",
+    "casino checklist",
+    "going to casino what do i need",
+    "first time going to a casino, what should i know",
+    "casino newbie checklist",
+    "wat do i bring to a casino first time",
+    "casino etiquette and prep for beginners",
+    "heading to vegas casino first time checklist",
+    "first casino trip tips"
+   ],
+   "title": "First casino visit checklist",
+   "html": "<div class=\"card\"><h4>First casino visit checklist</h4><p class=\"muted t-small\">Set a budget, learn the table minimums, and tip the dealers.</p><ul class=\"list\"><li>Set a strict cash budget before you walk in (and leave the ATM card at home if you're prone to \"just one more\")</li><li>Bring your ID \u2014 you'll need it to enter and to cash out</li><li>Wear comfortable shoes; casino floors are a hike</li><li>Know the table minimums before you sit down</li><li>Learn basic etiquette: tip dealers, don't touch the cards, place bets before the deal</li><li>Take breaks \u2014 free drinks are a trap, not a strategy</li><li>Set a time limit, not just a money limit</li><li>Remember: the house always has an edge. Play for fun, not for rent.</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "first time at a renaissance faire checklist",
+    "ren faire prep",
+    "what to bring to a renaissance fair",
+    "renaissance faire tips",
+    "prep for ren faire",
+    "ren faire checklist",
+    "going to a renaissance festival what do i need"
+   ],
+   "title": "First Renaissance faire checklist",
+   "html": "<div class=\"card\"><h4>First Renaissance faire checklist</h4><p class=\"muted t-small\">Comfortable shoes, cash for turkey legs, and a willingness to say \"huzzah.\"</p><ul class=\"list\"><li>Comfortable walking shoes (the grounds are usually grass or dirt)</li><li>Cash for food, drinks, and tipping performers \u2014 many vendors are cash-only</li><li>Sunscreen and a hat; shade is scarce</li><li>Refillable water bottle</li><li>Costume optional, but fun \u2014 check the faire's costume rules first</li><li>Small bag or belt pouch for your phone, wallet, and a turkey leg napkin</li><li>Check the schedule for jousting times and shows you don't want to miss</li><li>Bring a sense of humor for the improv actors \u2014 they will roast you lovingly</li></ul></div>"
+  },
+  {
+   "user_requests": [
+    "first time at a karaoke bar checklist",
+    "karaoke night prep",
+    "what to do at karaoke",
+    "karaoke first time tips",
+    "prep for karaoke",
+    "karaoke checklist",
+    "going to karaoke what do i need"
+   ],
+   "title": "First karaoke night checklist",
+   "html": "<div class=\"card\"><h4>First karaoke night checklist</h4><p class=\"muted t-small\">Pick a song you know by heart, not one you wish you knew.</p><ul class=\"list\"><li>Choose a song in your vocal comfort zone (no Mariah unless you can actually hit it)</li><li>Have a backup song ready</li><li>Practice the lyrics once or twice beforehand \u2014 the screen helps, but not that much</li><li>Hydrate and avoid too much liquid courage; slurred karaoke is only fun for you</li><li>Check the sign-up process (some places have apps, some have clipboards)</li><li>Tip the KJ (karaoke host) \u2014 they control your fate</li><li>Don't hog the mic; one song per rotation is the unwritten rule</li><li>Cheer for everyone else. It's a group activity, not a talent show.</li></ul></div>"
+  },
+  {
+   "user_requests": [
+    "planning my first poker night with friends",
+    "poker night checklist",
+    "what do I need for a poker night at home",
+    "help me host a poker night",
+    "poker night with the crew checklist",
+    "home poker game setup checklist",
+    "first time hosting poker night checklist"
+   ],
+   "title": "Poker Night Host Checklist",
+   "html": "<div class=\"card\"><h4>Poker Night Host Checklist</h4><p class=\"muted t-small\">For <regex>user_name</regex> \u2014 keep it friendly, keep the chips flying.</p><ul class=\"list\"><li>Deck of cards (plus a spare)</li><li>Poker chips \u2014 at least 300 for 6 players</li><li>Felt table topper or a plain bedsheet</li><li>Snacks that don't leave grease on cards (pretzels, grapes, popcorn)</li><li>Drinks \u2014 water, soda, maybe a growler</li><li>Small notepad and pen for buy-ins</li><li>Blinds schedule taped to the wall</li><li>A clock or phone timer for levels</li><li>Trash bowl for wrappers</li><li>House rule sheet: no string bets, no slow-rolling</li><li>Music playlist ready \u2014 low key, no distractions</li><li>Enough chairs and elbow room</li></ul><div class=\"callout info\"><p>New to dealing? Look up a 30-second YouTube on how to shuffle chips. It's oddly soothing.</p></div></div>"
+  },
+  {
+   "user_requests": [
+    "how do I start a coin collection",
+    "coin collecting for beginners checklist",
+    "first coin collection checklist",
+    "getting into coin collecting",
+    "starting a coin collection tips",
+    "beginner coin collector checklist",
+    "coin collection starter kit"
+   ],
+   "title": "Starting a Coin Collection Checklist",
+   "html": "<div class=\"card\"><h4>Starting a Coin Collection Checklist</h4><ul class=\"list\"><li>Pick a focus: US pennies, world coins, silver, or a specific era</li><li>Get a folder or album with acid-free pages</li><li>Buy a magnifying glass (10x loupe is plenty)</li><li>Cotton gloves for handling uncirculated coins</li><li>Small plastic sleeves or 2x2 cardboard flips</li><li>Notebook to log finds \u2014 date, mint mark, condition</li><li>Join an online forum or local coin club for swaps</li><li>Learn the basics of grading (Good to Mint State)</li><li>Ask bank tellers for rolls of coins to search</li><li>Store away from humidity \u2014 silica packets help</li><li>Never clean old coins with polish; it kills value</li></ul><div class=\"callout good\"><p>Start with what's in your pocket. That 1965 quarter? Probably not silver, but check the edge.</p></div></div>"
+  },
+  {
+   "user_requests": [
+    "preparing for a blood donation",
+    "blood donation checklist",
+    "what to do before donating blood",
+    "first time blood donor checklist",
+    "blood donation prep",
+    "how to get ready to give blood",
+    "blood drive checklist"
+   ],
+   "title": "Blood Donation Day Checklist",
+   "html": "<div class=\"card\"><h4>Blood Donation Day Checklist</h4><p class=\"muted t-small\">Thanks for rolling up a sleeve, <regex>user_name</regex>.</p><ul class=\"list\"><li>Eat a good meal 2\u20133 hours before \u2014 iron-rich if you can</li><li>Hydrate: 16 oz of water right before you go</li><li>Bring photo ID and a list of medications</li><li>Wear a short-sleeved or loose top</li><li>Avoid heavy exercise before and after</li><li>Skip alcohol for 24 hours prior</li><li>Get a good night's sleep</li><li>Bring a book or podcast for the wait</li><li>Plan a snack for after \u2014 cookies are tradition</li><li>No aspirin for 48 hours if you're on a platelet schedule</li></ul><div class=\"callout warn\"><p>Feeling lightheaded? Tell the staff. They've seen it all and have juice boxes ready.</p></div></div>"
+  },
+  {
+   "user_requests": [
+    "how to plan a game night",
+    "game night checklist",
+    "hosting a board game night",
+    "board game night prep",
+    "first game night checklist",
+    "game night with friends checklist",
+    "organizing a game night"
+   ],
+   "title": "Game Night Host Checklist",
+   "html": "<div class=\"card\"><h4>Game Night Host Checklist</h4><ul class=\"list\"><li>Pick 2\u20133 games that fit the crowd (party, strategy, co-op)</li><li>Read the rules beforehand so you can teach fast</li><li>Set up a central table with enough chairs</li><li>Snacks in bowls \u2014 nothing too greasy</li><li>Drinks station away from the board</li><li>Phone basket by the door (optional but noble)</li><li>Timer or phone for turns if needed</li><li>Scorepad and pens</li><li>Background music low or off</li><li>Have a short filler game for late arrivals</li><li>Designate a rules lawyer \u2014 you, probably</li></ul><div class=\"callout info\"><p>Pro move: teach the game in 3 minutes, then play a practice round open-handed.</p></div></div>"
+  },
+  {
+   "user_requests": [
+    "starting a new journal",
+    "journaling checklist",
+    "how to start journaling",
+    "beginner journaling checklist",
+    "first journal setup",
+    "journaling for beginners",
+    "journal starter checklist"
+   ],
+   "title": "Beginning a Journal Checklist",
+   "html": "<div class=\"card\"><h4>Beginning a Journal Checklist</h4><ul class=\"list\"><li>Pick a notebook you actually like touching</li><li>Choose a pen that flows \u2014 no skipping</li><li>Decide a time: morning pages or before bed</li><li>Set a tiny goal: 3 sentences, not 3 pages</li><li>Skip the pressure to be profound</li><li>Date every entry</li><li>Write about today's small win</li><li>Add one thing you're curious about</li><li>Don't edit \u2014 let it be messy</li><li>Keep it visible on your desk or nightstand</li><li>If you miss a day, just start again</li></ul><div class=\"callout good\"><p>The blank page isn't a judge, <regex>user_name</regex>. It's just paper.</p></div></div>"
+  },
+  {
+   "user_requests": [
+    "how to plan a picnic",
+    "picnic checklist",
+    "first picnic with friends",
+    "picnic prep checklist",
+    "what to bring to a picnic",
+    "picnic planning list",
+    "simple picnic checklist"
+   ],
+   "title": "Picnic Planning Checklist",
+   "html": "<div class=\"card\"><h4>Picnic Planning Checklist</h4><ul class=\"list\"><li>Pick a spot with shade and a flat surface</li><li>Check the weather \u2014 wind is the enemy</li><li>Blanket or a big towel</li><li>Cooler with ice packs</li><li>Reusable plates, cups, and cutlery</li><li>Napkins and a trash bag</li><li>Sandwiches, fruit, and something crunchy</li><li>Water bottle for each person</li><li>Sunscreen and bug spray</li><li>A board game or frisbee</li><li>Speaker for music, charged</li></ul><div class=\"callout info\"><p>Bring a small cutting board \u2014 it doubles as a table for cups on grass.</p></div></div>"
+  }
+ ]
+}

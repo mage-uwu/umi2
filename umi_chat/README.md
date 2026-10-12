@@ -49,5 +49,26 @@ cc -O3 -march=native -fopenmp umi_chat.c -lm -o umi_chat
 ./umi_chat chat  --data data --load umi-1M-chat.bin --beta 8 --gamma 8 -v
 ```
 
-`pod_train.sh` is the start script for the RunPod CPU pod. It clones this branch, trains,
-evaluates, runs multi-turn demos, and serves `/root/ckpt` on port 8888.
+## umi-smart-internet (about $1.97 of DeepSeek)
+
+DeepSeek also built umi's visual vocabulary (`gen_web.py`, `augment_web.py`, in `data/web/`). It wrote:
+
+* the "Umi Cache UI" design system: one stylesheet with light and dark themes
+* a catalog of 47 client-side widgets: 10 answer wrappers (card, callout, quote, steps,
+  flashcard, accordion, and others), tables, stat tiles, timelines, SVG bar, line, pie and
+  donut charts, gauges, recipe cards, checklists, habit trackers, web-dev references, and
+  11 dashboard layouts
+* 3,757 cached instances, each a static HTML fragment with no scripts and no external
+  resources, plus about 47k user requests
+
+`prepare_web.py` builds `data_web/`, where widget 63 is the reserved "plain" class (no
+widget). A second MLM, trained the same way, picks a widget for each turn. The `chat` command
+then compiles the conversation into an HTML page, umi's own in-app interface:
+
+```
+./umi_chat chat --data data --load umi-1M-chat.bin --web data_web \
+                --web-load umi-smart-internet.bin --html umi.html
+```
+
+`pod_train.sh` is the start script for the RunPod CPU pod. It clones this branch, trains the chat
+model and then the widget model, evaluates, compiles demo pages, and serves `/root/ckpt` on port 8888.

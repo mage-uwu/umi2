@@ -1,0 +1,2315 @@
+{
+ "widget": "habit_tracker",
+ "instances": [
+  {
+   "user_requests": [
+    "track my reading habit for the week",
+    "I want to read every day, help me keep track",
+    "weekly reading streak tracker",
+    "reading habit - how am I doing?",
+    "can u make me a tracker for daily reading?",
+    "book habit check-in",
+    "i keep forgetting to read, show me my week",
+    "help me read more books each week",
+    "keep tabs on my weekly reading",
+    "reading log for the week",
+    "I wanna read 30 mins daily",
+    "book habit tracker",
+    "track pages read per day"
+   ],
+   "title": "Weekly Reading Habit",
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Habit: Read 20 pages</h4><p class=\"muted t-small\">You've read 4 of 7 days. A short session still counts.</p><div class=\"row\" style=\"flex-wrap:wrap;gap:var(--s-1);\"><span class=\"badge good\"><i class=\"dot\"></i>Mon</span><span class=\"badge good\"><i class=\"dot\"></i>Tue</span><span class=\"badge\">Wed</span><span class=\"badge good\"><i class=\"dot\"></i>Thu</span><span class=\"badge\">Fri</span><span class=\"badge good\"><i class=\"dot\"></i>Sat</span><span class=\"badge\">Sun</span></div><div class=\"divider\"></div><div class=\"meter\"><span style=\"width:57%\"></span></div><p class=\"dim t-small\">57% complete</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "water intake tracker",
+    "did I drink enough water this week?",
+    "help me track my hydration",
+    "8 glasses a day - am I hitting it?",
+    "hydration habit for the week",
+    "i want to drink more water, track it",
+    "water log pls",
+    "remind me to drink water",
+    "how many glasses today?",
+    "water log",
+    "stay hydrated tracker",
+    "count my cups of water",
+    "drink 8 cups a day habit"
+   ],
+   "title": "Hydration Habit",
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Habit: Drink 8 glasses</h4><p class=\"muted t-small\">5 out of 7 days. Your best day was Tuesday.</p><div class=\"row\" style=\"flex-wrap:wrap;gap:var(--s-1);\"><span class=\"badge good\"><i class=\"dot\"></i>Mon</span><span class=\"badge good\"><i class=\"dot\"></i>Tue</span><span class=\"badge\">Wed</span><span class=\"badge good\"><i class=\"dot\"></i>Thu</span><span class=\"badge good\"><i class=\"dot\"></i>Fri</span><span class=\"badge\">Sat</span><span class=\"badge good\"><i class=\"dot\"></i>Sun</span></div><div class=\"divider\"></div><div class=\"meter\"><span style=\"width:71%\"></span></div><p class=\"dim t-small\">71% complete</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "meditation tracker",
+    "did I meditate every day?",
+    "show my meditation habit for the week",
+    "mindfulness streak",
+    "i keep skipping meditation, help",
+    "meditation week in review",
+    "track my calm",
+    "mindfulness minutes",
+    "meditate every day",
+    "zen habit tracker",
+    "track my calm sessions",
+    "10 min meditation streak",
+    "help me stick to meditating"
+   ],
+   "title": "Daily Meditation",
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Habit: Meditate 10 min</h4><p class=\"muted t-small\">3 days this week. A pause counts, even brief.</p><div class=\"row\" style=\"flex-wrap:wrap;gap:var(--s-1);\"><span class=\"badge good\"><i class=\"dot\"></i>Mon</span><span class=\"badge\">Tue</span><span class=\"badge good\"><i class=\"dot\"></i>Wed</span><span class=\"badge\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge good\"><i class=\"dot\"></i>Sat</span><span class=\"badge\">Sun</span></div><div class=\"divider\"></div><div class=\"meter\"><span style=\"width:43%\"></span></div><p class=\"dim t-small\">43% complete</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "exercise tracker",
+    "did I work out this week?",
+    "gym habit check",
+    "show my workout week",
+    "i want to move more, track it",
+    "fitness streak",
+    "exercise log for the week",
+    "gym streak",
+    "track my workouts",
+    "exercise log",
+    "I want to work out 5x a week",
+    "fitness habit tracker",
+    "did I exercise today?"
+   ],
+   "title": "Workout Habit",
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Habit: Move for 30 min</h4><p class=\"muted t-small\">5 days of movement. A walk totally counts.</p><div class=\"row\" style=\"flex-wrap:wrap;gap:var(--s-1);\"><span class=\"badge good\"><i class=\"dot\"></i>Mon</span><span class=\"badge good\"><i class=\"dot\"></i>Tue</span><span class=\"badge good\"><i class=\"dot\"></i>Wed</span><span class=\"badge\">Thu</span><span class=\"badge good\"><i class=\"dot\"></i>Fri</span><span class=\"badge good\"><i class=\"dot\"></i>Sat</span><span class=\"badge\">Sun</span></div><div class=\"divider\"></div><div class=\"meter\"><span style=\"width:71%\"></span></div><p class=\"dim t-small\">71% complete</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "language practice tracker",
+    "did I study Spanish this week?",
+    "duolingo habit check",
+    "show my language streak",
+    "i keep forgetting to practice, help",
+    "language learning week",
+    "track my vocab",
+    "duolingo streak",
+    "practice spanish daily",
+    "language learning tracker",
+    "keep up with french",
+    "vocab practice log",
+    "I need to study a language every day"
+   ],
+   "title": "Language Practice",
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Habit: Practice Spanish</h4><p class=\"muted t-small\">2 days this week. Ten minutes is plenty.</p><div class=\"row\" style=\"flex-wrap:wrap;gap:var(--s-1);\"><span class=\"badge\">Mon</span><span class=\"badge good\"><i class=\"dot\"></i>Tue</span><span class=\"badge\">Wed</span><span class=\"badge\">Thu</span><span class=\"badge good\"><i class=\"dot\"></i>Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"divider\"></div><div class=\"meter\"><span style=\"width:29%\"></span></div><p class=\"dim t-small\">29% complete</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "sleep tracker",
+    "did I get enough sleep this week?",
+    "bedtime habit check",
+    "show my sleep week",
+    "i want to sleep earlier, track it",
+    "sleep streak",
+    "how's my sleep?",
+    "track my sleep",
+    "bedtime routine tracker",
+    "hours slept each night",
+    "sleep schedule habit",
+    "go to bed on time",
+    "monitor my sleep pattern"
+   ],
+   "title": "Sleep Habit",
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Habit: Lights out by 11</h4><p class=\"muted t-small\">4 nights on time. Close counts too.</p><div class=\"row\" style=\"flex-wrap:wrap;gap:var(--s-1);\"><span class=\"badge good\"><i class=\"dot\"></i>Mon</span><span class=\"badge good\"><i class=\"dot\"></i>Tue</span><span class=\"badge\">Wed</span><span class=\"badge good\"><i class=\"dot\"></i>Thu</span><span class=\"badge\">Fri</span><span class=\"badge good\"><i class=\"dot\"></i>Sat</span><span class=\"badge\">Sun</span></div><div class=\"divider\"></div><div class=\"meter\"><span style=\"width:57%\"></span></div><p class=\"dim t-small\">57% complete</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Gratitude Journal Habit",
+   "user_requests": [
+    "gratitude journal habit tracker",
+    "track my daily gratitude practice",
+    "I want to write 3 good things every night, make me a tracker",
+    "gratuitude habit widget pls",
+    "gratitude journal streak for the week",
+    "help me keep a gratitude log going",
+    "make a weekly tracker for writing down good stuff",
+    "write down things I'm thankful for",
+    "daily gratitude log",
+    "thankful journal tracker",
+    "count my blessings habit",
+    "3 good things a day",
+    "gratitude streak"
+   ],
+   "html": "<div class=\"card\"><div class=\"between row\"><h3 class=\"card-title\">Gratitude Journal</h3><span class=\"badge good\"><i class=\"dot\"></i>4-day streak</span></div><p class=\"muted t-small\">Three good things, written before lights out. <regex>user_name</regex>, future you says thanks.</p><div class=\"row\" style=\"flex-wrap:wrap;gap:var(--s-2);margin:var(--s-4) 0\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"meter\"><span style=\"width:57%\"></span></div><p class=\"dim t-small\">4 of 7 nights logged.</p><details class=\"acc\"><summary>What counts as an entry?</summary><div class=\"body\"><ul class=\"list\"><li>One sentence each is plenty.</li><li>Small things beat grand ones.</li><li>Same notebook, same pen, same corner of the desk.</li></ul></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Budget Check-In Habit",
+   "user_requests": [
+    "weekly budget check habit",
+    "track my money check-ins",
+    "I keep forgetting to review my spending, tracker please",
+    "budgt review habit widget",
+    "money check-in streak",
+    "make me a weekly finance review tracker",
+    "habit for looking at my bank app every sunday",
+    "track my spending weekly",
+    "money check habit",
+    "review my budget every week",
+    "expense check-in",
+    "keep an eye on my finances",
+    "weekly finance tracker"
+   ],
+   "html": "<div class=\"card\"><div class=\"between row\"><h3 class=\"card-title\">Budget Check-In</h3><span class=\"badge warn\"><i class=\"dot\"></i>Needs a look</span></div><p class=\"muted t-small\">Ten minutes on Sunday. Coffee, statements, no judgement. <regex>user_name</regex>, the numbers can wait, but not forever.</p><div class=\"grid two\" style=\"margin:var(--s-4) 0\"><div class=\"stat\"><span class=\"label\">Checked</span><span class=\"value\">3<span class=\"unit\">/7</span></span></div><div class=\"stat\"><span class=\"label\">Left</span><span class=\"value\">4<span class=\"unit\">days</span></span></div></div><div class=\"row\" style=\"flex-wrap:wrap;gap:var(--s-2)\"><span class=\"badge good\">Mon</span><span class=\"badge\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge\">Thu</span><span class=\"badge good\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"callout info\" style=\"margin-top:var(--s-4)\"><p class=\"t-small\">Skip a day and nothing breaks. Skip a month and the surprises get expensive.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Declutter Habit",
+   "user_requests": [
+    "declutter one thing a day tracker",
+    "habit for tidying up daily",
+    "I want to get rid of stuff little by little",
+    "decluter habit widget please",
+    "one item a day clutter streak",
+    "make a tracker for daily tidy-up",
+    "help me actually toss one thing every day",
+    "get rid of one thing a day",
+    "declutter tracker",
+    "minimalism habit",
+    "tidy up one area daily",
+    "purge stuff habit",
+    "decluttering streak"
+   ],
+   "html": "<div class=\"card\"><div class=\"between row\"><h3 class=\"card-title\">One Thing Out</h3><span class=\"badge accent\">Day 12</span></div><p class=\"muted t-small\">One drawer, one shelf, one sad sock. <regex>user_name</regex>, tiny removals add up faster than big clean-outs.</p><div class=\"row\" style=\"flex-wrap:wrap;gap:var(--s-2);margin:var(--s-4) 0\"><span class=\"badge good\">M</span><span class=\"badge good\">T</span><span class=\"badge\">W</span><span class=\"badge good\">T</span><span class=\"badge good\">F</span><span class=\"badge\">S</span><span class=\"badge\">S</span></div><div class=\"meter\"><span style=\"width:71%\"></span></div><p class=\"dim t-small\">5 of 7 days this week. Anything counted, even a receipt.</p><details class=\"acc\"><summary>Today's suggestion</summary><div class=\"body\"><p class=\"t-small\">The pen cup. You know the one. Three pens work. The rest are archaeology.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Stretching Habit",
+   "user_requests": [
+    "daily stretching habit tracker",
+    "track my morning stretch routine",
+    "I sit all day and my back hates me, make a stretch tracker",
+    "stretchin habit widget",
+    "flexibility streak for the week",
+    "help me remember to stretch daily",
+    "habit tracker for 10 min stretch",
+    "stretch every morning",
+    "flexibility tracker",
+    "daily stretch log",
+    "I want to stretch more",
+    "yoga stretch habit",
+    "5 min stretch a day"
+   ],
+   "html": "<div class=\"card\"><div class=\"between row\"><h3 class=\"card-title\">Daily Stretch</h3><span class=\"badge info\"><i class=\"dot\"></i>6 min \u00b7 easy</span></div><p class=\"muted t-small\">Ten minutes, floor or doorway, nothing fancy. <regex>user_name</regex>, your hamstrings have opinions.</p><div class=\"row\" style=\"flex-wrap:wrap;gap:var(--s-2);margin:var(--s-4) 0\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge good\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"grid two\"><div class=\"stat\"><span class=\"label\">This week</span><span class=\"value\">5<span class=\"unit\">sessions</span></span></div><div class=\"stat\"><span class=\"label\">Best streak</span><span class=\"value\">9<span class=\"unit\">days</span></span></div></div><blockquote class=\"quote\" style=\"margin-top:var(--s-4)\"><p class=\"t-small\">\"It's not exercise, it's negotiation.\"</p><cite>You, on day four</cite></blockquote></div>",
+   "augmented": true
+  },
+  {
+   "title": "Inbox Zero Habit",
+   "user_requests": [
+    "inbox zero daily habit",
+    "track my email cleanup",
+    "I want to keep my inbox under 20",
+    "inbox habbit widget",
+    "email triage streak tracker",
+    "make a habit tracker for checking email once",
+    "help me stop drowning in email",
+    "clear my email daily",
+    "inbox zero streak",
+    "email management habit",
+    "empty inbox tracker",
+    "process emails every day",
+    "zero inbox challenge"
+   ],
+   "html": "<div class=\"card\"><div class=\"between row\"><h3 class=\"card-title\">Inbox Triage</h3><span class=\"badge good\"><i class=\"dot\"></i>Under 20</span></div><p class=\"muted t-small\">Two passes a day, not twenty. <regex>user_name</regex>, the inbox is a doorway, not a living room.</p><div class=\"row\" style=\"flex-wrap:wrap;gap:var(--s-2);margin:var(--s-4) 0\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge good\">Fri</span><span class=\"badge good\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"meter\"><span style=\"width:86%\"></span></div><p class=\"dim t-small\">6 of 7 days kept under target.</p><ul class=\"list\" style=\"margin-top:var(--s-4)\"><li>Archive anything older than a week.</li><li>Reply, or turn it into a task. Never both.</li><li>Unsubscribe once, every time.</li></ul></div>",
+   "augmented": true
+  },
+  {
+   "title": "Plant Watering Habit",
+   "user_requests": [
+    "plant watering habit tracker",
+    "track when I water my plants",
+    "my monstera keeps dying, help me keep a schedule",
+    "plant habit widget pls",
+    "watering streak for the week",
+    "reminder tracker for houseplant care",
+    "make me a habit tracker for watering plants",
+    "remember to water plants",
+    "plant care tracker",
+    "watering schedule",
+    "keep my plants alive",
+    "plant habit log",
+    "water the plants daily"
+   ],
+   "html": "<div class=\"card\"><div class=\"between row\"><h3 class=\"card-title\">Plant Watering</h3><span class=\"badge warn\"><i class=\"dot\"></i>Check soil first</span></div><p class=\"muted t-small\">Finger in the dirt beats a calendar. <regex>user_name</regex>, overwatering is the quiet killer.</p><div class=\"row\" style=\"flex-wrap:wrap;gap:var(--s-2);margin:var(--s-4) 0\"><span class=\"badge good\">Mon</span><span class=\"badge\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge\">Thu</span><span class=\"badge good\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"grid two\"><div class=\"stat\"><span class=\"label\">Watered</span><span class=\"value\">4<span class=\"unit\">days</span></span></div><div class=\"stat\"><span class=\"label\">Thirsty</span><span class=\"value\">3<span class=\"unit\">plants</span></span></div></div><details class=\"acc\" style=\"margin-top:var(--s-4)\"><summary>The roster</summary><div class=\"body\"><ul class=\"list\"><li>Monstera \u2014 weekly, bright indirect.</li><li>Snake plant \u2014 every three weeks, ignore it fondly.</li><li>Basil \u2014 daily, dramatic about everything.</li></ul></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Tidy Desk Habit",
+   "user_requests": [
+    "I keep telling myself I'll clean my desk and then I don't",
+    "help me stop letting my desk become a disaster zone",
+    "desk reset habit ideas that actually stick?",
+    "want to tidy my desk every evening after work, any tips?",
+    "how do I build a habit of not letting papers pile up",
+    "my desk is always messy by wednesday. need a fix",
+    "small daily tidy-up routine for my workspace",
+    "clean my desk every night",
+    "desk organization tracker",
+    "keep workspace tidy",
+    "5 min desk tidy",
+    "declutter my desk habit",
+    "make my desk neat"
+   ],
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Tidy Desk Habit</h4><p class=\"t-small dim\">For <regex>user_name</regex>: two minutes before you leave the desk. That's it.</p><div class=\"row\" style=\"flex-wrap:wrap;gap:var(--s-2)\"><span class=\"badge good\"><i class=\"dot\"></i>Mon</span><span class=\"badge good\"><i class=\"dot\"></i>Tue</span><span class=\"badge\">Wed</span><span class=\"badge good\"><i class=\"dot\"></i>Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"divider\"></div><p class=\"t-small muted\">Reset: put away the obvious 3 things, then stop. Done beats perfect.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Morning Pages Habit",
+   "user_requests": [
+    "I want to start writing every morning but keep skipping",
+    "morning pages - how do I make it stick?",
+    "need a habit for journaling before coffee",
+    "brain dump every morning, help me commit",
+    "how to build a writing habit when I hate routines",
+    "morning journal, but tiny",
+    "writing 3 pages feels like a lot. alternatives?",
+    "write 3 pages every morning",
+    "daily writing habit",
+    "journaling in the morning",
+    "morning writing streak",
+    "brain dump habit",
+    "I want to write every morning"
+   ],
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Morning Pages Habit</h4><p class=\"t-small dim\">For <regex>user_name</regex>: one page, longhand, before you look at a screen. The blank page isn't judging you.</p><div class=\"row\" style=\"flex-wrap:wrap;gap:var(--s-2)\"><span class=\"badge good\"><i class=\"dot\"></i>Mon</span><span class=\"badge good\"><i class=\"dot\"></i>Tue</span><span class=\"badge good\"><i class=\"dot\"></i>Wed</span><span class=\"badge\">Thu</span><span class=\"badge good\"><i class=\"dot\"></i>Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><details class=\"acc\"><summary>Stuck? Try this</summary><div class=\"body\"><p class=\"t-small\">Start with \"Right now I notice...\" and keep the pen moving for 5 minutes. No editing.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "No-Spend Day Habit",
+   "user_requests": [
+    "I want to stop buying random stuff every day",
+    "no-spend challenge, but for real this time",
+    "how do I do a no-spend day without feeling deprived?",
+    "tiny money habit: don't spend today",
+    "need help not clicking buy on dumb things",
+    "no spend streak tracker?",
+    "every time I open amazon I fail. help",
+    "don't spend money today",
+    "no buy challenge",
+    "spending freeze tracker",
+    "track my no spend days",
+    "save money by not shopping",
+    "zero spend habit"
+   ],
+   "html": "<div class=\"card\"><h4 class=\"card-title\">No-Spend Day Habit</h4><p class=\"t-small dim\">For <regex>user_name</regex>: if it isn't food or a bill, it waits 24 hours.</p><div class=\"row\" style=\"flex-wrap:wrap;gap:var(--s-2)\"><span class=\"badge good\"><i class=\"dot\"></i>Mon</span><span class=\"badge good\"><i class=\"dot\"></i>Tue</span><span class=\"badge good\"><i class=\"dot\"></i>Wed</span><span class=\"badge good\"><i class=\"dot\"></i>Thu</span><span class=\"badge\">Fri</span><span class=\"badge good\"><i class=\"dot\"></i>Sat</span><span class=\"badge good\"><i class=\"dot\"></i>Sun</span></div><p class=\"t-small muted\" style=\"margin-top:var(--s-3)\">Streak: 5 days. Your cart is not a to-do list.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Daily Walk Habit",
+   "user_requests": [
+    "I sit all day and want to walk more but never do",
+    "gentle walking habit - 10 mins a day?",
+    "how to actually go outside for a walk daily",
+    "walk habit for someone who hates exercise",
+    "need a reason to leave the house every day",
+    "steps aren't happening. help",
+    "tiny outdoor habit ideas for busy people",
+    "walk 10k steps",
+    "daily step tracker",
+    "go for a walk every day",
+    "walking habit log",
+    "get my steps in",
+    "track my walks"
+   ],
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Daily Walk Habit</h4><p class=\"t-small dim\">For <regex>user_name</regex>: 10 minutes after lunch. No podcast, no pressure. Just legs.</p><div class=\"row\" style=\"flex-wrap:wrap;gap:var(--s-2)\"><span class=\"badge good\"><i class=\"dot\"></i>Mon</span><span class=\"badge\">Tue</span><span class=\"badge good\"><i class=\"dot\"></i>Wed</span><span class=\"badge good\"><i class=\"dot\"></i>Thu</span><span class=\"badge good\"><i class=\"dot\"></i>Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><p class=\"t-small muted\" style=\"margin-top:var(--s-3)\">Missed Tuesday? Walk today. The streak is a friend, not a boss.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Make Your Bed Habit",
+   "user_requests": [
+    "I never make my bed and it makes me feel messy",
+    "one minute habit: make the bed",
+    "how do I start making my bed every day?",
+    "bed-making habit for depressed mornings",
+    "first win of the day ideas",
+    "make bed, feel better? prove it",
+    "tiny morning habit that changes everything",
+    "bed always looks like a tornado hit it, wanna fix that",
+    "help me actually start making my bed lol",
+    "my room feels chaotic bc i never make the bed",
+    "want a daily checkoff for bed making",
+    "bed making streak pls",
+    "i wake up and just leave everything messy, need to make my bed"
+   ],
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Make Your Bed Habit</h4><p class=\"t-small dim\">For <regex>user_name</regex>: one minute, right after you get up. A small promise kept before coffee.</p><div class=\"row\" style=\"flex-wrap:wrap;gap:var(--s-2)\"><span class=\"badge good\"><i class=\"dot\"></i>Mon</span><span class=\"badge good\"><i class=\"dot\"></i>Tue</span><span class=\"badge good\"><i class=\"dot\"></i>Wed</span><span class=\"badge good\"><i class=\"dot\"></i>Thu</span><span class=\"badge good\"><i class=\"dot\"></i>Fri</span><span class=\"badge\">Sat</span><span class=\"badge good\"><i class=\"dot\"></i>Sun</span></div><p class=\"t-small muted\" style=\"margin-top:var(--s-3)\">6 of 7. Your room looks like someone lives there on purpose.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Floss Habit",
+   "user_requests": [
+    "dentist says floss, I don't. need a habit",
+    "how to remember to floss every night",
+    "flossing habit - any tricks?",
+    "I always forget to floss. help me",
+    "tiny dental habit for lazy people",
+    "floss before bed, how?",
+    "need a nightly hygiene habit that sticks",
+    "flossing every night is impossible for me, help",
+    "gotta floss more, my gums bleed",
+    "need to remember to floss b4 bed",
+    "floss tracker?? dentist yelled at me again",
+    "i skip flossing constantly",
+    "build up a flossing streak so my checkups stop being scary"
+   ],
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Floss Habit</h4><p class=\"t-small dim\">For <regex>user_name</regex>: floss before you brush. The floss lives on the sink, not in a drawer.</p><div class=\"row\" style=\"flex-wrap:wrap;gap:var(--s-2)\"><span class=\"badge good\"><i class=\"dot\"></i>Mon</span><span class=\"badge good\"><i class=\"dot\"></i>Tue</span><span class=\"badge\">Wed</span><span class=\"badge good\"><i class=\"dot\"></i>Thu</span><span class=\"badge good\"><i class=\"dot\"></i>Fri</span><span class=\"badge good\"><i class=\"dot\"></i>Sat</span><span class=\"badge good\"><i class=\"dot\"></i>Sun</span></div><p class=\"t-small muted\" style=\"margin-top:var(--s-3)\">6 of 7. Your gums say thank you.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Dishwashing Habit",
+   "user_requests": [
+    "remind me to wash dishes every night",
+    "how do i stop letting dishes pile up?",
+    "sink is full again, help me fix this",
+    "daily dish duty tracker",
+    "I keep putting off washing the dishes and it's gross, tips?",
+    "can you track my dishwashing streak?",
+    "dish washing habit",
+    "sink is always full of dirty plates, need a routine",
+    "wash dishes before bed habit",
+    "i let dishes pile up for days, help",
+    "kitchen cleanup every evening tracker",
+    "dishes never get done in my house, need accountability",
+    "nightly dish duty habit plz"
+   ],
+   "html": "<div class=\"card\"><h4>Habit: wash the dishes before bed</h4><p class=\"muted\">Seven nights. One sink. No regrets.</p><div class=\"row\" style=\"gap:var(--s-2);flex-wrap:wrap;margin-top:var(--s-3)\"><span class=\"badge good\"><i class=\"dot\"></i>Mon</span><span class=\"badge good\"><i class=\"dot\"></i>Tue</span><span class=\"badge good\"><i class=\"dot\"></i>Wed</span><span class=\"badge\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><p class=\"t-small muted\" style=\"margin-top:var(--s-3)\">3 of 7 days clean. Keep going, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Nagging Habit",
+   "user_requests": [
+    "I nag my partner too much, how to stop?",
+    "help me stop nagging",
+    "track my no-nagging days",
+    "I want to stop reminding my partner to do stuff",
+    "nagging habit breaker",
+    "how many days without nagging?",
+    "no nag challenge",
+    "i constantly nag my bf and i hate it",
+    "how do i stop nagging my husband so much",
+    "less nagging more patience, track it",
+    "i hear myself nagging and cringe, help me quit",
+    "stop nagging my kids all the time",
+    "nagging reduction tracker"
+   ],
+   "html": "<div class=\"card\"><h4>Habit: no nagging for one day</h4><p class=\"muted\">Breathe. Ask once. Let it be.</p><div class=\"row\" style=\"gap:var(--s-2);flex-wrap:wrap;margin-top:var(--s-3)\"><span class=\"badge good\"><i class=\"dot\"></i>Mon</span><span class=\"badge\">Tue</span><span class=\"badge good\"><i class=\"dot\"></i>Wed</span><span class=\"badge good\"><i class=\"dot\"></i>Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><p class=\"t-small muted\" style=\"margin-top:var(--s-3)\">3 days free. That's a kindness streak, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Mobility Habit",
+   "user_requests": [
+    "I want to improve my mobility",
+    "daily mobility exercises",
+    "help me move better",
+    "track my mobility work",
+    "mobility habit streaking",
+    "how to stay limber?",
+    "mobility routine check",
+    "my hips are so stiff, wanna do mobility work daily",
+    "stretching and mobility every morning",
+    "i sit all day and feel like a rock, mobility habit?",
+    "daily mobility drills tracker",
+    "want to touch my toes again, mobility practice",
+    "get more flexible, need a habit"
+   ],
+   "html": "<div class=\"card\"><h4>Habit: 10 minutes of mobility</h4><p class=\"muted\">Hips, shoulders, ankles. Grease the joints.</p><div class=\"row\" style=\"gap:var(--s-2);flex-wrap:wrap;margin-top:var(--s-3)\"><span class=\"badge good\"><i class=\"dot\"></i>Mon</span><span class=\"badge good\"><i class=\"dot\"></i>Tue</span><span class=\"badge good\"><i class=\"dot\"></i>Wed</span><span class=\"badge good\"><i class=\"dot\"></i>Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><p class=\"t-small muted\" style=\"margin-top:var(--s-3)\">4 of 7. Your future self says thanks, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Writing Habit",
+   "user_requests": [
+    "I want to write every day",
+    "daily writing habit",
+    "help me start writing",
+    "writing streak tracker",
+    "how to write daily?",
+    "write 200 words a day",
+    "writing habit check",
+    "wanna write 500 words a day",
+    "daily writing streak for my novel",
+    "i keep saying ill write and never do, help",
+    "morning pages habit tracker",
+    "write something every day, no matter how small",
+    "author habit: write daily"
+   ],
+   "html": "<div class=\"card\"><h4>Habit: write 200 words</h4><p class=\"muted\">A paragraph is a paragraph. It counts.</p><div class=\"row\" style=\"gap:var(--s-2);flex-wrap:wrap;margin-top:var(--s-3)\"><span class=\"badge good\"><i class=\"dot\"></i>Mon</span><span class=\"badge good\"><i class=\"dot\"></i>Tue</span><span class=\"badge\">Wed</span><span class=\"badge good\"><i class=\"dot\"></i>Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><p class=\"t-small muted\" style=\"margin-top:var(--s-3)\">3 days of words. That's a story, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Nail Care Habit",
+   "user_requests": [
+    "I bite my nails, help me stop",
+    "nail care habit",
+    "stop nail biting challenge",
+    "daily nail check",
+    "how to grow nails?",
+    "nail biting tracker",
+    "nail habit",
+    "my nails are destroyed from biting, help me stop",
+    "nail biting habit breaker pls",
+    "want nice nails, need to stop picking at them",
+    "cuticle care and no biting tracker",
+    "i chew my nails when anxious, need to quit",
+    "nail care routine daily"
+   ],
+   "html": "<div class=\"card\"><h4>Habit: no nail biting</h4><p class=\"muted\">Notice the urge. Breathe. Hands busy elsewhere.</p><div class=\"row\" style=\"gap:var(--s-2);flex-wrap:wrap;margin-top:var(--s-3)\"><span class=\"badge good\"><i class=\"dot\"></i>Mon</span><span class=\"badge good\"><i class=\"dot\"></i>Tue</span><span class=\"badge good\"><i class=\"dot\"></i>Wed</span><span class=\"badge good\"><i class=\"dot\"></i>Thu</span><span class=\"badge good\"><i class=\"dot\"></i>Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><p class=\"t-small muted\" style=\"margin-top:var(--s-3)\">5 days! Your fingertips thank you, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Guitar Habit",
+   "user_requests": [
+    "I want to practice guitar daily",
+    "guitar practice tracker",
+    "help me learn guitar",
+    "daily guitar habit",
+    "guitar streak",
+    "how to practice guitar consistently?",
+    "guitar habit",
+    "my guitar collects dust, want to play daily",
+    "practice chords 20 min a day habit",
+    "learn guitar, need daily practice tracker",
+    "i wanna get good at guitar, daily reps",
+    "guitar practice streak pls",
+    "play guitar every day, no excuses"
+   ],
+   "html": "<div class=\"card\"><h4>Habit: 15 minutes of guitar</h4><p class=\"muted\">Chords today, songs tomorrow.</p><div class=\"row\" style=\"gap:var(--s-2);flex-wrap:wrap;margin-top:var(--s-3)\"><span class=\"badge good\"><i class=\"dot\"></i>Mon</span><span class=\"badge\">Tue</span><span class=\"badge good\"><i class=\"dot\"></i>Wed</span><span class=\"badge good\"><i class=\"dot\"></i>Thu</span><span class=\"badge good\"><i class=\"dot\"></i>Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><p class=\"t-small muted\" style=\"margin-top:var(--s-3)\">4 days strumming. Keep the rhythm, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sunscreen Habit",
+   "user_requests": [
+    "remind me to wear sunscreen every day",
+    "track my sunscreen habit",
+    "daily SPF check",
+    "need help remembering sun screen",
+    "habit tracker for sun protection",
+    "make sure I put on spf",
+    "sunscreen streak",
+    "i always forget sunscreen, need a daily reminder",
+    "spf every morning habit",
+    "skin cancer runs in my family, sunscreen daily",
+    "put on sunscreen before leaving habit",
+    "never remember spf, help",
+    "daily sunscreen checkoff"
+   ],
+   "html": "<div class=\"card\"><h4>Sunscreen Habit</h4><p class=\"muted\">Small dab, big payoff. <regex>user_name</regex>, let's keep that glow safe.</p><div class=\"row\"><span class=\"badge good\"><i class=\"dot\"></i>Mon</span><span class=\"badge good\"><i class=\"dot\"></i>Tue</span><span class=\"badge\"><i class=\"dot\"></i>Wed</span><span class=\"badge good\"><i class=\"dot\"></i>Thu</span><span class=\"badge\"><i class=\"dot\"></i>Fri</span><span class=\"badge good\"><i class=\"dot\"></i>Sat</span><span class=\"badge\"><i class=\"dot\"></i>Sun</span></div><div class=\"meter\"><span style=\"width:71%\"></span></div><p class=\"t-small dim\">5 of 7 days. The sun doesn't take days off, but neither do you\u2014mostly.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Push-Up Habit",
+   "user_requests": [
+    "start a push up habit",
+    "track pushups daily",
+    "how many push ups did I do",
+    "push-up streak tracker",
+    "remind me to do pushups",
+    "daily push up challenge",
+    "push up habit",
+    "wanna do 100 pushups a day eventually, start small",
+    "pushups every morning habit",
+    "i can barely do 5 pushups, want to build up",
+    "daily pushup streak tracker",
+    "get stronger, pushups daily",
+    "pushup progress habit"
+   ],
+   "html": "<div class=\"card\"><h4>Push-Up Habit</h4><p class=\"muted\">Drop and give yourself ten. <regex>user_name</regex>, your future shoulders say thanks.</p><div class=\"row\"><span class=\"badge good\"><i class=\"dot\"></i>Mon</span><span class=\"badge good\"><i class=\"dot\"></i>Tue</span><span class=\"badge good\"><i class=\"dot\"></i>Wed</span><span class=\"badge\"><i class=\"dot\"></i>Thu</span><span class=\"badge good\"><i class=\"dot\"></i>Fri</span><span class=\"badge\"><i class=\"dot\"></i>Sat</span><span class=\"badge good\"><i class=\"dot\"></i>Sun</span></div><div class=\"meter\"><span style=\"width:71%\"></span></div><p class=\"t-small dim\">5 of 7 days. Rest days count too. Sort of.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Vitamin Habit",
+   "user_requests": [
+    "did I take my vitamins today",
+    "vitamin habit tracker",
+    "remind me to take vitamins",
+    "daily vitamin check",
+    "supplement streak",
+    "help me remember my pills",
+    "vitamin habit",
+    "i keep forgetting my vitamins, need a tracker",
+    "daily vitamin reminder pls",
+    "did i take my pill today? need to track",
+    "vitamin d every morning habit",
+    "supplements always slip my mind",
+    "take vitamins with breakfast habit"
+   ],
+   "html": "<div class=\"card\"><h4>Vitamin Habit</h4><p class=\"muted\">One a day keeps the doctor mildly impressed. <regex>user_name</regex>.</p><div class=\"row\"><span class=\"badge good\"><i class=\"dot\"></i>Mon</span><span class=\"badge good\"><i class=\"dot\"></i>Tue</span><span class=\"badge\"><i class=\"dot\"></i>Wed</span><span class=\"badge good\"><i class=\"dot\"></i>Thu</span><span class=\"badge good\"><i class=\"dot\"></i>Fri</span><span class=\"badge\"><i class=\"dot\"></i>Sat</span><span class=\"badge good\"><i class=\"dot\"></i>Sun</span></div><div class=\"meter\"><span style=\"width:71%\"></span></div><p class=\"t-small dim\">5 of 7 days. Not bad, not bad at all.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "No Phone in Bed Habit",
+   "user_requests": [
+    "stop scrolling in bed",
+    "no phone before sleep habit",
+    "track phone-free bedtime",
+    "keep phone out of bed",
+    "habit tracker for no phone in bed",
+    "sleep without scrolling",
+    "no phone bed",
+    "i doomscroll in bed till 2am, help",
+    "no screens in bed habit tracker",
+    "phone out of the bedroom challenge",
+    "stop doomscrolling at night pls",
+    "i need to stop taking my phone to bed",
+    "bedtime phone ban habit"
+   ],
+   "html": "<div class=\"card\"><h4>No Phone in Bed</h4><p class=\"muted\">The blue light can wait. <regex>user_name</regex>, your pillow deserves your full attention.</p><div class=\"row\"><span class=\"badge good\"><i class=\"dot\"></i>Mon</span><span class=\"badge\"><i class=\"dot\"></i>Tue</span><span class=\"badge good\"><i class=\"dot\"></i>Wed</span><span class=\"badge good\"><i class=\"dot\"></i>Thu</span><span class=\"badge\"><i class=\"dot\"></i>Fri</span><span class=\"badge good\"><i class=\"dot\"></i>Sat</span><span class=\"badge good\"><i class=\"dot\"></i>Sun</span></div><div class=\"meter\"><span style=\"width:71%\"></span></div><p class=\"t-small dim\">5 of 7 days. Those two slip-ups? We don't talk about them.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Teeth Whitening Habit",
+   "user_requests": [
+    "whiten my teeth daily",
+    "track teeth whitening",
+    "remind me to use whitening strips",
+    "daily whitening habit",
+    "teeth whitening streak",
+    "whitening routine tracker",
+    "whiten teeth",
+    "want whiter teeth, need a daily routine",
+    "whitening strips every night tracker",
+    "my teeth are yellow, whitening habit?",
+    "daily whitening routine pls",
+    "stay consistent with teeth whitening",
+    "whiten teeth streak"
+   ],
+   "html": "<div class=\"card\"><h4>Teeth Whitening Habit</h4><p class=\"muted\">A little sparkle goes a long way. <regex>user_name</regex>, your smile is already great\u2014this just helps it shine.</p><div class=\"row\"><span class=\"badge good\"><i class=\"dot\"></i>Mon</span><span class=\"badge good\"><i class=\"dot\"></i>Tue</span><span class=\"badge good\"><i class=\"dot\"></i>Wed</span><span class=\"badge\"><i class=\"dot\"></i>Thu</span><span class=\"badge\"><i class=\"dot\"></i>Fri</span><span class=\"badge good\"><i class=\"dot\"></i>Sat</span><span class=\"badge good\"><i class=\"dot\"></i>Sun</span></div><div class=\"meter\"><span style=\"width:71%\"></span></div><p class=\"t-small dim\">5 of 7 days. Whitening strips: applied. Confidence: boosted.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Skincare Routine Habit",
+   "user_requests": [
+    "stick to my skincare routine",
+    "track skincare daily",
+    "remind me to do my skincare",
+    "skincare habit tracker",
+    "nightly skincare streak",
+    "help me keep up with skincare",
+    "skincare routine",
+    "i buy skincare and never use it, help",
+    "am/pm skincare routine tracker",
+    "want glass skin, need consistency",
+    "my routine falls apart, need a habit tracker",
+    "skincare every night no skipping",
+    "face routine daily checkoff"
+   ],
+   "html": "<div class=\"card\"><h4>Skincare Routine</h4><p class=\"muted\">Clean, tone, moisturize, repeat. <regex>user_name</regex>, your face will thank you.</p><div class=\"row\"><span class=\"badge good\"><i class=\"dot\"></i>Mon</span><span class=\"badge good\"><i class=\"dot\"></i>Tue</span><span class=\"badge good\"><i class=\"dot\"></i>Wed</span><span class=\"badge good\"><i class=\"dot\"></i>Thu</span><span class=\"badge\"><i class=\"dot\"></i>Fri</span><span class=\"badge good\"><i class=\"dot\"></i>Sat</span><span class=\"badge\"><i class=\"dot\"></i>Sun</span></div><div class=\"meter\"><span style=\"width:71%\"></span></div><p class=\"t-small dim\">5 of 7 days. Two nights off won't undo your progress.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Meal Prep Habit",
+   "user_requests": [
+    "meal prep habit tracker",
+    "track my sunday meal prep",
+    "how do i stick to meal prep?",
+    "meal prep weekly tracker",
+    "keep me accountable for meal prep",
+    "meal prep streak",
+    "tracking my meal prep habit",
+    "i eat out too much, wanna meal prep sundays",
+    "weekly meal prep tracker",
+    "prep lunches for the week habit",
+    "save money by meal prepping, need accountability",
+    "meal prep every sunday pls",
+    "cooking ahead habit tracker"
+   ],
+   "html": "<div class=\"card\"><div class=\"between\"><h4>Meal Prep Habit</h4><span class=\"badge accent\"><i class=\"dot\"></i> 3\u2011day streak</span></div><p class=\"muted t-small\">Prep once, relax all week. <regex>user_name</regex>, one session on Sunday sets you up.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"meter\"><div class=\"progress\"><span style=\"width:43%\"></span></div></div><p class=\"dim t-small\">43% of days prepped. Keep going, you've got this.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Journaling Habit",
+   "user_requests": [
+    "journaling habit tracker",
+    "daily journal streak",
+    "track my journaling",
+    "how to journal daily",
+    "keep a journal habit",
+    "journal every day",
+    "my journaling habit",
+    "wanna journal every night before bed",
+    "brain dump journaling habit",
+    "i started journaling and quit, help me restart",
+    "5 min journal daily tracker",
+    "write in my journal every day pls",
+    "evening journaling streak"
+   ],
+   "html": "<div class=\"card\"><div class=\"between\"><h4>Journaling Habit</h4><span class=\"badge good\"><i class=\"dot\"></i> 5\u2011day streak</span></div><p class=\"muted t-small\">A few lines a day keeps the thoughts clear. <regex>user_name</regex>, aim for 3 sentences.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge good\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"meter\"><div class=\"progress\"><span style=\"width:71%\"></span></div></div><p class=\"dim t-small\">71% of days written. The blank page isn't scary anymore.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Grocery Budget Habit",
+   "user_requests": [
+    "grocery budget habit",
+    "track my grocery spending",
+    "grocery budget tracker",
+    "how to stay on grocery budget",
+    "weekly grocery budget",
+    "keep grocery spending in check",
+    "my grocery budget habit",
+    "keep my grocery spending under control",
+    "track weekly food shopping expenses",
+    "grocery budget tracker",
+    "stop overspending at the supermarket",
+    "how can i stick to my grocery budget?",
+    "monitor my grocery bills each week"
+   ],
+   "html": "<div class=\"card\"><div class=\"between\"><h4>Grocery Budget Habit</h4><span class=\"badge warn\"><i class=\"dot\"></i> 1\u2011day streak</span></div><p class=\"muted t-small\">Check your spending before you shop. <regex>user_name</regex>, it takes 2 minutes.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge\">Tue</span><span class=\"badge\">Wed</span><span class=\"badge\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"meter\"><div class=\"progress\"><span style=\"width:14%\"></span></div></div><p class=\"dim t-small\">14% of days checked. Small steps count.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Laundry Habit",
+   "user_requests": [
+    "laundry habit tracker",
+    "track my laundry days",
+    "do laundry regularly",
+    "laundry routine",
+    "weekly laundry habit",
+    "keep up with laundry",
+    "my laundry habit",
+    "remember to do laundry regularly",
+    "laundry schedule tracker",
+    "i keep forgetting to do laundry",
+    "need to stay on top of laundry",
+    "track my laundry days",
+    "laundry habit builder"
+   ],
+   "html": "<div class=\"card\"><div class=\"between\"><h4>Laundry Habit</h4><span class=\"badge good\"><i class=\"dot\"></i> 2\u2011day streak</span></div><p class=\"muted t-small\">One load a day keeps the pile away. <regex>user_name</regex>, just start it.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge\">Wed</span><span class=\"badge\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"meter\"><div class=\"progress\"><span style=\"width:29%\"></span></div></div><p class=\"dim t-small\">29% of days done. The basket thanks you.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Water Plants Habit",
+   "user_requests": [
+    "water plants habit",
+    "track my plant watering",
+    "plant watering tracker",
+    "how to remember to water plants",
+    "keep plants alive",
+    "plant care habit",
+    "my plant watering habit",
+    "remind me to water my plants",
+    "plant watering schedule",
+    "i always forget to water the plants",
+    "keep my houseplants alive",
+    "track when i water my plants",
+    "watering plants habit"
+   ],
+   "html": "<div class=\"card\"><div class=\"between\"><h4>Water Plants Habit</h4><span class=\"badge good\"><i class=\"dot\"></i> 4\u2011day streak</span></div><p class=\"muted t-small\">A little water goes a long way. <regex>user_name</regex>, check the soil first.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"meter\"><div class=\"progress\"><span style=\"width:57%\"></span></div></div><p class=\"dim t-small\">57% of days watered. Your green friends are happy.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Gratitude Habit",
+   "user_requests": [
+    "gratitude habit tracker",
+    "daily gratitude practice",
+    "track my gratitude",
+    "how to practice gratitude",
+    "gratitude journal habit",
+    "count my blessings",
+    "my gratitude habit",
+    "practice gratitude daily",
+    "gratitude journal tracker",
+    "write down things i'm grateful for",
+    "daily gratitude practice",
+    "track my gratitude habit",
+    "i want to be more grateful"
+   ],
+   "html": "<div class=\"card\"><div class=\"between\"><h4>Gratitude Habit</h4><span class=\"badge good\"><i class=\"dot\"></i> 6\u2011day streak</span></div><p class=\"muted t-small\">Three good things. That's it. <regex>user_name</regex>, you're on a roll.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge good\">Fri</span><span class=\"badge good\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"meter\"><div class=\"progress\"><span style=\"width:86%\"></span></div></div><p class=\"dim t-small\">86% of days noted. Almost a full week!</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Cold Shower Habit",
+   "user_requests": [
+    "cold shower habit",
+    "track my cold showers",
+    "help me stick to cold showers",
+    "morning cold plunge tracker",
+    "i wanna do cold showers every day",
+    "cold shower streak?",
+    "need a cold shower habit widget",
+    "take cold showers every day",
+    "cold shower challenge tracker",
+    "i want to start cold showers",
+    "track my cold shower streak",
+    "cold shower habit builder",
+    "how many cold showers have i taken?"
+   ],
+   "html": "<div class=\"card\"><div class=\"between row\"><h4 class=\"card-title\">Cold Shower Habit</h4><span class=\"badge info\"><i class=\"dot\"></i>streak: 3</span></div><p class=\"muted t-small\">Hi <regex>user_name</regex> \u2014 20 seconds counts. We're not training for Everest.</p><div class=\"row\" role=\"list\"><span class=\"badge good\" role=\"listitem\">Mon \u2713</span><span class=\"badge good\" role=\"listitem\">Tue \u2713</span><span class=\"badge good\" role=\"listitem\">Wed \u2713</span><span class=\"badge\" role=\"listitem\">Thu</span><span class=\"badge\" role=\"listitem\">Fri</span><span class=\"badge\" role=\"listitem\">Sat</span><span class=\"badge\" role=\"listitem\">Sun</span></div><div class=\"meter\" aria-label=\"3 of 7 days done\"><span class=\"progress\"><span style=\"width:43%\"></span></span></div><p class=\"dim t-small\">3 / 7 days. Cold water, warm pride.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Screen Time Habit",
+   "user_requests": [
+    "screen time habit",
+    "track my phone screen time",
+    "help me cut down screen time",
+    "daily screen time tracker",
+    "i want to reduce scrolling",
+    "phone usage habit widget",
+    "keep me off my phone",
+    "reduce my screen time",
+    "track how much i use my phone",
+    "screen time tracker",
+    "limit my phone usage",
+    "monitor my daily screen time",
+    "i need to cut down on screen time"
+   ],
+   "html": "<div class=\"card\"><div class=\"between row\"><h4 class=\"card-title\">Screen Time Habit</h4><span class=\"badge warn\"><i class=\"dot\"></i>under 2h goal</span></div><p class=\"muted t-small\"><regex>user_name</regex>, the phone doesn't need you as much as it pretends.</p><div class=\"grid two\"><div class=\"stat\"><span class=\"label\">Mon</span><span class=\"value\">1h 40m</span></div><div class=\"stat\"><span class=\"label\">Tue</span><span class=\"value\">2h 05m</span></div><div class=\"stat\"><span class=\"label\">Wed</span><span class=\"value\">1h 22m</span></div><div class=\"stat\"><span class=\"label\">Thu</span><span class=\"value\">\u2014</span></div></div><div class=\"row\"><span class=\"badge good\">Mon \u2713</span><span class=\"badge bad\">Tue \u2717</span><span class=\"badge good\">Wed \u2713</span><span class=\"badge\">Thu</span></div><p class=\"dim t-small\">Two wins, one slip. Slips are data, not verdicts.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Posture Habit",
+   "user_requests": [
+    "posture habit",
+    "help me fix my posture",
+    "daily posture check",
+    "track posture improvements",
+    "i slouch too much",
+    "posture reminder widget",
+    "sit up straight habit",
+    "improve my posture",
+    "posture reminder tracker",
+    "i want to sit up straight",
+    "track my posture habits",
+    "posture correction habit",
+    "remember to check my posture"
+   ],
+   "html": "<div class=\"card\"><div class=\"between row\"><h4 class=\"card-title\">Posture Habit</h4><span class=\"badge accent\"><i class=\"dot\"></i>3 checks a day</span></div><p class=\"muted t-small\"><regex>user_name</regex>, shoulders back \u2014 your spine is listening.</p><details class=\"acc\"><summary>Today's checks</summary><div class=\"body\"><ul class=\"list\"><li>Morning \u2014 done</li><li>Afternoon \u2014 done</li><li>Evening \u2014 <span class=\"dim\">pending</span></li></ul></div></details><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge warn\">Wed</span><span class=\"badge\">Thu</span><span class=\"badge\">Fri</span></div><svg viewBox=\"0 0 120 20\" class=\"chart\" role=\"img\" aria-label=\"Posture check trend\"><rect class=\"bar\" x=\"4\" y=\"6\" width=\"14\" height=\"14\" rx=\"3\"></rect><rect class=\"bar alt\" x=\"26\" y=\"2\" width=\"14\" height=\"18\" rx=\"3\"></rect><rect class=\"bar\" x=\"48\" y=\"8\" width=\"14\" height=\"12\" rx=\"3\"></rect><rect class=\"bar alt\" x=\"70\" y=\"4\" width=\"14\" height=\"16\" rx=\"3\"></rect><rect class=\"bar\" x=\"92\" y=\"10\" width=\"14\" height=\"10\" rx=\"3\"></rect></svg><p class=\"dim t-small\">Wed was a two-check day. Still counts.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Water Intake Habit",
+   "user_requests": [
+    "water intake habit",
+    "track my water",
+    "how much water I drink",
+    "hydration but for real",
+    "i forget to drink water",
+    "water tracker widget",
+    "drink more water habit",
+    "drink more water",
+    "water drinking tracker",
+    "track my daily water intake",
+    "how much water am i drinking?",
+    "stay hydrated habit",
+    "water intake reminder"
+   ],
+   "html": "<div class=\"card\"><div class=\"between row\"><h4 class=\"card-title\">Water Intake Habit</h4><span class=\"badge info\"><i class=\"dot\"></i>goal: 8 glasses</span></div><p class=\"muted t-small\"><regex>user_name</regex>, your houseplants have notes.</p><div class=\"grid two\"><div class=\"stat\"><span class=\"label\">Today</span><span class=\"value\">5 <span class=\"unit\">/ 8</span></span></div><div class=\"stat\"><span class=\"label\">Streak</span><span class=\"value\">4 <span class=\"unit\">days</span></span></div></div><div class=\"meter\"><span class=\"progress\"><span style=\"width:63%\"></span></span></div><div class=\"row\"><span class=\"badge good\">Mon 8</span><span class=\"badge good\">Tue 9</span><span class=\"badge good\">Wed 8</span><span class=\"badge good\">Thu 8</span><span class=\"badge warn\">Fri 5</span></div><p class=\"dim t-small\">Five down. Three to go before bed. You've got this.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Kindness Habit",
+   "user_requests": [
+    "kindness habit",
+    "one kind act a day",
+    "track random acts of kindness",
+    "help me be kinder",
+    "daily good deed habit",
+    "kindness streak tracker",
+    "i want a kindness widget",
+    "do random acts of kindness",
+    "kindness tracker",
+    "practice kindness daily",
+    "track my kind deeds",
+    "i want to be kinder",
+    "kindness habit builder"
+   ],
+   "html": "<div class=\"card\"><div class=\"between row\"><h4 class=\"card-title\">Kindness Habit</h4><span class=\"badge good\"><i class=\"dot\"></i>5-day streak</span></div><p class=\"muted t-small\"><regex>user_name</regex>, tiny kindnesses count double.</p><details class=\"acc\"><summary>This week's good deeds</summary><div class=\"body\"><ul class=\"list\"><li>Mon \u2014 held the elevator</li><li>Tue \u2014 sent a nice text</li><li>Wed \u2014 tipped well</li><li>Thu \u2014 listened properly</li><li>Fri \u2014 <span class=\"dim\">your turn</span></li></ul></div></details><div class=\"row\"><span class=\"badge good\">Mon \u2713</span><span class=\"badge good\">Tue \u2713</span><span class=\"badge good\">Wed \u2713</span><span class=\"badge good\">Thu \u2713</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><p class=\"dim t-small\">Five days in. The world noticed. So did we.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Post-Run Stretch Habit",
+   "user_requests": [
+    "post run stretch habit",
+    "stretch after running",
+    "track my post-run stretches",
+    "help me stretch after runs",
+    "i keep skipping cooldowns",
+    "post-run cooldown tracker",
+    "stretch habit widget",
+    "stretch after running",
+    "post run stretching tracker",
+    "remember to stretch after my run",
+    "cool down stretch habit",
+    "track my post-run stretches",
+    "stretching after running habit"
+   ],
+   "html": "<div class=\"card\"><div class=\"between row\"><h4 class=\"card-title\">Post-Run Stretch Habit</h4><span class=\"badge accent\"><i class=\"dot\"></i>5 min cooldown</span></div><p class=\"muted t-small\"><regex>user_name</regex>, your hamstrings filed a request.</p><div class=\"row\" role=\"list\"><span class=\"badge good\" role=\"listitem\">Mon \u2713</span><span class=\"badge good\" role=\"listitem\">Tue \u2713</span><span class=\"badge warn\" role=\"listitem\">Wed ~</span><span class=\"badge good\" role=\"listitem\">Thu \u2713</span><span class=\"badge bad\" role=\"listitem\">Fri \u2717</span><span class=\"badge\" role=\"listitem\">Sat</span><span class=\"badge\" role=\"listitem\">Sun</span></div><div class=\"meter\" aria-label=\"3 of 5 runs stretched\"><span class=\"progress\"><span style=\"width:60%\"></span></span></div><p class=\"dim t-small\">Stretched after 3 of 5 runs. Friday ran off without you.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Tea Ritual Habit",
+   "user_requests": [
+    "i want to build a daily tea ritual habit",
+    "track my tea drinking streak",
+    "help me make tea a daily habit",
+    "tea every day tracker",
+    "habit tracker for tea time",
+    "can you help me stick to daily tea?",
+    "tea ritual streak",
+    "make tea every day",
+    "tea drinking ritual tracker",
+    "i want a daily tea routine",
+    "track my tea habit",
+    "evening tea ritual",
+    "tea time habit"
+   ],
+   "html": "<div class=\"card\"><h4>Habit: Tea Ritual</h4><p class=\"muted\">A calm cup daily.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"meter\"><span style=\"width: 29%\"></span></div><p class=\"t-small dim\">2 of 7 days logged. Keep steeping, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Mindful Breathing Habit",
+   "user_requests": [
+    "track my mindful breathing practice",
+    "daily breathwork habit tracker",
+    "i keep forgetting to breathe mindfully",
+    "help me do breathing exercises every day",
+    "breathing habit streak",
+    "mindful minutes tracker",
+    "daily breathing reminder",
+    "practice mindful breathing daily",
+    "breathing exercises tracker",
+    "i want to breathe mindfully",
+    "track my breathing practice",
+    "mindfulness breathing habit",
+    "daily breathing exercises"
+   ],
+   "html": "<div class=\"card\"><h4>Habit: Mindful Breathing</h4><p class=\"muted\">Five minutes of quiet.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge\">Wed</span><span class=\"badge\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"meter\"><span style=\"width: 29%\"></span></div><p class=\"t-small dim\">2 of 7 days logged. Inhale, exhale, repeat.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Daily Reading Habit",
+   "user_requests": [
+    "read 10 pages every day",
+    "track my daily reading",
+    "help me read more books",
+    "reading habit streak tracker",
+    "i want to read daily",
+    "pages read habit",
+    "daily reading goal tracker",
+    "read every day",
+    "daily reading tracker",
+    "i want to read more books",
+    "track my reading habit",
+    "reading streak tracker",
+    "how many days have i read?"
+   ],
+   "html": "<div class=\"card\"><h4>Habit: Daily Reading</h4><p class=\"muted\">Ten pages, that's it.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"meter\"><span style=\"width: 43%\"></span></div><p class=\"t-small dim\">3 of 7 days logged. Chapter by chapter.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Evening Journal Habit",
+   "user_requests": [
+    "write in my journal every night",
+    "track evening journaling",
+    "help me keep a journal habit",
+    "daily journal streak",
+    "journaling before bed",
+    "i want to journal daily",
+    "nightly reflection tracker",
+    "journal every night",
+    "evening journaling tracker",
+    "i want to write in my journal daily",
+    "track my journaling habit",
+    "nightly journal routine",
+    "journal before bed"
+   ],
+   "html": "<div class=\"card\"><h4>Habit: Evening Journal</h4><p class=\"muted\">A few lines before sleep.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"meter\"><span style=\"width: 43%\"></span></div><p class=\"t-small dim\">3 of 7 days logged. Pen to paper.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Morning Stretch Habit",
+   "user_requests": [
+    "stretch every morning",
+    "track my morning stretching",
+    "help me build a stretching habit",
+    "daily stretch streak",
+    "i want to stretch daily",
+    "morning mobility tracker",
+    "stretching before breakfast",
+    "stretch in the morning",
+    "morning stretching tracker",
+    "i want to stretch when i wake up",
+    "track my morning stretches",
+    "daily morning stretch routine",
+    "stretch every morning habit"
+   ],
+   "html": "<div class=\"card\"><h4>Habit: Morning Stretch</h4><p class=\"muted\">Loosen up before the day.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"meter\"><span style=\"width: 43%\"></span></div><p class=\"t-small dim\">3 of 7 days logged. Reach for the ceiling.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Screen-Free Hour Habit",
+   "user_requests": [
+    "no screens for an hour before bed",
+    "track my screen-free time",
+    "help me unplug daily",
+    "digital detox habit tracker",
+    "i want to spend less time on my phone",
+    "screen free evening streak",
+    "unplugged hour habit",
+    "no screens for an hour",
+    "screen free hour tracker",
+    "i want to unplug for an hour",
+    "track my screen-free time",
+    "digital detox hour habit",
+    "avoid screens before bed"
+   ],
+   "html": "<div class=\"card\"><h4>Habit: Screen-Free Hour</h4><p class=\"muted\">Unplug before bed.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge good\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"meter\"><span style=\"width: 43%\"></span></div><p class=\"t-small dim\">3 of 7 days logged. Breathe, don't scroll.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Cat Care Habit",
+   "user_requests": [
+    "Cat care tracker",
+    "did i brush the cat",
+    "track cat stuff",
+    "help me remembr cat meds",
+    "cat habit thing",
+    "weekly kitty checklist",
+    "umii cat care",
+    "remind me to feed n brush my cat every day",
+    "kitty care routine checkoff",
+    "i keep forgettin to scoop the litter box lol",
+    "daily cat chores tracker pls",
+    "something to track cat stuff - food, water, litter",
+    "need help stayin on top of cat care tbh"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Habit: cat care</h4>\n  <p class=\"muted t-small\">Litter, water, play, meds. The cat does not care, but you do.</p>\n  <div class=\"row\">\n    <span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span>\n  </div>\n  <details class=\"acc\">\n    <summary>What counts?</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Scoop litter</li>\n        <li>Fresh water bowl</li>\n        <li>Ten minutes of play</li>\n        <li>Meds or supplements</li>\n      </ul>\n      <p class=\"dim t-small\">If the cat sits on the checklist, that counts as a yes.</p>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Kitchen Reset Habit",
+   "user_requests": [
+    "kitchen reset",
+    "track dish doing",
+    "make me clean kitchen",
+    "umm kitchen habit",
+    "nightly kitchen tidy",
+    "keeping sink empty",
+    "did i reset kitchen",
+    "wanna wipe counters n put dishes away every night",
+    "tidy kitchen before bed tracker",
+    "my kitchen is always a mess help",
+    "reset the kitchen daily kinda thing",
+    "dishes + counters + sink, every evening",
+    "track me cleaning up the kitchen each nite"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Habit: kitchen reset</h4>\n  <p class=\"muted t-small\">Ten minutes at night. Tomorrow-you gets a clean start.</p>\n  <div class=\"grid two\" style=\"margin-block: var(--s-3)\">\n    <div class=\"stat\"><span class=\"label\">Streak</span><span class=\"value\">4<span class=\"unit\"> days</span></span></div>\n    <div class=\"stat\"><span class=\"label\">Best</span><span class=\"value\">11<span class=\"unit\"> days</span></span></div>\n  </div>\n  <div class=\"row\">\n    <span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge\">Thu</span><span class=\"badge good\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span>\n  </div>\n  <div class=\"meter\" style=\"margin-top: var(--s-2)\"><span style=\"width: 57%\"></span></div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Bike Commute Habit",
+   "user_requests": [
+    "bike commute tracker",
+    "did i ride today",
+    "track biking",
+    "habbit bike",
+    "umi bike habit",
+    "cycle to work tracker",
+    "bike days this week",
+    "track days i bike to work instead of driving",
+    "want to ride my bike more, need a tracker",
+    "cycling to office habit thing",
+    "bike to work streak",
+    "how many times did i bike in this week",
+    "commute by bike every weekday pls"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Habit: bike commute</h4>\n  <p class=\"muted t-small\">Two wheels, zero gas, one smug feeling.</p>\n  <div class=\"row\">\n    <span class=\"badge good\">Mon</span><span class=\"badge\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span>\n  </div>\n  <div class=\"grid two\" style=\"margin-top: var(--s-3)\">\n    <div class=\"stat\"><span class=\"label\">This week</span><span class=\"value\">3<span class=\"unit\"> rides</span></span></div>\n    <div class=\"stat\"><span class=\"label\">Goal</span><span class=\"value\">4<span class=\"unit\"> rides</span></span></div>\n  </div>\n  <details class=\"acc\">\n    <summary>What counts as a ride?</summary>\n    <div class=\"body\"><p class=\"t-small\">Any trip where you pedal and don't drive. Rain counts if you ride. Helmet hair does not count against you.</p></div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Compliment Habit",
+   "user_requests": [
+    "compliment habit",
+    "track nice words",
+    "give a compliment daily",
+    "umi nice habit",
+    "did i compliment someone",
+    "compliment tracker",
+    "one nice thing a day",
+    "tryna say something nice to someone each day",
+    "give a compliment daily tracker",
+    "nice thing to a person habit",
+    "i wanna be more encouraging to ppl",
+    "one compliment a day, keep me honest",
+    "trackin my daily kind word to someone"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Habit: one compliment a day</h4>\n  <p class=\"muted t-small\">Small, specific, true. No strings attached.</p>\n  <div class=\"row\">\n    <span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge good\">Sat</span><span class=\"badge\">Sun</span>\n  </div>\n  <details class=\"acc\">\n    <summary>Today's idea</summary>\n    <div class=\"body\">\n      <p class=\"t-small\">Tell someone what you noticed, not just what you think. \"You made that meeting easier\" beats \"good job.\"</p>\n    </div>\n  </details>\n  <div class=\"callout good\" style=\"margin-top: var(--s-2)\">\n    <span class=\"badge good\"><i class=\"dot\"></i> 5-day streak</span>\n    <p class=\"t-small dim\" style=\"margin-top: var(--s-1)\">Kindness compounds.</p>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Eat a Fruit Habit",
+   "user_requests": [
+    "fruit habit",
+    "did i eat fruit today",
+    "track fruit",
+    "umm fruit thing",
+    "eat fruit daily tracker",
+    "fruit check",
+    "one fruit a day",
+    "eat at least one piece of fruit every day",
+    "need to get more fruit in my diet",
+    "apple a day kinda tracker",
+    "fruit instead of junk food habit",
+    "trackin my daily fruit lol i never eat any",
+    "one serving of fruit daily please"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Habit: eat a fruit</h4>\n  <p class=\"muted t-small\">Nature's dessert, already packaged.</p>\n  <div class=\"row\">\n    <span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge good\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span>\n  </div>\n  <div class=\"grid two\" style=\"margin-top: var(--s-3)\">\n    <div class=\"stat\"><span class=\"label\">This week</span><span class=\"value\">4<span class=\"unit\"> fruits</span></span></div>\n  </div>\n  <details class=\"accordion\">\n    <summary>Fruit ideas</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Apple with peanut butter</li>\n        <li>Frozen grapes</li>\n        <li>Banana on the way out</li>\n        <li>Whatever is about to go bad first</li>\n      </ul>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Talk to a Friend Habit",
+   "user_requests": [
+    "friend habit",
+    "reach out to a friend",
+    "track talking to friends",
+    "umi friendship",
+    "Did i text my friend",
+    "keeping in touch habit",
+    "friend check in tracker",
+    "reach out to a buddy every day",
+    "i wanna call or text a friend daily",
+    "keep in touch w friends tracker",
+    "socialize more - one friend a day",
+    "text someone i care about each day",
+    "track me checkin in on my pals"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Habit: talk to a friend</h4>\n  <p class=\"muted t-small\">A text counts. A meme counts double.</p>\n  <div class=\"row\">\n    <span class=\"badge good\">Mon</span><span class=\"badge\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge good\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span>\n  </div>\n  <div class=\"callout info\" style=\"margin-top: var(--s-2)\">\n    <span class=\"badge info\">Near miss</span>\n    <p class=\"t-small\" style=\"margin-top: var(--s-1)\">You missed Wednesday. A quick \"thinking of you\" is still on the table.</p>\n  </div>\n  <details class=\"acc\">\n    <summary>Who to reach out to</summary>\n    <div class=\"body\"><p class=\"t-small\">The person you thought about this week but didn't text. That one.</p></div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Daily Step Goal Habit",
+   "user_requests": [
+    "Can you make me a habit tracker for my daily steps?",
+    "I need to track my step goal each day, can you help?",
+    "track my 10k steps habit pleeease",
+    "Set up a simple step tracker for the week",
+    "I want to see my step streak for the last 7 days",
+    "Habit tracker for walking 8000 steps daily",
+    "Make a widget for my daily step goal",
+    "10k steps a day tracker",
+    "walk more!! need a step counter habit thing",
+    "hit my step goal each day",
+    "trackin my 8k steps",
+    "step goal streak pls",
+    "want to walk 10000 steps daily, help"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Habit: Daily Step Goal</h4>\n  <p class=\"muted t-small\">Target: 8,000 steps</p>\n  <div class=\"row\" style=\"flex-wrap: wrap; gap: var(--s-2);\">\n    <span class=\"badge good\"><i class=\"dot\"></i>Mon</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Tue</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Wed</span>\n    <span class=\"badge\"><i class=\"dot\"></i>Thu</span>\n    <span class=\"badge\"><i class=\"dot\"></i>Fri</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Sat</span>\n    <span class=\"badge\"><i class=\"dot\"></i>Sun</span>\n  </div>\n  <div class=\"meter\" style=\"margin-top: var(--s-3);\">\n    <span style=\"width: 70%;\"></span>\n  </div>\n  <p class=\"muted t-small\" style=\"margin-top: var(--s-1);\">4 of 7 days hit</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Kitchen Clean-Up Habit",
+   "user_requests": [
+    "habit tracker for keeping my kitchen clean?",
+    "I want to track cleaning the kitchen each night",
+    "can u make a tracker for kitchen cleanup?",
+    "Need a widget to track my nightly kitchen tidy",
+    "Kitchen reset habit tracker 7 days",
+    "Track my habit of wiping counters every night",
+    "make a habit tracker for cleaning kitchen daily",
+    "stop leavin dishes in the sink overnight",
+    "clean as i go in the kitchen tracker",
+    "wipe down stove n counters daily",
+    "kitchen tidy streak",
+    "dishes done before bed every night",
+    "need a daily kitchen cleanup reminder"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Habit: Kitchen Clean-Up</h4>\n  <p class=\"muted t-small\">Wipe counters, load dishwasher</p>\n  <div class=\"row\" style=\"flex-wrap: wrap; gap: var(--s-2);\">\n    <span class=\"badge good\"><i class=\"dot\"></i>Mon</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Tue</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Wed</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Thu</span>\n    <span class=\"badge\"><i class=\"dot\"></i>Fri</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Sat</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Sun</span>\n  </div>\n  <div class=\"meter\" style=\"margin-top: var(--s-3);\">\n    <span style=\"width: 85.7%;\"></span>\n  </div>\n  <p class=\"muted t-small\" style=\"margin-top: var(--s-1);\">6 of 7 days hit</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Drink Water Habit",
+   "user_requests": [
+    "habit tracker for drinking water?",
+    "I need to drink more water, can you track it?",
+    "water habit tracker pretty please",
+    "set up a daily water intake tracker",
+    "track my 8 glasses of water a day",
+    "simple habit tracker for water",
+    "make a widget for my water drinking habit",
+    "8 glasses of water a day tracker",
+    "hydrate!! i forget to drink water",
+    "water intake habit pls",
+    "trackin my daily h2o",
+    "drink more water challenge",
+    "remind me to sip water all day"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Habit: Drink Water</h4>\n  <p class=\"muted t-small\">Goal: 8 glasses daily</p>\n  <div class=\"row\" style=\"flex-wrap: wrap; gap: var(--s-2);\">\n    <span class=\"badge good\"><i class=\"dot\"></i>Mon</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Tue</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Wed</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Thu</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Fri</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Sat</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Sun</span>\n  </div>\n  <div class=\"meter\" style=\"margin-top: var(--s-3);\">\n    <span style=\"width: 100%;\"></span>\n  </div>\n  <p class=\"muted t-small\" style=\"margin-top: var(--s-1);\">7 of 7 days hit</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Read 10 Pages Habit",
+   "user_requests": [
+    "habit tracker for reading 10 pages a day?",
+    "I want to read more, can you track my pages?",
+    "reading habit tracker for 10 pages daily",
+    "track my daily reading habit",
+    "widget for reading 10 pages each day",
+    "make a tracker for my 10 page reading goal",
+    "can u set up a habit tracker for reading?",
+    "read a chapter before bed tracker",
+    "want to read more books, 10 pages daily",
+    "book habit - ten pages every day",
+    "trackin my nightly reading",
+    "read instead of scrollin at night",
+    "10 pages a day keeps the phone away lol"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Habit: Read 10 Pages</h4>\n  <p class=\"muted t-small\">Daily reading goal</p>\n  <div class=\"row\" style=\"flex-wrap: wrap; gap: var(--s-2);\">\n    <span class=\"badge good\"><i class=\"dot\"></i>Mon</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Tue</span>\n    <span class=\"badge\"><i class=\"dot\"></i>Wed</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Thu</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Fri</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Sat</span>\n    <span class=\"badge\"><i class=\"dot\"></i>Sun</span>\n  </div>\n  <div class=\"meter\" style=\"margin-top: var(--s-3);\">\n    <span style=\"width: 71.4%;\"></span>\n  </div>\n  <p class=\"muted t-small\" style=\"margin-top: var(--s-1);\">5 of 7 days hit</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Stretch in the Morning Habit",
+   "user_requests": [
+    "habit tracker for morning stretching?",
+    "I want to stretch every morning, can you track it?",
+    "morning stretch habit tracker please",
+    "set up a tracker for my morning stretch",
+    "track my daily morning stretching",
+    "habit tracker widget for stretching",
+    "make a morning stretch habit tracker",
+    "morning stretch routine tracker",
+    "wanna loosen up when i wake up",
+    "5 min stretch after waking",
+    "stretch daily habit pls",
+    "my back hurts, need morning stretches",
+    "track me stretching b4 coffee"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Habit: Morning Stretch</h4>\n  <p class=\"muted t-small\">5 minutes after waking</p>\n  <div class=\"row\" style=\"flex-wrap: wrap; gap: var(--s-2);\">\n    <span class=\"badge good\"><i class=\"dot\"></i>Mon</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Tue</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Wed</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Thu</span>\n    <span class=\"badge\"><i class=\"dot\"></i>Fri</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Sat</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Sun</span>\n  </div>\n  <div class=\"meter\" style=\"margin-top: var(--s-3);\">\n    <span style=\"width: 85.7%;\"></span>\n  </div>\n  <p class=\"muted t-small\" style=\"margin-top: var(--s-1);\">6 of 7 days hit</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "No Late-Night Snack Habit",
+   "user_requests": [
+    "habit tracker for not snacking at night?",
+    "I want to stop late-night snacking, can you track it?",
+    "no snacks after 8pm habit tracker",
+    "track my habit of not eating late",
+    "widget to track no late-night snacks",
+    "can u make a habit tracker for no evening snacking?",
+    "late night snack free tracker",
+    "stop eating after 8pm tracker",
+    "no midnight fridge raids lol",
+    "late night snacking is my weakness, help",
+    "track nights i dont snack",
+    "kitchen closed after dinner habit",
+    "resist the pantry at night"
+   ],
+   "html": "<div class=\"card\">\n  <h4>Habit: No Late-Night Snack</h4>\n  <p class=\"muted t-small\">Kitchen closed after 8pm</p>\n  <div class=\"row\" style=\"flex-wrap: wrap; gap: var(--s-2);\">\n    <span class=\"badge good\"><i class=\"dot\"></i>Mon</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Tue</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Wed</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Thu</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Fri</span>\n    <span class=\"badge\"><i class=\"dot\"></i>Sat</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Sun</span>\n  </div>\n  <div class=\"meter\" style=\"margin-top: var(--s-3);\">\n    <span style=\"width: 85.7%;\"></span>\n  </div>\n  <p class=\"muted t-small\" style=\"margin-top: var(--s-1);\">6 of 7 days hit</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Evening Wind-Down Habit",
+   "user_requests": [
+    "help me wind down before bed",
+    "evening routine tracker",
+    "i keep doomscrolling at night",
+    "wind down habit",
+    "need to chill before sleep",
+    "track my evening wind-down",
+    "how do i stop screens at night",
+    "calm routine before sleep tracker",
+    "no screens, tea, journal - wind down thing",
+    "help me relax at night instead of doomscrolling",
+    "bedtime routine checklist",
+    "wind down streak",
+    "chill out before bed every night"
+   ],
+   "html": "<div class=\"card\"><h4>Habit: Evening Wind-Down</h4><p class=\"t-small muted\">Aim: lights low, screens off 30 min before bed.</p><div class=\"row\" style=\"gap: var(--s-1);\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge good\">Sat</span><span class=\"badge good\">Sun</span></div><details class=\"acc\"><summary>Why it works</summary><div class=\"body\"><p class=\"t-small\">Dim light tells your brain it's night. Screens lie. Pick one quiet thing&mdash;tea, pages, stretching&mdash;and let the day loosen its grip.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Cat Playtime Habit",
+   "user_requests": [
+    "cat playtime tracker",
+    "i forget to play with my cat",
+    "daily cat play",
+    "help me play with my cat more",
+    "cat exercise habit",
+    "track cat play sessions",
+    "my cat is bored",
+    "play w my cat every day tracker",
+    "kitty needs more playtime, help me remember",
+    "10 mins of laser pointer daily",
+    "track play sessions w my cat",
+    "my cat is bored lol, daily play habit",
+    "interactive play with cat each evening"
+   ],
+   "html": "<div class=\"card\"><h4>Habit: Cat Playtime</h4><p class=\"t-small muted\">10 minutes, wand toy, before dinner. The cat wins.</p><div class=\"row\" style=\"gap: var(--s-1);\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge\">Thu</span><span class=\"badge good\">Fri</span><span class=\"badge good\">Sat</span><span class=\"badge\">Sun</span></div><details class=\"acc\"><summary>Why it works</summary><div class=\"body\"><p class=\"t-small\">Play mimics hunting, then eating. A tired cat is a happy cat. Ten focused minutes beats an hour of half-hearted string dangling.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Digital Sunset Habit",
+   "user_requests": [
+    "digital sunset habit",
+    "i need to stop using phone at night",
+    "set a digital sunset",
+    "no screens after 9",
+    "track my screen cutoff",
+    "phone off before bed",
+    "how to do a digital sunset",
+    "put my phone away an hour before bed",
+    "no screens after 9pm tracker",
+    "digital detox at night habit",
+    "stop scrolling before sleep",
+    "phone off by 10 every night",
+    "screen-free evening streak"
+   ],
+   "html": "<div class=\"card\"><h4>Habit: Digital Sunset</h4><p class=\"t-small muted\">Phone goes to bed before you do.</p><div class=\"row\" style=\"gap: var(--s-1);\"><span class=\"badge good\">Mon</span><span class=\"badge\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge good\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge good\">Sun</span></div><details class=\"acc\"><summary>Why it works</summary><div class=\"body\"><p class=\"t-small\">When the phone sleeps in another room, you're not fighting temptation at 11pm. You've already won.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Family Dinner Habit",
+   "user_requests": [
+    "family dinner habit",
+    "we never eat together",
+    "track family meals",
+    "dinner without phones",
+    "eat dinner as a family",
+    "family dinner tracker",
+    "help us eat together more",
+    "eat dinner together as a family nightly",
+    "no phones at dinner, family meal tracker",
+    "family supper every night",
+    "want more family dinners, track it",
+    "dinner at the table w the kids",
+    "track our family meals each week"
+   ],
+   "html": "<div class=\"card\"><h4>Habit: Family Dinner</h4><p class=\"t-small muted\">Table set. Phones parked. One story each.</p><div class=\"row\" style=\"gap: var(--s-1);\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge good\">Fri</span><span class=\"badge good\">Sat</span><span class=\"badge good\">Sun</span></div><details class=\"acc\"><summary>Why it works</summary><div class=\"body\"><p class=\"t-small\">The meal is the excuse. The talking is the point. Even fifteen minutes counts as dinner together.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Daily Puzzle Habit",
+   "user_requests": [
+    "daily puzzle habit",
+    "i want to do a puzzle every day",
+    "track my crossword",
+    "puzzle streak",
+    "do a puzzle daily",
+    "wordle every day",
+    "help me puzzle more",
+    "do a crossword every day",
+    "puzzle a day keeps the brain awake",
+    "i wanna do a sudoku daily",
+    "brain teaser each morning",
+    "help me keep up with my daily wordle",
+    "daily puzzle thing"
+   ],
+   "html": "<div class=\"card\"><h4>Habit: Daily Puzzle</h4><p class=\"t-small muted\">One puzzle, any kind. Coffee optional but recommended.</p><div class=\"row\" style=\"gap: var(--s-1);\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge good\">Sat</span><span class=\"badge good\">Sun</span></div><details class=\"acc\"><summary>Why it works</summary><div class=\"body\"><p class=\"t-small\">Puzzles are play with a side of focus. A small daily win that doesn't need to mean anything.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Gratitude Text Habit",
+   "user_requests": [
+    "gratitude text habit",
+    "send a thank you text daily",
+    "text someone thanks",
+    "gratitude text tracker",
+    "i want to appreciate people more",
+    "daily thank you message",
+    "send gratitude texts",
+    "send a thank you text each day",
+    "txt someone im grateful for",
+    "message a friend thanks daily",
+    "shoot a gratitude text every night",
+    "i want to thank ppl more often by text",
+    "daily thank u msg"
+   ],
+   "html": "<div class=\"card\"><h4>Habit: Gratitude Text</h4><p class=\"t-small muted\">One text. One person. One specific thing they did.</p><div class=\"row\" style=\"gap: var(--s-1);\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge good\">Fri</span><span class=\"badge good\">Sat</span><span class=\"badge good\">Sun</span></div><details class=\"acc\"><summary>Why it works</summary><div class=\"body\"><p class=\"t-small\">Specific thanks lands better than vague praise. And you get to reread the reply when you need it.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Dishes Before Bed Habit",
+   "user_requests": [
+    "help me stop leaving dishes in the sink overnight",
+    "I want a nightly dishwashing habit, can you track it?",
+    "dishes before bed habit tracker",
+    "how do I get in the habit of washing dishes every night?",
+    "track my dishwashing streak please",
+    "nightly kitchen sink reset tracker",
+    "I keep forgetting to do the dishes, need a habit tracker",
+    "dont leave dirty plates for morning",
+    "wash up before i sleep",
+    "kitchen sink should be empty at night",
+    "stop waking up to a sink full of dishes",
+    "evening dish duty",
+    "clean dishes b4 bed"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Dishes Before Bed</h4>\n  <p class=\"muted t-small\">A clean sink by 9pm means a kinder morning.</p>\n  <div class=\"row\" style=\"flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-3);\">\n    <span class=\"badge good\"><i class=\"dot\"></i>Mon</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Tue</span>\n    <span class=\"badge\">Wed</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Thu</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Fri</span>\n    <span class=\"badge\">Sat</span>\n    <span class=\"badge\">Sun</span>\n  </div>\n  <div class=\"callout info\" style=\"margin-top: var(--s-3);\">\n    <p><strong>Tip:</strong> Run the disposal for 10 seconds before you start. It clears the drain and your head.</p>\n  </div>\n  <details class=\"acc\" style=\"margin-top: var(--s-2);\">\n    <summary>Tonight's quick plan</summary>\n    <div class=\"body\">\n      <ol class=\"list\">\n        <li>Rinse and stack plates.</li>\n        <li>Wash glasses first, then cutlery.</li>\n        <li>Wipe the counter while the sink drains.</li>\n      </ol>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Water the Plants Habit",
+   "user_requests": [
+    "remind me to water my plants every other day",
+    "plant watering habit tracker",
+    "I always forget to water my plants, help",
+    "track my plant care streak",
+    "how do I remember to water the fiddle leaf fig?",
+    "plant mama needs a watering schedule",
+    "water plants habit",
+    "my plants need a drink schedule",
+    "plant watering reminder every 2 days",
+    "keep my houseplants alive",
+    "dont let the ferns die",
+    "water monstera every other morning",
+    "plant care routine"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Water the Plants</h4>\n  <p class=\"muted t-small\">Even the pothos gets thirsty. Check the top inch of soil.</p>\n  <div class=\"row\" style=\"flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-3);\">\n    <span class=\"badge good\"><i class=\"dot\"></i>Mon</span>\n    <span class=\"badge\">Tue</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Wed</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Thu</span>\n    <span class=\"badge\">Fri</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Sat</span>\n    <span class=\"badge\">Sun</span>\n  </div>\n  <div class=\"callout good\" style=\"margin-top: var(--s-3);\">\n    <p><strong>Streak:</strong> 4 days. The fern says thanks.</p>\n  </div>\n  <details class=\"acc\" style=\"margin-top: var(--s-2);\">\n    <summary>Plant-by-plant guide</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li><strong>Fiddle leaf fig:</strong> water when top 2 inches are dry.</li>\n        <li><strong>Snake plant:</strong> every 2\u20133 weeks, less in winter.</li>\n        <li><strong>Pothos:</strong> when leaves start to droop slightly.</li>\n      </ul>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Gratitude Journal Habit",
+   "user_requests": [
+    "I want to start a gratitude journal",
+    "help me write down three good things daily",
+    "gratitude journal habit tracker",
+    "track my gratitude practice",
+    "how to build a gratitude habit",
+    "daily gratitude journaling streak",
+    "gratitude journal",
+    "write down 3 things im thankful for",
+    "start a thankfulness diary",
+    "gratitude notebook every night",
+    "jot what im grateful for daily",
+    "i wanna reflect on good stuff each evening",
+    "daily thanks journaling"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Gratitude Journal</h4>\n  <p class=\"muted t-small\">Three small good things. No pressure to be profound.</p>\n  <div class=\"row\" style=\"flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-3);\">\n    <span class=\"badge good\"><i class=\"dot\"></i>Mon</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Tue</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Wed</span>\n    <span class=\"badge\">Thu</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Fri</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Sat</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Sun</span>\n  </div>\n  <div class=\"callout\" style=\"margin-top: var(--s-3);\">\n    <p><strong>Prompt:</strong> What made you smile today? Even a tiny thing counts.</p>\n  </div>\n  <details class=\"acc\" style=\"margin-top: var(--s-2);\">\n    <summary>Need inspiration?</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>A warm cup of tea.</li>\n        <li>A friend's text.</li>\n        <li>Sunlight on the floor.</li>\n        <li>Your own sense of humor.</li>\n      </ul>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Make Your Bed Habit",
+   "user_requests": [
+    "I want to make my bed every morning",
+    "bed making habit tracker",
+    "help me build a morning routine starting with making the bed",
+    "track my make-your-bed streak",
+    "how to remember to make the bed",
+    "make bed habit",
+    "bed making accountability",
+    "bed should be made right after i get up",
+    "tidy my duvet every am",
+    "stop leaving covers in a heap",
+    "morning bed routine",
+    "i want my room to look neat first thing",
+    "make bed before coffee"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Make Your Bed</h4>\n  <p class=\"muted t-small\">One minute now saves ten minutes of scrambling later.</p>\n  <div class=\"row\" style=\"flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-3);\">\n    <span class=\"badge good\"><i class=\"dot\"></i>Mon</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Tue</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Wed</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Thu</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Fri</span>\n    <span class=\"badge\">Sat</span>\n    <span class=\"badge\">Sun</span>\n  </div>\n  <div class=\"callout good\" style=\"margin-top: var(--s-3);\">\n    <p><strong>5-day streak!</strong> Your future self appreciates the tidy start.</p>\n  </div>\n  <details class=\"acc\" style=\"margin-top: var(--s-2);\">\n    <summary>Quick technique</summary>\n    <div class=\"body\">\n      <ol class=\"list\">\n        <li>Pull up the flat sheet and duvet together.</li>\n        <li>Fluff the pillows.</li>\n        <li>Smooth the top. Done.</li>\n      </ol>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Drink Water Habit",
+   "user_requests": [
+    "I need to drink more water",
+    "water intake habit tracker",
+    "help me remember to drink water throughout the day",
+    "track my hydration streak",
+    "how many glasses of water should I drink?",
+    "water drinking habit",
+    "stay hydrated habit",
+    "hydrate more throughout the day",
+    "8 glasses a day reminder",
+    "i keep forgetting to sip water",
+    "water bottle goals",
+    "stay hydrated habit",
+    "drink h2o regularly"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Drink Water</h4>\n  <p class=\"muted t-small\">Aim for 8 glasses. Your skin and brain will thank you.</p>\n  <div class=\"row\" style=\"flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-3);\">\n    <span class=\"badge good\"><i class=\"dot\"></i>Mon</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Tue</span>\n    <span class=\"badge\">Wed</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Thu</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Fri</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Sat</span>\n    <span class=\"badge\">Sun</span>\n  </div>\n  <div class=\"meter\" style=\"margin-top: var(--s-3);\">\n    <div class=\"progress\"><span style=\"width: 70%;\"></span></div>\n    <p class=\"t-small muted\">70% of daily goal reached</p>\n  </div>\n  <details class=\"acc\" style=\"margin-top: var(--s-2);\">\n    <summary>Hydration hacks</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Keep a bottle on your desk.</li>\n        <li>Drink a glass before each meal.</li>\n        <li>Add lemon or mint if plain water bores you.</li>\n      </ul>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Read Before Bed Habit",
+   "user_requests": [
+    "I want to read before bed instead of scrolling",
+    "reading habit tracker",
+    "help me build a nightly reading routine",
+    "track my reading streak",
+    "how to read more books",
+    "read before bed habit",
+    "book before bed challenge",
+    "book instead of phone at night",
+    "read a few pages before sleep",
+    "swap scrolling for reading",
+    "i want to wind down with a novel",
+    "nighttime reading routine",
+    "read not reels b4 bed"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Read Before Bed</h4>\n  <p class=\"muted t-small\">Swap the phone for a few pages. Even 10 minutes counts.</p>\n  <div class=\"row\" style=\"flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-3);\">\n    <span class=\"badge good\"><i class=\"dot\"></i>Mon</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Tue</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Wed</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Thu</span>\n    <span class=\"badge\">Fri</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Sat</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Sun</span>\n  </div>\n  <div class=\"callout info\" style=\"margin-top: var(--s-3);\">\n    <p><strong>Current book:</strong> \"The Midnight Library\" \u2014 12 pages to go.</p>\n  </div>\n  <details class=\"acc\" style=\"margin-top: var(--s-2);\">\n    <summary>Make it stick</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Put your book on your pillow in the morning.</li>\n        <li>Set a phone alarm for 9:30pm labeled \"read\".</li>\n        <li>Keep a book light handy for late nights.</li>\n      </ul>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Two-Minute Tidy Habit",
+   "user_requests": [
+    "two minute tidy habit",
+    "2 min tidy up tracker",
+    "i want a tiny tidy habit",
+    "quick tidy habit please",
+    "give me a two-minute tidy routine",
+    "2min tidy habit tracker",
+    "track my two minute tidy streak",
+    "quick tidy for 120 seconds",
+    "pick up for 2 mins daily",
+    "speed clean each day",
+    "two min pickup habit",
+    "tidy sprint every evening",
+    "2 minute declutter"
+   ],
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Two-Minute Tidy \u00b7 <regex>user_name</regex></h4><p class=\"muted t-small\">Set a timer for two minutes. Pick up whatever is closest. When it rings, stop. That's the whole habit.</p><div class=\"table-wrap\"><table><thead><tr><th>Day</th><th>Done</th><th class=\"num\">Min</th></tr></thead><tbody><tr><td>Mon</td><td><i class=\"dot good\"></i> Yes</td><td class=\"num\">2</td></tr><tr><td>Tue</td><td><i class=\"dot good\"></i> Yes</td><td class=\"num\">2</td></tr><tr><td>Wed</td><td><i class=\"dot warn\"></i> Late</td><td class=\"num\">1</td></tr><tr><td>Thu</td><td><i class=\"dot good\"></i> Yes</td><td class=\"num\">2</td></tr><tr><td>Fri</td><td><i class=\"dot good\"></i> Yes</td><td class=\"num\">2</td></tr><tr><td>Sat</td><td><i class=\"dot bad\"></i> Skipped</td><td class=\"num\">0</td></tr><tr><td>Sun</td><td><i class=\"dot good\"></i> Yes</td><td class=\"num\">2</td></tr></tbody></table></div><div class=\"row between\"><span class=\"badge good\">Streak: 3 days</span><span class=\"badge\">6/7 this week</span></div><details class=\"acc\"><summary>Why two minutes?</summary><div class=\"body\"><p class=\"muted\">It's short enough that you can't talk yourself out of it, and long enough to make a visible dent. The point isn't spotless\u2014it's that you start.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "One Nice Thing Habit",
+   "user_requests": [
+    "one nice thing habit",
+    "daily one nice thing tracker",
+    "i want to do one nice thing a day",
+    "one nice thing habit widget",
+    "track one nice thing daily",
+    "one small nice thing habit",
+    "habit for doing one nice thing",
+    "do a small kindness daily",
+    "one good deed a day",
+    "be nice once a day",
+    "random act of kindness habit",
+    "do something kind each morning",
+    "daily nice gesture"
+   ],
+   "html": "<div class=\"card\"><h4 class=\"card-title\">One Nice Thing \u00b7 <regex>user_name</regex></h4><p class=\"muted t-small\">Tiny, specific, low-effort. Hold a door, send a kind text, refill the office kettle. One per day.</p><div class=\"grid two\"><div class=\"stat\"><div class=\"label\">This week</div><div class=\"value\">5<span class=\"unit\">/7</span></div><div class=\"delta\">+2 vs last</div></div><div class=\"stat\"><div class=\"label\">Longest run</div><div class=\"value\">11<span class=\"unit\">days</span></div></div></div><div class=\"stack t-small\"><div class=\"row\"><span class=\"badge good\"><i class=\"dot\"></i>Mon</span><span class=\"muted\">Made coffee for the whole flat</span></div><div class=\"row\"><span class=\"badge good\"><i class=\"dot\"></i>Tue</span><span class=\"muted\">Sent a voice note to Sam</span></div><div class=\"row\"><span class=\"badge\">Wed</span><span class=\"muted\">\u2014</span></div><div class=\"row\"><span class=\"badge good\"><i class=\"dot\"></i>Thu</span><span class=\"muted\">Held the lift for the courier</span></div><div class=\"row\"><span class=\"badge good\"><i class=\"dot\"></i>Fri</span><span class=\"muted\">Watered Priya's desk plant</span></div></div><blockquote class=\"quote\">Nice is not a personality. It's a thing you do before noon.<cite>\u2014 a fridge magnet, probably</cite></blockquote><details class=\"acc\"><summary>How to pick one</summary><div class=\"body\"><p>Ask: is this 30 seconds or less, and would it land well if someone did it for me? If both are yes, go.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sit Up Straight Habit",
+   "user_requests": [
+    "sit up straight habit",
+    "posture check habit",
+    "i keep slouching, help",
+    "sit up straight tracker",
+    "habit for sitting up straight",
+    "posture habit widget",
+    "track my posture habit",
+    "stop slouching at my desk",
+    "posture check reminder",
+    "sit tall habit",
+    "fix my posture daily",
+    "i hunch too much",
+    "straighten up regularly"
+   ],
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Sit Up Straight \u00b7 <regex>user_name</regex></h4><p class=\"muted t-small\">Not a whole-day rule. Three check-ins: mid-morning, after lunch, before you log off. Sit tall for ten seconds and go back to work.</p><div class=\"row between\"><span class=\"badge info\">Today: 2 / 3 check-ins</span><span class=\"badge\">7-day score 82%</span></div><div class=\"meter\"><span style=\"width:82%\"></span></div><div class=\"grid two\"><div class=\"stat\"><div class=\"label\">Best day</div><div class=\"value\">3<span class=\"unit\">/3</span></div><div class=\"delta\">Wed</div></div><div class=\"stat\"><div class=\"label\">Most missed</div><div class=\"value\">Mon<span class=\"unit\">afternoon</span></div></div></div><ul class=\"list t-small\"><li><strong>Anchor it:</strong> every time you refill your glass, reset your shoulders.</li><li><strong>Check three:</strong> ears over shoulders, shoulders over hips, feet flat.</li><li><strong>Don't fight it:</strong> posture is a habit of noticing, not a pose you hold for eight hours.</li></ul><details class=\"acc\"><summary>What counts as done?</summary><div class=\"body\"><p>Any check-in where you actually noticed and adjusted. If you caught yourself slouching, that's a win\u2014the noticing is the skill.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Name Three Good Things Habit",
+   "user_requests": [
+    "name three good things habit",
+    "three good things tracker",
+    "i want to list three good things daily",
+    "habit for naming three good things",
+    "3 good things habit widget",
+    "track three good things",
+    "daily three good things habit",
+    "list 3 positives each night",
+    "three good things before bed",
+    "name 3 wins daily",
+    "count my blessings x3",
+    "evening positivity list",
+    "3 good things habit"
+   ],
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Name Three Good Things \u00b7 <regex>user_name</regex></h4><p class=\"muted t-small\">At the end of the day, write three. Small counts. \"The bus came\" is allowed.</p><div class=\"stack t-small\"><div class=\"row between\"><span class=\"badge good\">Mon</span><span class=\"muted\">Sunshine on the kitchen floor \u00b7 Found the good pen \u00b7 No queue at the post office</span></div><div class=\"row between\"><span class=\"badge good\">Tue</span><span class=\"muted\">Long call with Mum \u00b7 Finished the report \u00b7 Soup was better than expected</span></div><div class=\"row between\"><span class=\"badge good\">Wed</span><span class=\"muted\">Walked the long way \u00b7 Cat sat on my lap \u00b7 Clean sheets</span></div><div class=\"row between\"><span class=\"badge\">Thu</span><span class=\"muted\">\u2014 still time</span></div></div><div class=\"row between\"><span class=\"badge good\">3 days in a row</span><span class=\"badge\">21 things noted</span></div><details class=\"acc\"><summary>If nothing comes to mind</summary><div class=\"body\"><p>Lower the bar until something does. Warm shower. Good bread. A song you still like. The list is not a competition.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Put Your Phone Away at Meals Habit",
+   "user_requests": [
+    "put your phone away at meals habit",
+    "phone away at meals tracker",
+    "i want to stop using my phone at meals",
+    "no phone at meals habit",
+    "habit for phone away during meals",
+    "mealtime no phone widget",
+    "track phone away at meals",
+    "no screens while eating",
+    "phone in another room at dinner",
+    "be present at meals",
+    "stop scrolling during lunch",
+    "device-free dining",
+    "put phone down when i eat"
+   ],
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Phone Away at Meals \u00b7 <regex>user_name</regex></h4><p class=\"muted t-small\">Phone in another room, face down, or in a drawer. One rule: not on the table while you eat.</p><div class=\"grid two\"><div class=\"stat\"><div class=\"label\">Meals phone-free</div><div class=\"value\">9<span class=\"unit\">/14</span></div><div class=\"delta\">+3 this week</div></div><div class=\"stat\"><div class=\"label\">Longest streak</div><div class=\"value\">4<span class=\"unit\">days</span></div></div></div><div class=\"stack t-small\"><div class=\"row\"><span class=\"badge good\">Breakfast</span><span class=\"muted\">Phone left in the hall</span></div><div class=\"row\"><span class=\"badge good\">Lunch</span><span class=\"muted\">Read a page instead</span></div><div class=\"row\"><span class=\"badge bad\">Dinner</span><span class=\"muted\">Scrolled for 20 min</span></div></div><details class=\"acc\"><summary>Small workaround</summary><div class=\"body\"><p>If you eat at your desk, put the phone in your bag. If you eat with others, stack phones in the middle\u2014first one to reach pays for coffee.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Morning Sunlight Habit",
+   "user_requests": [
+    "morning sunlight habit",
+    "sunlight tracker",
+    "i want to get morning sun",
+    "habit for morning sunlight",
+    "morning sun habit widget",
+    "track morning sunlight",
+    "daily sunlight habit",
+    "get outside first thing am",
+    "sun on my face each morning",
+    "10 mins of morning light",
+    "wake up with daylight",
+    "morning walk in the sun",
+    "catch sunrise rays daily"
+   ],
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Morning Sunlight \u00b7 <regex>user_name</regex></h4><p class=\"muted t-small\">Ten minutes outside, ideally within an hour of waking. Cloudy still counts\u2014just a little longer.</p><div class=\"grid two\"><div class=\"stat\"><div class=\"label\">This week</div><div class=\"value\">5<span class=\"unit\">/7</span></div><div class=\"delta\">+1 vs last</div></div><div class=\"stat\"><div class=\"label\">Avg time</div><div class=\"value\">12<span class=\"unit\">min</span></div></div></div><div class=\"stack t-small\"><div class=\"row between\"><span class=\"badge good\">Mon</span><span class=\"muted\">10 min \u00b7 clear</span></div><div class=\"row between\"><span class=\"badge good\">Tue</span><span class=\"muted\">15 min \u00b7 overcast</span></div><div class=\"row between\"><span class=\"badge good\">Wed</span><span class=\"muted\">10 min \u00b7 clear</span></div><div class=\"row between\"><span class=\"badge\">Thu</span><span class=\"muted\">Indoors, grey</span></div><div class=\"row between\"><span class=\"badge good\">Fri</span><span class=\"muted\">12 min \u00b7 clear</span></div></div><details class=\"acc\"><summary>Why morning, not noon?</summary><div class=\"body\"><p>Light early in the day helps set your body clock, which nudges sleep and mood later. A coffee outside does the job in one go.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "I want to start flossing every night",
+    "help me track a daily floss habit",
+    "flossing reminder widget",
+    "how do I remember to floss?",
+    "make flossing stick",
+    "floss tracker",
+    "keep track of flossing each day",
+    "floss every night before brush",
+    "dental floss daily",
+    "i never floss help",
+    "make flossing stick",
+    "floss after dinner",
+    "nightly floss routine"
+   ],
+   "title": "Flossing Habit",
+   "html": "<div class=\"card\"><h4>Flossing</h4><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge\">Wed</span><span class=\"badge\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><p class=\"muted t-small\">Two days in. Keep going, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "I need to stretch my back every day",
+    "daily back stretch reminder",
+    "help me stretch my back",
+    "back stretch habit tracker",
+    "how to remember back stretches",
+    "stretch for back pain",
+    "make a back stretching routine",
+    "daily back stretches",
+    "loosen my back every morning",
+    "stretch spine habit",
+    "back pain prevention stretches",
+    "5 min back stretch daily",
+    "keep my back flexible"
+   ],
+   "title": "Back Stretch Habit",
+   "html": "<div class=\"card\"><h4>Back Stretch</h4><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge\">Tue</span><span class=\"badge\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><p class=\"muted t-small\">Three days. Your spine says thanks, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "I want to take the stairs more often",
+    "stair climbing habit",
+    "take stairs instead of elevator",
+    "track stair use daily",
+    "stairs habit widget",
+    "how to take stairs every day",
+    "make stairs a habit",
+    "Elevator is for the weak, stairs all day",
+    "avoid elevators, always take stairs",
+    "Tak the stairs habit tracker",
+    "I keep taking the lift, help me switch to stairs",
+    "Stair climb daily, need accountability",
+    "can u make a thing to track stair usage?"
+   ],
+   "title": "Take the Stairs Habit",
+   "html": "<div class=\"card\"><h4>Take the Stairs</h4><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge\">Wed</span><span class=\"badge\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><p class=\"muted t-small\">Two flights up. Keep climbing, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "I want to meditate for 5 minutes daily",
+    "meditation habit tracker",
+    "help me start meditating",
+    "daily meditation reminder",
+    "meditate every day",
+    "mindfulness meditation habit",
+    "track my meditation",
+    "need to calm my mind with daily meditation",
+    "10 mins of zen every day, track it",
+    "Meditaiton habit builder",
+    "start a meditation streak",
+    "help me be more mindful daily",
+    "track my meditation sessions plz"
+   ],
+   "title": "Meditation Habit",
+   "html": "<div class=\"card\"><h4>Meditation</h4><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge\">Tue</span><span class=\"badge\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge good\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><p class=\"muted t-small\">Four sits. Notice the quiet, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "I need to practice Spanish daily",
+    "language learning habit",
+    "Spanish practice tracker",
+    "help me learn Spanish every day",
+    "daily language practice",
+    "track Spanish practice",
+    "make language learning a habit",
+    "Duolingo everyday, need tracker",
+    "learn French daily, track progress",
+    "Language practice streak",
+    "practice vocab daily",
+    "daily language drills, keep me honest",
+    "i wanna practice german every day"
+   ],
+   "title": "Language Practice Habit",
+   "html": "<div class=\"card\"><h4>Language Practice</h4><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge good\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><p class=\"muted t-small\">Five days. \u00a1Muy bien, <regex>user_name</regex>!</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "I want to write in my journal every night",
+    "journaling habit tracker",
+    "daily journal reminder",
+    "help me journal regularly",
+    "evening journal habit",
+    "track my journaling",
+    "journal every night",
+    "bedtime journaling tracker",
+    "write before bed, track it",
+    "journaling at night, need habit",
+    "Nightly diary habit",
+    "track my evening journaling",
+    "I want to journal every night"
+   ],
+   "title": "Night Journal Habit",
+   "html": "<div class=\"card\"><h4>Night Journal</h4><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge good\">Fri</span><span class=\"badge good\">Sat</span><span class=\"badge\">Sun</span></div><p class=\"muted t-small\">Six nights. One more for a full week, <regex>user_name</regex>.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "help me stop hitting snooze every morning",
+    "I want to wake up on time",
+    "no more snooze button challenge",
+    "alarm snooze habit tracker",
+    "how to actually get out of bed",
+    "stop snoozing so much",
+    "snooze free mornings",
+    "wake up on first alarm, no snooze",
+    "stop snoozing, track success",
+    "No snooze button challenge",
+    "I hit snooze too much, help",
+    "track days without snoozing",
+    "need to get up immediately, no snooze"
+   ],
+   "title": "No Snooze Habit",
+   "html": "<div class=\"card\"><h4>Habit: no snooze</h4><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge bad\">Fri</span><span class=\"badge good\">Sat</span><span class=\"badge good\">Sun</span></div><p class=\"t-small muted\">Five of seven. Friday's a scratch, not a spiral.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "i want to drink less coffee",
+    "cutting back on caffeine",
+    "coffee reduction habit",
+    "track my coffee intake",
+    "less espresso more water",
+    "caffeine taper plan",
+    "help me stop drinking so much coffee",
+    "cut back on caffeine, track cups",
+    "max 2 coffees a day, track it",
+    "Coffee reduction tracker",
+    "limit espresso intake daily",
+    "track my coffee consumption",
+    "i drink too much coffee, help me track"
+   ],
+   "title": "Coffee Limit Habit",
+   "html": "<div class=\"card\"><h4>Habit: max two cups</h4><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge warn\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge good\">Sat</span><span class=\"badge good\">Sun</span></div><p class=\"t-small muted\">Wednesday was a three-cup day. It happens. Back on track Thursday.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "i need to walk my dog more",
+    "dog walking routine",
+    "daily dog walk habit",
+    "help me remember to walk the dog",
+    "puppy exercise tracker",
+    "walk the dog every day",
+    "doggo walk streak",
+    "walk the dog daily, need reminder",
+    "dog walking streak",
+    "take pup out every day, track",
+    "daily dog walks tracker",
+    "I want to walk my dog every morning",
+    "track dog walkies"
+   ],
+   "title": "Dog Walk Habit",
+   "html": "<div class=\"card\"><h4>Habit: walk the dog</h4><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge good\">Fri</span><span class=\"badge good\">Sat</span><span class=\"badge bad\">Sun</span></div><p class=\"t-small muted\">Six for seven. Sunday's rain was relentless. The dog forgave you.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "i want to eat more vegetables",
+    "veggie habit tracker",
+    "eating greens daily",
+    "how to add veggies to every meal",
+    "vegetable challenge",
+    "more salads less snacks",
+    "veggies with dinner habit",
+    "eat a veggie with dinner, track it",
+    "add greens to dinner daily",
+    "Veggie at dinner habit",
+    "track my dinner veggies",
+    "more vegetables at dinner, need tracker",
+    "i need to eat veggies at dinner"
+   ],
+   "title": "Veggie at Dinner Habit",
+   "html": "<div class=\"card\"><h4>Habit: veggie at dinner</h4><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge good\">Fri</span><span class=\"badge warn\">Sat</span><span class=\"badge good\">Sun</span></div><p class=\"t-small muted\">Saturday was fries. Potatoes are technically vegetables. We'll count it.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "i need to practice guitar more",
+    "guitar practice habit",
+    "daily guitar routine",
+    "help me play guitar every day",
+    "music practice tracker",
+    "guitar streak",
+    "learn guitar consistently",
+    "practice guitar daily, track it",
+    "Guitar streak tracker",
+    "need to play guitar every day",
+    "track my guitar practice",
+    "daily guitar drills, keep me accountable",
+    "i wanna practice guitar daily"
+   ],
+   "title": "Guitar Practice Habit",
+   "html": "<div class=\"card\"><h4>Habit: practice guitar</h4><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge bad\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge good\">Fri</span><span class=\"badge good\">Sat</span><span class=\"badge good\">Sun</span></div><p class=\"t-small muted\">Six days. Wednesday the strings stayed quiet. Today they sang.</p></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "i want to stop biting my nails",
+    "nail biting habit tracker",
+    "quit nail biting",
+    "help me stop chewing my nails",
+    "nail care habit",
+    "no more nail biting",
+    "nail biting recovery",
+    "stop biting nails, track days",
+    "Nail biting cessation tracker",
+    "quit nail biting habit",
+    "track my no nail biting streak",
+    "help me stop biting my nails",
+    "nail biting tracker plz"
+   ],
+   "title": "No Nail Biting Habit",
+   "html": "<div class=\"card\"><h4>Habit: no nail biting</h4><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge bad\">Thu</span><span class=\"badge good\">Fri</span><span class=\"badge good\">Sat</span><span class=\"badge good\">Sun</span></div><p class=\"t-small muted\">Thursday was a slip. Your nails are still longer than last week.</p></div>",
+   "augmented": true
+  },
+  {
+   "title": "Vitamin Habit",
+   "user_requests": [
+    "track taking my vitamin every morning",
+    "need a habit tracker for daily vitamins",
+    "hey umi can u make me a vitamin streak thing",
+    "i keep forgetting my vitamin d pill, help?",
+    "vitamin tracker pls, 7 days",
+    "morning vitamin habit tracker widget",
+    "remind me to take my vitamins with a chart",
+    "take vitamins daily, track it",
+    "Vitamin streak tracker",
+    "remember to take vitamin every day",
+    "track my daily vitamin",
+    "need vitamin reminder",
+    "i keep forgetting my vitamins, help"
+   ],
+   "html": "<div class=\"card stack\"><div class=\"between\"><h4 class=\"card-title\">Vitamin Habit</h4><span class=\"badge info\"><i class=\"dot\"></i>weekly</span></div><p class=\"muted t-small\">One tiny pill, one big smug feeling. Tap a day when it's done, <regex>user_name</regex>.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"divider\"></div><div class=\"row between\"><span class=\"t-small muted\">Streak</span><span class=\"t-small\"><strong>3 days</strong></span></div><div class=\"meter\"><div class=\"progress\"><span style=\"width:43%\"></span></div></div><details class=\"acc\"><summary>Why mornings win</summary><div class=\"body\"><p class=\"t-small muted\">Pair it with something you already do \u2014 kettle on, pill down. No kettle, no excuse.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Sunscreen Habit",
+   "user_requests": [
+    "help me remember sunscreen daily",
+    "sunscreen tracker widget",
+    "can u track my spf habit for a week",
+    "i always forget to put on sunscreen!!",
+    "dermatologist said daily spf, need a tracker",
+    "make a sunscreen streak chart",
+    "spf every day habit thingy",
+    "apply sunscreen daily, track",
+    "Sunscreen streak",
+    "remember to put on sunscreen",
+    "track my sunscreen usage",
+    "daily sunscreen habit",
+    "i need to wear sunscreen every day"
+   ],
+   "html": "<div class=\"card stack\"><div class=\"between\"><h4 class=\"card-title\">Sunscreen Habit</h4><span class=\"badge accent\">spf daily</span></div><p class=\"muted t-small\">Future you has fewer wrinkles and says thanks, <regex>user_name</regex>.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"divider\"></div><div class=\"row between\"><span class=\"t-small muted\">Days logged</span><span class=\"t-small\"><strong>4 of 7</strong></span></div><div class=\"meter\"><div class=\"progress\"><span style=\"width:57%\"></span></div></div><details class=\"acc\"><summary>Cloudy days count too</summary><div class=\"body\"><p class=\"t-small muted\">UV gets through clouds like it owns the place. Two fingers' worth, face and neck.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Plant Watering Habit",
+   "user_requests": [
+    "i need a plant watering tracker",
+    "help me not kill my houseplants",
+    "watering schedule widget for my plants",
+    "track when i water the monstera",
+    "plant care habit tracker pls",
+    "monstera is thirsty, make me a chart",
+    "weekly plant watering habit",
+    "water plants daily, track",
+    "Plant watering schedule",
+    "remember to water plants",
+    "track my plant watering",
+    "daily plant care tracker",
+    "i keep forgetting to water my plants"
+   ],
+   "html": "<div class=\"card stack\"><div class=\"between\"><h4 class=\"card-title\">Plant Watering Habit</h4><span class=\"badge good\"><i class=\"dot\"></i>alive</span></div><p class=\"muted t-small\">Keep the leafy roommates hydrated, <regex>user_name</regex>. They notice.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge good\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"divider\"></div><div class=\"row between\"><span class=\"t-small muted\">This week</span><span class=\"t-small\"><strong>3 waterings</strong></span></div><div class=\"meter\"><div class=\"progress\"><span style=\"width:43%\"></span></div></div><div class=\"callout info\"><p class=\"t-small\">Stick a finger in the soil. Dry two knuckles deep means it's time.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "title": "Flossing Habit",
+   "user_requests": [
+    "make a flossing tracker",
+    "i never floss, help me start",
+    "dentist guilt tracker for flossing",
+    "floss every night habit widget",
+    "track my flossing for a week pls",
+    "need a nightly floss streak",
+    "floss tracker so i stop lying to my dentist",
+    "floss daily, track it",
+    "Flossing streak tracker",
+    "remember to floss every night",
+    "track my flossing",
+    "daily floss habit",
+    "i need to floss more, track it"
+   ],
+   "html": "<div class=\"card stack\"><div class=\"between\"><h4 class=\"card-title\">Flossing Habit</h4><span class=\"badge warn\">dentist approved</span></div><p class=\"muted t-small\">Your gums don't bleed for fun, <regex>user_name</regex>. Two minutes, that's it.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"divider\"></div><div class=\"row between\"><span class=\"t-small muted\">Nights flossed</span><span class=\"t-small\"><strong>3 of 7</strong></span></div><div class=\"meter\"><div class=\"progress\"><span style=\"width:43%\"></span></div></div><details class=\"acc\"><summary>Make it easy</summary><div class=\"body\"><p class=\"t-small muted\">Leave the floss on the counter next to your toothbrush. Visible = done.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Push-Up Habit",
+   "user_requests": [
+    "track my daily push ups",
+    "push up streak widget",
+    "help me do push ups every day",
+    "can u make a push up habit tracker",
+    "i want to hit 20 push ups a day",
+    "pushup tracker pls 7 days",
+    "bodyweight habit chart for push ups",
+    "do push ups daily, track",
+    "Push-up streak tracker",
+    "track my push ups",
+    "daily push-up challenge",
+    "i want to do push ups every day",
+    "push-up habit builder"
+   ],
+   "html": "<div class=\"card stack\"><div class=\"between\"><h4 class=\"card-title\">Push-Up Habit</h4><span class=\"badge accent\">20 a day</span></div><p class=\"muted t-small\">Tiny reps, real arms. Go, <regex>user_name</regex>.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge\n good\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"divider\"></div><div class=\"row between\"><span class=\"t-small muted\">Total this week</span><span class=\"t-small\"><strong>80 reps</strong></span></div><div class=\"meter\"><div class=\"progress\"><span style=\"width:57%\"></span></div></div><details class=\"acc\"><summary>Form over ego</summary><div class=\"body\"><p class=\"t-small muted\">Elbows tucked, body straight. Ten good ones beat thirty sloppy ones.</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Unplug Habit",
+   "user_requests": [
+    "track my no phone time",
+    "unplug habit tracker",
+    "help me take phone breaks daily",
+    "phone free minutes tracker pls",
+    "i want 30 mins a day without my phone",
+    "make an unplug streak widget",
+    "no screen hour habit chart",
+    "no phone time, track it",
+    "Unplug from devices daily",
+    "digital detox tracker",
+    "track my screen-free time",
+    "i need to unplug more often",
+    "no phone zone habit"
+   ],
+   "html": "<div class=\"card stack\"><div class=\"between\"><h4 class=\"card-title\">Unplug Habit</h4><span class=\"badge info\">30 min</span></div><p class=\"muted t-small\">Thirty phone-free minutes. The scroll will survive without you, <regex>user_name</regex>.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"divider\"></div><div class=\"row between\"><span class=\"t-small muted\">Days unplugged</span><span class=\"t-small\"><strong>3 of 7</strong></span></div><div class=\"meter\"><div class=\"progress\"><span style=\"width:43%\"></span></div></div><div class=\"callout good\"><p class=\"t-small\">Last one done before lunch. Nice timing.</p></div></div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "make a habit tracker for meditating",
+    "I need a tracker for my meditation streak",
+    "meditation habit widget please",
+    "track my daily meditation habit",
+    "habit tracker: meditate every day",
+    "i want to track meditation for a week",
+    "meditation tracker for the week"
+   ],
+   "title": "Meditation Habit",
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Meditation Habit</h4><p class=\"muted\">A little quiet, every day. <regex>user_name</regex>, keep the streak alive.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge\">Wed</span><span class=\"badge\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><details class=\"acc\"><summary>Why it helps</summary><div class=\"body\"><p>Even five minutes counts. Consistency beats duration.</p></div></details></div>"
+  },
+  {
+   "user_requests": [
+    "habit tracker for taking vitamins",
+    "i keep forgetting my vitamins",
+    "vitamin habit widget",
+    "track my daily vitamin",
+    "need a tracker for vitamins",
+    "vitamin streak tracker",
+    "help me remember vitamins daily"
+   ],
+   "title": "Vitamin Habit",
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Vitamin Habit</h4><p class=\"muted\">One tiny pill, one big win. <regex>user_name</regex>, don't skip it.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><details class=\"acc\"><summary>Tip</summary><div class=\"body\"><p>Pair it with an existing routine, like brushing your teeth.</p></div></details></div>"
+  },
+  {
+   "user_requests": [
+    "track my flossing habit",
+    "floss every day tracker",
+    "habit tracker for flossing",
+    "i need to floss more",
+    "flossing streak widget",
+    "make flossing a habit",
+    "daily floss tracker"
+   ],
+   "title": "Flossing Habit",
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Flossing Habit</h4><p class=\"muted\">Your dentist will be so proud. <regex>user_name</regex>, tiny string, big smile.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><details class=\"acc\"><summary>Why it matters</summary><div class=\"body\"><p>Flossing removes plaque where your brush can't reach.</p></div></details></div>"
+  },
+  {
+   "user_requests": [
+    "habit tracker for sunscreen",
+    "i never remember sunscreen",
+    "track my daily sunscreen",
+    "sunscreen habit widget",
+    "need a sunscreen streak",
+    "apply sunscreen daily tracker",
+    "sunscreen reminder habit"
+   ],
+   "title": "Sunscreen Habit",
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Sunscreen Habit</h4><p class=\"muted\">Future you says thanks. <regex>user_name</regex>, a little SPF goes a long way.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge\">Thu</span><span class=\"badge good\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><details class=\"acc\"><summary>Tip</summary><div class=\"body\"><p>Keep a bottle by your toothbrush or in your bag.</p></div></details></div>"
+  },
+  {
+   "user_requests": [
+    "track my push-up habit",
+    "push-up streak tracker",
+    "habit tracker for push-ups",
+    "i want to do push-ups daily",
+    "push-up habit widget",
+    "daily push-up tracker",
+    "start a push-up habit"
+   ],
+   "title": "Push-Up Habit",
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Push-Up Habit</h4><p class=\"muted\">Drop and give me ten. <regex>user_name</regex>, strong starts small.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge good\">Sat</span><span class=\"badge\">Sun</span></div><details class=\"acc\"><summary>Why it works</summary><div class=\"body\"><p>Doing them right after waking up makes them automatic.</p></div></details></div>"
+  },
+  {
+   "user_requests": [
+    "habit tracker for unplugging",
+    "unplug from tech daily tracker",
+    "i need to unplug more",
+    "unplug habit widget",
+    "track my unplug time",
+    "daily unplug streak",
+    "unplug challenge tracker"
+   ],
+   "title": "Unplug Habit",
+   "html": "<div class=\"card\"><h4 class=\"card-title\">Unplug Habit</h4><p class=\"muted\">Log off, look up. <regex>user_name</regex>, the world is still there.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><details class=\"acc\"><summary>How to start</summary><div class=\"body\"><p>Try 30 minutes before bed. No screens, just quiet.</p></div></details></div>"
+  },
+  {
+   "title": "Wake Up Early Habit",
+   "user_requests": [
+    "track my wake up early habit for the week",
+    "i wanna stop hitting snooze and actually get up early, help me track it",
+    "wake up 6am habit tracker pls",
+    "Can you make me a weekly tracker for waking up early?",
+    "early riser streak thing",
+    "track mornings i get up before 7",
+    "help me keep a wake-up-early streak goin"
+   ],
+   "html": "<div class=\"card\">\n<h4 class=\"card-title\">Wake Up Early</h4>\n<p class=\"muted t-small\">Up by 6:30, feet on floor. That's it. No heroics, <regex>user_name</regex>.</p>\n<div class=\"row\" style=\"gap:var(--s-2);flex-wrap:wrap\">\n<span class=\"badge good\"><i class=\"dot\"></i>Mon</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Tue</span>\n<span class=\"badge\">Wed</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Thu</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Fri</span>\n<span class=\"badge\">Sat</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Sun</span>\n</div>\n<div class=\"divider\"></div>\n<div class=\"stat\"><span class=\"label\">This week</span><span class=\"value\">5<span class=\"unit\">/7</span></span><span class=\"delta\">best streak 4 days</span></div>\n<details class=\"acc\">\n<summary>Why mornings are easier</summary>\n<div class=\"body\"><p class=\"t-small\">Alarm across the room. Clothes laid out the night before. Light on within a minute. Stack three tiny wins and the bed stops calling.</p></div>\n</details>\n</div>"
+  },
+  {
+   "title": "Learn a New Word Habit",
+   "user_requests": [
+    "word of the day tracker",
+    "i want to learn one new word every day, track it",
+    "daily vocab habit widget",
+    "help me build a word-a-day streak",
+    "new word tracking week",
+    "track me learning words pls",
+    "vocab streak for the whole week"
+   ],
+   "html": "<div class=\"card\">\n<h4 class=\"card-title\">One New Word a Day</h4>\n<p class=\"muted t-small\">Learn it, say it out loud once, use it before bed. Words stick when they leave your mouth, <regex>user_name</regex>.</p>\n<div class=\"row\" style=\"gap:var(--s-2);flex-wrap:wrap\">\n<span class=\"badge good\"><i class=\"dot\"></i>Mon</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Tue</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Wed</span>\n<span class=\"badge\">Thu</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Fri</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Sat</span>\n<span class=\"badge\">Sun</span>\n</div>\n<div class=\"divider\"></div>\n<div class=\"stat\"><span class=\"label\">Words collected</span><span class=\"value\">38</span><span class=\"delta\">5 this week</span></div>\n<details class=\"acc\">\n<summary>Sticky picks from this week</summary>\n<div class=\"body\"><ul class=\"list t-small\"><li><strong>Pernicious</strong> \u2014 quietly harmful.</li><li><strong>Lucid</strong> \u2014 clear, easy to follow.</li><li><strong>Brisk</strong> \u2014 quick and energising.</li></ul></div>\n</details>\n</div>"
+  },
+  {
+   "title": "Save Money Habit",
+   "user_requests": [
+    "no-spend day tracker",
+    "i'm trying to save money, track my no-spend days",
+    "frugal week habit widget",
+    "track days i don't spend anything",
+    "money saving streak tracker",
+    "help me stop spending daily",
+    "no spend challenge this week"
+   ],
+   "html": "<div class=\"card\">\n<h4 class=\"card-title\">No-Spend Day</h4>\n<p class=\"muted t-small\">A day you bought nothing but the essentials. Count it, <regex>user_name</regex>. Small numbers grow quietly.</p>\n<div class=\"row\" style=\"gap:var(--s-2);flex-wrap:wrap\">\n<span class=\"badge good\"><i class=\"dot\"></i>Mon</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Tue</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Wed</span>\n<span class=\"badge\">Thu</span>\n<span class=\"badge\">Fri</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Sat</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Sun</span>\n</div>\n<div class=\"divider\"></div>\n<div class=\"stat\"><span class=\"label\">This week</span><span class=\"value\">5<span class=\"unit\">/7</span></span><span class=\"delta\">\u2248 20 extra a week</span></div>\n<details class=\"acc\">\n<summary>The two-day rule</summary>\n<div class=\"body\"><p class=\"t-small\">One off day is life. Two in a row is a habit forming the wrong way. Get back on it tomorrow, no guilt tax.</p></div>\n</details>\n</div>"
+  },
+  {
+   "title": "Cold Shower Habit",
+   "user_requests": [
+    "cold shower tracker",
+    "i want to try cold showers every day, track it",
+    "cold plunge streak widget",
+    "track my cold shower habit for the week",
+    "daily cold shower thing",
+    "help me stick with cold showers",
+    "cold showers week tracker"
+   ],
+   "html": "<div class=\"card\">\n<h4 class=\"card-title\">Cold Shower</h4>\n<p class=\"muted t-small\">Last 60 seconds on cold. Thirty is fine to start. Breathe out slow, <regex>user_name</regex>.</p>\n<div class=\"row\" style=\"gap:var(--s-2);flex-wrap:wrap\">\n<span class=\"badge good\"><i class=\"dot\"></i>Mon</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Tue</span>\n<span class=\"badge\">Wed</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Thu</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Fri</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Sat</span>\n<span class=\"badge\">Sun</span>\n</div>\n<div class=\"divider\"></div>\n<div class=\"stat\"><span class=\"label\">This week</span><span class=\"value\">5<span class=\"unit\">/7</span></span><span class=\"delta\">longest run 4</span></div>\n<details class=\"acc\">\n<summary>If you hate it at second five</summary>\n<div class=\"body\"><p class=\"t-small\">That's the turn. Count breaths, not seconds. Once the shock passes, the rest is just standing there being slightly smug.</p></div>\n</details>\n</div>"
+  },
+  {
+   "title": "Practice Handwriting Habit",
+   "user_requests": [
+    "handwriting practice tracker",
+    "i want to improve my handwriting, daily tracker",
+    "penmanship habit widget",
+    "track my writing practice week",
+    "daily handwriting thing pls",
+    "help me practice my handwriting every day",
+    "handwriting streak tracker"
+   ],
+   "html": "<div class=\"card\">\n<h4 class=\"card-title\">Handwriting Practice</h4>\n<p class=\"muted t-small\">Five minutes, one page. Slow letters beat fast scribbles, <regex>user_name</regex>.</p>\n<div class=\"row\" style=\"gap:var(--s-2);flex-wrap:wrap\">\n<span class=\"badge good\"><i class=\"dot\"></i>Mon</span>\n<span class=\"badge\">Tue</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Wed</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Thu</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Fri</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Sat</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Sun</span>\n</div>\n<div class=\"divider\"></div>\n<div class=\"stat\"><span class=\"label\">This week</span><span class=\"value\">6<span class=\"unit\">/7</span></span><span class=\"delta\">pages written 22</span></div>\n<details class=\"acc\">\n<summary>Drill that actually helps</summary>\n<div class=\"body\"><p class=\"t-small\">Write the same sentence three times: fast, slower, slowest. Watch which shapes wobble. Fix that one letter tomorrow.</p></div>\n</details>\n</div>"
+  },
+  {
+   "title": "Eat Breakfast Habit",
+   "user_requests": [
+    "breakfast tracker",
+    "i keep skipping breakfast, help me track eating it",
+    "morning meal habit widget",
+    "track breakfast this week",
+    "daily breakfast streak",
+    "help me actually eat in the morning",
+    "breakfast every day tracker pls"
+   ],
+   "html": "<div class=\"card\">\n<h4 class=\"card-title\">Eat Breakfast</h4>\n<p class=\"muted t-small\">Something real before the first meeting. Coffee alone doesn't count, <regex>user_name</regex>. Sorry.</p>\n<div class=\"row\" style=\"gap:var(--s-2);flex-wrap:wrap\">\n<span class=\"badge good\"><i class=\"dot\"></i>Mon</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Tue</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Wed</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Thu</span>\n<span class=\"badge\">Fri</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Sat</span>\n<span class=\"badge good\"><i class=\"dot\"></i>Sun</span>\n</div>\n<div class=\"divider\"></div>\n<div class=\"stat\"><span class=\"label\">This week</span><span class=\"value\">6<span class=\"unit\">/7</span></span><span class=\"delta\">best streak 5</span></div>\n<details class=\"acc\">\n<summary>The 90-second version</summary>\n<div class=\"body\"><p class=\"t-small\">Yoghurt, oats, fruit, done. No cooking required. If you're really rushed, a banana counts and we both know it.</p></div>\n</details>\n</div>"
+  },
+  {
+   "title": "Tidy Desk Habit",
+   "user_requests": [
+    "track my tidy desk habit for the week",
+    "help me clean my desk every day",
+    "desk reset streak please",
+    "i keep forgetting to clear my desk at end of day",
+    "weekly habit tracker for a tidy desk",
+    "can u make a little desk tidy tracker <regex>user_name</regex>",
+    "stop living in clutter \u2014 desk edition"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Tidy Desk Habit</h4>\n  <p class=\"t-small muted\">Two minutes at the end of the day. That's it. <regex>user_name</regex>, future you says thanks.</p>\n  <div class=\"row\">\n    <span class=\"badge good\"><i class=\"dot\"></i>Mon</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Tue</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Wed</span>\n    <span class=\"badge\">Thu</span>\n    <span class=\"badge\">Fri</span>\n    <span class=\"badge\">Sat</span>\n    <span class=\"badge\">Sun</span>\n  </div>\n  <div class=\"meter\"><span class=\"progress\"><span style=\"width:43%\"></span></span></div>\n  <p class=\"t-small dim\">3 of 7 days cleared. Cup goes back. Cable gets wound.</p>\n  <details class=\"acc\">\n    <summary>The 2-minute routine</summary>\n    <div class=\"body\">\n      <ol class=\"list\">\n        <li>Cups and wrappers to the bin.</li>\n        <li>Pen back in the pot, notebook squared.</li>\n        <li>One thing that doesn't belong here goes home.</li>\n      </ol>\n    </div>\n  </details>\n</div>"
+  },
+  {
+   "title": "Walk After Lunch Habit",
+   "user_requests": [
+    "post lunch walk tracker",
+    "i want to walk after eating every day",
+    "10 min walk after lunch habit",
+    "help me stop sitting all afternoon",
+    "lunch walk streak please",
+    "track my after-lunch stroll",
+    "habit widget for a lunchtime walk <regex>user_name</regex>"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Walk After Lunch Habit</h4>\n  <p class=\"t-small muted\">Ten minutes outside. Not a workout, just daylight and leg movement.</p>\n  <div class=\"row\">\n    <span class=\"badge good\"><i class=\"dot\"></i>Mon</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Tue</span>\n    <span class=\"badge\">Wed</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Thu</span>\n    <span class=\"badge\">Fri</span>\n    <span class=\"badge\">Sat</span>\n    <span class=\"badge\">Sun</span>\n  </div>\n  <div class=\"meter\"><span class=\"progress\"><span style=\"width:43%\"></span></span></div>\n  <p class=\"t-small dim\">3 of 7. Wednesday got eaten by a meeting. It happens.</p>\n  <details class=\"acc\">\n    <summary>Make it stick</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Leave the shoes by the door.</li>\n        <li>Same route so you stop deciding.</li>\n        <li>No phone. That's the whole reward.</li>\n      </ul>\n    </div>\n  </details>\n</div>"
+  },
+  {
+   "title": "Lights Out by Eleven Habit",
+   "user_requests": [
+    "bedtime habit tracker",
+    "i need to go to bed at 11",
+    "stop staying up scrolling",
+    "track my lights out time",
+    "sleep schedule habit widget",
+    "help me actually sleep <regex>user_name</regex>",
+    "11pm bed streak"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Lights Out by Eleven Habit</h4>\n  <p class=\"t-small muted\">Phone on the charger across the room. Lights off by 11.</p>\n  <div class=\"row\">\n    <span class=\"badge good\"><i class=\"dot\"></i>Mon</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Tue</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Wed</span>\n    <span class=\"badge warn\"><i class=\"dot\"></i>Thu</span>\n    <span class=\"badge\">Fri</span>\n    <span class=\"badge\">Sat</span>\n    <span class=\"badge\">Sun</span>\n  </div>\n  <div class=\"meter\"><span class=\"progress\"><span style=\"width:50%\"></span></span></div>\n  <p class=\"t-small dim\">3 clean, 1 close. Thursday you made it by nine minutes.</p>\n  <details class=\"acc\">\n    <summary>If you miss it</summary>\n    <div class=\"body\">\n      <p class=\"t-small\">Don't restart the streak in your head. Just go to bed. Tomorrow counts from zero anyway.</p>\n    </div>\n  </details>\n</div>"
+  },
+  {
+   "title": "Stretch Between Meetings Habit",
+   "user_requests": [
+    "track stretching between calls",
+    "desk stretch habit",
+    "i sit too much, help",
+    "shoulder and neck stretch tracker",
+    "mini stretch breaks at work",
+    "habit for stretching every hour <regex>user_name</regex>",
+    "stretch habit widget"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Stretch Between Meetings Habit</h4>\n  <p class=\"t-small muted\">Sixty seconds. Stand up, roll the shoulders, reach for the ceiling.</p>\n  <div class=\"row\">\n    <span class=\"badge good\"><i class=\"dot\"></i>Mon</span>\n    <span class=\"badge\">Tue</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Wed</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Thu</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Fri</span>\n    <span class=\"badge\">Sat</span>\n    <span class=\"badge\">Sun</span>\n  </div>\n  <div class=\"meter\"><span class=\"progress\"><span style=\"width:57%\"></span></span></div>\n  <p class=\"t-small dim\">4 of 7. Weekends don't count for much, honestly.</p>\n  <details class=\"acc\">\n    <summary>Three moves, one minute</summary>\n    <div class=\"body\">\n      <ol class=\"list\">\n        <li>Neck rolls, slow, both directions.</li>\n        <li>Shoulder blades squeeze, hold five.</li>\n        <li>Arms overhead, big yawn optional.</li>\n      </ol>\n    </div>\n  </details>\n</div>"
+  },
+  {
+   "title": "Swap Soda for Sparkling Water Habit",
+   "user_requests": [
+    "quit soda tracker",
+    "replace soda with sparkling water",
+    "sugar drink habit help",
+    "i drink too much coke",
+    "sparkling water swap habit widget",
+    "cut out soda <regex>user_name</regex>",
+    "daily soda swap streak"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Swap Soda for Sparkling Water Habit</h4>\n  <p class=\"t-small muted\">Not quitting soda forever. Just choosing the bubbles without sugar today.</p>\n  <div class=\"row\">\n    <span class=\"badge good\"><i class=\"dot\"></i>Mon</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Tue</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Wed</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Thu</span>\n    <span class=\"badge bad\"><i class=\"dot\"></i>Fri</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Sat</span>\n    <span class=\"badge\">Sun</span>\n  </div>\n  <div class=\"meter\"><span class=\"progress\"><span style=\"width:71%\"></span></span></div>\n  <p class=\"t-small dim\">5 of 7. Friday was a birthday. Birthdays are exempt.</p>\n  <details class=\"acc\">\n    <summary>Keep the cans cold</summary>\n    <div class=\"body\">\n      <p class=\"t-small\">Front of the fridge, same shelf where the soda lived. Your hand goes where it always goes.</p>\n    </div>\n  </details>\n</div>"
+  },
+  {
+   "title": "Tidy Up Before Bed Habit",
+   "user_requests": [
+    "5 min tidy before bed",
+    "nightly reset habit",
+    "pick up before sleeping tracker",
+    "living room reset at night",
+    "habit widget for a bedtime tidy",
+    "stop waking up to mess <regex>user_name</regex>",
+    "quick before-bed pickup"
+   ],
+   "html": "<div class=\"card\">\n  <h4 class=\"card-title\">Tidy Up Before Bed Habit</h4>\n  <p class=\"t-small muted\">Five minutes with a basket. Anything out of place goes back where it lives.</p>\n  <div class=\"row\">\n    <span class=\"badge good\"><i class=\"dot\"></i>Mon</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Tue</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Wed</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Thu</span>\n    <span class=\"badge\">Fri</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Sat</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>Sun</span>\n  </div>\n  <div class=\"meter\"><span class=\"progress\"><span style=\"width:86%\"></span></span></div>\n  <p class=\"t-small dim\">6 of 7. Friday you fell asleep on the couch mid-basket. Valid.</p>\n  <details class=\"acc\">\n    <summary>Why it works</summary>\n    <div class=\"body\">\n      <p class=\"t-small\">Mornings are easier when last night's you already did the boring part.</p>\n    </div>\n  </details>\n</div>"
+  },
+  {
+   "html": "<div class=\"card\"><div class=\"between\"><h4 class=\"card-title\">Habit: <regex>user_name</regex> Take the Stairs</h4><span class=\"badge info\">cached match</span></div><p class=\"muted t-small\">Elevators are for furniture. Your legs got this.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"meter\"><span style=\"width: 29%\"></span></div><p class=\"dim t-small\">2 of 7 days. Those two floors count.</p></div>",
+   "title": "Take the Stairs Habit",
+   "user_requests": [
+    "help me track taking stairs daily",
+    "stairs habit tracker",
+    "I want to take the stairs instead of elevator",
+    "track my stair climbing",
+    "weekly stairs habit",
+    "taking stairs everyday",
+    "stair streak tracker"
+   ]
+  },
+  {
+   "html": "<div class=\"card\"><div class=\"between\"><h4 class=\"card-title\">Habit: <regex>user_name</regex> Morning Sunlight</h4><span class=\"badge good\">on a roll</span></div><p class=\"muted t-small\">Ten minutes of sun. Your brain's way of saying good morning.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge good\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"meter\"><span style=\"width: 71%\"></span></div><p class=\"dim t-small\">5 of 7 days. You're basically a plant now.</p></div>",
+   "title": "Morning Sunlight Habit",
+   "user_requests": [
+    "track morning sunlight habit",
+    "I want to get sunlight every morning",
+    "sunlight tracker",
+    "morning sun habit",
+    "help me get outside in the morning",
+    "weekly morning sunlight",
+    "sunlight streak"
+   ]
+  },
+  {
+   "html": "<div class=\"card\"><div class=\"between\"><h4 class=\"card-title\">Habit: <regex>user_name</regex> Eat Breakfast</h4><span class=\"badge\">just started</span></div><p class=\"muted t-small\">Not coffee. Actual food. Your stomach has opinions.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge\">Tue</span><span class=\"badge\">Wed</span><span class=\"badge\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"meter\"><span style=\"width: 14%\"></span></div><p class=\"dim t-small\">1 of 7 days. One is a start.</p></div>",
+   "title": "Eat Breakfast Habit",
+   "user_requests": [
+    "track eating breakfast",
+    "breakfast habit",
+    "I want to eat breakfast every day",
+    "remind me to eat breakfast",
+    "morning meal tracker",
+    "breakfast streak",
+    "help me eat in the morning"
+   ]
+  },
+  {
+   "html": "<div class=\"card\"><div class=\"between\"><h4 class=\"card-title\">Habit: <regex>user_name</regex> Tidy Desk</h4><span class=\"badge warn\">slump alert</span></div><p class=\"muted t-small\">A clear desk, a clear head, and fewer lost pens.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge\">Tue</span><span class=\"badge\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"meter\"><span style=\"width: 29%\"></span></div><p class=\"dim t-small\">2 of 7 days. Tomorrow's desk is a fresh start.</p></div>",
+   "title": "Tidy Desk Habit",
+   "user_requests": [
+    "help me keep my desk clean",
+    "desk tidying habit",
+    "track cleaning my desk",
+    "I want to tidy my workspace daily",
+    "desk organization tracker",
+    "weekly desk tidy",
+    "tidy desk streak"
+   ]
+  },
+  {
+   "html": "<div class=\"card\"><div class=\"between\"><h4 class=\"card-title\">Habit: <regex>user_name</regex> Walk After Lunch</h4><span class=\"badge good\">consistent</span></div><p class=\"muted t-small\">Ten minutes around the block. Your lunch will thank you.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge\">Fri</span><span class=\"badge good\">Sat</span><span class=\"badge good\">Sun</span></div><div class=\"meter\"><span style=\"width: 86%\"></span></div><p class=\"dim t-small\">6 of 7 days. That's a solid stroll streak.</p></div>",
+   "title": "Walk After Lunch Habit",
+   "user_requests": [
+    "track walking after lunch",
+    "post-lunch walk habit",
+    "I want to walk after eating",
+    "walk tracker for after meals",
+    "daily after lunch walk",
+    "walking streak",
+    "help me walk after lunch"
+   ]
+  },
+  {
+   "html": "<div class=\"card\"><div class=\"between\"><h4 class=\"card-title\">Habit: <regex>user_name</regex> Lights Out by Eleven</h4><span class=\"badge info\">cached match</span></div><p class=\"muted t-small\">Eleven o'clock. The pillow is calling. Answer it.</p><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge good\">Wed</span><span class=\"badge good\">Thu</span><span class=\"badge good\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span></div><div class=\"meter\"><span style=\"width: 71%\"></span></div><p class=\"dim t-small\">5 of 7 days. Early bedtime looks good on you.</p></div>",
+   "title": "Lights Out by Eleven Habit",
+   "user_requests": [
+    "track lights out by 11",
+    "bedtime habit",
+    "I want to go to bed by 11pm",
+    "sleep tracker lights out",
+    "early bedtime habit",
+    "lights out streak",
+    "help me sleep by eleven"
+   ]
+  },
+  {
+   "title": "Make the Bed Before Coffee Habit",
+   "user_requests": [
+    "track my make the bed habit",
+    "I want to make my bed every morning before coffee",
+    "habit tracker for bed making",
+    "help me keep making my bed pls",
+    "bed made b4 coffee streak?",
+    "tracking make bed daily",
+    "can u track my morning bed habit"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"between\">\n    <h4 class=\"card-title\">Make the Bed Before Coffee</h4>\n    <span class=\"badge accent\"><i class=\"dot\"></i>streak 4</span>\n  </div>\n  <p class=\"muted t-small\">Pillow straight, duvet up. Thirty seconds, then the kettle. <regex>user_name</regex>, the day can wait 30 seconds.</p>\n  <div class=\"row\" style=\"gap:var(--s-2);flex-wrap:wrap\">\n    <span class=\"badge good\">Mon</span>\n    <span class=\"badge good\">Tue</span>\n    <span class=\"badge good\">Wed</span>\n    <span class=\"badge\">Thu</span>\n    <span class=\"badge good\">Fri</span>\n    <span class=\"badge\">Sat</span>\n    <span class=\"badge\">Sun</span>\n  </div>\n  <div class=\"meter\" style=\"margin-top:var(--s-3)\"><span style=\"width:57%\"></span></div>\n  <div class=\"row between t-small muted\"><span>4 of 7 days</span><span>57%</span></div>\n  <details class=\"acc\" style=\"margin-top:var(--s-3)\">\n    <summary>Why bother?</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>The first task of the day is already done.</li>\n        <li>You can't crawl back in as easily.</li>\n        <li>It's the cheapest tidy-up in the house.</li>\n      </ul>\n    </div>\n  </details>\n  <div class=\"callout info\" style=\"margin-top:var(--s-3)\">Missed days aren't lost days. Just start again tonight.</div>\n</div>"
+  },
+  {
+   "title": "Wash the Lunch Boxes Habit",
+   "user_requests": [
+    "remind me to wash lunch boxes after school",
+    "track washing the lunchbox habit",
+    "lunchbox wash streak tracker",
+    "habit to clean lunch boxes daily",
+    "keep on top of washing lunch boxes",
+    "lunchbox cleaning tracker plz",
+    "track my after school lunch box wash"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"between\">\n    <h4 class=\"card-title\">Wash the Lunch Boxes</h4>\n    <span class=\"badge warn\"><i class=\"dot\"></i>streak 1</span>\n  </div>\n  <p class=\"muted t-small\">Empty, rinse, rack. Before the sandwich crumbs turn into archaeology.</p>\n  <div class=\"grid two\" style=\"margin-top:var(--s-3)\">\n    <div class=\"stat\"><div class=\"label\">This week</div><div class=\"value\">3<span class=\"unit\">/7</span></div><div class=\"delta down\">behind by 1</div></div>\n    <div class=\"stat\"><div class=\"label\">Best streak</div><div class=\"value\">11<span class=\"unit\">days</span></div></div>\n  </div>\n  <div class=\"row\" style=\"gap:var(--s-2);flex-wrap:wrap;margin-top:var(--s-3)\">\n    <span class=\"badge good\">M</span><span class=\"badge good\">T</span><span class=\"badge good\">W</span>\n    <span class=\"badge\">T</span><span class=\"badge\">F</span><span class=\"badge\">S</span><span class=\"badge\">S</span>\n  </div>\n  <details class=\"acc\" style=\"margin-top:var(--s-3)\">\n    <summary>The 4pm trick</summary>\n    <div class=\"body\">Put the wash-up bowl out when the kids get home. Visible bowl, empty box.</div>\n  </details>\n  <p class=\"dim t-small\" style=\"margin-top:var(--s-3)\">Two days off is fine, <regex>user_name</regex>. Four is a smell.</p>\n</div>"
+  },
+  {
+   "title": "Call Your Mum Habit",
+   "user_requests": [
+    "habit for calling my mum weekly",
+    "track weekly calls to mum",
+    "remind me to call mum",
+    "mum call habit tracker",
+    "how do I keep calling my mum every week",
+    "tracking my sunday call to mum",
+    "habit: ring mum"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"between\">\n    <h4 class=\"card-title\">Call Your Mum</h4>\n    <span class=\"badge info\"><i class=\"dot\"></i>weekly</span>\n  </div>\n  <p class=\"muted t-small\">One ten-minute call beats a text every time. She can hear when you're smiling, you know.</p>\n  <div class=\"row\" style=\"gap:var(--s-2);flex-wrap:wrap;margin-top:var(--s-3)\">\n    <span class=\"badge good\">Sun</span>\n    <span class=\"badge good\">Sun</span>\n    <span class=\"badge\">Sun</span>\n    <span class=\"badge good\">Sun</span>\n  </div>\n  <div class=\"meter\" style=\"margin-top:var(--s-3)\"><span style=\"width:75%\"></span></div>\n  <div class=\"row between t-small muted\"><span>3 of last 4 Sundays</span><span>75%</span></div>\n  <details class=\"acc\" style=\"margin-top:var(--s-3)\">\n    <summary>If she doesn't pick up</summary>\n    <div class=\"body\">Leave the message anyway. Leaving one counts, and hearing your voice <em>is</em> the point.</div>\n  </details>\n  <div class=\"callout good\" style=\"margin-top:var(--s-3)\">Sunday afternoons seem to be your slot. Protect it like a meeting, <regex>user_name</regex>.</div>\n</div>"
+  },
+  {
+   "title": "Scoop the Litter Tray Habit",
+   "user_requests": [
+    "track scooping the litter tray",
+    "cat litter habit tracker",
+    "remind me to clean the litter box daily",
+    "habit for litter tray scooping",
+    "litter tray streak plz",
+    "how to remember litter box",
+    "track litter box cleaning"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"between\">\n    <h4 class=\"card-title\">Scoop the Litter Tray</h4>\n    <span class=\"badge good\"><i class=\"dot\"></i>streak 9</span>\n  </div>\n  <p class=\"muted t-small\">Twice a day if you can manage it. The cat has opinions, and no way to file a complaint.</p>\n  <div class=\"grid two\" style=\"margin-top:var(--s-3)\">\n    <div class=\"stat\"><div class=\"label\">Today</div><div class=\"value\">1<span class=\"unit\">of 2</span></div></div>\n    <div class=\"stat\"><div class=\"label\">Cat mood</div><div class=\"value\">\ud83d\ude3a<span class=\"unit\">good</span></div></div>\n  </div>\n  <div class=\"row\" style=\"gap:var(--s-2);flex-wrap:wrap;margin-top:var(--s-3)\">\n    <span class=\"badge good\">Mo</span><span class=\"badge good\">Tu</span><span class=\"badge good\">We</span>\n    <span class=\"badge good\">Th</span><span class=\"badge good\">Fr</span><span class=\"badge good\">Sa</span><span class=\"badge\">Su</span>\n  </div>\n  <details class=\"acc\" style=\"margin-top:var(--s-3)\">\n    <summary>Full change schedule</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>Scoop: morning and evening.</li>\n        <li>Full wash with soap: once a week.</li>\n        <li>Fresh litter to about 4cm deep.</li>\n      </ul>\n    </div>\n  </details>\n  <p class=\"dim t-small\" style=\"margin-top:var(--s-3)\">Six days in a row, <regex>user_name</regex>. The tray thanks you. So does your nose.</p>\n</div>"
+  },
+  {
+   "title": "Pack Tomorrow's Bag Habit",
+   "user_requests": [
+    "habit for packing my bag at night",
+    "track packing bag the night before",
+    "night before prep habit tracker",
+    "pack school bag habit",
+    "help me pack my bag before bed",
+    "bag packing streak tracker",
+    "track my evening bag prep"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"between\">\n    <h4 class=\"card-title\">Pack Tomorrow's Bag</h4>\n    <span class=\"badge accent\"><i class=\"dot\"></i>streak 5</span>\n  </div>\n  <p class=\"muted t-small\">Keys, charger, lunch, the thing you'll forget at 7:40. Ten minutes now or a sprint later.</p>\n  <ol class=\"list\" style=\"margin-top:var(--s-3)\">\n    <li>Sit the bag by the door.</li>\n    <li>Check the calendar for tomorrow.</li>\n    <li>Add anything unusual: gym kit, folder, gift.</li>\n  </ol>\n  <div class=\"row\" style=\"gap:var(--s-2);flex-wrap:wrap;margin-top:var(--s-3)\">\n    <span class=\"badge good\">Mon</span><span class=\"badge good\">Tue</span><span class=\"badge good\">Wed</span>\n    <span class=\"badge good\">Thu</span><span class=\"badge good\">Fri</span><span class=\"badge\">Sat</span><span class=\"badge\">Sun</span>\n  </div>\n  <div class=\"meter\" style=\"margin-top:var(--s-3)\"><span style=\"width:71%\"></span></div>\n  <details class=\"acc\" style=\"margin-top:var(--s-3)\">\n    <summary>Anchor it to something</summary>\n    <div class=\"body\">Chain it to brushing your teeth. Bag by the door, then teeth. Your brain likes a pair.</div>\n  </details>\n  <div class=\"callout info\" style=\"margin-top:var(--s-3)\">Five nights running. That's a proper groove, <regex>user_name</regex>.</div>\n</div>"
+  },
+  {
+   "title": "Ten Minutes of Tidying Habit",
+   "user_requests": [
+    "set a 10 min tidy timer habit",
+    "track ten minute tidy",
+    "habit for tidying ten minutes a day",
+    "daily 10 min clean up tracker",
+    "quick tidy habit tracker",
+    "ten min pick up streak",
+    "help me tidy 10 mins daily"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"between\">\n    <h4 class=\"card-title\">Ten Minutes of Tidying</h4>\n    <span class=\"badge good\"><i class=\"dot\"></i>streak 6</span>\n  </div>\n  <p class=\"muted t-small\">Set a timer, pick one room, stop when it rings. Ten minutes is short on purpose.</p>\n  <div class=\"grid two\" style=\"margin-top:var(--s-3)\">\n    <div class=\"stat\"><div class=\"label\">This week</div><div class=\"value\">6<span class=\"unit\">/7</span></div></div>\n    <div class=\"stat\"><div class=\"label\">Total</div><div class=\"value\">70<span class=\"unit\">min</span></div></div>\n  </div>\n  <div class=\"chart\" style=\"margin-top:var(--s-4);height:64px\">\n    <svg viewBox=\"0 0 280 64\" role=\"img\" aria-label=\"Minutes tidied each day this week\">\n      <line class=\"guide\" x1=\"0\" y1=\"60\" x2=\"280\" y2=\"60\"></line>\n      <rect class=\"bar\" x=\"8\" y=\"40\" width=\"26\" height=\"20\" rx=\"3\"></rect>\n      <rect class=\"bar\" x=\"46\" y=\"32\" width=\"26\" height=\"28\" rx=\"3\"></rect>\n      <rect class=\"bar\" x=\"84\" y=\"24\" width=\"26\" height=\"36\" rx=\"3\"></rect>\n      <rect class=\"bar alt\" x=\"122\" y=\"48\" width=\"26\" height=\"12\" rx=\"3\"></rect>\n      <rect class=\"bar\" x=\"160\" y=\"20\" width=\"26\" height=\"40\" rx=\"3\"></rect>\n      <rect class=\"bar\" x=\"198\" y=\"28\" width=\"26\" height=\"32\" rx=\"3\"></rect>\n      <rect class=\"bar alt\" x=\"236\" y=\"8\" width=\"26\" height=\"52\" rx=\"3\"></rect>\n      <text class=\"lbl\" x=\"246\" y=\"20\" text-anchor=\"middle\">Su</text>\n    </svg>\n  </div>\n  <details class=\"acc\" style=\"margin-top:var(--s-3)\">\n    <summary>Rules that make it work</summary>\n    <div class=\"body\">\n      <ul class=\"list\">\n        <li>No rearranging, just putting things home.</li>\n        <li>Timer visible, phone face down.</li>\n        <li>Carry a basket. Empty it at the end.</li>\n      </ul>\n    </div>\n  </details>\n  <p class=\"dim t-small\" style=\"margin-top:var(--s-3)\">Sunday was your big one, <regex>user_name</regex>. Gold star for the laundry pile.</p>\n</div>"
+  }
+ ]
+}

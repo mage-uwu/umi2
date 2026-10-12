@@ -1,0 +1,245 @@
+{
+ "widget": "answer_callout",
+ "instances": [
+  {
+   "user_requests": [
+    "show me the reply as a green callout",
+    "can you wrap that answer in a good-news callout?",
+    "I want the answer in a nice positive box",
+    "put the reply in a success callout pls",
+    "gimme the answer with a green accent",
+    "show the reply as a good callout",
+    "can u put the answer in a green box?",
+    "can u put the answer in a green box w/ a tick?",
+    "mark this reply as good to go pls",
+    "success style plz",
+    "turn the response into a positive confirmation banner with checkmark",
+    "yo make it green and confirmed",
+    "this one worked, show it like a win"
+   ],
+   "title": "Success callout with check icon",
+   "html": "<div class=\"callout good\">\n  <div class=\"row\" style=\"align-items:center;gap:var(--s-2);\">\n    <svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/></svg>\n    <strong>All good, <regex>user_name</regex></strong>\n  </div>\n  <p class=\"stack\" style=\"margin-top:var(--s-2);\">{{answer}}</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "flag it as a warning",
+    "show the answer in a warning callout",
+    "can you wrap this in a yellow warning box?",
+    "I need the reply as a warning",
+    "put the answer in a caution callout",
+    "display the answer with a warning label",
+    "make the reply a warning callout pls",
+    "put a lil caution triangle on this",
+    "can u make it look like a heads up?",
+    "warning vibes for the reply pls",
+    "style the answer as something I should be careful about",
+    "amber alert box but for text",
+    "give me the answer inside a yellow warning thing"
+   ],
+   "title": "Warning callout with triangle icon",
+   "html": "<div class=\"callout warn\">\n  <div class=\"row\" style=\"align-items:center;gap:var(--s-2);\">\n    <svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 2 2 20h20L12 2z\"/><path d=\"M12 9v4\"/><circle cx=\"12\" cy=\"17\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/></svg>\n    <strong>Just a heads-up, <regex>user_name</regex></strong>\n  </div>\n  <p class=\"stack\" style=\"margin-top:var(--s-2);\">{{answer}}</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "show that as a red error callout",
+    "can you put the answer in a bad callout?",
+    "I want the reply as an error box",
+    "wrap the answer in a danger callout",
+    "show the answer as a bad-news callout",
+    "gimme the answer in a red callout",
+    "put the reply in a bad callout pls",
+    "make it red with an x pls",
+    "this is a fail, show it as an error card",
+    "can u wrap the reply in a mistake-looking box",
+    "bad news styling w/ a cross",
+    "error state for the answer, red and crossed",
+    "show it like something went wrong"
+   ],
+   "title": "Error callout with cross icon",
+   "html": "<div class=\"callout bad\">\n  <div class=\"row\" style=\"align-items:center;gap:var(--s-2);\">\n    <svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/></svg>\n    <strong>Oops, <regex>user_name</regex></strong>\n  </div>\n  <p class=\"stack\" style=\"margin-top:var(--s-2);\">{{answer}}</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "show the answer as info",
+    "can you wrap the reply in an info callout?",
+    "I want the answer in a blue info box",
+    "put the answer in an info callout",
+    "display the reply with an info label",
+    "gimme the answer as an info callout",
+    "wrap the answer in a blue callout pls",
+    "just a normal blue info box pls",
+    "put an i in a circle on this answer",
+    "can u show the reply as neutral info?",
+    "standard informational callout plz",
+    "make the response look like a tip with the info symbol",
+    "i want the answer in a blue note style"
+   ],
+   "title": "Info callout with info circle icon",
+   "html": "<div class=\"callout info\">\n  <div class=\"row\" style=\"align-items:center;gap:var(--s-2);\">\n    <svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 16v-4\"/><circle cx=\"12\" cy=\"8\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/></svg>\n    <strong>For your info, <regex>user_name</regex></strong>\n  </div>\n  <p class=\"stack\" style=\"margin-top:var(--s-2);\">{{answer}}</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "show the answer in a compact callout",
+    "can you wrap the reply in a small callout?",
+    "I want the answer in a minimal callout",
+    "put the answer in a compact callout",
+    "display the reply as a tiny callout",
+    "gimme the answer in a small callout",
+    "wrap the answer in a compact callout pls",
+    "small info box w/ a tag",
+    "can u make the answer short n sweet w/ an info chip?",
+    "compact note style plz",
+    "info pill on a slim callout",
+    "tiny blue box with an info label",
+    "keep it brief but still callout-y with a badge"
+   ],
+   "title": "Compact info callout with badge",
+   "html": "<div class=\"callout info\" style=\"padding:var(--s-2) var(--s-3);\">\n  <span class=\"badge info\" style=\"margin-bottom:var(--s-1);\">Quick note</span>\n  <p class=\"t-small\" style=\"margin:0;\"><regex>user_name</regex>, {{answer}}</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "show the answer as a collapsible callout",
+    "can you wrap the reply in an accordion callout?",
+    "I want the answer in a details callout",
+    "put the answer in a collapsible callout",
+    "display the reply as a foldable callout",
+    "gimme the answer in a details callout",
+    "wrap the answer in a collapsible callout pls",
+    "can the answer hide behind a clicky info thing",
+    "collapsible blue box pls",
+    "make an expandable info callout",
+    "i wanna open it to see the answer, info style",
+    "hide details in a dropdown info note",
+    "click to reveal info callout"
+   ],
+   "title": "Collapsible info callout with details",
+   "html": "<details class=\"acc callout info\">\n  <summary style=\"display:flex;align-items:center;gap:var(--s-2);cursor:pointer;\">\n    <svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 16v-4\"/><circle cx=\"12\" cy=\"8\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/></svg>\n    <strong>Details for <regex>user_name</regex></strong>\n  </summary>\n  <div class=\"body\" style=\"margin-top:var(--s-2);\">\n    <p>{{answer}}</p>\n  </div>\n</details>",
+   "augmented": true
+  },
+  {
+   "title": "Good news callout with sparkle icon",
+   "user_requests": [
+    "wrap the reply in a green callout with a sparkle",
+    "show it as a positive note, sparkle icon please",
+    "make the answer feel like good news, green bubble",
+    "put a lil sparkle callout around ur reply",
+    "render the response in the good tone with a star sparkle",
+    "green callout + sparkle, thanks",
+    "can u make it look like a happy callout w/ a sparkly icon",
+    "green sparkly box for the reply pls",
+    "make it feel like good news w/ a lil sparkle",
+    "can u wrap it in a happy callout with stars?",
+    "positive vibe, green, sparkle icon",
+    "celebrate the answer w/ a green callout",
+    "this is great news, show it that way"
+   ],
+   "html": "<div class=\"callout good\">\n  <div class=\"row\" style=\"align-items:flex-start;gap:var(--s-3)\">\n    <svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" aria-hidden=\"true\" style=\"flex:0 0 auto;color:var(--good);margin-top:2px\">\n      <path fill=\"currentColor\" d=\"M12 2.5l1.9 5.2 5.2 1.9-5.2 1.9L12 16.7l-1.9-5.2L4.9 9.6l5.2-1.9L12 2.5zm6.4 11.3l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9.9-2.4z\"/>\n    </svg>\n    <div>\n      <h4 style=\"margin:0 0 var(--s-1)\">Good news, <regex>user_name</regex></h4>\n      <p style=\"margin:0\">{{answer}}</p>\n    </div>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Warning callout with shield icon",
+   "user_requests": [
+    "needs a caution vibe, shield icon",
+    "wrap it in a yellow callout with a shield",
+    "show the answer as a careful heads-up w/ shield",
+    "yellow warn box, shield please",
+    "make it look cautious but not scary, shield emoji-ish",
+    "put a shield on the warning callout",
+    "yo can u wrap this in an amber/warn tone w/ a shield svg",
+    "caution shield pls",
+    "yellow warning w/ a shield thing",
+    "make the answer look protected but careful",
+    "safety warning callout",
+    "shield icon warning box for this reply",
+    "needs a guard rail vibe, shield icon"
+   ],
+   "html": "<div class=\"callout warn\">\n  <div class=\"row\" style=\"align-items:flex-start;gap:var(--s-3)\">\n    <svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" aria-hidden=\"true\" style=\"flex:0 0 auto;color:var(--warn);margin-top:2px\">\n      <path fill=\"currentColor\" d=\"M12 2l7 3v6c0 4.4-2.9 8.3-7 9.5C7.9 19.3 5 15.4 5 11V5l7-3zm-1 5v5h2V7h-2zm0 7v2h2v-2h-2z\"/>\n    </svg>\n    <div>\n      <h4 style=\"margin:0 0 var(--s-1)\">Careful here, <regex>user_name</regex></h4>\n      <p style=\"margin:0\">{{answer}}</p>\n    </div>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Error callout with octagon icon",
+   "user_requests": [
+    "red callout with a stop/octagon thing",
+    "wrap the answer as a hard no, red octagon",
+    "show it in the bad tone with an octagon icon",
+    "make it a red stop-sign callout plz",
+    "render this as an error w/ octagon svg",
+    "red alert style callout, octagon",
+    "put the reply in a scary-but-polite red box w/ octagon",
+    "red stop sign style for the answer",
+    "octagon error box pls",
+    "make it look like a hard stop w/ the reply inside",
+    "error callout w/ stop symbol",
+    "show this as a red octagon warning",
+    "halt style error thing"
+   ],
+   "html": "<div class=\"callout bad\">\n  <div class=\"row\" style=\"align-items:flex-start;gap:var(--s-3)\">\n    <svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" aria-hidden=\"true\" style=\"flex:0 0 auto;color:var(--bad);margin-top:2px\">\n      <path fill=\"currentColor\" d=\"M7.5 2h9L22 7.5v9L16.5 22h-9L2 16.5v-9L7.5 2zm4.5 5v6h2V7h-2zm0 8v2h2v-2h-2z\"/>\n    </svg>\n    <div>\n      <h4 style=\"margin:0 0 var(--s-1)\">No can do, <regex>user_name</regex></h4>\n      <p style=\"margin:0\">{{answer}}</p>\n    </div>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Info callout with lightbulb icon",
+   "user_requests": [
+    "blue callout with a lightbulb",
+    "show the answer with a lil idea bulb icon",
+    "wrap it as an info note w/ a bulb svg",
+    "blue/info tone, lightbulb please",
+    "make it look like a tip w/ a lightbulb",
+    "put a bulb on this info box",
+    "can u wrap my reply in a calm blue callout w/ a lightbulb icon",
+    "blue callout w/ a bulb pls",
+    "lightbulb info box for the answer",
+    "make it look like a bright idea tip",
+    "idea icon info callout",
+    "put the reply in a blue note w/ lightbulb",
+    "tip style w/ bulb"
+   ],
+   "html": "<div class=\"callout info\">\n  <div class=\"row\" style=\"align-items:flex-start;gap:var(--s-3)\">\n    <svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" aria-hidden=\"true\" style=\"flex:0 0 auto;color:var(--info);margin-top:2px\">\n      <path fill=\"currentColor\" d=\"M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2zM9.5 20h5v1a1 1 0 0 1-1 1h-3a1 1 0 0 1-1-1v-1z\"/>\n    </svg>\n    <div>\n      <h4 style=\"margin:0 0 var(--s-1)\">Quick tip, <regex>user_name</regex></h4>\n      <p style=\"margin:0\">{{answer}}</p>\n    </div>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Slim info callout with pill badge",
+   "user_requests": [
+    "make it compact w/ a lil pill that says info",
+    "slim callout plz, badge on the side",
+    "tighten it up and add an info pill",
+    "small info callout w/ a badge, one-liner",
+    "can u wrap it compactly w/ a pill label",
+    "thin callout + info badge",
+    "squeeze the answer into a compact blue box w/ a pill",
+    "skinny info box w/ a lil pill that says info",
+    "compact blue callout w/ tag",
+    "slim note w/ badge pls",
+    "make it narrow and info-labeled",
+    "tiny callout w/ pill chip",
+    "short info strip w/ badge"
+   ],
+   "html": "<div class=\"callout info\" style=\"padding:var(--s-3) var(--s-4)\">\n  <div class=\"row between\" style=\"align-items:center;gap:var(--s-3);flex-wrap:wrap\">\n    <p style=\"margin:0;flex:1 1 12rem;min-width:0\">{{answer}}</p>\n    <span class=\"badge info\"><i class=\"dot\"></i>info</span>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Folding answer callout with details",
+   "user_requests": [
+    "make it collapsible, closed by default",
+    "wrap the answer in a details/summary accordion",
+    "foldable callout plz, tap to open",
+    "put it in a collapsible box w/ a summary line",
+    "hide the answer behind a details toggle",
+    "accordion-style callout, closed initially",
+    "can u tuck the reply inside a details block w/ a summary",
+    "make the answer foldable and closed at first",
+    "collapsible thing, shut by default pls",
+    "hide the answer until i click, details style",
+    "foldable callout w/ details inside",
+    "can it start collapsed and open on click?",
+    "accordion answer box pls"
+   ],
+   "html": "<details class=\"acc\" style=\"border-radius:var(--r-md);border:1px solid var(--line);background:var(--panel)\">\n  <summary style=\"padding:var(--s-3) var(--s-4);cursor:pointer\">\n    <span class=\"row\" style=\"display:inline-flex;align-items:center;gap:var(--s-2)\">\n      <svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" aria-hidden=\"true\" style=\"color:var(--accent)\">\n        <path fill=\"currentColor\" d=\"M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm0 8h1v6h-2v-4h-1v-2h2zm-1-3h2v2h-2V8z\"/>\n      </svg>\n      <strong>Tap for the answer, <regex>user_name</regex></strong>\n    </span>\n  </summary>\n  <div class=\"body\" style=\"padding:0 var(--s-4) var(--s-4)\">\n    <p style=\"margin:0\">{{answer}}</p>\n  </div>\n</details>",
+   "augmented": true
+  }
+ ]
+}

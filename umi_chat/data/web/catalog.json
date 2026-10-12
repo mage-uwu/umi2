@@ -1,0 +1,380 @@
+{
+ "widgets": [
+  {
+   "wraps_answer": true,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"title\":{\"type\":\"string\"},\"body\":{\"type\":\"string\"},\"tags\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"required\":[\"body\"]}",
+   "name": "answer_card",
+   "example_html": "<article class=\"card\"><div class=\"card-title\"><h3>Note for <regex>user_name</regex></h3><span class=\"badge accent\"><i class=\"dot\"></i>cached match</span></div><p>{{answer}}</p></article>",
+   "description": "Wraps any umi reply in a clean card with an optional title and tags. Use for general answers where a little visual framing helps.",
+   "category": "text container"
+  },
+  {
+   "wraps_answer": true,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"body\":{\"type\":\"string\"},\"tone\":{\"enum\":[\"info\",\"good\",\"warn\",\"bad\"]}},\"required\":[\"body\"]}",
+   "name": "answer_callout",
+   "example_html": "<div class=\"callout info\"><h4>Heads up, <regex>user_name</regex></h4><p>{{answer}}</p></div>",
+   "description": "Wraps any umi reply in a coloured callout for emphasis or near-miss honesty. Use when the answer needs a tone label.",
+   "category": "text container"
+  },
+  {
+   "wraps_answer": true,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"quote\":{\"type\":\"string\"},\"attribution\":{\"type\":\"string\"},\"body\":{\"type\":\"string\"}},\"required\":[\"quote\"]}",
+   "name": "answer_quote",
+   "example_html": "<blockquote class=\"quote\">\u201c{{answer}}\u201d<cite>\u2014 umi cache</cite></blockquote>",
+   "description": "Wraps any umi reply in a quotation style with cite. Use for echoing the user's words or a memorable line.",
+   "category": "text container"
+  },
+  {
+   "wraps_answer": true,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"steps\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"body\":{\"type\":\"string\"}},\"required\":[\"body\"]}",
+   "name": "answer_steps",
+   "example_html": "<ol class=\"list\"><li>{{answer}}</li></ol>",
+   "description": "Wraps any umi reply as a single ordered step or a short sequence. Use when the reply is procedural.",
+   "category": "text container"
+  },
+  {
+   "wraps_answer": true,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"body\":{\"type\":\"string\"},\"label\":{\"type\":\"string\"}},\"required\":[\"body\"]}",
+   "name": "answer_timeline",
+   "example_html": "<ul class=\"timeline\"><li><span class=\"when\">now</span><p>{{answer}}</p></li></ul>",
+   "description": "Wraps any umi reply as a single timeline entry. Use for chronological context or history.",
+   "category": "text container"
+  },
+  {
+   "wraps_answer": true,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"body\":{\"type\":\"string\"},\"front\":{\"type\":\"string\"},\"back\":{\"type\":\"string\"}},\"required\":[\"body\"]}",
+   "name": "answer_flashcard",
+   "example_html": "<div class=\"flip\"><div class=\"front\">Quick recall, <regex>user_name</regex></div><div class=\"back\">{{answer}}</div></div>",
+   "description": "Wraps any umi reply as a flashcard back. Use for quick-recall or definition prompts.",
+   "category": "learning"
+  },
+  {
+   "wraps_answer": true,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"body\":{\"type\":\"string\"},\"question\":{\"type\":\"string\"}},\"required\":[\"body\"]}",
+   "name": "answer_quiz",
+   "example_html": "<div class=\"quiz\"><div class=\"q\">Pop quiz for <regex>user_name</regex></div><details><summary>Show answer</summary><div class=\"answer\">{{answer}}</div></details></div>",
+   "description": "Wraps any umi reply as a quiz answer hidden behind a details toggle. Use for self-testing.",
+   "category": "learning"
+  },
+  {
+   "wraps_answer": true,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"body\":{\"type\":\"string\"},\"title\":{\"type\":\"string\"}},\"required\":[\"body\"]}",
+   "name": "answer_accordion",
+   "example_html": "<details class=\"acc\"><summary>Answer for <regex>user_name</regex></summary><div class=\"body\">{{answer}}</div></details>",
+   "description": "Wraps any umi reply in a collapsible accordion. Use when the answer is long or optional.",
+   "category": "text container"
+  },
+  {
+   "wraps_answer": true,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"body\":{\"type\":\"string\"},\"title\":{\"type\":\"string\"}},\"required\":[\"body\"]}",
+   "name": "answer_tab",
+   "example_html": "<details class=\"tab\"><summary>Answer for <regex>user_name</regex></summary><div class=\"body\">{{answer}}</div></details>",
+   "description": "Wraps any umi reply in a tab-like panel. Use when you want a tabbed feel without scripts.",
+   "category": "text container"
+  },
+  {
+   "wraps_answer": true,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"body\":{\"type\":\"string\"}},\"required\":[\"body\"]}",
+   "name": "answer_plain",
+   "example_html": "<div class=\"umi-page\"><p>{{answer}}</p></div>",
+   "description": "Wraps any umi reply in the standard page column with no extra chrome. Use as the default wrapper.",
+   "category": "layout"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"title\":{\"type\":\"string\"},\"rows\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"cells\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"required\":[\"cells\"]}},\"headers\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"required\":[\"headers\",\"rows\"]}",
+   "name": "data_table",
+   "example_html": "<div class=\"table-wrap\"><table><thead><tr><th>Cache tier</th><th class=\"num\">Hits</th></tr></thead><tbody><tr><td>exact</td><td class=\"num\">12,400</td></tr><tr><td>fuzzy</td><td class=\"num\">3,180</td></tr></tbody></table></div>",
+   "description": "Generic table for structured data. Use for any tabular answer, like comparisons or lists.",
+   "category": "data"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"},\"unit\":{\"type\":\"string\"},\"delta\":{\"type\":\"string\"}},\"required\":[\"label\",\"value\"]}",
+   "name": "stat_tile",
+   "example_html": "<div class=\"stat\"><div class=\"label\">Cache hit rate</div><div class=\"value\">94<span class=\"unit\">%</span></div><div class=\"delta\">+2.1%</div></div>",
+   "description": "Single stat tile with label, value, unit, delta. Use for dashboards or summaries.",
+   "category": "data"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\"},\"value\":{\"type\":\"number\"},\"max\":{\"type\":\"number\"}},\"required\":[\"label\",\"value\",\"max\"]}",
+   "name": "progress_bar",
+   "example_html": "<div class=\"meter\"><div class=\"top\"><b>Cache coverage</b><span>72%</span></div><div class=\"progress\"><span style=\"width:72%\"></span></div></div>",
+   "description": "Labeled progress bar. Use for confidence, coverage, or completion.",
+   "category": "data"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"items\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"when\":{\"type\":\"string\"},\"text\":{\"type\":\"string\"}},\"required\":[\"text\"]}}},\"required\":[\"items\"]}",
+   "name": "timeline_view",
+   "example_html": "<ul class=\"timeline\"><li><span class=\"when\">09:12</span><p>Query received</p></li><li><span class=\"when\">09:12</span><p>Exact match found</p></li></ul>",
+   "description": "Vertical timeline of events. Use for sequence history or step logs.",
+   "category": "data"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"left\":{\"type\":\"string\"},\"right\":{\"type\":\"string\"}},\"required\":[\"left\",\"right\"]}",
+   "name": "comparison",
+   "example_html": "<div class=\"grid two\"><div class=\"card\"><h4>Before</h4><p>No cache.</p></div><div class=\"card\"><h4>After</h4><p>Instant recall.</p></div></div>",
+   "description": "Side-by-side comparison of two things. Use for pros/cons or before/after.",
+   "category": "data"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"labels\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"values\":{\"type\":\"array\",\"items\":{\"type\":\"number\"}},\"max\":{\"type\":\"number\"}},\"required\":[\"labels\",\"values\"]}",
+   "name": "bar_chart",
+   "example_html": "<div class=\"chart\"><svg viewBox=\"0 0 200 100\"><rect class=\"bar\" x=\"10\" y=\"40\" width=\"30\" height=\"50\"></rect><rect class=\"bar alt\" x=\"60\" y=\"20\" width=\"30\" height=\"70\"></rect><line class=\"axis\" x1=\"0\" y1=\"90\" x2=\"200\" y2=\"90\"></line></svg><div class=\"legend\"><i></i>hits <i class=\"alt\"></i>misses</div></div>",
+   "description": "Inline SVG bar chart with tokens. Use for categorical comparison.",
+   "category": "svg graphic"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"points\":{\"type\":\"array\",\"items\":{\"type\":\"number\"}},\"labels\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"required\":[\"points\"]}",
+   "name": "line_chart",
+   "example_html": "<div class=\"chart\"><svg viewBox=\"0 0 200 100\"><polyline class=\"line\" points=\"0,80 40,60 80,70 120,30 160,40 200,20\"></polyline></svg></div>",
+   "description": "Inline SVG line chart. Use for trends over time.",
+   "category": "svg graphic"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"slices\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"value\":{\"type\":\"number\"},\"label\":{\"type\":\"string\"}},\"required\":[\"value\"]}}},\"required\":[\"slices\"]}",
+   "name": "pie_chart",
+   "example_html": "<div class=\"chart\"><svg viewBox=\"0 0 100 100\"><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"var(--accent)\" stroke=\"var(--line-2)\"></circle></svg></div>",
+   "description": "Inline SVG pie chart (placeholder arcs). Use for part-to-whole.",
+   "category": "svg graphic"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"segments\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"value\":{\"type\":\"number\"},\"label\":{\"type\":\"string\"}},\"required\":[\"value\"]}}},\"required\":[\"segments\"]}",
+   "name": "donut_chart",
+   "example_html": "<div class=\"chart\"><svg viewBox=\"0 0 100 100\"><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"20\"></circle><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"none\" stroke=\"var(--info)\" stroke-width=\"20\" stroke-dasharray=\"60 190\"></circle></svg></div>",
+   "description": "Inline SVG donut chart. Use like pie but with a hollow centre for a total.",
+   "category": "svg graphic"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"value\":{\"type\":\"number\"},\"max\":{\"type\":\"number\"},\"label\":{\"type\":\"string\"}},\"required\":[\"value\",\"max\"]}",
+   "name": "gauge",
+   "example_html": "<div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"10\"></path><path d=\"M10 50 A40 40 0 0 1 70 30\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"10\"></path></svg></div>",
+   "description": "Semi-circular gauge for a single value. Use for speed or confidence meters.",
+   "category": "svg graphic"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"nodes\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"edges\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"required\":[\"nodes\"]}",
+   "name": "diagram_simple",
+   "example_html": "<div class=\"chart\"><svg viewBox=\"0 0 200 100\"><rect x=\"10\" y=\"20\" width=\"50\" height=\"30\" fill=\"var(--accent-soft)\" stroke=\"var(--line)\"></rect><text x=\"35\" y=\"40\" class=\"lbl\">in</text><line x1=\"60\" y1=\"35\" x2=\"110\" y2=\"35\" class=\"axis\"></line><rect x=\"110\" y=\"20\" width=\"50\" height=\"30\" fill=\"var(--good-soft)\" stroke=\"var(--line)\"></rect><text x=\"135\" y=\"40\" class=\"lbl\">out</text></svg></div>",
+   "description": "Simple boxes-and-lines diagram. Use for flows or architecture sketches.",
+   "category": "svg graphic"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"caption\":{\"type\":\"string\"}},\"required\":[]}",
+   "name": "illustration",
+   "example_html": "<div class=\"chart\"><svg viewBox=\"0 0 100 100\"><circle cx=\"50\" cy=\"50\" r=\"30\" fill=\"var(--accent-soft)\" stroke=\"var(--accent)\"></circle><text x=\"50\" y=\"55\" text-anchor=\"middle\" class=\"lbl\">umi</text></svg></div>",
+   "description": "Small decorative inline SVG illustration. Use to break up long text or add a friendly touch.",
+   "category": "svg graphic"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"front\":{\"type\":\"string\"},\"back\":{\"type\":\"string\"}},\"required\":[\"front\",\"back\"]}",
+   "name": "flashcard",
+   "example_html": "<div class=\"flip\"><div class=\"front\">What is a cache hit?</div><div class=\"back\">A request served from memory without recomputation.</div></div>",
+   "description": "Flip-style flashcard using details/summary. Use for study or quick recall.",
+   "category": "learning"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"question\":{\"type\":\"string\"},\"options\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"answer\":{\"type\":\"string\"}},\"required\":[\"question\",\"options\",\"answer\"]}",
+   "name": "quiz_question",
+   "example_html": "<div class=\"quiz\"><div class=\"q\">What does umi retrieve?</div><details><summary>A) Fresh answers</summary></details><details><summary>B) Pre-written replies</summary><div class=\"answer\">Correct.</div></details></div>",
+   "description": "Multiple-choice quiz with expandable answers. Use for self-assessment.",
+   "category": "learning"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"terms\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"term\":{\"type\":\"string\"},\"definition\":{\"type\":\"string\"}},\"required\":[\"term\",\"definition\"]}}},\"required\":[\"terms\"]}",
+   "name": "glossary",
+   "example_html": "<div class=\"card\"><h4>Glossary</h4><ul class=\"list\"><li><b>Cache</b> \u2014 stored replies.</li><li><b>Hit</b> \u2014 a matched reply.</li></ul></div>",
+   "description": "Term/definition list. Use for jargon or key concepts.",
+   "category": "learning"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"title\":{\"type\":\"string\"},\"ingredients\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"steps\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"required\":[\"title\",\"ingredients\",\"steps\"]}",
+   "name": "recipe_card",
+   "example_html": "<div class=\"recipe\"><div class=\"head\"><h3>Cache pie</h3><div class=\"meta\"><span>Prep 5 min</span><span>Serves many</span></div></div><div class=\"body\"><ul class=\"ing\"><li>1 part exact match</li><li>2 parts fuzzy logic</li></ul><ol class=\"list\"><li>Retrieve.</li><li>Serve.</li></ol></div></div>",
+   "description": "Recipe layout with ingredients and steps. Use for cooking or any how-to with parts.",
+   "category": "everyday"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"title\":{\"type\":\"string\"},\"items\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"text\":{\"type\":\"string\"},\"done\":{\"type\":\"boolean\"}},\"required\":[\"text\"]}}},\"required\":[\"title\",\"items\"]}",
+   "name": "checklist",
+   "example_html": "<div class=\"card\"><h4>Launch checklist</h4><ul class=\"list\"><li>Index replies</li><li>Warm cache</li><li>Ship</li></ul></div>",
+   "description": "Checklist of items. Use for tasks or packing lists.",
+   "category": "everyday"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"title\":{\"type\":\"string\"},\"events\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"time\":{\"type\":\"string\"},\"text\":{\"type\":\"string\"}},\"required\":[\"time\",\"text\"]}}},\"required\":[\"title\",\"events\"]}",
+   "name": "schedule",
+   "example_html": "<div class=\"card\"><h4>Today</h4><ul class=\"timeline\"><li><span class=\"when\">09:00</span><p>Standup</p></li><li><span class=\"when\">13:00</span><p>Cache review</p></li></ul></div>",
+   "description": "Daily schedule or agenda. Use for time-blocked plans.",
+   "category": "everyday"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"title\":{\"type\":\"string\"},\"lines\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\"},\"amount\":{\"type\":\"number\"}},\"required\":[\"label\",\"amount\"]}},\"total\":{\"type\":\"number\"}},\"required\":[\"title\",\"lines\"]}",
+   "name": "budget",
+   "example_html": "<div class=\"card\"><h4>Budget</h4><div class=\"between\"><span>Hosting</span><b>$20</b></div><div class=\"between\"><span>Cache</span><b>$5</b></div><hr class=\"divider\"><div class=\"between\"><b>Total</b><b>$25</b></div></div>",
+   "description": "Simple budget with line items and total. Use for money or resource plans.",
+   "category": "everyday"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"habit\":{\"type\":\"string\"},\"days\":{\"type\":\"array\",\"items\":{\"type\":\"boolean\"}}},\"required\":[\"habit\",\"days\"]}",
+   "name": "habit_tracker",
+   "example_html": "<div class=\"card\"><h4>Habit: read cache docs</h4><div class=\"row\"><span class=\"badge good\">Mon</span><span class=\"badge\">Tue</span><span class=\"badge good\">Wed</span></div></div>",
+   "description": "Weekly habit tracker with day badges. Use for streaks or routines.",
+   "category": "everyday"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"location\":{\"type\":\"string\"},\"temp\":{\"type\":\"string\"},\"condition\":{\"type\":\"string\"},\"forecast\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"required\":[\"location\",\"temp\",\"condition\"]}",
+   "name": "weather_summary",
+   "example_html": "<div class=\"card\"><div class=\"between\"><h4>Cacheville</h4><span class=\"badge info\">sunny</span></div><div class=\"stat\"><div class=\"value\">22<span class=\"unit\">\u00b0C</span></div></div><p class=\"muted\">Clear with a chance of hits.</p></div>",
+   "description": "Weather-style summary card. Use for conditions or a light forecast.",
+   "category": "everyday"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"colours\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"hex\":{\"type\":\"string\"}},\"required\":[\"name\",\"hex\"]}}},\"required\":[\"colours\"]}",
+   "name": "colour_palette",
+   "example_html": "<div class=\"card\"><h4>Palette</h4><div class=\"row\"><span class=\"chip\" style=\"background:var(--accent)\">accent</span><span class=\"chip\" style=\"background:var(--info)\">info</span></div></div>",
+   "description": "Swatch palette with names. Use for design tokens or colour choices.",
+   "category": "web-dev reference"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"title\":{\"type\":\"string\"},\"code\":{\"type\":\"string\"},\"language\":{\"type\":\"string\"}},\"required\":[\"code\"]}",
+   "name": "css_snippet",
+   "example_html": "<div class=\"card\"><h4>CSS snippet</h4><pre class=\"code\"><code>.card{background:var(--panel);border:1px solid var(--line)}</code></pre></div>",
+   "description": "Formatted code block for CSS. Use for snippets or style references.",
+   "category": "web-dev reference"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"props\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"notes\":{\"type\":\"string\"}},\"required\":[\"name\",\"props\"]}",
+   "name": "component_spec",
+   "example_html": "<div class=\"card\"><h4>Button</h4><p class=\"muted\">Props: variant, size</p><p>Standard action button.</p></div>",
+   "description": "Component specification with props and notes. Use for design-system docs.",
+   "category": "web-dev reference"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"rows\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"code\":{\"type\":\"string\"},\"meaning\":{\"type\":\"string\"}},\"required\":[\"code\",\"meaning\"]}}},\"required\":[\"rows\"]}",
+   "name": "http_status_table",
+   "example_html": "<div class=\"table-wrap\"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>OK</td></tr><tr><td>404</td><td>Not Found</td></tr></tbody></table></div>",
+   "description": "Table of HTTP status codes and meanings. Use for web-dev reference.",
+   "category": "web-dev reference"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"rows\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"tag\":{\"type\":\"string\"},\"use\":{\"type\":\"string\"}},\"required\":[\"tag\",\"use\"]}}},\"required\":[\"rows\"]}",
+   "name": "html_cheat_sheet",
+   "example_html": "<div class=\"table-wrap\"><table><thead><tr><th>Tag</th><th>Use</th></tr></thead><tbody><tr><td>&lt;details&gt;</td><td>Disclosure widget</td></tr></tbody></table></div>",
+   "description": "Cheat sheet of HTML tags. Use for quick markup reference.",
+   "category": "web-dev reference"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"title\":{\"type\":\"string\"},\"stats\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}},\"required\":[\"label\",\"value\"]}},\"chart\":{\"type\":\"string\"}},\"required\":[\"title\",\"stats\"]}",
+   "name": "dashboard_overview",
+   "example_html": "<div class=\"umi-page\"><h1>Cache dashboard</h1><div class=\"grid\"><div class=\"stat\"><div class=\"label\">Hits</div><div class=\"value\">12.4k</div></div><div class=\"stat\"><div class=\"label\">Misses</div><div class=\"value\">318</div></div></div><div class=\"chart\"><svg viewBox=\"0 0 200 60\"><rect class=\"bar\" x=\"10\" y=\"20\" width=\"40\" height=\"30\"></rect><rect class=\"bar alt\" x=\"70\" y=\"10\" width=\"40\" height=\"40\"></rect></svg></div></div>",
+   "description": "Full dashboard with stat tiles and a chart. Use as a top-level answer layout for metrics.",
+   "category": "dashboard"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"title\":{\"type\":\"string\"},\"panels\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"required\":[\"title\",\"panels\"]}",
+   "name": "dashboard_split",
+   "example_html": "<div class=\"umi-page\"><h1>Split view</h1><div class=\"grid two\"><div class=\"card\"><h4>Left</h4><p>Cache stats.</p></div><div class=\"card\"><h4>Right</h4><p>Recent queries.</p></div></div></div>",
+   "description": "Two-column dashboard layout. Use for side-by-side panels.",
+   "category": "dashboard"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"title\":{\"type\":\"string\"},\"steps\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"required\":[\"title\",\"steps\"]}",
+   "name": "dashboard_steps",
+   "example_html": "<div class=\"umi-page\"><h1>Onboarding</h1><ol class=\"list\"><li>Index</li><li>Warm</li><li>Serve</li></ol></div>",
+   "description": "Dashboard focused on a numbered sequence. Use for guided flows.",
+   "category": "dashboard"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"title\":{\"type\":\"string\"},\"items\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"question\":{\"type\":\"string\"},\"answer\":{\"type\":\"string\"}},\"required\":[\"question\",\"answer\"]}}},\"required\":[\"title\",\"items\"]}",
+   "name": "dashboard_faq",
+   "example_html": "<div class=\"umi-page\"><h1>FAQ</h1><details class=\"acc\"><summary>What is umi?</summary><div class=\"body\">A retrieval-based assistant.</div></details></div>",
+   "description": "Dashboard of collapsible FAQ entries. Use for help centres or Q&A.",
+   "category": "dashboard"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"title\":{\"type\":\"string\"},\"items\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\"},\"value\":{\"type\":\"number\"}},\"required\":[\"label\",\"value\"]}}},\"required\":[\"title\",\"items\"]}",
+   "name": "dashboard_gauges",
+   "example_html": "<div class=\"umi-page\"><h1>Health</h1><div class=\"grid\"><div class=\"chart\"><svg viewBox=\"0 0 100 60\"><path d=\"M10 50 A40 40 0 0 1 90 50\" fill=\"none\" stroke=\"var(--line-2)\" stroke-width=\"8\"></path><path d=\"M10 50 A40 40 0 0 1 80 40\" fill=\"none\" stroke=\"var(--good)\" stroke-width=\"8\"></path></svg></div></div></div>",
+   "description": "Dashboard of gauge charts. Use for multi-metric health views.",
+   "category": "dashboard"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"title\":{\"type\":\"string\"},\"rows\":{\"type\":\"array\",\"items\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"headers\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"required\":[\"title\",\"headers\",\"rows\"]}",
+   "name": "dashboard_table",
+   "example_html": "<div class=\"umi-page\"><h1>Recent queries</h1><div class=\"table-wrap\"><table><thead><tr><th>Query</th><th>Status</th></tr></thead><tbody><tr><td>hello</td><td>hit</td></tr></tbody></table></div></div>",
+   "description": "Dashboard centred on a data table. Use for logs or lists.",
+   "category": "dashboard"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"title\":{\"type\":\"string\"},\"cards\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\"},\"text\":{\"type\":\"string\"}},\"required\":[\"label\",\"text\"]}}},\"required\":[\"title\",\"cards\"]}",
+   "name": "dashboard_cards",
+   "example_html": "<div class=\"umi-page\"><h1>Overview</h1><div class=\"grid\"><div class=\"card\"><h4>Cache</h4><p>Healthy.</p></div><div class=\"card\"><h4>Latency</h4><p>Low.</p></div></div></div>",
+   "description": "Dashboard of summary cards. Use for a quick multi-topic glance.",
+   "category": "dashboard"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"title\":{\"type\":\"string\"},\"tabs\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"body\":{\"type\":\"string\"}},\"required\":[\"name\",\"body\"]}}},\"required\":[\"title\",\"tabs\"]}",
+   "name": "dashboard_tabs",
+   "example_html": "<div class=\"umi-page\"><h1>Tabs</h1><details class=\"tab\"><summary>Stats</summary><div class=\"body\">All good.</div></details><details class=\"tab\"><summary>Logs</summary><div class=\"body\">Nothing to report.</div></details></div>",
+   "description": "Dashboard with tabbed panels. Use for switching between views.",
+   "category": "dashboard"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"title\":{\"type\":\"string\"},\"events\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"when\":{\"type\":\"string\"},\"text\":{\"type\":\"string\"}},\"required\":[\"when\",\"text\"]}}},\"required\":[\"title\",\"events\"]}",
+   "name": "dashboard_timeline",
+   "example_html": "<div class=\"umi-page\"><h1>Activity</h1><ul class=\"timeline\"><li><span class=\"when\">09:00</span><p>Cache warmed</p></li></ul></div>",
+   "description": "Dashboard of chronological events. Use for activity feeds.",
+   "category": "dashboard"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"title\":{\"type\":\"string\"},\"formula\":{\"type\":\"string\"},\"steps\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"required\":[\"title\",\"formula\",\"steps\"]}",
+   "name": "dashboard_formula",
+   "example_html": "<div class=\"umi-page\"><h1>Formula</h1><pre class=\"code\"><code>hit_rate = hits / (hits + misses)</code></pre><ol class=\"list\"><li>Count hits.</li><li>Count misses.</li></ol></div>",
+   "description": "Dashboard with a formula and steps. Use for calculations or derivations.",
+   "category": "dashboard"
+  },
+  {
+   "wraps_answer": false,
+   "slot_schema": "{\"type\":\"object\",\"properties\":{\"title\":{\"type\":\"string\"},\"terms\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"term\":{\"type\":\"string\"},\"definition\":{\"type\":\"string\"}},\"required\":[\"term\",\"definition\"]}}},\"required\":[\"title\",\"terms\"]}",
+   "name": "dashboard_glossary",
+   "example_html": "<div class=\"umi-page\"><h1>Glossary</h1><ul class=\"list\"><li><b>Hit</b> \u2014 served from cache.</li></ul></div>",
+   "description": "Dashboard of terms and definitions. Use for reference pages.",
+   "category": "dashboard"
+  }
+ ]
+}

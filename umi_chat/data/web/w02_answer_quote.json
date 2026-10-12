@@ -1,0 +1,245 @@
+{
+ "widget": "answer_quote",
+ "instances": [
+  {
+   "title": "Classic quote block",
+   "user_requests": [
+    "show me that reply as a quote",
+    "put it in quotation marks",
+    "quote style pls",
+    "can u format ur answer like a quote",
+    "I want the answer as a pull-quote",
+    "wrap it in quotes, thanks",
+    "echo that back to me in quote form",
+    "can u show ur last msg as a quote",
+    "I want that reply formatted as a quotation",
+    "turn your answer into a blockquote pls",
+    "quote ur previous repsonse",
+    "display the reply like a quoted passage",
+    "wrap that answer in a classic quote"
+   ],
+   "html": "<blockquote class=\"quote\">\u201c{{answer}}\u201d<cite>\u2014 umi cache</cite></blockquote>",
+   "augmented": true
+  },
+  {
+   "title": "Cached-match card quote",
+   "user_requests": [
+    "put the reply in a card with a quote",
+    "card + quote version?",
+    "show the answer like a cached result",
+    "I like the badge look, wrap my answer in that",
+    "give me the answer in a lil card",
+    "quote card format plz",
+    "display it like a matched cache entry",
+    "card that reply and quote it",
+    "show the answer inside a quoted card",
+    "put the cached reply into a quote card",
+    "quote the message in a card form",
+    "make a card with the answer quoted",
+    "render that reply as a quote on a card"
+   ],
+   "html": "<div class=\"card\">\n  <div class=\"row between\">\n    <span class=\"badge accent\"><i class=\"dot\"></i> cached match</span>\n    <span class=\"badge\">quote</span>\n  </div>\n  <blockquote class=\"quote\">\u201c{{answer}}\u201d<cite>\u2014 umi</cite></blockquote>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Accordion-quoted reply",
+   "user_requests": [
+    "hide the answer in a foldable quote",
+    "collapse that reply pls",
+    "accordion style answer",
+    "I wanna tap to reveal the quote",
+    "make ur reply expandable as a quote",
+    "details/summary quote thing",
+    "can the answer be tucked inside a fold?",
+    "make the answer collapsible and quoted",
+    "can I fold that quoted reply?",
+    "hide the quote in an accordion",
+    "show the reply as a foldable quotation",
+    "make a quotable accordion with ur answer",
+    "put the answer in a click-to-expand quote"
+   ],
+   "html": "<details class=\"acc\">\n  <summary>\u201ca line worth keeping\u201d</summary>\n  <div class=\"body\">\n    <blockquote class=\"quote\">\u201c{{answer}}\u201d<cite>\u2014 umi cache</cite></blockquote>\n  </div>\n</details>",
+   "augmented": true
+  },
+  {
+   "title": "Timeline journal quote",
+   "user_requests": [
+    "put the reply in a timeline entry",
+    "show the answer like a log line",
+    "timeline + quote combo",
+    "fmt the answer as a dated quote",
+    "I want it in the history feed",
+    "quote it inside a timeline li",
+    "give me the answer as an archived note",
+    "add the reply as a timeline quote",
+    "put the answer in a journal timeline",
+    "show the quote in a chronological entry",
+    "log that reply as a timeline quote",
+    "make the answer a journal quote entry",
+    "quote it in a timeline format"
+   ],
+   "html": "<ol class=\"timeline\">\n  <li>\n    <span class=\"when\">now \u00b7 cached</span>\n    <blockquote class=\"quote\">\u201c{{answer}}\u201d<cite>\u2014 umi</cite></blockquote>\n  </li>\n</ol>",
+   "augmented": true
+  },
+  {
+   "title": "Chat-bubble quote to user",
+   "user_requests": [
+    "say it back to me in a bubble",
+    "chat style answer with quotes",
+    "msg umi bubble quote pls",
+    "reply like ur talking to me but quoted",
+    "bubble + quote fmt",
+    "I want the answer phrased back in a chat bubble",
+    "can the reply be in a chat quote",
+    "echo that back to me in a quote bubble",
+    "put ur reply in a chat bubble as a quote",
+    "bubble-quote the answer for me",
+    "show the reply as a quoted chat bubble",
+    "say the answer back in a quote bubble",
+    "can u quote it in a bubble chat style"
+   ],
+   "html": "<article class=\"msg umi\">\n  <span class=\"who\">umi</span>\n  <p><regex>user_name</regex>, here\u2019s that line:</p>\n  <blockquote class=\"quote\">\u201c{{answer}}\u201d<cite>\u2014 umi cache</cite></blockquote>\n</article>",
+   "augmented": true
+  },
+  {
+   "title": "Highlighted callout quote",
+   "user_requests": [
+    "make the answer a highlighted quote",
+    "callout quote version",
+    "I want it to pop \u2014 quote the reply",
+    "put the answer in a colored quote box",
+    "callout + quote pls",
+    "show the answer with a colored accent",
+    "give the reply some highlight",
+    "highlight the answer as a quote",
+    "make a callout with the quoted reply",
+    "show the answer in a highlighted quote box",
+    "give me the reply as a highlighted quote",
+    "put a highlight on that quoted answer",
+    "render the answer as a callout quote"
+   ],
+   "html": "<div class=\"callout info\">\n  <svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" aria-hidden=\"true\" fill=\"currentColor\"><path d=\"M7 7h4v4c0 3-2 5-4 6l-1-2c1-.6 2-1.6 2-3H7V7zm7 0h4v4c0 3-2 5-4 6l-1-2c1-.6 2-1.6 2-3h-1V7z\"/></svg>\n  <blockquote class=\"quote\">\u201c{{answer}}\u201d<cite>\u2014 umi cache</cite></blockquote>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Pull-quote margin note",
+   "user_requests": [
+    "can you show that bit like a book pull-quote?",
+    "put ur reply in a quote iv seen in articles",
+    "quote it w/ a little mark on the side pls",
+    "i want the answer in kind of a fancy magazine style",
+    "echo that back like a pull quote w/ a tiny label",
+    "display the reply as a quoted snippet, side bar n all",
+    "gimme the answer wrapped like a fancy quote plz",
+    "show that as a pull-quote on the side",
+    "make the answer a margin pull-quote",
+    "put the reply in the margin as a quote",
+    "can u render it like a magazine pull-quote?",
+    "pull-quote the answer in the margin",
+    "show the quoted bit as a margin note"
+   ],
+   "html": "<figure class=\"card flat\" style=\"position:relative;display:flex;gap:var(--s-4);padding:var(--s-5) var(--s-5) var(--s-4);align-items:stretch;\">\n  <span aria-hidden=\"true\" style=\"flex:0 0 4px;border-radius:var(--r-pill);background:var(--accent);\"></span>\n  <div class=\"stack\" style=\"gap:var(--s-3);\">\n    <p class=\"muted t-small\" style=\"margin:0;letter-spacing:.04em;text-transform:uppercase;\">From the cache \u00b7 for <regex>user_name</regex></p>\n    <blockquote class=\"quote\" style=\"margin:0;border:0;padding:0;font-size:var(--t-4);line-height:1.45;\">{{answer}}</blockquote>\n    <figcaption class=\"row\" style=\"gap:var(--s-2);align-items:center;color:var(--ink-3);font-size:var(--t-2);\">\n      <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\" style=\"flex:none;\">\n        <path d=\"M4 7h16\"></path><path d=\"M4 12h11\"></path><path d=\"M4 17h7\"></path>\n      </svg>\n      <span>\u2014 umi</span>\n    </figcaption>\n  </div>\n</figure>",
+   "augmented": true
+  },
+  {
+   "title": "Sticky-note quote tile",
+   "user_requests": [
+    "stick ur answer on a lil note for me",
+    "can it look like a post-it w/ my line on it?",
+    "quote me but make it cute, like a sticky",
+    "show the reply as a small note card",
+    "i want that answer on a lil yellow-ish card thing",
+    "display as sticky note style plss",
+    "put ur words on a post it type thing, nice n small",
+    "put ur reply on a sticky note as a quote",
+    "show the answer as a sticky note quote",
+    "tile that quote like a sticky note",
+    "make a sticky note with the quoted reply",
+    "can I get the answer on a sticky note?",
+    "display the quote as a sticky note tile"
+   ],
+   "html": "<div class=\"card\" style=\"max-width:380px;background:var(--accent-soft);border:1px solid var(--line);border-radius:var(--r-sm,r-4);box-shadow:var(--shadow);padding:var(--s-5);transform:rotate(-0.6deg);\">\n  <div class=\"row between\" style=\"align-items:flex-start;gap:var(--s-3);margin-bottom:var(--s-3);\">\n    <span class=\"badge accent\" style=\"gap:6px;\"><i class=\"dot\"></i>cached match</span>\n    <svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" aria-hidden=\"true\" style=\"color:var(--accent);flex:none;\">\n      <path d=\"M5 4h11l3 3v13H5z\"></path><path d=\"M8 9h8\"></path><path d=\"M8 13h8\"></path><path d=\"M8 17h5\"></path>\n    </svg>\n  </div>\n  <blockquote class=\"quote\" style=\"margin:0 0 var(--s-4);border:0;padding:0;font-size:var(--t-4);\">{{answer}}</blockquote>\n  <p class=\"muted t-small\" style=\"margin:0;\">for <regex>user_name</regex> \u00b7 \u2014 umi</p>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Split-panel quote with confidence bar",
+   "user_requests": [
+    "show the answer w/ a little confidence meter next to it",
+    "can u quote that n show how sure u r?",
+    "put the reply in a panel w/ a match bar",
+    "i want the quote + some cache stats beside it",
+    "display the answer as a quote w/ a progress thing",
+    "gimme that answer quoted, plus how strong the match was",
+    "quote it w/ a lil bar tellin me how cached this is",
+    "show the quote in a split panel with confidence",
+    "add a confidence bar to the quoted answer",
+    "put the answer in a two-panel quote with a meter",
+    "quote the reply and show confidence level",
+    "split panel quote with a certainty bar pls",
+    "render the answer as a quoted panel with confidence"
+   ],
+   "html": "<div class=\"card\" style=\"padding:0;overflow:hidden;\">\n  <div style=\"display:grid;grid-template-columns:1fr;\">\n    <div style=\"padding:var(--s-5);\">\n      <blockquote class=\"quote\" style=\"margin:0;border:0;padding:0;font-size:var(--t-4);line-height:1.5;\">{{answer}}</blockquote>\n      <p class=\"muted t-small\" style=\"margin:var(--s-3) 0 0;\">\u2014 umi, to <regex>user_name</regex></p>\n    </div>\n    <div style=\"border-top:1px solid var(--line);background:var(--bg-alt);padding:var(--s-4) var(--s-5);\">\n      <div class=\"row between\" style=\"gap:var(--s-3);align-items:baseline;\">\n        <span class=\"muted t-small\">match confidence</span>\n        <span class=\"badge good\">high</span>\n      </div>\n      <div class=\"meter\" style=\"margin-top:var(--s-2);\"><div class=\"progress\"><span style=\"width:82%;\"></span></div></div>\n    </div>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Receipt-style quoted snippet",
+   "user_requests": [
+    "make it look like a tiny receipt w/ my quoted answer",
+    "quote the reply on a receipt plz",
+    "i want the answer like a cash register slip w/ dashes",
+    "display the reply as a little receipt thing",
+    "give me the answer on a receipt style card w/ the quote",
+    "put that in kind of a receipt format, w/ a quote at top",
+    "show it as a receipt w/ little dashes n the quote",
+    "make the answer look like a receipt quote",
+    "show the reply as a receipt snippet",
+    "put the quoted answer on a receipt",
+    "receipt-style quote for the last answer",
+    "can u format the answer like a tiny receipt?",
+    "quote it in a receipt format"
+   ],
+   "html": "<div class=\"card flat\" style=\"max-width:360px;margin-inline:auto;font-family:var(--mono,var(--font));padding:var(--s-5) var(--s-4);background:var(--panel);\">\n  <div class=\"stack\" style=\"gap:var(--s-2);text-align:left;\">\n    <div class=\"row between\"><span class=\"t-small\">UMI CACHE</span><span class=\"t-small\">#3091</span></div>\n    <div class=\"divider\" style=\"margin:var(--s-2) 0;\"></div>\n    <blockquote class=\"quote\" style=\"margin:0;border:0;padding:var(--s-3) 0;font-size:var(--t-3);line-height:1.5;\">{{answer}}</blockquote>\n    <div class=\"divider\" style=\"margin:var(--s-2) 0;\"></div>\n    <div class=\"row between\"><span class=\"muted t-small\">served to</span><span class=\"t-small\"><regex>user_name</regex></span></div>\n    <div class=\"row between\"><span class=\"muted t-small\">source</span><span class=\"t-small\">prior answer</span></div>\n    <div class=\"row between\"><span class=\"muted t-small\">total</span><span class=\"t-small\">1 quote</span></div>\n  </div>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Sidebar quote callout",
+   "user_requests": [
+    "put that line in a sidebar callout next to the text",
+    "can u float the quote off to the side like a margin note?",
+    "show it as a side quote for me, w/ a lil icon",
+    "i want the answer in a side callout style box",
+    "display the reply as a margin-style quote, small n neat",
+    "quote that in a sidebar w/ some color",
+    "show the reply as a side bar note thingy pls",
+    "put the answer in a sidebar as a quote",
+    "show the reply as a sidebar callout",
+    "sidebar quote the last answer",
+    "make a sidebar callout with the quote",
+    "display the answer in a side quote box",
+    "can u sidebar-quote that reply?"
+   ],
+   "html": "<aside class=\"callout info\" style=\"display:flex;gap:var(--s-4);align-items:stretch;padding:var(--s-4) var(--s-5);\">\n  <div style=\"flex:0 0 auto;display:flex;align-items:center;\">\n    <svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\" style=\"color:var(--accent);\">\n      <path d=\"M6 5h12v14H6z\"></path><path d=\"M9 9h6\"></path><path d=\"M9 13h6\"></path><path d=\"M9 17h3\"></path>\n    </svg>\n  </div>\n  <div class=\"stack\" style=\"gap:var(--s-2);flex:1 1 auto;min-width:0;\">\n    <p class=\"t-small\" style=\"margin:0;color:var(--ink-2);\">a line for <regex>user_name</regex></p>\n    <blockquote class=\"quote\" style=\"margin:0;border:0;padding:0;font-size:var(--t-3);line-height:1.5;\">{{answer}}</blockquote>\n    <p class=\"muted t-small\" style=\"margin:0;\">\u2014 umi</p>\n  </div>\n</aside>",
+   "augmented": true
+  },
+  {
+   "title": "Bookplate quote card",
+   "user_requests": [
+    "make it look like a bookplate w/ my quote inside",
+    "can u frame the answer like an old book page n quote it?",
+    "show the reply inside a fancy border, quote style",
+    "i want a little ornamental quote card plz",
+    "display that as a bookplate quote w/ a seal",
+    "quote it w/ a nice border n a tiny stamp",
+    "give me the answer like a souvenir bookplate quote",
+    "make the answer a bookplate quote",
+    "show the reply as a bookplate card",
+    "put the quote inside a bookplate",
+    "bookplate card with the quoted answer",
+    "can u render the answer like a bookplate?",
+    "quote it on a bookplate design"
+   ],
+   "html": "<div class=\"card\" style=\"position:relative;padding:var(--s-6) var(--s-5);border:1px solid var(--line-2);background:var(--panel-2);\">\n  <svg width=\"26\" height=\"26\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" aria-hidden=\"true\" style=\"position:absolute;top:var(--s-4);right:var(--s-4);color:var(--accent);opacity:.7;\">\n    <circle cx=\"12\" cy=\"12\" r=\"8\"></circle><path d=\"M12 4v16\"></path><path d=\"M4 12h16\"></path>\n  </svg>\n  <p class=\"muted t-small\" style=\"margin:0 0 var(--s-3);letter-spacing:.05em;text-transform:uppercase;\">bookplate \u00b7 umi</p>\n  <blockquote class=\"quote\" style=\"margin:0 0 var(--s-4);border:0;padding:0 var(--s-3);font-size:var(--t-4);line-height:1.55;\">{{answer}}</blockquote>\n  <p class=\"muted t-small\" style=\"margin:0;text-align:right;\">quoted for <regex>user_name</regex> \u00b7 \u2014 umi cache</p>\n</div>",
+   "augmented": true
+  }
+ ]
+}

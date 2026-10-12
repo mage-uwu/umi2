@@ -1,0 +1,245 @@
+{
+ "widget": "answer_steps",
+ "instances": [
+  {
+   "user_requests": [
+    "can you show me the steps?",
+    "walk me thru it pls",
+    "i need a numbered how-to",
+    "step by step would help",
+    "lay out the process for me",
+    "gimme the play-by-play",
+    "how do i do this? show each step",
+    "show me the steps in order please",
+    "can u list the steps 4 me?",
+    "what r the steps?",
+    "gimme the ordered steps",
+    "i want to see the steps laid out",
+    "steps plz in order"
+   ],
+   "title": "Ordered Steps",
+   "html": "<div class=\"card\">\n  <div class=\"row between\">\n    <span class=\"card-title\">Steps</span>\n    <span class=\"badge accent\"><i class=\"dot\"></i>cached match</span>\n  </div>\n  <p class=\"muted\"><regex>user_name</regex>, here's the sequence.</p>\n  <ol class=\"list\">\n    <li>{{answer}}</li>\n  </ol>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "break it down for me",
+    "i need a checklist",
+    "can u list the steps?",
+    "what's the recipe?",
+    "show me how, one by one",
+    "give me the to-do list",
+    "steps plz",
+    "can u make a checklist of the steps?",
+    "turn that into a checklist",
+    "i need a checklist version",
+    "checklist pls",
+    "give me a checklist for this",
+    "can you break it down into a checklist?"
+   ],
+   "title": "Checklist Steps",
+   "html": "<div class=\"card\">\n  <div class=\"row between\">\n    <span class=\"card-title\">Checklist</span>\n    <span class=\"badge good\"><i class=\"dot\"></i>cached match</span>\n  </div>\n  <p class=\"muted\"><regex>user_name</regex>, here's the list.</p>\n  <ul class=\"list\">\n    <li>{{answer}}</li>\n  </ul>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "walk me through it",
+    "can you guide me?",
+    "i'm lost, show steps",
+    "need a how-to",
+    "break it into steps",
+    "show the process",
+    "steps please, short and sweet",
+    "guide me thru it",
+    "can u walk me thru the steps?",
+    "i need a guide with steps",
+    "show me a guided walkthrough",
+    "walk me thru plz",
+    "can you guide me step by step?"
+   ],
+   "title": "Guide Steps",
+   "html": "<div class=\"card\">\n  <div class=\"row between\">\n    <span class=\"card-title\">Guide</span>\n    <span class=\"badge info\"><i class=\"dot\"></i>cached match</span>\n  </div>\n  <p class=\"muted\"><regex>user_name</regex>, here's the path.</p>\n  <ol class=\"list\">\n    <li>{{answer}}</li>\n  </ol>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "give me the steps",
+    "how do i do this?",
+    "show me the sequence",
+    "need step-by-step",
+    "can u break it down?",
+    "what's the process?",
+    "steps, pls and thx",
+    "show me the steps with confidence levels",
+    "how sure r u about each step?",
+    "can u add confidence to the steps?",
+    "i want steps with confidence scores",
+    "steps w/ confidence pls",
+    "give me the steps and how confident u r"
+   ],
+   "title": "Steps with Confidence",
+   "html": "<div class=\"card\">\n  <div class=\"row between\">\n    <span class=\"card-title\">Steps</span>\n    <span class=\"badge accent\"><i class=\"dot\"></i>cached match</span>\n  </div>\n  <p class=\"muted\"><regex>user_name</regex>, here's how it goes.</p>\n  <div class=\"meter\">\n    <div class=\"progress\"><span style=\"width:100%\"></span></div>\n    <span class=\"t-small muted\">match confidence</span>\n  </div>\n  <ol class=\"list\">\n    <li>{{answer}}</li>\n  </ol>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "i need a step-by-step",
+    "show the way",
+    "break it down, please",
+    "can you list the steps?",
+    "how to do it?",
+    "walk me through, slowly",
+    "steps?",
+    "can u put the steps on a timeline?",
+    "show me a timeline of the steps",
+    "i need a step timeline",
+    "timeline of steps plz",
+    "make a timeline for the steps",
+    "can you lay out the steps on a timeline?"
+   ],
+   "title": "Step Timeline",
+   "html": "<div class=\"card\">\n  <div class=\"row between\">\n    <span class=\"card-title\">Timeline</span>\n    <span class=\"badge accent\"><i class=\"dot\"></i>cached match</span>\n  </div>\n  <p class=\"muted\"><regex>user_name</regex>, here's the sequence.</p>\n  <ul class=\"timeline\">\n    <li>{{answer}}</li>\n  </ul>\n</div>",
+   "augmented": true
+  },
+  {
+   "user_requests": [
+    "just the steps",
+    "give me the quick steps",
+    "show me the shortest path",
+    "what do i do first?",
+    "step list, please",
+    "can you show the steps?",
+    "how-to in a nutshell",
+    "just give me the quick steps",
+    "fast steps pls",
+    "i need quick steps",
+    "quick steps only",
+    "can u give me the steps quickly?",
+    "quick steps now"
+   ],
+   "title": "Quick Steps",
+   "html": "<div class=\"card\">\n  <div class=\"row between\">\n    <span class=\"card-title\">Quick Steps</span>\n    <span class=\"badge accent\"><i class=\"dot\"></i>cached match</span>\n  </div>\n  <p class=\"muted\"><regex>user_name</regex>, here's the gist.</p>\n  <details class=\"acc\">\n    <summary>Show steps</summary>\n    <div class=\"body\">\n      <ol class=\"list\">\n        <li>{{answer}}</li>\n      </ol>\n    </div>\n  </details>\n</div>",
+   "augmented": true
+  },
+  {
+   "title": "Steps in a Fold",
+   "user_requests": [
+    "put the answer in one of those collapsible card things so it's tidy",
+    "can you hide the steps until I click? i like a clean chat",
+    "give me the answer inside a details dropdown pls",
+    "show me the reply folded up, i'll open it when ready",
+    "answer in an expandable block plz",
+    "wrap this in a drop-down so it don't crowd the screen",
+    "i want the steps tucked away, show a summary i can tap",
+    "put the steps in a collapsible section",
+    "can u fold the steps?",
+    "i want the steps in a fold",
+    "make the steps collapsible",
+    "steps in a fold pls",
+    "can you put the steps inside a fold?"
+   ],
+   "html": "<details class=\"acc\"><summary><span class=\"badge accent\"><i class=\"dot\"></i>steps inside</span></summary><div class=\"body\"><p>{{answer}}</p></div></details>",
+   "augmented": true
+  },
+  {
+   "title": "Steps as Tabs",
+   "user_requests": [
+    "make the answer look like little tabbed sections",
+    "can you show the reply in tabs so i can flip through",
+    "tabby steps please, like separate panels",
+    "answer as tabs, one for each bit",
+    "put the steps in a tab thing i can click",
+    "show me the reply as clickable tabs pls",
+    "i'd like the steps in a tab layout, feels neat",
+    "can u make the steps into tabs?",
+    "i want the steps as tabs",
+    "show the steps in tabs",
+    "tabs for the steps pls",
+    "can you present the steps as tabbed sections?",
+    "steps in tabbed format"
+   ],
+   "html": "<div class=\"tabs\"><details class=\"tab\"><summary>Steps</summary><div class=\"body\"><p>{{answer}}</p></div></details></div>",
+   "augmented": true
+  },
+  {
+   "title": "Steps on Cards",
+   "user_requests": [
+    "put the answer on a card so it stands out",
+    "can you show the steps in a card style",
+    "card it up pls, steps on a panel",
+    "answer inside a card, nice and clean",
+    "give me the steps on a little card thing",
+    "show the reply as a card with the steps",
+    "i want the answer in a card, like a note",
+    "can u put the steps on cards?",
+    "i want the steps on separate cards",
+    "show me the steps as cards",
+    "cards for the steps pls",
+    "can you lay out the steps on cards?",
+    "steps on cards plz"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Steps</div><ol class=\"list\"><li>{{answer}}</li></ol></div>",
+   "augmented": true
+  },
+  {
+   "title": "Steps with Meter",
+   "user_requests": [
+    "add a progress bar to the answer so i know how far",
+    "can you show a little meter with the steps",
+    "steps with a confidence meter pls",
+    "answer with a progress thingy at the top",
+    "i'd like a meter next to the steps",
+    "show me the reply with a progress bar",
+    "put a meter in the answer, feels more alive",
+    "can u add a progress meter to the steps?",
+    "i want steps with a meter",
+    "show the steps with a progress bar",
+    "steps with meter pls",
+    "can you include a meter for the steps?",
+    "add a meter to the steps"
+   ],
+   "html": "<div class=\"card\"><div class=\"card-title\">Steps</div><div class=\"meter\"><span style=\"width:80%\"></span></div><ol class=\"list\"><li>{{answer}}</li></ol></div>",
+   "augmented": true
+  },
+  {
+   "title": "Steps in a Quote",
+   "user_requests": [
+    "make the answer look like a quote block",
+    "can you put the steps in a quote style",
+    "quote the answer pls, feels classy",
+    "answer as a blockquote with the steps",
+    "i want the reply in a quote thing",
+    "show the steps inside a quote block",
+    "dress the answer up like a quote",
+    "can u put the steps in a quote?",
+    "i want the steps as a blockquote",
+    "show me the steps in quote format",
+    "steps in a quote pls",
+    "can you format the steps as a quote?",
+    "put the steps in a quote block"
+   ],
+   "html": "<blockquote class=\"quote\"><ol class=\"list\"><li>{{answer}}</li></ol><cite>\u2014 Umi</cite></blockquote>",
+   "augmented": true
+  },
+  {
+   "title": "Steps on a Timeline",
+   "user_requests": [
+    "put the steps on a timeline so it flows",
+    "can you show the answer as a timeline",
+    "timeline the steps pls, in order",
+    "answer on a timeline, one after another",
+    "i want the reply in a timeline view",
+    "show me the steps like a little journey",
+    "make the answer a timeline, feels natural",
+    "can u put the steps on a timeline?",
+    "i want the steps on a timeline",
+    "show me a timeline with the steps",
+    "steps on a timeline pls",
+    "can you lay out the steps on a timeline?",
+    "timeline for the steps"
+   ],
+   "html": "<div class=\"timeline\"><li><span class=\"when\">now</span><p>{{answer}}</p></li></div>",
+   "augmented": true
+  }
+ ]
+}
