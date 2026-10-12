@@ -162,25 +162,38 @@ enum{NGB=1<<20,NGK=16};
 static int grams(const char*msg,uint32_t*out){
     char buf[512];int L=snprintf(buf,sizeof buf," %s ",msg);if(L>(int)sizeof buf-1)L=sizeof buf-1;int m=0;
     for(int n=3;n<=5;n++)for(int i=0;i+n<=L;i++){uint32_t h=2166136261u^n;for(int j=0;j<n;j++)h=(h^(unsigned char)buf[i+j])*16777619u;out[m++]=h&(NGB-1);}
-    /* dedupe */
-    for(int i=1;i<m;i++){uint32_t v=out[i];int j=i-1;while(j>=0&&out[j]>v){out[j+1]=out[j];j--;}out[j+1]=v;}
-    int u=0;for(int i=0;i<m;i++)if(!u||out[u-1]!=out[i])out[u++]=out[i];return u;
+    /* dedupe with a small open-addressing set on the stack (linear time, thread-safe) */
+    int cap=64;while(cap<2*m)cap<<=1;uint32_t set[cap];memset(set,0xff,cap*sizeof(uint32_t));int u=0;
+    for(int i=0;i<m;i++){uint32_t v=out[i],h=(v*2654435761u)&(cap-1);
+        while(set[h]!=0xffffffffu&&set[h]!=v)h=(h+1)&(cap-1);
+        if(set[h]==0xffffffffu){set[h]=v;out[u++]=v;}}
+    return u;
 }
-static int cmp_u64(const void*a,const void*b){uint64_t x=*(const uint64_t*)a,y=*(const uint64_t*)b;return x<y?-1:x>y;}
+/* Counting sort by bucket. Messages are visited in answer order, so each bucket's list comes out
+ * already sorted by answer and equal answers are adjacent: no comparison sort is needed. */
 static void ngram_build(Ex*e,int ne){
-    size_t cap=0;for(int i=0;i<ne;i++)cap+=3*(strlen(e[i].msg)+2);
-    uint64_t*pr=malloc(cap*sizeof(uint64_t));size_t np=0;uint32_t g[1600];
-    for(int i=0;i<ne;i++){int a=ans_at[e[i].id];if(a<0)continue;int m=grams(e[i].msg,g);for(int j=0;j<m;j++)pr[np++]=(uint64_t)g[j]<<32|(uint32_t)a;}
-    qsort(pr,np,sizeof*pr,cmp_u64);
-    /* (bucket, answer) -> tf; df per bucket */
-    ng.off=calloc(NGB+1,sizeof(int));ng.idf=calloc(NGB,sizeof(float));
-    size_t nu=0;for(size_t i=0;i<np;i++)if(!i||pr[i]!=pr[i-1]){nu++;ng.off[(pr[i]>>32)+1]++;}
-    for(int b=0;b<NGB;b++){ng.idf[b]=ng.off[b+1]?logf((float)n_answers/ng.off[b+1]):0;ng.off[b+1]+=ng.off[b];}
-    ng.ans=malloc(nu*sizeof(int));ng.w=malloc(nu*sizeof(float));double*norm=calloc(n_answers,sizeof(double));
-    for(size_t i=0,k=0;i<np;){size_t j=i;while(j<np&&pr[j]==pr[i])j++;int b=pr[i]>>32,a=(uint32_t)pr[i];
-        ng.ans[k]=a;ng.w[k]=(1+logf((float)(j-i)))*ng.idf[b];norm[a]+=(double)ng.w[k]*ng.w[k];k++;i=j;}
-    for(size_t k=0;k<nu;k++)ng.w[k]/=(float)sqrt(norm[ng.ans[k]]+1e-9);
-    free(pr);free(norm);ng.n=n_answers;
+    uint32_t g[1600];int*cnt=calloc(NGB+1,sizeof(int)),*byans=calloc(n_answers+1,sizeof(int)),*ord=malloc(ne*sizeof(int)),no=0;
+    for(int i=0;i<ne;i++)if(ans_at[e[i].id]>=0)byans[ans_at[e[i].id]+1]++;
+    for(int a=0;a<n_answers;a++)byans[a+1]+=byans[a];
+    for(int i=0;i<ne;i++)if(ans_at[e[i].id]>=0){ord[byans[ans_at[e[i].id]]++]=i;no++;}
+    free(byans);
+    for(int q=0;q<no;q++){int i=ord[q];int m=grams(e[i].msg,g);for(int j=0;j<m;j++)cnt[g[j]+1]++;}
+    for(int b=0;b<NGB;b++)cnt[b+1]+=cnt[b];
+    size_t np=cnt[NGB];int*list=malloc((np+1)*sizeof(int)),*fill=malloc(NGB*sizeof(int));memcpy(fill,cnt,NGB*sizeof(int));
+    for(int q=0;q<no;q++){int i=ord[q],a=ans_at[e[i].id];int m=grams(e[i].msg,g);for(int j=0;j<m;j++)list[fill[g[j]]++]=a;}
+    free(fill);free(ord);
+    ng.off=calloc(NGB+1,sizeof(int));ng.idf=calloc(NGB,sizeof(float));ng.ans=malloc((np+1)*sizeof(int));ng.w=malloc((np+1)*sizeof(float));
+    double*norm=calloc(n_answers,sizeof(double));size_t k=0;
+    for(int b=0;b<NGB;b++){
+        int s0=cnt[b],s1=cnt[b+1];ng.off[b]=(int)k;if(s1==s0)continue;
+        size_t k0=k;
+        for(int i=s0;i<s1;){int j=i;while(j<s1&&list[j]==list[i])j++;ng.ans[k]=list[i];ng.w[k]=(float)(j-i);k++;i=j;}
+        ng.idf[b]=logf((float)n_answers/(float)(k-k0));
+        for(size_t q=k0;q<k;q++){ng.w[q]=(1+logf(ng.w[q]))*ng.idf[b];norm[ng.ans[q]]+=(double)ng.w[q]*ng.w[q];}
+    }
+    ng.off[NGB]=(int)k;
+    for(size_t q=0;q<k;q++)ng.w[q]/=(float)sqrt(norm[ng.ans[q]]+1e-9);
+    free(list);free(cnt);free(norm);ng.n=n_answers;
 }
 /* top-k answers by cosine similarity; returns count, fills answer indices and scores.
  * If all is non-NULL it receives the cosine of every answer (caller frees). */
@@ -365,9 +378,12 @@ static void write_page(void){
     }
     fputs("</main></body></html>\n",f);fclose(f);
 }
-static void reply(Net*n,const char*line,double thresh,int verbose){
-    char text[1024],alt[1024],cap[64]="",cap2[64]="",msg[2048];double c,c2;
-    canon(line,text,sizeof text);
+/* One chat turn: canonicalise names, retrieve, remember the name and the reply.
+ * Writes umi's rendered reply to msg and the canonical text the model saw to seen;
+ * returns the packed answer ID. Shared by the CLI and the WebAssembly build. */
+static int respond(Net*n,const char*line,double thresh,char*msg,size_t mn,char*text,double*conf,int*fell){
+    char alt[1024],cap[64]="",cap2[64]="";double c,c2;
+    canon(line,text,1024);
     int strong=sub_name(&re_strong,2,text,alt,sizeof alt,cap,sizeof cap);if(strong)strcpy(text,alt);
     int r=decide(n,0,text,hist[0],hist[1],hy_beta,hy_gamma,&c);
     if(!strong&&sub_name(&re_weak,3,text,alt,sizeof alt,cap2,sizeof cap2)){
@@ -378,11 +394,15 @@ static void reply(Net*n,const char*line,double thresh,int verbose){
         snprintf(user_name,sizeof user_name,"%s",cap);user_name[0]=toupper((unsigned char)user_name[0]);
         for(char*p=user_name+1;*p;p++)*p=tolower((unsigned char)*p);
     }
-    int fell=r<0||c<thresh;if(fell&&fallback_id>=0)r=fallback_id;
-    Ans*a=answers+ans_at[r];render(a,msg,sizeof msg);
+    *fell=r<0||c<thresh;if(*fell&&fallback_id>=0)r=fallback_id;
+    render(answers+ans_at[r],msg,mn);*conf=c;
+    hist[1]=hist[0];hist[0]=r;return r;
+}
+static void reply(Net*n,const char*line,double thresh,int verbose){
+    char text[1024],msg[2048];double c;int fell;
+    int r=respond(n,line,thresh,msg,sizeof msg,text,&c,&fell);Ans*a=answers+ans_at[r];
     if(verbose)printf("  [%d.%d.%d %s | p=%.3f%s | seen as \"%s\"]\n",ID_A(r),ID_B(r),ID_T(r),a->name,c,fell?" -> fallback":"",text);
     printf("umi> %s\n",msg);fflush(stdout);
-    hist[1]=hist[0];hist[0]=r;
     if(webnet){
         double wc;C=&cache_web;int w=decide(webnet,0,text,-1,-1,hy_beta,0,&wc);char*frag=NULL;
         if(w>=0&&wc>=web_thresh&&strncmp(answers[ans_at[w]].name,"plain",5)){

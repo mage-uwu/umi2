@@ -19,9 +19,18 @@ NAME_STRONG = re.compile(r"\b(my name is|my name's|name's|call me|you can call m
 TAG = "<regex>user_name</regex>"
 NAME_TOKEN = re.compile(r"<\s*regex\s*>[^<]*<\s*/\s*regex\s*>|\{\s*(name|user|username|user_name)\s*\}", re.I)
 NONE = "-"
+# DeepSeek sometimes emits a punctuation escape with its high byte dropped (\u0014 for \u2014 and
+# similar), leaving a control character plus stray digits in the text. Such variants are dropped
+# when a clean one exists; otherwise the damaged sequence becomes a dash.
+CTRL = re.compile(r"[\x00-\x08\x0b-\x1f\x7f][0-9]{0,2}")
+def fix(s):
+    if not CTRL.search(s): return s
+    s = CTRL.sub(" \u2014 ", s)
+    s = re.sub(r"(\s*\u2014\s*)+", " \u2014 ", s)
+    return re.sub(r"[ ]{2,}", " ", s).strip()
 
 def clean(msg):
-    m = NAME_TOKEN.sub(TAG, msg.strip())
+    m = NAME_TOKEN.sub(TAG, fix(msg.strip()))
     m = NAME_STRONG.sub(lambda g: g.group(1) + " " + TAG, m)
     return re.sub(r"\s+", " ", m).lower()
 
@@ -34,7 +43,9 @@ def main(raw, convdir, out):
         di = int(os.path.basename(f)[:2]); d = json.load(open(f)); seen = set()
         for ii, it in enumerate([x for x in d["intents"] if not (x["intent"] in seen or seen.add(x["intent"]))][:64]):
             cid = ids(di, ii, 0)
-            for ans, ano in zip(it["answers"], it["answers_no_name"]):
+            pairs = list(zip(it["answers"], it["answers_no_name"]))
+            good = [p for p in pairs if not CTRL.search(p[0] + p[1])]
+            for ans, ano in (good or [(fix(a), fix(b)) for a, b in pairs]):
                 ans = NAME_TOKEN.sub(TAG, ans.strip())
                 answers.append((cid, f"{d['domain']}/{it['intent']}", ans, NAME_TOKEN.sub("", ano.strip()) or ans.replace(TAG, "").strip(), NONE))
             rows += [("train", cid, NONE, NONE, clean(m)) for m in it["user_messages"]]
@@ -48,8 +59,8 @@ def main(raw, convdir, out):
             tix = {t["id"]: i for i, t in enumerate(cv["turns"][:64])}; par = {t["id"]: t["parent"] for t in cv["turns"]}
             for t in cv["turns"][:64]:
                 cid = ids(a, b, tix[t["id"]]); nturns += 1
-                ans = NAME_TOKEN.sub(TAG, t["assistant"].strip())
-                ano = NAME_TOKEN.sub("", t["assistant_no_name"].strip()) or ans.replace(TAG, "").strip()
+                ans = NAME_TOKEN.sub(TAG, fix(t["assistant"].strip()))
+                ano = NAME_TOKEN.sub("", fix(t["assistant_no_name"].strip())) or ans.replace(TAG, "").strip()
                 p = t["parent"]; c1 = ids(a, b, tix[p]) if p in tix else NONE
                 answers.append((cid, f"conv/{d['domain']}/{tsv(cv['topic'])[:60]}/{t['id']}", ans, ano, c1))
                 pp = par.get(p, ""); c2 = ids(a, b, tix[pp]) if pp in tix else NONE

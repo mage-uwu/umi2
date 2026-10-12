@@ -1,0 +1,195 @@
+<title>umi-1M-chat</title>
+<style>
+/* Layout: one column chat. A slim header shows model status and the remembered name; replies can
+   reveal the retrieval decision (answer ID, intent, confidence, the text the model saw).
+   Tokens follow "Umi Cache UI", the design system DeepSeek wrote for umi (data_web/design.css). */
+:root{
+  --bg:#fdfbf7;--panel:#ffffff;--panel-2:#f4efe7;--ink:#2c2a27;--ink-2:#5c574f;--ink-3:#8b8478;
+  --line:#e6dfd3;--accent:#b4643a;--accent-ink:#ffffff;--accent-soft:#f6e7de;--good:#3f7d5c;--warn:#a97a1e;--bad:#a6483f;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --r:14px;--shadow:0 1px 2px rgba(44,42,39,.06),0 6px 20px -12px rgba(44,42,39,.18);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#17161a;--panel:#211f24;--panel-2:#26242a;--ink:#ece7df;--ink-2:#bdb6ac;--ink-3:#8d867c;
+  --line:#332f36;--accent:#e2916a;--accent-ink:#1c1410;--accent-soft:#35261f;--good:#7fc39a;--warn:#dbb264;--bad:#e08a80;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -14px rgba(0,0,0,.7);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#17161a;--panel:#211f24;--panel-2:#26242a;--ink:#ece7df;--ink-2:#bdb6ac;--ink-3:#8d867c;
+  --line:#332f36;--accent:#e2916a;--accent-ink:#1c1410;--accent-soft:#35261f;--good:#7fc39a;--warn:#dbb264;--bad:#e08a80;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -14px rgba(0,0,0,.7);color-scheme:dark}
+
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--font);padding-inline:16px;padding-block:0}
+.app{max-width:760px;height:100%;margin:0 auto;display:flex;flex-direction:column;gap:12px;padding-block:14px}
+
+header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.brand{display:flex;align-items:baseline;gap:8px;margin-right:auto}
+.brand h1{font-size:20px;letter-spacing:-.01em;margin:0}
+.brand span{color:var(--ink-3);font:12px var(--mono)}
+.status{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-2)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--warn)}
+.status.ready .dot{background:var(--good)}.status.error .dot{background:var(--bad)}
+.chip{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--ink-2);background:var(--panel)}
+.chip b{color:var(--ink);font-weight:600}
+.tools{display:flex;gap:8px;align-items:center}
+button{font:inherit;cursor:pointer}
+.ghost{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:6px 12px;font-size:13px}
+.ghost:hover{border-color:var(--ink-3)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+label.toggle{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-2);cursor:pointer}
+
+.log{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:14px;padding:4px 2px 8px}
+.turn{display:flex;flex-direction:column;gap:4px;max-width:86%;min-width:0}
+.turn.user{align-self:flex-end;align-items:flex-end}
+.bubble{padding:10px 14px;border-radius:var(--r);white-space:pre-wrap;overflow-wrap:anywhere}
+.user .bubble{background:var(--accent);color:var(--accent-ink);border-bottom-right-radius:4px}
+.umi .bubble{background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);border-bottom-left-radius:4px}
+.umi .bubble.fallback{border-style:dashed}
+.why{font:12px/1.5 var(--mono);color:var(--ink-3);display:flex;flex-wrap:wrap;gap:4px 10px;padding:0 4px}
+.why code{color:var(--ink-2)}
+.why .bar{display:inline-block;vertical-align:middle;width:46px;height:5px;border-radius:3px;background:var(--panel-2);overflow:hidden}
+.why .bar i{display:block;height:100%;background:var(--accent)}
+.why .seen{flex-basis:100%;color:var(--ink-2)}
+body:not(.show-why) .why{display:none}
+.typing{color:var(--ink-3);font-style:italic;padding:0 4px}
+
+.empty{margin:auto 0;display:flex;flex-direction:column;gap:14px;padding:8px 2px}
+.empty h2{font-size:22px;line-height:1.25;margin:0;text-wrap:balance;max-width:28ch}
+.empty p{margin:0;color:var(--ink-2);max-width:60ch}
+.meter{height:6px;border-radius:3px;background:var(--panel-2);overflow:hidden;max-width:420px}
+.meter i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+.loadline{font:12px var(--mono);color:var(--ink-3)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;max-width:640px}
+.fact{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--panel)}
+.fact b{display:block;font-size:18px;font-variant-numeric:tabular-nums}
+.fact span{font-size:12px;color:var(--ink-3)}
+
+.suggest{display:flex;flex-wrap:wrap;gap:8px}
+.suggest button{border:1px dashed var(--line);background:transparent;color:var(--ink-2);border-radius:999px;padding:5px 12px;font-size:13px}
+.suggest button:hover:not(:disabled){border-color:var(--accent);color:var(--ink)}
+.suggest button:disabled{opacity:.5;cursor:default}
+
+form{display:flex;gap:8px;padding-bottom:env(safe-area-inset-bottom,0px)}
+#msg{flex:1;min-width:0;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 14px}
+#msg:focus{outline:none;border-color:var(--accent)}
+.send{border:0;border-radius:12px;padding:0 18px;background:var(--accent);color:var(--accent-ink);font-weight:600}
+.send:disabled,#msg:disabled{opacity:.55;cursor:default}
+@media (prefers-reduced-motion:reduce){.meter i{transition:none}}
+@media (max-width:520px){.turn{max-width:94%}.brand span{display:none}}
+</style>
+
+<div class="app">
+  <header>
+    <div class="brand"><h1>umi</h1><span>1M-param cache-retrieval chat · WebAssembly</span></div>
+    <div class="status" id="status" role="status"><i class="dot"></i><span id="statusText">Loading</span></div>
+    <span class="chip" id="nameChip" hidden>name <b id="nameVal"></b></span>
+    <div class="tools">
+      <label class="toggle" for="why"><input type="checkbox" id="why"> Show retrieval</label>
+      <button class="ghost" id="newChat" type="button">New chat</button>
+    </div>
+  </header>
+
+  <main class="log" id="log" aria-live="polite">
+    <section class="empty" id="empty">
+      <h2>umi answers from a cache. The model only decides which reply to pull.</h2>
+      <p>Each message goes through a 1,287,904-parameter bidirectional SSM. It fills a masked three-byte answer ID that picks one of 17,984 replies DeepSeek wrote for umi. Follow-ups use umi's last two replies as context. Your name is swapped for a <code>&lt;regex&gt;user_name&lt;/regex&gt;</code> tag before the model reads it, and filled back in afterwards. Everything runs on this device; nothing you type leaves the page.</p>
+      <div class="facts">
+        <div class="fact"><b>17,984</b><span>cached replies</span></div>
+        <div class="fact"><b>68% · 82% · 64%</b><span>held-out: single turn · follow-up · topic switch</span></div>
+        <div class="fact"><b id="sizeFact">58 MB</b><span>model + cache to download</span></div>
+      </div>
+      <div class="meter" aria-hidden="true"><i id="meter"></i></div>
+      <div class="loadline" id="loadline">Starting the WebAssembly runtime</div>
+    </section>
+  </main>
+
+  <div class="suggest" id="suggest">
+    <button type="button" disabled>hi umi!</button>
+    <button type="button" disabled>my name is Sam</button>
+    <button type="button" disabled>what's my name?</button>
+    <button type="button" disabled>how do i boil an egg?</button>
+    <button type="button" disabled>why are you so small?</button>
+    <button type="button" disabled>tell me more</button>
+  </div>
+  <form id="form" autocomplete="off">
+    <input id="msg" type="text" placeholder="Loading the model" aria-label="Message to umi" disabled maxlength="300">
+    <button class="send" id="send" type="submit" disabled>Send</button>
+  </form>
+</div>
+
+<script>
+const TOTAL_BYTES = 41169632 + 8511989 + 8721955; // model (base64) + cached replies + phrasings
+const $ = (id) => document.getElementById(id);
+const log = $('log'), msg = $('msg'), send = $('send');
+let busy = false, ready = false, seq = 0, pending = null;
+
+try { if (localStorage.getItem('umi-why') === '1') { $('why').checked = true; document.body.classList.add('show-why'); } } catch (e) {}
+$('why').addEventListener('change', (e) => {
+  document.body.classList.toggle('show-why', e.target.checked);
+  try { localStorage.setItem('umi-why', e.target.checked ? '1' : '0'); } catch (err) {}
+});
+
+function setStatus(text, cls) { $('statusText').textContent = text; $('status').className = 'status ' + (cls || ''); }
+function setEnabled(on) {
+  msg.disabled = send.disabled = !on;
+  document.querySelectorAll('.suggest button').forEach((b) => (b.disabled = !on));
+  msg.placeholder = on ? 'Message umi' : (ready ? 'umi is choosing a reply' : 'Loading the model');
+}
+function scroll() { log.scrollTop = log.scrollHeight; }
+function addTurn(who, text) {
+  $('empty')?.remove();
+  const t = document.createElement('div'); t.className = 'turn ' + who;
+  const b = document.createElement('div'); b.className = 'bubble'; b.textContent = text;
+  t.appendChild(b); log.appendChild(t); scroll(); return t;
+}
+
+const worker = new Worker('umi-worker.js');
+worker.onmessage = (e) => {
+  const m = e.data;
+  if (m.type === 'progress') {
+    const pct = Math.min(100, (100 * m.bytes) / TOTAL_BYTES);
+    $('meter').style.width = pct.toFixed(1) + '%';
+    $('loadline').textContent = `Downloading the model and cache: ${(m.bytes / 1048576).toFixed(1)} MB`;
+  } else if (m.type === 'stage') {
+    $('loadline').textContent = m.text; $('meter').style.width = '100%';
+  } else if (m.type === 'ready') {
+    ready = true; setStatus('Ready, running locally', 'ready'); setEnabled(true);
+    const ll = $('loadline'); if (ll) ll.textContent = `Ready: ${m.answers.toLocaleString()} replies indexed in ${(m.ms / 1000).toFixed(1)} s.`;
+    msg.focus();
+  } else if (m.type === 'reply') {
+    pending?.remove(); pending = null;
+    const t = addTurn('umi', m.reply);
+    if (m.fallback) t.firstChild.classList.add('fallback');
+    const w = document.createElement('div'); w.className = 'why';
+    const pct = Math.round(m.p * 100);
+    w.innerHTML = `<code></code><span></span><span><span class="bar"><i style="width:${pct}%"></i></span> p ${m.p.toFixed(2)}${m.fallback ? ' · below threshold, fallback reply' : ''}</span><span>${m.ms} ms</span><span class="seen"></span>`;
+    w.children[0].textContent = m.id; w.children[1].textContent = m.intent;
+    w.querySelector('.seen').textContent = 'model saw: ' + m.seen;
+    t.appendChild(w); scroll();
+    if (m.name) { $('nameVal').textContent = m.name; $('nameChip').hidden = false; }
+    busy = false; setEnabled(true); msg.focus();
+  } else if (m.type === 'reset') {
+    log.innerHTML = ''; $('nameChip').hidden = true; busy = false; setEnabled(true); msg.focus();
+  } else if (m.type === 'error') {
+    pending?.remove(); pending = null; busy = false;
+    setStatus('Error', 'error');
+    const t = addTurn('umi', 'Something went wrong in the model: ' + m.message);
+    t.firstChild.classList.add('fallback'); setEnabled(ready);
+  }
+};
+worker.onerror = (e) => { setStatus('Could not start', 'error'); const ll = $('loadline'); if (ll) ll.textContent = 'The WebAssembly worker failed to start: ' + (e.message || 'unknown error') + '. Reload to try again.'; };
+worker.postMessage({ type: 'load', beta: 32, gamma: 2 });
+
+function ask(text) {
+  text = text.trim(); if (!text || busy || !ready) return;
+  busy = true; setEnabled(false);
+  addTurn('user', text);
+  pending = document.createElement('div'); pending.className = 'typing'; pending.textContent = 'umi is rummaging through the drawer';
+  log.appendChild(pending); scroll();
+  worker.postMessage({ type: 'say', id: ++seq, text, threshold: 0.05 });
+}
+$('form').addEventListener('submit', (e) => { e.preventDefault(); const t = msg.value; msg.value = ''; ask(t); });
+document.querySelectorAll('.suggest button').forEach((b) => b.addEventListener('click', () => ask(b.textContent)));
+$('newChat').addEventListener('click', () => { if (ready && !busy) worker.postMessage({ type: 'reset' }); });
+</script>

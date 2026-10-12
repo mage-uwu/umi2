@@ -20,6 +20,7 @@ CSSURL = re.compile(r"url\(\s*['\"]?\s*(?:https?:|//)[^)]*\)", re.I)
 IMPORT = re.compile(r"@import[^;]*;", re.I)
 
 def sanitize(h):
+    h = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]", "", h)  # stray control bytes (newlines are kept, then encoded)
     h = SCRIPT.sub("", h); h = HANDLER.sub("", h); h = EXTERNAL.sub(r"\1\2#\2", h)
     h = CSSURL.sub("none", h); h = IMPORT.sub("", h)
     return NAME_TOKEN.sub(TAG, h).replace("\t", " ").replace("\r", "").replace("\n", "\x1c")
