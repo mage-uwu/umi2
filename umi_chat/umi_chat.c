@@ -1,69 +1,88 @@
 /*
- * umi_chat.c -- umi-1M-chat: a retrieval chatbot on the nanotss MLM.
+ * umi_chat.c -- umi-1M-chat: a multi-turn retrieval chatbot on the nanotss MLM.
  *
  * There is no autoregressive generation. Every reply is a cached answer
- * (written by DeepSeek, see gen_data.py). The bidirectional masked-LM reads
- * the user's message and fills a two-byte answer-ID slot:
+ * written by DeepSeek (gen_data.py, gen_convs.py). The bidirectional
+ * masked-LM reads the conversation state and the user's message and fills a
+ * three-byte answer-ID slot, a typed decision about what to retrieve:
  *
- *     <message> SEP [MASK] [MASK] END PAD...
- *                   domain intent
+ *   [ctx1 a b t][ctx2 a b t] GS <message> SEP [MASK][MASK][MASK] END PAD...
  *
- * Decoding is a small mask-predict search: score the domain byte with both
- * slots masked, reveal each of the top-K domains, score the intent byte, and
- * retrieve the answer with the best joint log-probability. A low joint
- * probability retrieves the fallback answer instead.
+ * ctx1/ctx2 are the IDs of umi's last two replies ("---" when there are
+ * none). IDs are hierarchical: single-turn intents are (domain, intent, 0);
+ * turns of a DeepSeek conversation tree are (conv_hi, conv_lo, turn), so a
+ * follow-up shares its first two bytes with the reply it follows and the
+ * model can copy them, then choose the next turn from the message.
  *
- * User names are kept consistent with regexes: a name in the user's text is
- * replaced by the tag <regex>user_name</regex> before the model sees it
- * (training data uses the same canonical form), and the same tag inside a
- * cached answer is spawned back in from the remembered name.
+ * Retrieval is two-stage. A large hashed char n-gram cache (TF-IDF over every
+ * answer's phrasings) proposes candidates, plus every turn of the
+ * conversation trees in context. The MLM then makes the typed decision: each
+ * candidate's ID is scored byte by byte through the masked slot (reveal a to
+ * score b, reveal a,b to score t), and log p + beta * cosine + gamma *
+ * [candidate directly follows umi's last reply in its cached tree] picks it.
+ * classify() is the MLM-only beam over all IDs, used for training metrics.
+ * Below --threshold confidence the fallback answer is retrieved.
  *
- * In BLT mode (default) the byte encoder also reads a large hashed 3..8-byte
- * n-gram cache (--ngram-bins); those rows are excluded from the ~1M budget.
+ * User names: a name in the user's text is replaced by the tag
+ * <regex>user_name</regex> before the model sees it (training data uses the
+ * same form), and the same tag inside a cached answer is spawned back in from
+ * the remembered name. In BLT mode (default) the byte encoder also reads a
+ * large hashed 3..8-byte n-gram cache (--ngram-bins), excluded from the ~1M
+ * budget as upstream does.
  *
  * Build:  cc -O3 -march=native -fopenmp umi_chat.c -lm -o umi_chat
- * Train:  ./umi_chat train --data data --seconds 3600 --threads 8 --save umi.bin
+ * Train:  ./umi_chat train --data data --seconds 7200 --threads 8 --save umi.bin
  * Eval:   ./umi_chat eval  --data data --load umi.bin
- * Chat:   ./umi_chat chat  --data data --load umi.bin [--ask "text"] [-v]
+ * Chat:   ./umi_chat chat  --data data --load umi.bin [-v] [--ask "a|b|c"]
  */
 #define NANOTSS_NO_MAIN
 #include "../nanotss_blt_mlm.c"
 #include <regex.h>
 #include <ctype.h>
 
-/* 64 ID symbols; must match prepare.py. */
 static const char ALPHA[]="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/";
-static int sym(int c){const char*p=c?strchr(ALPHA,c):NULL;return p?(int)(p-ALPHA):-1;}
-enum{SEQ=80,MAXMSG=SEQ-4,SEP=0x1F,END=0x1E,PAD=0,TOPK=4,NV=4};
+enum{NA=128,NB=64,NT=64,SEQ=96,CTX=6,MAXMSG=SEQ-CTX-6,GS=0x1D,SEP=0x1F,END=0x1E,PAD=0,NONE='-',NV=4,KA=4,KB=3};
 static const char TAG[]="<regex>user_name</regex>";
+/* byte for each ID part: a uses 64 printable symbols then 0x80..0xBF; b and t use the printable 64 */
+static int abyte(int a){return a<64?ALPHA[a]:0x80+(a-64);}
+static int bbyte(int b){return ALPHA[b];}
 
-typedef struct{int a,b;char*msg;}Ex;
-typedef struct{int a,b,nv,last;char*name,*ans[NV],*ano[NV];}Ans;
-static Ans answers[64*64];static int n_answers,ans_at[64][64];
-static int intro_a=-1,intro_b=-1,fallback_a=-1,fallback_b=-1;
+typedef struct{int id,c1,c2;char*msg;}Ex;               /* ids packed as a*4096+b*64+t, -1 = none */
+typedef struct{int id,parent,nv,last;char*name,*ans[NV],*ano[NV];}Ans;
+static Ans*answers;static int n_answers,*ans_at;          /* ans_at[packed id] -> answer index */
+static unsigned char has_a[NA],has_ab[NA][NB];
+static int intro_id=-1,fallback_id=-1;
+#define PACK(a,b,t) ((a)*NB*NT+(b)*NT+(t))
+#define ID_A(x) ((x)/(NB*NT))
+#define ID_B(x) ((x)/NT%NB)
+#define ID_T(x) ((x)%NT)
 
-static char*dupn(const char*s,size_t n){char*r=malloc(n+1);memcpy(r,s,n);r[n]=0;return r;}
+static int parse_id(const char*s){int a,b,t;if(*s=='-'||sscanf(s,"%d.%d.%d",&a,&b,&t)!=3||a<0||a>=NA||b<0||b>=NB||t<0||t>=NT)return -1;return PACK(a,b,t);}
 static Ex*load_ex(const char*dir,const char*name,int*n){
     char p[1024];snprintf(p,sizeof p,"%s/%s",dir,name);FILE*fp=fopen(p,"r");if(!fp){fprintf(stderr,"cannot open %s\n",p);exit(1);}
-    int cap=1024;Ex*e=malloc(cap*sizeof(Ex));*n=0;char line[4096];
+    int cap=4096;Ex*e=malloc(cap*sizeof(Ex));*n=0;char line[4096];
     while(fgets(line,sizeof line,fp)){
-        size_t l=strcspn(line,"\r\n");line[l]=0;if(l<4||line[2]!='\t')continue;
-        int a=sym(line[0]),b=sym(line[1]);if(a<0||b<0)continue;
-        if(*n==cap)e=realloc(e,(cap*=2)*sizeof(Ex));e[*n].a=a;e[*n].b=b;e[*n].msg=dupn(line+3,strlen(line+3));(*n)++;
+        line[strcspn(line,"\r\n")]=0;char*f[4];int k=0;f[k++]=line;
+        for(char*q=line;*q&&k<4;q++)if(*q=='\t'){*q=0;f[k++]=q+1;}
+        if(k<4||!*f[3])continue;int id=parse_id(f[0]);if(id<0)continue;
+        if(*n==cap)e=realloc(e,(cap*=2)*sizeof(Ex));e[*n]=(Ex){id,parse_id(f[1]),parse_id(f[2]),strdup(f[3])};(*n)++;
     }fclose(fp);return e;
 }
 static void load_answers(const char*dir){
     char p[1024];snprintf(p,sizeof p,"%s/answers.tsv",dir);FILE*fp=fopen(p,"r");if(!fp){fprintf(stderr,"cannot open %s\n",p);exit(1);}
-    memset(ans_at,-1,sizeof ans_at);char line[8192];
-    while(fgets(line,sizeof line,fp)&&n_answers<64*64){
-        line[strcspn(line,"\r\n")]=0;char*f[4];int k=0;f[k++]=line;
-        for(char*q=line;*q&&k<4;q++)if(*q=='\t'){*q=0;f[k++]=q+1;}
-        if(k<4||strlen(f[0])!=2)continue;int a=sym(f[0][0]),b=sym(f[0][1]);if(a<0||b<0)continue;
-        if(ans_at[a][b]>=0){Ans*r=answers+ans_at[a][b];if(r->nv<NV){r->ans[r->nv]=strdup(f[2]);r->ano[r->nv++]=strdup(f[3]);}continue;}
-        Ans*r=answers+n_answers;r->a=a;r->b=b;r->nv=1;r->last=-1;r->name=strdup(f[1]);r->ans[0]=strdup(f[2]);r->ano[0]=strdup(f[3]);ans_at[a][b]=n_answers++;
-        if(!strcmp(f[1],"umi_core/user_introduces_name")){intro_a=a;intro_b=b;}
-        if(!strcmp(f[1],"umi_core/fallback_unknown")){fallback_a=a;fallback_b=b;}
-    }fclose(fp);
+    ans_at=malloc((size_t)NA*NB*NT*sizeof(int));for(int i=0;i<NA*NB*NT;i++)ans_at[i]=-1;
+    int cap=4096;answers=calloc(cap,sizeof(Ans));char*line=malloc(1<<16);
+    while(fgets(line,1<<16,fp)){
+        line[strcspn(line,"\r\n")]=0;char*f[5];int k=0;f[k++]=line;
+        for(char*q=line;*q&&k<5;q++)if(*q=='\t'){*q=0;f[k++]=q+1;}
+        if(k<4)continue;int id=parse_id(f[0]);if(id<0)continue;
+        if(ans_at[id]>=0){Ans*r=answers+ans_at[id];if(r->nv<NV){r->ans[r->nv]=strdup(f[2]);r->ano[r->nv++]=strdup(f[3]);}continue;}
+        if(n_answers==cap)answers=realloc(answers,(cap*=2)*sizeof(Ans));
+        Ans*r=answers+n_answers;*r=(Ans){.id=id,.parent=k>4?parse_id(f[4]):-1,.nv=1,.last=-1,.name=strdup(f[1])};r->ans[0]=strdup(f[2]);r->ano[0]=strdup(f[3]);ans_at[id]=n_answers++;
+        has_a[ID_A(id)]=1;has_ab[ID_A(id)][ID_B(id)]=1;
+        if(!strcmp(f[1],"umi_core/user_introduces_name"))intro_id=id;
+        if(!strcmp(f[1],"umi_core/fallback_unknown"))fallback_id=id;
+    }fclose(fp);free(line);
 }
 
 /* ---- model wrapper: BLT (Faithful) or direct byte core (Model) ---- */
@@ -75,51 +94,154 @@ static void net_logits(Net*n,int th,const int*tok,real*lg256){
     const int V=n->m->c.vocab;real*tmp=malloc((size_t)SEQ*V*sizeof(real));eval_seq(n->m,tok,y,SEQ,n->m->ws[th],&ns,tmp);
     for(int i=0;i<SEQ;i++)memcpy(lg256+(size_t)i*256,tmp+(size_t)i*V,256*sizeof(real));free(tmp);
 }
-
-/* Lay out one example; returns the domain-slot position. aux>0 adds BERT corruption on message bytes. */
-static int encode(const char*msg,int a,int b,int reveal_a,int mask,double aux,uint64_t*rng,int*tok,int*lab){
+static void put_id(int*tok,int id){
+    if(id<0){tok[0]=tok[1]=tok[2]=NONE;return;}
+    tok[0]=abyte(ID_A(id));tok[1]=bbyte(ID_B(id));tok[2]=bbyte(ID_T(id));
+}
+/* Lay out one example; returns the position of the first answer slot. reveal = number of
+ * leading answer bytes shown (teacher forcing for the beam); aux>0 adds BERT noise on the message. */
+static int encode(const char*msg,int c1,int c2,int id,int reveal,int mask,double aux,uint64_t*rng,int*tok,int*lab){
     int len=(int)strlen(msg);if(len>MAXMSG)len=MAXMSG;
     for(int i=0;i<SEQ;i++){tok[i]=PAD;lab[i]=-1;}
+    put_id(tok,c1);put_id(tok+3,c2);tok[CTX]=GS;int o=CTX+1;
     for(int i=0;i<len;i++){
-        tok[i]=(unsigned char)msg[i];
-        if(aux>0&&urand(rng)<aux){lab[i]=tok[i];real u=urand(rng);if(u<(real).8)tok[i]=mask;else if(u<(real).9)tok[i]=(int)(urand(rng)*256)&255;}
+        tok[o+i]=(unsigned char)msg[i];
+        if(aux>0&&urand(rng)<aux){lab[o+i]=tok[o+i];real u=urand(rng);if(u<(real).8)tok[o+i]=mask;else if(u<(real).9)tok[o+i]=(int)(urand(rng)*256)&255;}
     }
-    tok[len]=SEP;tok[len+1]=mask;tok[len+2]=mask;tok[len+3]=END;
-    if(a>=0){lab[len+1]=ALPHA[a];lab[len+2]=ALPHA[b];}
-    if(reveal_a){tok[len+1]=ALPHA[a];lab[len+1]=-1;}
-    return len+1;
+    int s=o+len;tok[s]=SEP;s++;
+    int want[3]={-1,-1,-1};if(id>=0){want[0]=abyte(ID_A(id));want[1]=bbyte(ID_B(id));want[2]=bbyte(ID_T(id));}
+    for(int j=0;j<3;j++){if(j<reveal){tok[s+j]=want[j];}else{tok[s+j]=mask;lab[s+j]=want[j];}}
+    tok[s+3]=END;return s;
 }
-static double logsoftmax_at(const real*l,int v){double mx=-1e300,z=0;for(int i=0;i<256;i++)mx=l[i]>mx?l[i]:mx;for(int i=0;i<256;i++)z+=exp(l[i]-mx);return l[v]-mx-log(z);}
+static double lsm(const real*l,int v){double mx=-1e300,z=0;for(int i=0;i<256;i++)mx=l[i]>mx?l[i]:mx;for(int i=0;i<256;i++)z+=exp(l[i]-mx);return l[v]-mx-log(z);}
+/* top-k indices of p[0..n) with p>0 */
+static int topk(const double*p,int n,int k,int*out){int m=0;for(;m<k;m++){int b=-1;for(int i=0;i<n;i++){int used=0;for(int j=0;j<m;j++)used|=out[j]==i;if(!used&&p[i]>0&&(b<0||p[i]>p[b]))b=i;}if(b<0)break;out[m]=b;}return m;}
 
-/* Retrieval decision. Returns the answer index; *conf is the joint probability. */
-static int classify(Net*n,int th,const char*msg,double*conf,int*dom_top){
+/* Retrieval decision: returns the packed answer ID; *conf is its joint probability. */
+static int classify(Net*n,int th,const char*msg,int c1,int c2,double*conf){
     int tok[SEQ],lab[SEQ],mask=net_mask(n);real*lg=malloc((size_t)SEQ*256*sizeof(real));
-    int s=encode(msg,-1,-1,0,mask,0,NULL,tok,lab);net_logits(n,th,tok,lg);
-    /* domain distribution, renormalised over domains that exist */
-    double pa[64],z=0;for(int a=0;a<64;a++){int any=0;for(int b=0;b<64;b++)any|=ans_at[a][b]>=0;pa[a]=any?exp(logsoftmax_at(lg+(size_t)s*256,ALPHA[a])):0;z+=pa[a];}
-    for(int a=0;a<64;a++)pa[a]/=z;
-    int top[TOPK];for(int k=0;k<TOPK;k++){top[k]=-1;for(int a=0;a<64;a++){int used=0;for(int j=0;j<k;j++)used|=top[j]==a;if(!used&&pa[a]>0&&(top[k]<0||pa[a]>pa[top[k]]))top[k]=a;}}
-    if(dom_top)*dom_top=top[0];
-    int best=-1;double bestp=-1;
-    for(int k=0;k<TOPK&&top[k]>=0;k++){
-        int a=top[k];tok[s]=ALPHA[a];net_logits(n,th,tok,lg);
-        double pb[64],zb=0;for(int b=0;b<64;b++){pb[b]=ans_at[a][b]>=0?exp(logsoftmax_at(lg+(size_t)(s+1)*256,ALPHA[b])):0;zb+=pb[b];}
-        for(int b=0;b<64;b++)if(pb[b]>0&&pa[a]*pb[b]/zb>bestp){bestp=pa[a]*pb[b]/zb;best=ans_at[a][b];}
+    int s=encode(msg,c1,c2,-1,0,mask,0,NULL,tok,lab);net_logits(n,th,tok,lg);
+    double pa[NA],z=0;for(int a=0;a<NA;a++){pa[a]=has_a[a]?exp(lsm(lg+(size_t)s*256,abyte(a))):0;z+=pa[a];}
+    for(int a=0;a<NA;a++)pa[a]/=z;
+    int ta[KA],na=topk(pa,NA,KA,ta),best=-1;double bestp=-1;
+    for(int i=0;i<na;i++){
+        int a=ta[i];tok[s]=abyte(a);tok[s+1]=tok[s+2]=mask;net_logits(n,th,tok,lg);
+        double pb[NB],zb=0;for(int b=0;b<NB;b++){pb[b]=has_ab[a][b]?exp(lsm(lg+(size_t)(s+1)*256,bbyte(b))):0;zb+=pb[b];}
+        int tb[KB],nb=topk(pb,NB,KB,tb);
+        for(int j=0;j<nb;j++){
+            int b=tb[j];double pab=pa[a]*pb[b]/zb;if(pab<=bestp)continue;
+            int nt=0,only=-1;for(int t=0;t<NT;t++)if(ans_at[PACK(a,b,t)]>=0){nt++;only=t;}
+            if(nt==1){bestp=pab;best=PACK(a,b,only);continue;}
+            tok[s+1]=bbyte(b);net_logits(n,th,tok,lg);
+            double pt[NT],zt=0;for(int t=0;t<NT;t++){pt[t]=ans_at[PACK(a,b,t)]>=0?exp(lsm(lg+(size_t)(s+2)*256,bbyte(t))):0;zt+=pt[t];}
+            for(int t=0;t<NT;t++)if(pt[t]>0&&pab*pt[t]/zt>bestp){bestp=pab*pt[t]/zt;best=PACK(a,b,t);}
+        }
     }
     free(lg);*conf=bestp;return best;
 }
 
-static void evaluate(Net*n,Ex*e,int ne,int limit,double*acc,double*dacc){
-    if(limit>0&&limit<ne)ne=limit;int hit=0,dhit=0;
-#pragma omp parallel for num_threads(n->threads) reduction(+:hit,dhit) schedule(dynamic,8)
+/* ---- the n-gram cache: hashed char 3..5-gram TF-IDF index over every answer's phrasings ----
+ * It proposes candidates; the MLM's masked answer slot makes the final, typed decision. */
+enum{NGB=1<<20,NGK=16};
+typedef struct{int*off,*ans;float*w,*idf;int n;}NgIdx;
+static NgIdx ng;
+static int grams(const char*msg,uint32_t*out){
+    char buf[512];int L=snprintf(buf,sizeof buf," %s ",msg);if(L>(int)sizeof buf-1)L=sizeof buf-1;int m=0;
+    for(int n=3;n<=5;n++)for(int i=0;i+n<=L;i++){uint32_t h=2166136261u^n;for(int j=0;j<n;j++)h=(h^(unsigned char)buf[i+j])*16777619u;out[m++]=h&(NGB-1);}
+    /* dedupe */
+    for(int i=1;i<m;i++){uint32_t v=out[i];int j=i-1;while(j>=0&&out[j]>v){out[j+1]=out[j];j--;}out[j+1]=v;}
+    int u=0;for(int i=0;i<m;i++)if(!u||out[u-1]!=out[i])out[u++]=out[i];return u;
+}
+static int cmp_u64(const void*a,const void*b){uint64_t x=*(const uint64_t*)a,y=*(const uint64_t*)b;return x<y?-1:x>y;}
+static void ngram_build(Ex*e,int ne){
+    size_t cap=0;for(int i=0;i<ne;i++)cap+=3*(strlen(e[i].msg)+2);
+    uint64_t*pr=malloc(cap*sizeof(uint64_t));size_t np=0;uint32_t g[1600];
+    for(int i=0;i<ne;i++){int a=ans_at[e[i].id];if(a<0)continue;int m=grams(e[i].msg,g);for(int j=0;j<m;j++)pr[np++]=(uint64_t)g[j]<<32|(uint32_t)a;}
+    qsort(pr,np,sizeof*pr,cmp_u64);
+    /* (bucket, answer) -> tf; df per bucket */
+    ng.off=calloc(NGB+1,sizeof(int));ng.idf=calloc(NGB,sizeof(float));
+    size_t nu=0;for(size_t i=0;i<np;i++)if(!i||pr[i]!=pr[i-1]){nu++;ng.off[(pr[i]>>32)+1]++;}
+    for(int b=0;b<NGB;b++){ng.idf[b]=ng.off[b+1]?logf((float)n_answers/ng.off[b+1]):0;ng.off[b+1]+=ng.off[b];}
+    ng.ans=malloc(nu*sizeof(int));ng.w=malloc(nu*sizeof(float));double*norm=calloc(n_answers,sizeof(double));
+    for(size_t i=0,k=0;i<np;){size_t j=i;while(j<np&&pr[j]==pr[i])j++;int b=pr[i]>>32,a=(uint32_t)pr[i];
+        ng.ans[k]=a;ng.w[k]=(1+logf((float)(j-i)))*ng.idf[b];norm[a]+=(double)ng.w[k]*ng.w[k];k++;i=j;}
+    for(size_t k=0;k<nu;k++)ng.w[k]/=(float)sqrt(norm[ng.ans[k]]+1e-9);
+    free(pr);free(norm);ng.n=n_answers;
+}
+/* top-k answers by cosine similarity; returns count, fills answer indices and scores */
+static int ngram_top(const char*msg,int k,int*out,float*sc){
+    uint32_t g[1600];int m=grams(msg,g);float*s=calloc(ng.n,sizeof(float));double qn=0;
+    for(int j=0;j<m;j++){int b=g[j];if(ng.off[b+1]-ng.off[b]>ng.n/8)continue; /* stop-grams */
+        float q=ng.idf[b];qn+=q*q;for(int p=ng.off[b];p<ng.off[b+1];p++)s[ng.ans[p]]+=q*ng.w[p];}
+    qn=sqrt(qn+1e-9);int c=0;
+    for(int a=0;a<ng.n;a++){float v=s[a]/qn;if(c<k||v>sc[c-1]){int j=c<k?c++:k-1;while(j>0&&sc[j-1]<v){sc[j]=sc[j-1];out[j]=out[j-1];j--;}sc[j]=v;out[j]=a;}}
+    free(s);return c;
+}
+/* MLM log-probability of each candidate ID: p(a) p(b|a) p(t|a,b), each slot renormalised over IDs that exist */
+static void mlm_score(Net*n,int th,const char*msg,int c1,int c2,const int*ids,int nc,double*lp){
+    int tok[SEQ],lab[SEQ],mask=net_mask(n);real*lg=malloc((size_t)SEQ*256*sizeof(real));
+    int s=encode(msg,c1,c2,-1,0,mask,0,NULL,tok,lab);net_logits(n,th,tok,lg);
+    double la[NA],z=0;for(int a=0;a<NA;a++)z+=has_a[a]?exp(lsm(lg+(size_t)s*256,abyte(a))):0;
+    for(int a=0;a<NA;a++)la[a]=has_a[a]?lsm(lg+(size_t)s*256,abyte(a))-log(z):-1e9;
+    double top=-1e9;for(int i=0;i<nc;i++){lp[i]=la[ID_A(ids[i])];top=fmax(top,lp[i]);}
+    for(int i=0;i<nc;i++){
+        int a=ID_A(ids[i]);int seen=0;for(int j=0;j<i;j++)seen|=ID_A(ids[j])==a;if(seen)continue;
+        if(la[a]<top-6){for(int j=i;j<nc;j++)if(ID_A(ids[j])==a)lp[j]=-1e9;continue;} /* pruned: p(a) < 1/400 of the best */
+        tok[s]=abyte(a);tok[s+1]=tok[s+2]=mask;net_logits(n,th,tok,lg);
+        double zb=0;for(int b=0;b<NB;b++)if(has_ab[a][b])zb+=exp(lsm(lg+(size_t)(s+1)*256,bbyte(b)));
+        for(int j=i;j<nc;j++)if(ID_A(ids[j])==a)lp[j]+=lsm(lg+(size_t)(s+1)*256,bbyte(ID_B(ids[j])))-log(zb);
+        for(int j=i;j<nc;j++){
+            if(ID_A(ids[j])!=a)continue;int b=ID_B(ids[j]),dup=0;for(int k=i;k<j;k++)dup|=ID_A(ids[k])==a&&ID_B(ids[k])==b;if(dup)continue;
+            int nt=0;for(int t=0;t<NT;t++)nt+=ans_at[PACK(a,b,t)]>=0;if(nt<2)continue;
+            tok[s+1]=bbyte(b);net_logits(n,th,tok,lg);tok[s+1]=mask;
+            double zt=0;for(int t=0;t<NT;t++)if(ans_at[PACK(a,b,t)]>=0)zt+=exp(lsm(lg+(size_t)(s+2)*256,bbyte(t)));
+            for(int k=j;k<nc;k++)if(ID_A(ids[k])==a&&ID_B(ids[k])==b)lp[k]+=lsm(lg+(size_t)(s+2)*256,bbyte(ID_T(ids[k])))-log(zt);
+        }
+    }
+    free(lg);
+}
+static double hy_beta=8,hy_gamma=4; /* gamma: prior for a turn that directly follows the last reply */static int eval_n=0; /* eval: examples per half, 0 = all */ /* weight of the n-gram cosine against the MLM log-probability */
+/* Hybrid retrieval: candidates = n-gram top-K plus every turn of the conversations in context;
+ * decision = MLM log-prob + beta * cosine. beta<0 means n-gram only. Returns packed ID. */
+static int decide(Net*n,int th,const char*msg,int c1,int c2,double beta,double gamma,double*conf){
+    int ids[NGK+2*NT],na[NGK];float sc[NGK];int k=ngram_top(msg,NGK,na,sc),nc=0;double cs[NGK+2*NT];
+    for(int i=0;i<k;i++){ids[nc]=answers[na[i]].id;cs[nc++]=sc[i];}
+    for(int h=0;h<2;h++){int c=h?c2:c1;if(c<0)continue;int a=ID_A(c),b=ID_B(c);if(a<64)continue;
+        for(int t=0;t<NT;t++){int id=PACK(a,b,t);if(ans_at[id]<0)continue;int dup=0;for(int i=0;i<nc;i++)dup|=ids[i]==id;if(!dup){ids[nc]=id;cs[nc++]=0;}}}
+    if(!nc){*conf=0;return -1;}
+    if(beta<0){*conf=cs[0];return ids[0];}
+    double lp[NGK+2*NT];mlm_score(n,th,msg,c1,c2,ids,nc,lp);
+    int best=0;double mx=-1e300,z=0;
+    for(int i=0;i<nc;i++){lp[i]+=beta*cs[i]+(c1>=0&&answers[ans_at[ids[i]]].parent==c1?gamma:0);if(lp[i]>mx){mx=lp[i];best=i;}}
+    for(int i=0;i<nc;i++)z+=exp(lp[i]-mx);*conf=1/z;return ids[best];
+}
+static void evaluate_hybrid(Net*n,Ex*e,int ne,double beta,double gamma,double*acc0,double*acc1,int*n0,int*n1){
+    int h0=0,h1=0,c0=0,c1=0;
+#pragma omp parallel for num_threads(n->threads) reduction(+:h0,h1,c0,c1) schedule(dynamic,4)
     for(int i=0;i<ne;i++){
 #ifdef _OPENMP
         int th=omp_get_thread_num();
 #else
         int th=0;
 #endif
-        double c;int d;int r=classify(n,th,e[i].msg,&c,&d);hit+=r>=0&&answers[r].a==e[i].a&&answers[r].b==e[i].b;dhit+=d==e[i].a;
-    }*acc=(double)hit/ne;*dacc=(double)dhit/ne;
+        double c;int r=decide(n,th,e[i].msg,e[i].c1,e[i].c2,beta,gamma,&c);
+        if(e[i].c1<0){c0++;h0+=r==e[i].id;}else{c1++;h1+=r==e[i].id;}
+    }*acc0=c0?(double)h0/c0:0;*acc1=c1?(double)h1/c1:0;if(n0)*n0=c0;if(n1)*n1=c1;
+}
+
+/* accuracy on examples without context (single turn) and with context (follow-ups) */
+static void evaluate(Net*n,Ex*e,int ne,int limit,double*acc0,double*acc1,int*n0,int*n1){
+    int step=limit>0&&limit<ne?ne/limit:1,h0=0,h1=0,c0=0,c1=0;
+#pragma omp parallel for num_threads(n->threads) reduction(+:h0,h1,c0,c1) schedule(dynamic,4)
+    for(int i=0;i<ne;i+=step){
+#ifdef _OPENMP
+        int th=omp_get_thread_num();
+#else
+        int th=0;
+#endif
+        double c;int r=classify(n,th,e[i].msg,e[i].c1,e[i].c2,&c);
+        if(e[i].c1<0){c0++;h0+=r==e[i].id;}else{c1++;h1+=r==e[i].id;}
+    }*acc0=c0?(double)h0/c0:0;*acc1=c1?(double)h1/c1:0;if(n0)*n0=c0;if(n1)*n1=c1;
 }
 
 static Net net_load(const char*path,int threads){
@@ -129,19 +251,21 @@ static Net net_load(const char*path,int threads){
     return n;
 }
 
-static int cmd_train(const char*dir,const char*mode,double seconds,double entropy_seconds,int B,int threads,double lr,double aux,int seed,const char*out,int width,int bins){
+static int cmd_train(const char*dir,const char*mode,double seconds,double entropy_seconds,int B,int threads,double lr,double aux,double sw,int seed,const char*out,int width,int bins){
     int ntr,nte;Ex*tr=load_ex(dir,"train.tsv",&ntr),*te=load_ex(dir,"test.tsv",&nte);load_answers(dir);
-    printf("train %d  test %d  intents %d\n",ntr,nte,n_answers);
+    int withctx=0;for(int i=0;i<ntr;i++)withctx+=tr[i].c1>=0;
+    printf("train %d (%d with context)  test %d  answers %d\n",ntr,withctx,nte,n_answers);
     Cfg gc={.vocab=257,.d=width,.n_layer=4,.T=4,.D=7,.n=16,.p=16,.K=3,.group=width,.walks=2,.temp=1,.fff_gate=1,.fw_mask=1,.bidir=1};
     FConfig fc={.width=width/2,.heads=4,.bins=bins,.maxpatch=8,.enc_layers=2,.dec_layers=4,.local_depth=4,.local_trees=2,.local_state=8,.neural=1,.mixer=2,.target=4};
     Net n={0};n.threads=threads;int blt=!strcmp(mode,"blt");double overhead=0;
     g_rng^=((uint64_t)seed+1)*0x9E3779B97F4A7C15ULL;
     if(blt){
         use_muon=1;n.f=faithful_new(gc,fc,threads,SEQ,1);
-        /* the frozen causal entropy patcher learns from the training messages as one byte stream */
-        size_t cap=0;for(int i=0;i<ntr;i++)cap+=strlen(tr[i].msg)+1;unsigned char*raw=malloc(cap);size_t at=0;
-        uint64_t r=seed*7+3;int*perm=malloc(ntr*sizeof(int));for(int i=0;i<ntr;i++)perm[i]=i;for(int i=ntr-1;i>0;i--){int j=(int)(urand(&r)*(i+1))%(i+1);int t=perm[i];perm[i]=perm[j];perm[j]=t;}
-        for(int i=0;i<ntr;i++){size_t l=strlen(tr[perm[i]].msg);memcpy(raw+at,tr[perm[i]].msg,l);at+=l;raw[at++]='\n';}
+        /* the frozen causal entropy patcher learns from the training messages and answers as one byte stream */
+        size_t cap=0;for(int i=0;i<ntr;i++)cap+=strlen(tr[i].msg)+1;for(int i=0;i<n_answers;i++)cap+=strlen(answers[i].ans[0])+1;
+        unsigned char*raw=malloc(cap);size_t at=0;uint64_t r=seed*7+3;
+        int*perm=malloc(ntr*sizeof(int));for(int i=0;i<ntr;i++)perm[i]=i;for(int i=ntr-1;i>0;i--){int j=(int)(urand(&r)*(i+1))%(i+1);int t=perm[i];perm[i]=perm[j];perm[j]=t;}
+        for(int i=0;i<ntr;i++){size_t l=strlen(tr[perm[i]].msg);memcpy(raw+at,tr[perm[i]].msg,l);at+=l;raw[at++]='\n';if(i%8==0&&i/8<n_answers){Ans*a=answers+i/8;l=strlen(a->ans[0]);memcpy(raw+at,a->ans[0],l);at+=l;raw[at++]='\n';}}
         overhead=train_entropy_model(n.f->entropy,raw,(long)at,B,SEQ,entropy_seconds,seed);
         double avg=calibrate_neural(n.f,raw,(long)at,SEQ,4);printf("entropy patcher: avg patch %.3f bytes\n",avg);free(raw);free(perm);
     }else{use_muon=0;n.m=model_new(&gc,threads,SEQ);params_init(&gc,&n.m->P);model_requantize(n.m);}
@@ -153,13 +277,18 @@ static int cmd_train(const char*dir,const char*mode,double seconds,double entrop
     Hyper hp={.beta1=.9,.beta2=.98,.eps=1e-8,.weight_decay=.01,.clip=1};double budget=seconds-overhead,t0=wall(),nextlog=30,loss=0,ema=0;int step=0;
     while(wall()-t0<budget){
         double el=wall()-t0;hp.step=++step;hp.lr=lr*fmin(1,(el+.1)/fmin(10,budget*.05))*(.05+.95*.5*(1+cos(3.141592653589793*fmin(1,el/budget))));
-        for(int k=0;k<B;k++){Ex*x=tr+(int)(urand(&rng)*ntr)%ntr;encode(x->msg,x->a,x->b,urand(&rng)<.5,mask,aux,&rng,bt+k*SEQ,by+k*SEQ);}
+        for(int k=0;k<B;k++){
+            Ex*x=tr+(int)(urand(&rng)*ntr)%ntr;int c1=x->c1,c2=x->c2;
+            /* topic switch: a context-free message may arrive at any point of a conversation */
+            if(c1<0&&urand(&rng)<sw){c1=answers[(int)(urand(&rng)*n_answers)%n_answers].id;c2=urand(&rng)<.5?-1:answers[(int)(urand(&rng)*n_answers)%n_answers].id;}
+            encode(x->msg,c1,c2,x->id,(int)(urand(&rng)*3)%3,mask,aux,&rng,bt+k*SEQ,by+k*SEQ);
+        }
         loss=blt?faithful_step(n.f,bt,by,B,SEQ,&hp,NULL):tss_train_step(&n.m->c,&n.m->P,&n.m->Q,&n.m->G,n.m->hit,&n.m->M,&n.m->V,n.m->Gt,n.m->hits,n.m->ws,threads,bt,by,B,SEQ,&hp,n.m->k);
         ema=step==1?loss:.98*ema+.02*loss;
-        if(wall()-t0>=nextlog){double acc,dacc;evaluate(&n,te,nte,400,&acc,&dacc);printf("step %6d  t %6.0fs  loss %.4f  test@400 intent %.3f domain %.3f\n",step,wall()-t0,ema,acc,dacc);fflush(stdout);nextlog+=60;}
+        if(wall()-t0>=nextlog){double a0,a1;evaluate(&n,te,nte,600,&a0,&a1,NULL,NULL);printf("step %6d  t %6.0fs  loss %.4f  test@600 single-turn %.3f follow-up %.3f\n",step,wall()-t0,ema,a0,a1);fflush(stdout);nextlog+=(budget<900?60:300);}
     }
-    double acc,dacc,tacc,tdacc;evaluate(&n,te,nte,0,&acc,&dacc);evaluate(&n,tr,ntr,2000,&tacc,&tdacc);
-    printf("final: steps %d  test intent acc %.4f  domain acc %.4f  (train@2000 %.4f)\n",step,acc,dacc,tacc);
+    double a0,a1,t0a,t1a;int n0,n1;evaluate(&n,te,nte,0,&a0,&a1,&n0,&n1);evaluate(&n,tr,ntr,3000,&t0a,&t1a,NULL,NULL);
+    printf("final: steps %d  test single-turn %.4f (n=%d)  follow-up %.4f (n=%d)  | train@3000 %.4f / %.4f\n",step,a0,n0,a1,n1,t0a,t1a);
     if(out&&(blt?faithful_save(n.f,out):save(n.m,out))){fprintf(stderr,"save failed\n");return 1;}
     return 0;
 }
@@ -178,11 +307,11 @@ static int sub_name(regex_t*re,int g,const char*s,char*out,size_t on,char*cap,si
     snprintf(cap,cn,"%.*s",(int)(wl<cn-1?wl:cn-1),s+m[g].rm_so);
     snprintf(out,on,"%.*s%s%s",(int)m[g].rm_so,s,TAG,s+m[g].rm_eo);return 1;
 }
-/* Lower-case, squeeze spaces, and replace whole-word occurrences of the remembered name. */
+/* Lower-case, squeeze spaces, and replace whole-word occurrences of the remembered name with TAG. */
 static void canon(const char*in,char*out,size_t on){
-    size_t o=0;int sp=1;char nm[64];size_t nl=strlen(user_name);for(size_t i=0;i<nl;i++)nm[i]=tolower((unsigned char)user_name[i]);
+    size_t o=0,nl=strlen(user_name),tl=strlen(TAG);int sp=1;
     for(size_t i=0;in[i]&&o+8<on;){
-        if(nl&&!strncasecmp(in+i,nm,nl)&&(i==0||!isalnum((unsigned char)in[i-1]))&&!isalnum((unsigned char)in[i+nl])){size_t tl=strlen(TAG);if(o+tl+8>=on)break;memcpy(out+o,TAG,tl);o+=tl;i+=nl;sp=0;continue;}
+        if(nl&&!strncasecmp(in+i,user_name,nl)&&(i==0||!isalnum((unsigned char)in[i-1]))&&!isalnum((unsigned char)in[i+nl])){if(o+tl+8>=on)break;memcpy(out+o,TAG,tl);o+=tl;i+=nl;sp=0;continue;}
         unsigned char c=in[i++];if(isspace(c)){if(!sp)out[o++]=' ';sp=1;continue;}out[o++]=tolower(c);sp=0;
     }
     while(o&&out[o-1]==' ')o--;out[o]=0;
@@ -196,45 +325,65 @@ static void render(Ans*a,char*out,size_t on){
         out[o++]=*p++;
     }out[o]=0;
 }
+static int hist[2]={-1,-1}; /* IDs of umi's last two replies */
 static void reply(Net*n,const char*line,double thresh,int verbose){
-    char text[1024],alt[1024],cap[64]="",cap2[64]="",msg[1024];double c,c2;
+    char text[1024],alt[1024],cap[64]="",cap2[64]="",msg[2048];double c,c2;
     canon(line,text,sizeof text);
     int strong=sub_name(&re_strong,2,text,alt,sizeof alt,cap,sizeof cap);if(strong)strcpy(text,alt);
-    int r=classify(n,0,text,&c,NULL);
+    int r=decide(n,0,text,hist[0],hist[1],hy_beta,hy_gamma,&c);
     if(!strong&&sub_name(&re_weak,3,text,alt,sizeof alt,cap2,sizeof cap2)){
-        int r2=classify(n,0,alt,&c2,NULL);
-        if(r2>=0&&answers[r2].a==intro_a&&answers[r2].b==intro_b&&c2>c){r=r2;c=c2;strcpy(cap,cap2);strcpy(text,alt);}
+        int r2=decide(n,0,alt,hist[0],hist[1],hy_beta,hy_gamma,&c2);
+        if(r2==intro_id&&c2>c){r=r2;c=c2;strcpy(cap,cap2);strcpy(text,alt);}
     }
-    if(r>=0&&answers[r].a==intro_a&&answers[r].b==intro_b&&*cap){
+    if(r==intro_id&&*cap){
         snprintf(user_name,sizeof user_name,"%s",cap);user_name[0]=toupper((unsigned char)user_name[0]);
         for(char*p=user_name+1;*p;p++)*p=tolower((unsigned char)*p);
     }
-    int fell=r<0||c<thresh;if(fell&&fallback_a>=0)r=ans_at[fallback_a][fallback_b];
-    render(answers+r,msg,sizeof msg);
-    if(verbose)printf("  [%s | p=%.3f%s | seen as \"%s\"]\n",answers[r].name,c,fell?" -> fallback":"",text);
+    int fell=r<0||c<thresh;if(fell&&fallback_id>=0)r=fallback_id;
+    Ans*a=answers+ans_at[r];render(a,msg,sizeof msg);
+    if(verbose)printf("  [%d.%d.%d %s | p=%.3f%s | seen as \"%s\"]\n",ID_A(r),ID_B(r),ID_T(r),a->name,c,fell?" -> fallback":"",text);
     printf("umi> %s\n",msg);fflush(stdout);
+    hist[1]=hist[0];hist[0]=r;
 }
 
 int main(int argc,char**argv){
     if(argc<2){fprintf(stderr,"usage: umi_chat train|eval|chat --data DIR [--load F|--save F] ...\n");return 2;}
     const char*cmd=argv[1],*dir="data",*in=NULL,*out=NULL,*mode="blt",*ask=NULL;
-    double seconds=600,es=60,lr=.003,aux=.08,thresh=.15;int B=32,threads=4,seed=0,verbose=0,width=128,bins=16384;
+    double seconds=600,es=60,lr=.003,aux=.08,thresh=.05,sw=.3;int B=32,threads=4,seed=0,verbose=0,width=128,bins=16384;
     for(int i=2;i<argc;i++){
         const char*a=argv[i];if(!strcmp(a,"-v")){verbose=1;continue;}
         const char*v=i+1<argc?argv[++i]:NULL;if(!v){fprintf(stderr,"missing value for %s\n",a);return 2;}
         if(!strcmp(a,"--data"))dir=v;else if(!strcmp(a,"--load"))in=v;else if(!strcmp(a,"--save"))out=v;else if(!strcmp(a,"--mode"))mode=v;
         else if(!strcmp(a,"--seconds"))seconds=atof(v);else if(!strcmp(a,"--entropy-seconds"))es=atof(v);else if(!strcmp(a,"--lr"))lr=atof(v);
         else if(!strcmp(a,"--aux"))aux=atof(v);else if(!strcmp(a,"--threshold"))thresh=atof(v);else if(!strcmp(a,"--batch"))B=atoi(v);
-        else if(!strcmp(a,"--threads"))threads=atoi(v);else if(!strcmp(a,"--seed"))seed=atoi(v);else if(!strcmp(a,"--width"))width=atoi(v);else if(!strcmp(a,"--ngram-bins"))bins=atoi(v);else if(!strcmp(a,"--ask"))ask=v;
+        else if(!strcmp(a,"--switch"))sw=atof(v);else if(!strcmp(a,"--beta"))hy_beta=atof(v);else if(!strcmp(a,"--gamma"))hy_gamma=atof(v);else if(!strcmp(a,"--eval-n"))eval_n=atoi(v);
+        else if(!strcmp(a,"--threads"))threads=atoi(v);else if(!strcmp(a,"--seed"))seed=atoi(v);else if(!strcmp(a,"--width"))width=atoi(v);
+        else if(!strcmp(a,"--ngram-bins"))bins=atoi(v);else if(!strcmp(a,"--ask"))ask=v;
         else{fprintf(stderr,"unknown option %s\n",a);return 2;}
     }
-    if(!strcmp(cmd,"train"))return cmd_train(dir,mode,seconds,es,B,threads,lr,aux,seed,out,width,bins);
+    if(!strcmp(cmd,"train"))return cmd_train(dir,mode,seconds,es,B,threads,lr,aux,sw,seed,out,width,bins);
     if(!in){fprintf(stderr,"--load required\n");return 2;}
     load_answers(dir);Net n=net_load(in,threads);
-    if(!strcmp(cmd,"eval")){int nte;Ex*te=load_ex(dir,"test.tsv",&nte);double acc,dacc;evaluate(&n,te,nte,0,&acc,&dacc);printf("test %d  intent acc %.4f  domain acc %.4f\n",nte,acc,dacc);return 0;}
+    {int ntr;Ex*tr=load_ex(dir,"train.tsv",&ntr);ngram_build(tr,ntr);}
+    if(!strcmp(cmd,"eval")){
+        /* pick the n-gram weight on the even half of the test set, report everything on the odd half */
+        int nte,n0,n1;Ex*all=load_ex(dir,"test.tsv",&nte);Ex*tune=malloc(nte*sizeof(Ex)),*te=malloc(nte*sizeof(Ex));int nu=0,nr=0;
+        for(int i=0;i<nte;i++){if(i%2)te[nr++]=all[i];else tune[nu++]=all[i];}
+        if(eval_n>0){int st=nu/eval_n>1?nu/eval_n:1,k=0;for(int i=0;i<nu;i+=st)tune[k++]=tune[i];nu=k;st=nr/eval_n>1?nr/eval_n:1;k=0;for(int i=0;i<nr;i+=st)te[k++]=te[i];nr=k;}
+        double a0,a1,best=-1,bb=hy_beta,bg=hy_gamma;
+        const double gb[]={4,8,16,32},gg[]={0,4,8,16};
+        for(int i=0;i<4;i++)for(int j=0;j<4;j++){evaluate_hybrid(&n,tune,nu,gb[i],gg[j],&a0,&a1,&n0,&n1);double m=(a0*n0+a1*n1)/(n0+n1);
+            printf("tune beta %4.1f gamma %3.1f: single-turn %.4f follow-up %.4f\n",gb[i],gg[j],a0,a1);if(m>best){best=m;bb=gb[i];bg=gg[j];}}
+        printf("held-out half (n=%d):\n",nr);
+        evaluate(&n,te,nr,0,&a0,&a1,&n0,&n1);printf("  MLM beam only        single-turn %.4f (n=%d)  follow-up %.4f (n=%d)\n",a0,n0,a1,n1);
+        evaluate_hybrid(&n,te,nr,-1,0,&a0,&a1,&n0,&n1);printf("  n-gram cache only            single-turn %.4f  follow-up %.4f\n",a0,a1);
+        evaluate_hybrid(&n,te,nr,bb,bg,&a0,&a1,&n0,&n1);printf("  hybrid (beta %.0f, gamma %.0f)  single-turn %.4f  follow-up %.4f\n",bb,bg,a0,a1);
+        printf("use: chat --beta %.0f --gamma %.0f\n",bb,bg);
+        return 0;
+    }
     if(!strcmp(cmd,"chat")){
         regex_init();
-        if(ask){char buf[4096];snprintf(buf,sizeof buf,"%s",ask);for(char*p=strtok(buf,"|");p;p=strtok(NULL,"|")){printf("you> %s\n",p);reply(&n,p,thresh,verbose);}return 0;}
+        if(ask){char buf[8192];snprintf(buf,sizeof buf,"%s",ask);for(char*p=strtok(buf,"|");p;p=strtok(NULL,"|")){printf("you> %s\n",p);reply(&n,p,thresh,verbose);}return 0;}
         char line[1024];printf("umi-1M-chat (Ctrl-D to quit)\n");
         while(printf("you> "),fflush(stdout),fgets(line,sizeof line,stdin)){line[strcspn(line,"\r\n")]=0;if(*line)reply(&n,line,thresh,verbose);}
         return 0;
