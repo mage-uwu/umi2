@@ -289,7 +289,8 @@ static Net net_load(const char*path,int threads){
     return n;
 }
 
-static int cmd_train(const char*dir,const char*mode,double seconds,double entropy_seconds,int B,int threads,double lr,double aux,double sw,int seed,const char*out,int width,int bins){
+static Net net_load(const char*path,int threads);
+static int cmd_train(const char*dir,const char*mode,double seconds,double entropy_seconds,int B,int threads,double lr,double aux,double sw,int seed,const char*out,int width,int bins,const char*init){
     int ntr,nte;Ex*tr=load_ex(dir,"train.tsv",&ntr),*te=load_ex(dir,"test.tsv",&nte);load_answers(dir);
     int withctx=0;for(int i=0;i<ntr;i++)withctx+=tr[i].c1>=0;
     printf("train %d (%d with context)  test %d  answers %d\n",ntr,withctx,nte,n_answers);
@@ -297,7 +298,10 @@ static int cmd_train(const char*dir,const char*mode,double seconds,double entrop
     FConfig fc={.width=width/2,.heads=4,.bins=bins,.maxpatch=8,.enc_layers=2,.dec_layers=4,.local_depth=4,.local_trees=2,.local_state=8,.neural=1,.mixer=2,.target=4};
     Net n={0};n.threads=threads;int blt=!strcmp(mode,"blt");double overhead=0;
     g_rng^=((uint64_t)seed+1)*0x9E3779B97F4A7C15ULL;
-    if(blt){
+    if(init){ /* fine-tune: start from a trained checkpoint (its frozen entropy patcher included) */
+        n=net_load(init,threads);blt=n.f!=NULL;use_muon=blt;
+        printf("fine-tuning from %s\n",init);
+    }else if(blt){
         use_muon=1;n.f=faithful_new(gc,fc,threads,SEQ,1);
         /* the frozen causal entropy patcher learns from the training messages and answers as one byte stream */
         size_t cap=0;for(int i=0;i<ntr;i++)cap+=strlen(tr[i].msg)+1;for(int i=0;i<n_answers;i++)cap+=strlen(answers[i].ans[0])+1;
@@ -307,6 +311,7 @@ static int cmd_train(const char*dir,const char*mode,double seconds,double entrop
         overhead=train_entropy_model(n.f->entropy,raw,(long)at,B,SEQ,entropy_seconds,seed);
         double avg=calibrate_neural(n.f,raw,(long)at,SEQ,4);printf("entropy patcher: avg patch %.3f bytes\n",avg);free(raw);free(perm);
     }else{use_muon=0;n.m=model_new(&gc,threads,SEQ);params_init(&gc,&n.m->P);model_requantize(n.m);}
+    (void)mode;
     const Cfg*mc=blt?&n.f->global->c:&n.m->c;
     size_t params=blt?core_parameters(&n.f->global->c)+core_parameters(&n.f->encoder->c)+core_parameters(&n.f->decoder->c)+n.f->dense+(embed_rows(&n.f->encoder->c)+1)*n.f->c.width:core_parameters(mc)+(embed_rows(mc)+1)*mc->d;
     printf("mode %s  core params %zu  n-gram cache rows %zu (%zu values)  frozen entropy %zu\n",mode,params,blt?n.f->hashrows:0,blt?n.f->hashsize:0,blt?core_parameters(&n.f->entropy->c)+(size_t)257*n.f->entropy->c.d:0);fflush(stdout);
@@ -365,7 +370,7 @@ static void render(Ans*a,char*out,size_t on){
 }
 static int hist[2]={-1,-1}; /* IDs of umi's last two replies */
 /* ---- umi-smart-internet: compile the conversation into an HTML page with widgets ---- */
-static Net*webnet;static const char*html_out,*web_dir;static double web_thresh=.9; /* see the widget gate study in weights/umi-smart-internet/README.md */
+static Net*webnet;static const char*html_out,*web_dir;static double web_thresh=.9,web_gamma=2; /* see the widget gate study in weights/umi-smart-internet/README.md */
 typedef struct{char*user,*umi,*widget;}Turn;static Turn*turns;static int n_turns;
 static void html_esc(FILE*f,const char*s){for(;*s;s++){if(*s=='<')fputs("&lt;",f);else if(*s=='>')fputs("&gt;",f);else if(*s=='&')fputs("&amp;",f);else if(*s=='"')fputs("&quot;",f);else fputc(*s,f);}}
 static void write_page(void){
@@ -408,7 +413,7 @@ static int respond(Net*n,const char*line,double thresh,char*msg,size_t mn,char*t
  * conversation context stays where it is. Otherwise the chat model replies, and a confident widget
  * is attached (a wrapper then presents the new reply). Shared by the CLI and the WebAssembly build. */
 typedef struct{int r,fell,restyle,wrap;double c,wc;char text[1024],msg[2048];char*widget;const char*wname;}TurnOut;
-static char last_reply[2048];static double wrap_thresh=.5;static regex_t re_deictic;static int deictic_ok;
+static char last_reply[2048];static int whist[2]={-1,-1}; /* IDs of the last two widgets shown */static double wrap_thresh=.5;static regex_t re_deictic;static int deictic_ok;
 /* "put THAT in a card", "make IT a flashcard": the message points back at umi's last reply */
 static int points_back(const char*text){
     if(!deictic_ok){deictic_ok=!regcomp(&re_deictic,"(^|[^a-z])(that|this|it|those|these|your (last )?(answer|reply))([^a-z]|$)",REG_EXTENDED|REG_ICASE|REG_NOSUB)?1:-1;}
@@ -421,13 +426,14 @@ static void turn(Net*n,const char*line,double thresh,TurnOut*o){
     if(webnet){
         char alt[1024],cap[64];canon(line,o->text,sizeof o->text);
         if(sub_name(&re_strong,2,o->text,alt,sizeof alt,cap,sizeof cap))strcpy(o->text,alt);
-        C=&cache_web;w=decide(webnet,0,o->text,-1,-1,hy_beta,0,&wc);
+        C=&cache_web;w=decide(webnet,0,o->text,whist[0],whist[1],hy_beta,web_gamma,&wc);
         if(w>=0&&w!=plain_id){Ans*wa=answers+ans_at[w];
             int restyle=is_wrapper(wa)&&*last_reply&&points_back(o->text)&&wc>=wrap_thresh;
             if(!restyle&&wc<web_thresh)w=-1;}
         else w=-1;
         if(w>=0){Ans*wa=answers+ans_at[w];o->wrap=is_wrapper(wa);o->wname=wa->name;o->wc=wc;
             size_t cap2=strlen(wa->ans[0])+strlen(wa->ano[0])+4096;o->widget=malloc(cap2);render(wa,o->widget,cap2);}
+        if(w>=0&&!o->wrap){whist[1]=whist[0];whist[0]=w;} /* a content widget becomes the context for refinements */
         C=&cache_chat;
         if(w>=0&&o->wrap&&*last_reply&&points_back(o->text)){o->restyle=1;o->r=hist[0];o->c=wc;snprintf(o->msg,sizeof o->msg,"%s",last_reply);return;}
     }
@@ -457,12 +463,12 @@ int main(int argc,char**argv){
         else if(!strcmp(a,"--seconds"))seconds=atof(v);else if(!strcmp(a,"--entropy-seconds"))es=atof(v);else if(!strcmp(a,"--lr"))lr=atof(v);
         else if(!strcmp(a,"--aux"))aux=atof(v);else if(!strcmp(a,"--threshold"))thresh=atof(v);else if(!strcmp(a,"--batch"))B=atoi(v);
         else if(!strcmp(a,"--switch"))sw=atof(v);else if(!strcmp(a,"--beta"))hy_beta=atof(v);else if(!strcmp(a,"--gamma"))hy_gamma=atof(v);else if(!strcmp(a,"--eval-n"))eval_n=atoi(v);
-        else if(!strcmp(a,"--web"))web_dir=v;else if(!strcmp(a,"--web-load"))wload=v;else if(!strcmp(a,"--html"))html_out=v;else if(!strcmp(a,"--web-threshold"))web_thresh=atof(v);
+        else if(!strcmp(a,"--web"))web_dir=v;else if(!strcmp(a,"--web-load"))wload=v;else if(!strcmp(a,"--html"))html_out=v;else if(!strcmp(a,"--web-threshold"))web_thresh=atof(v);else if(!strcmp(a,"--web-gamma"))web_gamma=atof(v);
         else if(!strcmp(a,"--threads"))threads=atoi(v);else if(!strcmp(a,"--seed"))seed=atoi(v);else if(!strcmp(a,"--width"))width=atoi(v);
         else if(!strcmp(a,"--ngram-bins"))bins=atoi(v);else if(!strcmp(a,"--ask"))ask=v;
         else{fprintf(stderr,"unknown option %s\n",a);return 2;}
     }
-    if(!strcmp(cmd,"train"))return cmd_train(dir,mode,seconds,es,B,threads,lr,aux,sw,seed,out,width,bins);
+    if(!strcmp(cmd,"train"))return cmd_train(dir,mode,seconds,es,B,threads,lr,aux,sw,seed,out,width,bins,in);
     if(!in){fprintf(stderr,"--load required\n");return 2;}
     load_answers(dir);Net n=net_load(in,threads);
     {int ntr;Ex*tr=load_ex(dir,"train.tsv",&ntr);ngram_build(tr,ntr);}

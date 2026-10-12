@@ -36,9 +36,9 @@ EMSCRIPTEN_KEEPALIVE int umi_load(const char*model,const char*dir,double beta,do
     C=&cache_chat;int n=load_cache(dir);
     net=net_load(model,1);slim(&net);regex_init();hy_beta=beta;hy_gamma=gamma;return n;
 }
-EMSCRIPTEN_KEEPALIVE int umi_load_web(const char*model,const char*dir,double gate,double wrap_gate){
+EMSCRIPTEN_KEEPALIVE int umi_load_web(const char*model,const char*dir,double gate,double wrap_gate,double gamma){
     C=&cache_web;int n=load_cache(dir);
-    wnet=net_load(model,1);slim(&wnet);webnet=&wnet;web_thresh=gate;wrap_thresh=wrap_gate;C=&cache_chat;return n;
+    wnet=net_load(model,1);slim(&wnet);webnet=&wnet;web_thresh=gate;wrap_thresh=wrap_gate;web_gamma=gamma;C=&cache_chat;return n;
 }
 EMSCRIPTEN_KEEPALIVE const char*umi_say(const char*line,double thresh){
     TurnOut t;turn(&net,line,thresh,&t);size_t o=0;char b[160];
@@ -52,4 +52,4 @@ EMSCRIPTEN_KEEPALIVE const char*umi_say(const char*line,double thresh){
     put(&o,",\"widget_name\":");if(t.wname)jstr(&o,t.wname);else put(&o,"null");
     put(&o,"}");return out;
 }
-EMSCRIPTEN_KEEPALIVE void umi_reset(void){hist[0]=hist[1]=-1;user_name[0]=0;last_reply[0]=0;}
+EMSCRIPTEN_KEEPALIVE void umi_reset(void){hist[0]=hist[1]=-1;whist[0]=whist[1]=-1;user_name[0]=0;last_reply[0]=0;}
