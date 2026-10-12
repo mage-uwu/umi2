@@ -1,0 +1,158 @@
+=== START 2026-10-12T04:22:12Z  8 vCPU:  AMD Ryzen Threadripper 7960X 24-Cores
+74cfeb1 Add umi-1M-chat: MLM retrieval chatbot with DeepSeek-generated response set
+MLM CHECK PASSED
+=== TRAIN 7200s, 8 threads, 04:22:35
+train 104107  test 8076  intents 2608
+{"event":"entropy_training","steps":27465,"train_seconds":120.004142,"train_bytes":70310400,"bytes_per_second":585899.777,"last_batch_bpc":2.618882}
+entropy patcher: avg patch 3.995 bytes
+mode blt  core params 1287904  n-gram cache rows 98304 (6291456 values)  frozen entropy 42720
+step    437  t     31s  loss 2.8950  test@400 intent 0.000 domain 0.000
+step   1356  t     91s  loss 2.3838  test@400 intent 0.000 domain 0.217
+step   2236  t    151s  loss 2.2149  test@400 intent 0.003 domain 0.000
+step   3078  t    211s  loss 2.0773  test@400 intent 0.003 domain 0.247
+step   4003  t    271s  loss 1.9762  test@400 intent 0.005 domain 0.247
+step   4916  t    331s  loss 1.9292  test@400 intent 0.003 domain 0.077
+step   5842  t    391s  loss 1.8289  test@400 intent 0.015 domain 0.185
+step   6773  t    451s  loss 1.7731  test@400 intent 0.015 domain 0.282
+step   7694  t    511s  loss 1.7330  test@400 intent 0.015 domain 0.160
+step   8613  t    571s  loss 1.7171  test@400 intent 0.020 domain 0.172
+step   9560  t    631s  loss 1.6769  test@400 intent 0.013 domain 0.120
+step  10481  t    691s  loss 1.6095  test@400 intent 0.013 domain 0.105
+step  11404  t    751s  loss 1.6210  test@400 intent 0.018 domain 0.140
+step  12310  t    811s  loss 1.5884  test@400 intent 0.020 domain 0.152
+step  13199  t    871s  loss 1.5636  test@400 intent 0.028 domain 0.258
+step  14078  t    931s  loss 1.5288  test@400 intent 0.035 domain 0.235
+step  14972  t    991s  loss 1.5145  test@400 intent 0.018 domain 0.100
+step  15875  t   1051s  loss 1.5228  test@400 intent 0.037 domain 0.188
+step  16792  t   1111s  loss 1.5138  test@400 intent 0.028 domain 0.330
+step  17700  t   1171s  loss 1.4598  test@400 intent 0.040 domain 0.198
+step  18608  t   1231s  loss 1.4548  test@400 intent 0.037 domain 0.125
+step  19514  t   1291s  loss 1.4396  test@400 intent 0.033 domain 0.233
+step  20435  t   1351s  loss 1.4451  test@400 intent 0.037 domain 0.207
+step  21340  t   1411s  loss 1.4124  test@400 intent 0.033 domain 0.122
+step  22256  t   1471s  loss 1.4108  test@400 intent 0.035 domain 0.282
+step  23190  t   1531s  loss 1.3933  test@400 intent 0.025 domain 0.188
+step  24095  t   1591s  loss 1.3924  test@400 intent 0.045 domain 0.228
+step  25012  t   1651s  loss 1.3798  test@400 intent 0.043 domain 0.250
+step  25909  t   1711s  loss 1.3632  test@400 intent 0.043 domain 0.233
+step  26838  t   1771s  loss 1.3676  test@400 intent 0.035 domain 0.270
+step  27775  t   1831s  loss 1.3259  test@400 intent 0.048 domain 0.268
+step  28688  t   1891s  loss 1.3225  test@400 intent 0.048 domain 0.240
+step  29631  t   1951s  loss 1.3062  test@400 intent 0.055 domain 0.265
+step  30551  t   2011s  loss 1.2645  test@400 intent 0.052 domain 0.177
+step  31460  t   2071s  loss 1.2730  test@400 intent 0.055 domain 0.223
+step  32376  t   2131s  loss 1.2508  test@400 intent 0.068 domain 0.360
+step  33279  t   2191s  loss 1.2411  test@400 intent 0.058 domain 0.268
+step  34199  t   2251s  loss 1.2329  test@400 intent 0.037 domain 0.223
+step  35123  t   2311s  loss 1.2456  test@400 intent 0.052 domain 0.203
+step  36051  t   2371s  loss 1.2369  test@400 intent 0.048 domain 0.205
+step  36960  t   2431s  loss 1.2226  test@400 intent 0.065 domain 0.250
+step  37871  t   2491s  loss 1.2134  test@400 intent 0.058 domain 0.237
+step  38750  t   2551s  loss 1.1988  test@400 intent 0.068 domain 0.287
+step  39624  t   2611s  loss 1.1918  test@400 intent 0.072 domain 0.275
+step  40500  t   2671s  loss 1.1734  test@400 intent 0.055 domain 0.258
+step  41390  t   2731s  loss 1.1890  test@400 intent 0.062 domain 0.223
+step  42268  t   2791s  loss 1.1408  test@400 intent 0.058 domain 0.315
+step  43146  t   2851s  loss 1.1561  test@400 intent 0.062 domain 0.253
+step  44047  t   2911s  loss 1.1552  test@400 intent 0.075 domain 0.325
+step  44960  t   2971s  loss 1.1125  test@400 intent 0.072 domain 0.193
+step  45855  t   3031s  loss 1.1267  test@400 intent 0.070 domain 0.280
+step  46755  t   3091s  loss 1.0882  test@400 intent 0.085 domain 0.275
+step  47634  t   3151s  loss 1.1050  test@400 intent 0.077 domain 0.305
+step  48539  t   3211s  loss 1.0834  test@400 intent 0.075 domain 0.198
+step  49448  t   3271s  loss 1.1030  test@400 intent 0.095 domain 0.410
+step  50350  t   3331s  loss 1.0968  test@400 intent 0.090 domain 0.275
+step  51208  t   3391s  loss 1.0896  test@400 intent 0.068 domain 0.212
+step  52087  t   3451s  loss 1.0589  test@400 intent 0.095 domain 0.362
+step  52966  t   3511s  loss 1.0685  test@400 intent 0.077 domain 0.205
+step  53834  t   3571s  loss 1.0524  test@400 intent 0.070 domain 0.228
+step  54719  t   3631s  loss 1.0485  test@400 intent 0.090 domain 0.240
+step  55621  t   3691s  loss 1.0303  test@400 intent 0.130 domain 0.318
+step  56524  t   3751s  loss 1.0273  test@400 intent 0.115 domain 0.297
+step  57438  t   3811s  loss 1.0215  test@400 intent 0.090 domain 0.268
+step  58348  t   3871s  loss 1.0353  test@400 intent 0.092 domain 0.278
+step  59235  t   3932s  loss 1.0205  test@400 intent 0.100 domain 0.302
+step  60112  t   3991s  loss 0.9972  test@400 intent 0.122 domain 0.398
+step  61010  t   4051s  loss 0.9907  test@400 intent 0.102 domain 0.315
+step  61896  t   4111s  loss 0.9860  test@400 intent 0.110 domain 0.395
+step  62790  t   4171s  loss 0.9873  test@400 intent 0.120 domain 0.330
+step  63667  t   4231s  loss 0.9749  test@400 intent 0.120 domain 0.383
+step  64551  t   4291s  loss 0.9757  test@400 intent 0.105 domain 0.302
+step  65412  t   4351s  loss 0.9647  test@400 intent 0.115 domain 0.340
+step  66315  t   4411s  loss 0.9596  test@400 intent 0.117 domain 0.330
+step  67201  t   4471s  loss 0.9789  test@400 intent 0.090 domain 0.225
+step  68085  t   4531s  loss 0.9676  test@400 intent 0.102 domain 0.325
+step  68967  t   4591s  loss 0.9460  test@400 intent 0.135 domain 0.410
+step  69847  t   4651s  loss 0.9617  test@400 intent 0.128 domain 0.318
+step  70713  t   4711s  loss 0.9468  test@400 intent 0.102 domain 0.242
+step  71606  t   4771s  loss 0.9321  test@400 intent 0.113 domain 0.320
+step  72503  t   4831s  loss 0.9284  test@400 intent 0.117 domain 0.247
+step  73392  t   4891s  loss 0.9270  test@400 intent 0.140 domain 0.315
+step  74276  t   4951s  loss 0.9499  test@400 intent 0.115 domain 0.328
+step  75185  t   5011s  loss 0.9144  test@400 intent 0.147 domain 0.343
+step  76079  t   5071s  loss 0.9199  test@400 intent 0.140 domain 0.355
+step  76976  t   5131s  loss 0.9121  test@400 intent 0.120 domain 0.302
+step  77859  t   5191s  loss 0.8977  test@400 intent 0.135 domain 0.388
+step  78744  t   5251s  loss 0.9144  test@400 intent 0.120 domain 0.312
+step  79633  t   5311s  loss 0.9297  test@400 intent 0.133 domain 0.300
+step  80514  t   5371s  loss 0.8855  test@400 intent 0.128 domain 0.292
+step  81414  t   5431s  loss 0.8911  test@400 intent 0.142 domain 0.347
+step  82291  t   5491s  loss 0.8710  test@400 intent 0.130 domain 0.275
+step  83177  t   5551s  loss 0.8917  test@400 intent 0.138 domain 0.333
+step  84095  t   5611s  loss 0.8918  test@400 intent 0.152 domain 0.365
+step  85006  t   5671s  loss 0.8846  test@400 intent 0.140 domain 0.347
+step  85914  t   5731s  loss 0.8878  test@400 intent 0.147 domain 0.360
+step  86798  t   5791s  loss 0.8835  test@400 intent 0.135 domain 0.338
+step  87683  t   5851s  loss 0.8795  test@400 intent 0.135 domain 0.315
+step  88557  t   5911s  loss 0.8481  test@400 intent 0.160 domain 0.333
+step  89431  t   5971s  loss 0.8637  test@400 intent 0.138 domain 0.362
+step  90294  t   6031s  loss 0.8587  test@400 intent 0.135 domain 0.323
+step  91188  t   6091s  loss 0.8735  test@400 intent 0.130 domain 0.300
+step  92082  t   6151s  loss 0.8433  test@400 intent 0.135 domain 0.335
+step  92970  t   6211s  loss 0.8791  test@400 intent 0.140 domain 0.367
+step  93819  t   6271s  loss 0.8757  test@400 intent 0.145 domain 0.345
+step  94648  t   6331s  loss 0.8930  test@400 intent 0.150 domain 0.370
+step  95531  t   6391s  loss 0.8404  test@400 intent 0.138 domain 0.345
+step  96392  t   6451s  loss 0.8433  test@400 intent 0.152 domain 0.375
+step  97253  t   6511s  loss 0.8533  test@400 intent 0.147 domain 0.323
+step  98086  t   6571s  loss 0.8189  test@400 intent 0.138 domain 0.365
+step  98929  t   6631s  loss 0.8491  test@400 intent 0.170 domain 0.362
+step  99794  t   6691s  loss 0.8458  test@400 intent 0.130 domain 0.345
+step 100657  t   6751s  loss 0.8395  test@400 intent 0.165 domain 0.422
+step 101525  t   6811s  loss 0.8195  test@400 intent 0.133 domain 0.340
+step 102397  t   6871s  loss 0.8463  test@400 intent 0.163 domain 0.365
+step 103261  t   6931s  loss 0.8352  test@400 intent 0.135 domain 0.318
+step 104121  t   6991s  loss 0.8395  test@400 intent 0.142 domain 0.357
+step 104974  t   7051s  loss 0.8347  test@400 intent 0.135 domain 0.312
+final: steps 105396  test intent acc 0.4578  domain acc 0.7494  (train@2000 0.4165)
+=== EVAL 06:23:07
+test 8076  intent acc 0.4578  domain acc 0.7494
+=== DEMO
+you> hi there!
+  [umi_core/fallback_unknown | p=0.106 -> fallback | seen as "hi there!"]
+umi> That's a drawer opener, but the reply's not cached yet. Want me to show you what I do have?
+you> my name is Sam
+  [dreams_and_aspirations/dream_roadblocks | p=0.158 | seen as "my name is <regex>user_name</regex>"]
+umi> Every obstacle is a test of how much you want it. You're still here, so that's a good sign.
+you> what's my name?
+  [umi_core/user_asks_own_name | p=0.403 | seen as "what's my name?"]
+umi> I remember your name; I keep it tucked in a safe corner of my cache.
+you> who are you?
+  [umi_persona_and_identity/what_kind_of_chatbot | p=0.165 | seen as "who are you?"]
+umi> I'm a retrieval-based assistant—every reply I give comes from a curated cache, no live generation needed. Think of it as a treasure hunt through a very small drawer.
+you> how do i boil an egg?
+  [food_and_cooking_basics/egg_cooking_methods | p=0.788 | seen as "how do i boil an egg?"]
+umi> Ah, the eternal question. Over-easy: flip once, yolk runny. Over-hard: flip and cook until firm. Scrambled: just stir. Pick your fighter.
+you> tell me a joke
+  [small_talk_and_greetings/tell_me_a_joke | p=0.313 | seen as "tell me a joke"]
+umi> I’m better at near misses than punchlines. But I can offer a pun so bad it loops back to good.
+you> who was napoleon?
+  [history_and_culture_snippets/ask_about_historical_figure | p=0.730 | seen as "who was napoleon?"]
+umi> I don't have that historical figure in the drawer, but I can offer a near miss on someone from the same era. Want to hear it?
+you> i'm feeling kind of down today
+  [umi_core/fallback_unknown | p=0.095 -> fallback | seen as "i'm feeling kind of down today"]
+umi> Hm-hm. Let me rummage... nope, that's not in the cache. But I can offer a near miss, if you're curious?
+you> thanks umi, bye
+  [gratitude_and_small_victories/user_says_thanks_and_goodbye | p=0.901 | seen as "thanks umi, bye"]
+umi> Waiting is easy when it's you. Well, I can't actually wait, but I'm here.
+=== ALL DONE 2026-10-12T06:23:34Z

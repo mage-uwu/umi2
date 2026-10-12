@@ -30,10 +30,16 @@
  * large hashed 3..8-byte n-gram cache (--ngram-bins), excluded from the ~1M
  * budget as upstream does.
  *
+ * umi-smart-internet: with --web DIR --web-load F a second model, trained the same
+ * way on DeepSeek's widget cache (gen_web.py, prepare_web.py), picks an HTML
+ * widget, container or dashboard for each turn (or "plain"), and --html OUT
+ * compiles the conversation into a page: umi's own visual interface.
+ *
  * Build:  cc -O3 -march=native -fopenmp umi_chat.c -lm -o umi_chat
  * Train:  ./umi_chat train --data data --seconds 7200 --threads 8 --save umi.bin
  * Eval:   ./umi_chat eval  --data data --load umi.bin
  * Chat:   ./umi_chat chat  --data data --load umi.bin [-v] [--ask "a|b|c"]
+ *         [--web data_web --web-load web.bin --html page.html]
  */
 #define NANOTSS_NO_MAIN
 #include "../nanotss_blt_mlm.c"
@@ -49,9 +55,19 @@ static int bbyte(int b){return ALPHA[b];}
 
 typedef struct{int id,c1,c2;char*msg;}Ex;               /* ids packed as a*4096+b*64+t, -1 = none */
 typedef struct{int id,parent,nv,last;char*name,*ans[NV],*ano[NV];}Ans;
-static Ans*answers;static int n_answers,*ans_at;          /* ans_at[packed id] -> answer index */
-static unsigned char has_a[NA],has_ab[NA][NB];
-static int intro_id=-1,fallback_id=-1;
+typedef struct{int*off,*ans;float*w,*idf;int n;}NgIdx;
+/* One retrieval cache: the answers, their ID index and the n-gram index. umi keeps two, the chat
+ * cache and the umi-smart-internet widget cache, and C points at the one in use. */
+typedef struct{Ans*answers;int n_answers,*ans_at;unsigned char has_a[NA],has_ab[NA][NB];int intro_id,fallback_id;NgIdx ng;}Cache;
+static Cache cache_chat={.intro_id=-1,.fallback_id=-1},cache_web={.intro_id=-1,.fallback_id=-1},*C=&cache_chat;
+#define answers (C->answers)
+#define n_answers (C->n_answers)
+#define ans_at (C->ans_at)
+#define has_a (C->has_a)
+#define has_ab (C->has_ab)
+#define intro_id (C->intro_id)
+#define fallback_id (C->fallback_id)
+#define ng (C->ng)
 #define PACK(a,b,t) ((a)*NB*NT+(b)*NT+(t))
 #define ID_A(x) ((x)/(NB*NT))
 #define ID_B(x) ((x)/NT%NB)
@@ -143,8 +159,6 @@ static int classify(Net*n,int th,const char*msg,int c1,int c2,double*conf){
 /* ---- the n-gram cache: hashed char 3..5-gram TF-IDF index over every answer's phrasings ----
  * It proposes candidates; the MLM's masked answer slot makes the final, typed decision. */
 enum{NGB=1<<20,NGK=16};
-typedef struct{int*off,*ans;float*w,*idf;int n;}NgIdx;
-static NgIdx ng;
 static int grams(const char*msg,uint32_t*out){
     char buf[512];int L=snprintf(buf,sizeof buf," %s ",msg);if(L>(int)sizeof buf-1)L=sizeof buf-1;int m=0;
     for(int n=3;n<=5;n++)for(int i=0;i+n<=L;i++){uint32_t h=2166136261u^n;for(int j=0;j<n;j++)h=(h^(unsigned char)buf[i+j])*16777619u;out[m++]=h&(NGB-1);}
@@ -322,10 +336,28 @@ static void render(Ans*a,char*out,size_t on){
     const char*src=*user_name?a->ans[v]:a->ano[v];size_t o=0,tl=strlen(TAG);
     for(const char*p=src;*p&&o+1<on;){
         if(!strncmp(p,TAG,tl)){size_t l=strlen(user_name);if(o+l<on){memcpy(out+o,user_name,l);o+=l;}p+=tl;continue;}
-        out[o++]=*p++;
+        out[o++]=*p==0x1C?'\n':*p;p++; /* web fragments store newlines as 0x1C */
     }out[o]=0;
 }
 static int hist[2]={-1,-1}; /* IDs of umi's last two replies */
+/* ---- umi-smart-internet: compile the conversation into an HTML page with widgets ---- */
+static Net*webnet;static const char*html_out,*web_dir;static double web_thresh=.35;
+typedef struct{char*user,*umi,*widget;}Turn;static Turn*turns;static int n_turns;
+static void html_esc(FILE*f,const char*s){for(;*s;s++){if(*s=='<')fputs("&lt;",f);else if(*s=='>')fputs("&gt;",f);else if(*s=='&')fputs("&amp;",f);else if(*s=='"')fputs("&quot;",f);else fputc(*s,f);}}
+static void write_page(void){
+    FILE*f=fopen(html_out,"w");if(!f){perror(html_out);return;}
+    fputs("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>umi</title><style>\n",f);
+    char p[1024];snprintf(p,sizeof p,"%s/design.css",web_dir);FILE*css=fopen(p,"r");if(css){int c;while((c=fgetc(css))!=EOF)fputc(c,f);fclose(css);}
+    fputs("\n.umi-turn{margin:0 0 1rem}.umi-widget{margin:.5rem 0 0}</style></head><body><main class=\"umi-page\">\n",f);
+    for(int i=0;i<n_turns;i++){
+        fputs("<div class=\"umi-turn\"><div class=\"msg user\">",f);html_esc(f,turns[i].user);fputs("</div>\n",f);
+        const char*w=turns[i].widget,*slot=w?strstr(w,"{{answer}}"):NULL;
+        if(slot){fwrite(w,1,slot-w,f);html_esc(f,turns[i].umi);fputs(slot+10,f);}  /* wrapper widget presents the reply */
+        else{fputs("<div class=\"msg umi\">",f);html_esc(f,turns[i].umi);fputs("</div>\n",f);if(w){fputs("<div class=\"umi-widget\">",f);fputs(w,f);fputs("</div>\n",f);}}
+        fputs("</div>\n",f);
+    }
+    fputs("</main></body></html>\n",f);fclose(f);
+}
 static void reply(Net*n,const char*line,double thresh,int verbose){
     char text[1024],alt[1024],cap[64]="",cap2[64]="",msg[2048];double c,c2;
     canon(line,text,sizeof text);
@@ -344,11 +376,21 @@ static void reply(Net*n,const char*line,double thresh,int verbose){
     if(verbose)printf("  [%d.%d.%d %s | p=%.3f%s | seen as \"%s\"]\n",ID_A(r),ID_B(r),ID_T(r),a->name,c,fell?" -> fallback":"",text);
     printf("umi> %s\n",msg);fflush(stdout);
     hist[1]=hist[0];hist[0]=r;
+    if(webnet){
+        double wc;C=&cache_web;int w=decide(webnet,0,text,-1,-1,hy_beta,0,&wc);char*frag=NULL;
+        if(w>=0&&wc>=web_thresh&&strncmp(answers[ans_at[w]].name,"plain",5)){
+            Ans*wa=answers+ans_at[w];size_t cap=strlen(wa->ans[0])+strlen(wa->ano[0])+4096;frag=malloc(cap);render(wa,frag,cap);
+            if(verbose)printf("  [widget %s | p=%.3f]\n",wa->name,wc);
+        }else if(verbose&&w>=0)printf("  [no widget: %s p=%.3f]\n",answers[ans_at[w]].name,wc);
+        C=&cache_chat;
+        turns=realloc(turns,(n_turns+1)*sizeof(Turn));turns[n_turns++]=(Turn){strdup(line),strdup(msg),frag};
+        if(html_out)write_page();
+    }
 }
 
 int main(int argc,char**argv){
     if(argc<2){fprintf(stderr,"usage: umi_chat train|eval|chat --data DIR [--load F|--save F] ...\n");return 2;}
-    const char*cmd=argv[1],*dir="data",*in=NULL,*out=NULL,*mode="blt",*ask=NULL;
+    const char*cmd=argv[1],*dir="data",*in=NULL,*out=NULL,*mode="blt",*ask=NULL,*wload=NULL;
     double seconds=600,es=60,lr=.003,aux=.08,thresh=.05,sw=.3;int B=32,threads=4,seed=0,verbose=0,width=128,bins=16384;
     for(int i=2;i<argc;i++){
         const char*a=argv[i];if(!strcmp(a,"-v")){verbose=1;continue;}
@@ -357,6 +399,7 @@ int main(int argc,char**argv){
         else if(!strcmp(a,"--seconds"))seconds=atof(v);else if(!strcmp(a,"--entropy-seconds"))es=atof(v);else if(!strcmp(a,"--lr"))lr=atof(v);
         else if(!strcmp(a,"--aux"))aux=atof(v);else if(!strcmp(a,"--threshold"))thresh=atof(v);else if(!strcmp(a,"--batch"))B=atoi(v);
         else if(!strcmp(a,"--switch"))sw=atof(v);else if(!strcmp(a,"--beta"))hy_beta=atof(v);else if(!strcmp(a,"--gamma"))hy_gamma=atof(v);else if(!strcmp(a,"--eval-n"))eval_n=atoi(v);
+        else if(!strcmp(a,"--web"))web_dir=v;else if(!strcmp(a,"--web-load"))wload=v;else if(!strcmp(a,"--html"))html_out=v;else if(!strcmp(a,"--web-threshold"))web_thresh=atof(v);
         else if(!strcmp(a,"--threads"))threads=atoi(v);else if(!strcmp(a,"--seed"))seed=atoi(v);else if(!strcmp(a,"--width"))width=atoi(v);
         else if(!strcmp(a,"--ngram-bins"))bins=atoi(v);else if(!strcmp(a,"--ask"))ask=v;
         else{fprintf(stderr,"unknown option %s\n",a);return 2;}
@@ -383,6 +426,11 @@ int main(int argc,char**argv){
     }
     if(!strcmp(cmd,"chat")){
         regex_init();
+        if(web_dir&&wload){ /* second model: the umi-smart-internet widget cache */
+            C=&cache_web;load_answers(web_dir);int nw;Ex*tw=load_ex(web_dir,"train.tsv",&nw);ngram_build(tw,nw);
+            static Net wn;wn=net_load(wload,threads);webnet=&wn;C=&cache_chat;
+            if(!html_out)html_out="umi.html";
+        }
         if(ask){char buf[8192];snprintf(buf,sizeof buf,"%s",ask);for(char*p=strtok(buf,"|");p;p=strtok(NULL,"|")){printf("you> %s\n",p);reply(&n,p,thresh,verbose);}return 0;}
         char line[1024];printf("umi-1M-chat (Ctrl-D to quit)\n");
         while(printf("you> "),fflush(stdout),fgets(line,sizeof line,stdin)){line[strcspn(line,"\r\n")]=0;if(*line)reply(&n,line,thresh,verbose);}
