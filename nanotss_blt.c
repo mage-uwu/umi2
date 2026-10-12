@@ -2308,6 +2308,7 @@ static double faithful_eval(Faithful*f,int th,const int*t,const int*y,int L,int*
  * Blocks stay within a tree/matrix. Inactive routed rows are untouched.
  * This is blockwise active-row Muon, not full-matrix Muon. */
 static int use_muon=1,muon_steps=5,muon_block=16;
+static int ttt_freeze=0; /* test-time training: 1 keeps ternary matrices fixed */
 static real muon_scale=3;
 typedef struct {real*p,*g,*m,*q;unsigned char*hit;Model*model;int field,rows,d;size_t row;} MuonJob;
 static void muon_apply(MuonJob*j,const Hyper*h,real scale){
@@ -2396,13 +2397,13 @@ static void apply_job(UpdateView*v,long job,const Hyper*h,real scale,real c1,rea
     Model*m=v->m;int d=m->c.d;Codes*k=m->k;
     if((size_t)job<v->rows){
         size_t r=job;if(!m->hit[r])return;
-        for(int j=4;j<=7;j++){if(use_muon&&(j==4||j==6))continue;size_t width=(j==4||j==6)?d:1,off=r*width;adam(v->pf[j]+off,v->gf[j]+off,v->mf[j]+off,v->vf[j]+off,width,h,scale,c1,c2);}
+        for(int j=4;j<=7;j++){if((use_muon||ttt_freeze)&&(j==4||j==6)){if(ttt_freeze)memset(v->gf[j]+r*d,0,d*sizeof(real));continue;}size_t width=(j==4||j==6)?d:1,off=r*width;adam(v->pf[j]+off,v->gf[j]+off,v->mf[j]+off,v->vf[j]+off,width,h,scale,c1,c2);}
         m->Q.A_log[r]=m->P.A_log[r];k->decay_rates[r]=exp(m->P.A_log[r]);
         if(!use_muon){tss_ternary(m->P.w_in+r*d,m->Q.w_in+r*d,1,d,m->c.group);tss_ternary(m->P.w_out+r*d,m->Q.w_out+r*d,1,d,m->c.group);
         if(k->ok){plane_rows(m->Q.w_in,&k->w_in,r,r+1,d,m->c.group);plane_rows(m->Q.w_out,&k->w_out,r,r+1,d,m->c.group);}}
     }else{
         size_t dj=job-v->rows;int j=0;while(dj>=v->ends[j+1])j++;size_t off=(dj-v->ends[j])*v->chunk[j],len=v->z[j]-off<v->chunk[j]?v->z[j]-off:v->chunk[j];
-        if(use_muon&&(j==8||j==10))return;
+        if((use_muon||ttt_freeze)&&(j==8||j==10)){if(ttt_freeze)memset(v->gf[j]+off,0,len*sizeof(real));return;}
         adam(v->pf[j]+off,v->gf[j]+off,v->mf[j]+off,v->vf[j]+off,len,h,scale,c1,c2);
         if(j==8||j==10){real*qm=j==8?m->Q.proj:m->Q.U;size_t r=off/d;tss_ternary(v->pf[j]+off,qm+off,1,d,m->c.group);if(k->ok)plane_rows(qm,j==8?&k->proj:&k->U,r,r+1,d,m->c.group);}
     }
@@ -2457,7 +2458,7 @@ static real faithful_step(Faithful*f,const int*t,const int*y,int B,int L,const H
                 adam(f->p+off,f->g+off,f->m+off,f->v+off,len,h,scale,c1,c2);
             }
 #pragma omp for schedule(static,1) nowait
-            for(int j=0;j<nj;j++)muon_apply(jobs+j,h,scale);
+            for(int j=0;j<nj;j++){if(ttt_freeze&&jobs[j].q)memset(jobs[j].g,0,(size_t)jobs[j].rows*jobs[j].d*sizeof(real));else muon_apply(jobs+j,h,scale);}
         }else{
 #pragma omp for schedule(static) nowait
             for(size_t off=0;off<f->dense;off+=1024){size_t n=f->dense-off<1024?f->dense-off:1024;adam(f->p+off,f->g+off,f->m+off,f->v+off,n,h,scale,c1,c2);}
@@ -2730,6 +2731,102 @@ static int check_tree_fw(void){
     bad+=!(last<first*.6&&e<1e-4&&future==0&&saved&&rt==0&&frozen_ok);puts(bad?"TREE FW CHECK FAILED":"TREE FW CHECK PASSED");return !!bad;
 }
 
+/* ---------------- Test-time training: the context as a training set ----------------
+ * The recurrent state carries what the context says; TTT also writes it into the
+ * slow weights. Each chunk is scored first with the current weights, then the
+ * weights take --ttt-steps optimizer steps on --ttt-batch windows: the newest
+ * window plus uniform replay from everything already seen. No future byte is
+ * ever trained on before it is scored. */
+typedef struct {double lr,decay,clip,beta2;int steps,batch,chunk,ctx,stream,freeze,optim;} TTT;
+typedef struct {real*p[3*N_FIELDS+1];size_t n[3*N_FIELDS+1];int k;} PSet;
+static void fparams(Faithful*f,PSet*s){
+    Model*mods[3]={f->global,f->encoder,f->decoder};s->k=0;
+    for(int j=0;j<3;j++){size_t z[N_FIELDS];real*p[N_FIELDS];sizes(&mods[j]->c,z);fields(&mods[j]->P,p);for(int i=0;i<N_FIELDS;i++){s->p[s->k]=p[i];s->n[s->k++]=z[i];}}
+    s->p[s->k]=f->p;s->n[s->k++]=f->dense+f->hashsize;
+}
+static real**snap_take(Faithful*f){
+    PSet s;fparams(f,&s);real**b=calloc(s.k,sizeof(real*));
+    for(int i=0;i<s.k;i++){b[i]=malloc(s.n[i]*sizeof(real));memcpy(b[i],s.p[i],s.n[i]*sizeof(real));}return b;
+}
+static void faithful_requantize(Faithful*f){
+    model_requantize(f->global);model_requantize(f->encoder);model_requantize(f->decoder);if(f->c.mixer)tc_pack(f->p+f->mixoff,f->mixcode);
+}
+static void opt_reset(Faithful*f){
+    Model*mods[3]={f->global,f->encoder,f->decoder};
+    for(int j=0;j<3;j++){size_t z[N_FIELDS];real*m[N_FIELDS],*v[N_FIELDS];sizes(&mods[j]->c,z);fields(&mods[j]->M,m);fields(&mods[j]->V,v);
+        for(int i=0;i<N_FIELDS;i++){memset(m[i],0,z[i]*sizeof(real));memset(v[i],0,z[i]*sizeof(real));}}
+    size_t n=f->dense+f->hashsize;memset(f->m,0,n*sizeof(real));memset(f->v,0,n*sizeof(real));
+}
+static void snap_restore(Faithful*f,real**b){
+    PSet s;fparams(f,&s);for(int i=0;i<s.k;i++)memcpy(s.p[i],b[i],s.n[i]*sizeof(real));faithful_requantize(f);opt_reset(f);
+}
+/* Pull the slow weights a fraction lambda back toward the snapshot (anchored dynamic evaluation). */
+static void snap_pull(Faithful*f,real**b,real lambda){
+    PSet s;fparams(f,&s);for(int i=0;i<s.k;i++)for(size_t j=0;j<s.n[i];j++)s.p[i][j]+=lambda*(b[i][j]-s.p[i][j]);faithful_requantize(f);
+}
+static long ttt_step_count=0;
+/* Train on windows whose labels lie inside raw[0..e]. */
+static double ttt_train(Faithful*f,const unsigned char*raw,long e,const TTT*o,uint64_t*rng,int*t,int*y){
+    int L=f->Lmax<256?f->Lmax:256;if(e<L)return 0;double loss=0;
+    int save_muon=use_muon,save_freeze=ttt_freeze;use_muon=o->optim;ttt_freeze=o->freeze;
+    for(int it=0;it<o->steps;it++){
+        for(int b=0;b<o->batch;b++){long at=b==0?e-L:(long)(urand(rng)*(e-L+1));if(at>e-L)at=e-L;
+            for(int i=0;i<L;i++){t[b*L+i]=raw[at+i];y[b*L+i]=raw[at+i+1];}}
+        Hyper h={.lr=o->lr,.beta1=.9,.beta2=o->beta2,.eps=1e-8,.weight_decay=0,.clip=o->clip,.step=++ttt_step_count};
+        loss+=faithful_step(f,t,y,o->batch,L,&h,NULL);
+    }
+    use_muon=save_muon;ttt_freeze=save_freeze;return loss/o->steps;
+}
+/* Online score-then-adapt over raw[0..n). Fills per-position byte losses (nats) if loss!=NULL.
+ * Returns bits per byte over positions >= skip. */
+static double ttt_run(Faithful*f,const unsigned char*raw,long n,const TTT*o,real**anchor,float*loss,long skip,double*train_seconds){
+    int C=o->chunk,W=o->ctx+C;if(W>f->Lmax){fprintf(stderr,"ttt: ctx+chunk exceeds Lmax\n");exit(2);}
+    int*t=malloc((size_t)(W>256?W:256)*(o->batch>1?o->batch:1)*sizeof(int)),*y=malloc((size_t)(W>256?W:256)*(o->batch>1?o->batch:1)*sizeof(int));
+    real*lg=malloc((size_t)W*256*sizeof(real));uint64_t rng=0x9E3779B97F4A7C15ULL;double tot=0,tsec=0;long cnt=0;
+    FStream*fs=o->stream?fstream_new(f):NULL;real slg[256];int have=0;
+    for(long s=0;s<n-1;s+=C){
+        long e=s+C<n-1?s+C:n-1;
+        if(fs){
+            for(long i=s;i<e;i++){
+                if(!have){fstream_step(f,fs,raw[i],slg);}
+                double mx=-1e30,z=0;for(int v=0;v<256;v++)mx=slg[v]>mx?slg[v]:mx;for(int v=0;v<256;v++)z+=exp(slg[v]-mx);
+                double li=log(z)+mx-slg[raw[i+1]];if(loss)loss[i+1]=li;if(i+1>=skip){tot+=li;cnt++;}
+                fstream_step(f,fs,raw[i+1],slg);have=1;
+            }
+        }else{
+            long a=s-o->ctx<0?0:s-o->ctx;int Lw=(int)(e-a);
+            for(int i=0;i<Lw;i++){t[i]=raw[a+i];y[i]=a+i<s?-1:raw[a+i+1];}
+            int ns;faithful_eval(f,0,t,y,Lw,&ns,lg);
+            for(long i=s;i<e;i++){real*l=lg+(size_t)(i-a)*256;double mx=-1e30,z=0;for(int v=0;v<256;v++)mx=l[v]>mx?l[v]:mx;for(int v=0;v<256;v++)z+=exp(l[v]-mx);
+                double li=log(z)+mx-l[raw[i+1]];if(loss)loss[i+1]=li;if(i+1>=skip){tot+=li;cnt++;}}
+        }
+        if(o->lr>0){double st=wall();ttt_train(f,raw,e,o,&rng,t,y);if(anchor&&o->decay>0)snap_pull(f,anchor,o->decay);tsec+=wall()-st;}
+    }
+    free(t);free(y);free(lg);if(train_seconds)*train_seconds=tsec;return cnt?tot/cnt/log(2.):0;
+}
+static unsigned char*read_file(const char*path,long*n){
+    FILE*fp=fopen(path,"rb");if(!fp){perror(path);return NULL;}fseek(fp,0,SEEK_END);*n=ftell(fp);rewind(fp);unsigned char*r=malloc(*n+1);
+    if(fread(r,1,*n,fp)!=(size_t)*n){fclose(fp);free(r);return NULL;}fclose(fp);return r;
+}
+/* --ttt-eval FILE: score a document online. Prints overall bpc and a log2 position curve. */
+static int ttt_eval_main(const char*ckpt,const char*path,long off,long len,const TTT*o,int threads,int docs,long docstride){
+    long n;unsigned char*all=read_file(path,&n);if(!all)return 1;
+    if(off<0)off=(long)(n*.9);if(len<=0||off+len>n)len=n-off;
+    int W=o->ctx+o->chunk;Faithful*f=faithful_load(ckpt,threads,W>256?W:256);if(!f){fprintf(stderr,"ttt-eval needs a BLT checkpoint\n");return 1;}
+    real**base=snap_take(f);int nb=0;while((1L<<nb)<len)nb++;double*bs=calloc(nb+1,sizeof(double));long*bc=calloc(nb+1,sizeof(long));
+    float*loss=malloc((size_t)len*sizeof(float));double total=0,tsec=0;long tc=0;
+    for(int d=0;d<docs;d++){
+        long start=off+d*docstride;if(start+len>n)break;
+        snap_restore(f,base);double ts,st=wall();for(long i=0;i<len;i++)loss[i]=-1;
+        double bpc=ttt_run(f,all+start,len,o,base,loss,0,&ts);tsec+=ts;
+        for(long i=1;i<len;i++){int b=0;while((2L<<b)<=i)b++;bs[b]+=loss[i];bc[b]++;total+=loss[i];tc++;}
+        printf("{\"event\":\"ttt_doc\",\"doc\":%d,\"start\":%ld,\"bytes\":%ld,\"bpc\":%.6f,\"seconds\":%.3f,\"train_seconds\":%.3f}\n",d,start,len,bpc,wall()-st,ts);fflush(stdout);
+    }
+    for(int b=0;b<=nb;b++)if(bc[b])printf("{\"event\":\"ttt_curve\",\"from\":%ld,\"to\":%ld,\"bytes\":%ld,\"bpc\":%.6f}\n",b?1L<<b:1,2L<<b,bc[b],bs[b]/bc[b]/log(2.));
+    printf("{\"event\":\"ttt_eval\",\"lr\":%g,\"steps\":%d,\"batch\":%d,\"chunk\":%d,\"ctx\":%d,\"stream\":%d,\"freeze\":%d,\"optim\":\"%s\",\"decay\":%g,\"bytes\":%ld,\"bpc\":%.6f,\"train_seconds\":%.3f}\n",
+        o->lr,o->steps,o->batch,o->chunk,o->ctx,o->stream,o->freeze,o->optim?"muon":"adamw",o->decay,tc,total/tc/log(2.),tsec);
+    return 0;
+}
 static void usage(void){
     puts("nanotss-plastic: protected plastic -> FFF -> SSM -> FFF\n"
          "  --data FILE [--save FILE] [--seconds 300] [--entropy-seconds 60]\n"
@@ -2757,6 +2854,8 @@ int main(int argc,char**argv){
     const char*data=NULL,*out=NULL,*in=NULL,*mode="blt",*prompt="ROMEO:",*entropy_in=NULL,*entropy_out=NULL,*context_file=NULL;int threads=4,B=16,L=256,burn=64,sample=0,seed=0,steps=100000000,scoreonly=0,fixedsteps=0;
     double seconds=300,entropy_seconds=60,entropy_charge=0,lr=.003,target=4,temp=.8;
     Cfg gc={.vocab=256,.d=128,.n_layer=4,.T=4,.D=7,.n=16,.p=16,.K=3,.group=128,.walks=2,.temp=1,.fff_gate=1,.fw_mask=1};
+    const char*ttt_file=NULL;long ttt_off=-1,ttt_len=0,ttt_stride=0;int ttt_docs=1;
+    TTT tt={.lr=0,.decay=0,.clip=1,.beta2=.99,.steps=1,.batch=4,.chunk=192,.ctx=64,.stream=0,.freeze=0,.optim=0};
     FConfig cfg={.width=64,.heads=4,.bins=256,.maxpatch=8,.enc_layers=2,.dec_layers=4,.local_depth=4,.local_trees=2,.local_state=8,.neural=1,.mixer=2,.target=4};
     for(int i=1;i<argc;i++){
         if(!strcmp(argv[i],"--cpu-reference")){cpu_fast=0;continue;}
@@ -2768,9 +2867,13 @@ int main(int argc,char**argv){
         if(!strcmp(argv[i],"--check"))return check_gated_fff()||check_tree_fw();
         if(!strcmp(argv[i],"--score-only")){scoreonly=1;continue;}
         const char*a=argv[i],*v=i+1<argc?argv[++i]:NULL;if(!v)return 2;
+        if(!strcmp(a,"--ttt-optim")){if(!strcmp(v,"muon"))tt.optim=1;else if(!strcmp(v,"adamw"))tt.optim=0;else return 2;continue;}
         if(!strcmp(a,"--optimizer")){optimizer_explicit=1;if(!strcmp(v,"muon"))use_muon=1;else if(!strcmp(v,"adamw"))use_muon=0;else return 2;continue;}
         if(!strcmp(a,"--patcher")){if(strcmp(v,"neural")){fprintf(stderr,"Only the neural entropy patcher is supported.\n");return 2;}continue;}
 #define OPT(n,x,cv) if(!strcmp(a,n)){x=cv(v);continue;}
+        OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
+        OPT("--ttt-lr",tt.lr,atof) OPT("--ttt-decay",tt.decay,atof) OPT("--ttt-clip",tt.clip,atof) OPT("--ttt-beta2",tt.beta2,atof) OPT("--ttt-steps",tt.steps,atoi) OPT("--ttt-batch",tt.batch,atoi)
+        OPT("--ttt-chunk",tt.chunk,atoi) OPT("--ttt-ctx",tt.ctx,atoi) OPT("--ttt-stream",tt.stream,atoi) OPT("--ttt-freeze",tt.freeze,atoi)
         OPT("--context-file",context_file,(const char*)) OPT("--data",data,(const char*)) OPT("--save",out,(const char*)) OPT("--load",in,(const char*)) OPT("--mode",mode,(const char*)) OPT("--prompt",prompt,(const char*))
         OPT("--muon-scale",muon_scale,atof) OPT("--muon-steps",muon_steps,atoi) OPT("--muon-block",muon_block,atoi)
         OPT("--entropy-charge",entropy_charge,atof) OPT("--entropy-load",entropy_in,(const char*)) OPT("--entropy-save",entropy_out,(const char*)) OPT("--entropy-seconds",entropy_seconds,atof)
@@ -2790,6 +2893,7 @@ int main(int argc,char**argv){
     if(use_muon&&strcmp(mode,"blt")){if(optimizer_explicit){fprintf(stderr,"CPU Muon is integrated in full BLT training; byte mode uses AdamW.\n");return 2;}use_muon=0;}
     if(!strcmp(mode,"byte")&&cfg.mixer){fprintf(stderr,"Standalone byte mode requires --conv-mix 0; the integrated mixer acts on global BLT states.\n");return 2;}
     g_rng^=((uint64_t)seed+1)*0x9E3779B97F4A7C15ULL;
+    if(ttt_file){if(!in)return 2;return ttt_eval_main(in,ttt_file,ttt_off,ttt_len,&tt,threads,ttt_docs,ttt_stride?ttt_stride:ttt_len);}
     if(context_file){if(!in||data||scoreonly||sample<0){fprintf(stderr,"--context-file requires --load and generation mode\n");return 2;}return context_generate(in,context_file,prompt,sample,temp);}
     if(in&&!data){
         Faithful*f=faithful_load(in,1,L);if(!f){Model*m=load(in,1,L);if(!m){fprintf(stderr,"cannot load checkpoint\n");return 1;}generate(m,prompt,sample,temp);return 0;}
