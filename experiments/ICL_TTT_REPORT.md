@@ -139,7 +139,24 @@ plain sampling. It does lose some general fluency (word validity 0.85 vs 0.90), 
 does not win that back. On base300 the same comparison favored retrieval refinement on every
 metric (0.784 / 0.427 / 0.247 / 0.57 vs plain T=0.7 at 0.786 / 0.416 / 0.154 / 0).
 
-JUDGE_TABLE_PLACEHOLDER
+**Judge model.** `big600` (4.2M parameters, never the generator) scores each method's 12 samples. Lower BPC is better.
+It scores them twice: as trained (*plain judge*), and after reading the same context for 8 TTT epochs (*context judge*).
+
+| base2h samples | plain judge | context judge |
+|---|---|---|
+| **retrieval refine, 4 epochs, 3 rounds** | 2.725 | **2.194** |
+| retrieval refine, 8 epochs, 3 rounds | 2.703 | 2.213 |
+| retrieval refine, 4 epochs, 5 rounds | 2.673 | 2.228 |
+| TTT + best-of-8 | 2.732 | 2.268 |
+| retrieval refine, 4 epochs, lr 1e-4 | 2.603 | 2.287 |
+| plain, T=0.7 | **2.136** | 2.293 |
+| TTT, T=0.7 | 2.810 | 2.374 |
+| retrieval refine, 2 epochs | 2.826 | 2.376 |
+| plain, T=1 | 2.826 | 2.907 |
+
+The context-aware judge ranks retrieval refinement first, at 0.10 BPC better than plain T=0.7 and
+0.18 better than single-shot TTT. The plain judge prefers plain sampling, because plain samples
+are ordinary TinyShakespeare text, which is exactly what that judge was trained on.
 
 Samples (base2h, *Faustus* context, seed 1, prompt `FAUSTUS:`):
 
