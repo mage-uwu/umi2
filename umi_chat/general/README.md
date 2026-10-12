@@ -36,11 +36,19 @@ Audit: `python3 general/stats.py data_general`.
 
 Data is committed gzipped: `gunzip -k data_general/*/*.jsonl.gz` before running the scripts.
 
+## Fact-check
+
+`factcheck.py` had DeepSeek judge the 62,007 replies that state something specific (numbers, quoted titles,
+proper nouns) for $1.39: 48,779 ok, 8,309 doubtful, 4,919 false. Verdicts are in `factcheck.jsonl.gz`; the false
+ones are in `flagged.txt` (add `--flag-doubtful` to flag both). In a sample the flags were mostly real: invented
+people, books and TV spin-offs, wrong attributions, wrong conversions. `prepare.py` leaves flagged turns and
+the turns below them out of the cache: 16,114 replies (11%). Trees keep their slots and turn numbers, so IDs
+match models trained before the check.
+
 ## Known weaknesses
 
-- gpt-oss-120b at low reasoning effort invents long-tail specifics (album titles, dates). Common
-  knowledge is reliable; obscure facts are not. A cheap verification pass, or keeping long-tail trees out of
-  the cache, is worth doing before training.
+- gpt-oss-120b at low reasoning effort invents long-tail specifics (album titles, dates). The fact-check
+  catches many; "doubtful" replies (13% of those checked) are still in the cache.
 - Phase 2 sometimes drifts from the topic seed (the opener is about something else). The opener is still a
   realistic message, but the seed label does not always describe it.
 - Persona catchphrases ("hm-hm, let me rummage") still show up more often than the once per conversation asked.

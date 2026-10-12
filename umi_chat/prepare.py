@@ -52,12 +52,10 @@ def general_convs(tdir):
             t = json.loads(line); sd = t["seed"]
             grp = ("hat_" + sd["topic"].split(":")[0]) if sd["source"] == "hat" else sd["topic"].split(" > ")[0]
             drop = {x["id"] for x in t["turns"] if f"{t['uid']}:{x['id']}" in flagged}
-            turns = []
             for x in t["turns"]:  # turns come parent-first, so a dropped parent drops its subtree
-                if x["id"] in drop or x["parent"] in drop: drop.add(x["id"]); continue
-                turns.append(x)
-            if turns and not turns[0]["parent"]:
-                out.append((grp, {"topic": t["uid"], "turns": turns}))
+                if x["parent"] in drop: drop.add(x["id"])
+            # the tree keeps its slot and its turn numbering either way, so IDs match models trained before the check
+            out.append((grp, {"topic": t["uid"], "turns": t["turns"], "drop": drop}))
     out.sort(key=lambda g: g[0])
     return out
 
@@ -85,6 +83,7 @@ def main(raw, convdir, out, gendir=None):
             a, b = 64 + k // NB, k % NB; k += 1
             tix = {t["id"]: i for i, t in enumerate(cv["turns"][:NT])}; par = {t["id"]: t["parent"] for t in cv["turns"]}
             for t in cv["turns"][:NT]:
+                if t["id"] in cv.get("drop", ()): continue
                 cid = ids(a, b, tix[t["id"]]); nturns += 1
                 ans = NAME_TOKEN.sub(TAG, fix(t["assistant"].strip()))
                 ano = NAME_TOKEN.sub("", fix(t["assistant_no_name"].strip())) or ans.replace(TAG, "").strip()
