@@ -491,6 +491,7 @@ typedef struct {
     real *ys,*rs,*drs;real *head;
     double *head_exp;
     real *stream_hist;
+    real *carry_h,*carry_hist; /* training state carry: per even layer h, per layer K-1 conv inputs */
     void (*prepare_state)(void*,real*,size_t,int,int);
     void *prepare_state_user;
     const Tape *reuse_fw_input;
@@ -823,7 +824,7 @@ static void fw_fwd(const Cfg *c,const Params *P,const Params *Q,int l,int L,real
         const real *ut=tp->u+(size_t)t*d;
         for(int i=0;i<d;i++)mx[i]=conv[i]*ut[i];
         for(int j=1;j<K;j++) {
-            const real *past=t>=j?tp->u+(size_t)(t-j)*d:(w->stream_hist?w->stream_hist+(size_t)l*(K-1)*d+(size_t)(j-t-1)*d:NULL);
+            const real *past=t>=j?tp->u+(size_t)(t-j)*d:(w->stream_hist?w->stream_hist+(size_t)l*(K-1)*d+(size_t)(j-t-1)*d:w->carry_hist?w->carry_hist+(size_t)l*(K-1)*d+(size_t)(j-t-1)*d:NULL);
             if(past)for(int i=0;i<d;i++)mx[i]+=conv[j*d+i]*past[i];
         }
         quant8(mx,tp->x+(size_t)t*d,tp->xq+(size_t)t*d,tp->xs+t,d);
@@ -1133,7 +1134,7 @@ static void layer_fwd(const Cfg *c,const Params *P,const Params *Q,int l,int L,r
         const real *ut=tp->u+(size_t)t*d;
         for(int i=0;i<d;i++)mx[i]=conv[i]*ut[i];
         for(int j=1;j<K;j++) {
-            const real *past=t>=j?tp->u+(size_t)(t-j)*d:(w->stream_hist?w->stream_hist+(size_t)l*(K-1)*d+(size_t)(j-t-1)*d:NULL);
+            const real *past=t>=j?tp->u+(size_t)(t-j)*d:(w->stream_hist?w->stream_hist+(size_t)l*(K-1)*d+(size_t)(j-t-1)*d:w->carry_hist?w->carry_hist+(size_t)l*(K-1)*d+(size_t)(j-t-1)*d:NULL);
             if(past)for(int i=0;i<d;i++)mx[i]+=conv[j*d+i]*past[i];
         }
         quant8(mx,tp->x+(size_t)t*d,tp->xq+(size_t)t*d,tp->xs+t,d);
@@ -2202,8 +2203,14 @@ static void core_fwd(Model*m,int th,int L,int training){
     Work*w=m->ws[th];w->k=m->k;w->no_alt=!training;
     if(!L)return;
     for(int l=0;l<m->c.n_layer;l++){
-        if(!(l&1))memset(w->h,0,(size_t)m->c.T*NODES(&m->c)*m->c.n*m->c.p*sizeof(real));
+        size_t S=(size_t)m->c.T*NODES(&m->c)*m->c.n*m->c.p;
+        if(!(l&1)){if(w->carry_h)memcpy(w->h,w->carry_h+(size_t)(l/2)*S,S*sizeof(real));else memset(w->h,0,S*sizeof(real));}
         layer_fwd(&m->c,&m->P,&m->Q,l,L,w->x,w->h,w->tp+l,w);
+        if(!(l&1)&&w->carry_h){
+            memcpy(w->carry_h+(size_t)(l/2)*S,w->h,S*sizeof(real));
+            int K=m->c.K,d=m->c.d;if(w->carry_hist&&K>1){real*hb=w->carry_hist+(size_t)l*(K-1)*d;
+                for(int i=0;i<K-1;i++){int t=L-1-i;if(t>=0)memcpy(hb+(size_t)i*d,w->tp[l].u+(size_t)t*d,d*sizeof(real));else memmove(hb+(size_t)i*d,hb+(size_t)(i-L)*d,d*sizeof(real));}}
+        }
     }
 }
 static void core_bwd(Model*m,int th,int L){
@@ -2310,6 +2317,8 @@ static double faithful_eval(Faithful*f,int th,const int*t,const int*y,int L,int*
  * Blocks stay within a tree/matrix. Inactive routed rows are untouched.
  * This is blockwise active-row Muon, not full-matrix Muon. */
 static int use_muon=1,muon_steps=5,muon_block=16;
+/* Global-stack state carried across consecutive training windows (one slot per batch row). */
+static real*carry_bank_h=NULL,*carry_bank_hist=NULL;static size_t carry_sz_h=0,carry_sz_hist=0;
 static int ttt_freeze=0; /* test-time training: 1 keeps ternary matrices fixed */
 static real muon_scale=3;
 typedef struct {real*p,*g,*m,*q;unsigned char*hit;Model*model;int field,rows,d;size_t row;} MuonJob;
@@ -2429,7 +2438,9 @@ static real faithful_step(Faithful*f,const int*t,const int*y,int B,int L,const H
 #pragma omp for schedule(static) reduction(+:loss,scored,np)
         for(int b=0;b<B;b++){
             for(int j=0;j<3;j++)tss_work_seed(views[j].m->ws[th],(uint64_t)h->step*1000003ULL+b+97*j);
+            Work*gw=f->global->ws[th];gw->carry_h=carry_bank_h?carry_bank_h+(size_t)b*carry_sz_h:NULL;gw->carry_hist=carry_bank_hist?carry_bank_hist+(size_t)b*carry_sz_hist:NULL;
             int ns;loss+=faithful_train_seq(f,th,t+(size_t)b*L,y+(size_t)b*L,L,&ns);scored+=ns;np+=f->ws[th]->M;
+            gw->carry_h=gw->carry_hist=NULL;
         }
         for(int j=0;j<3;j++){
 #pragma omp for schedule(static,16) reduction(+:nrm)
@@ -2831,7 +2842,7 @@ static void fstream_reset(Faithful*f,FStream*s,int mask){
     if(mask&4){gen_reset(&f->global->c,s->global);memset(s->mixhist,0,(TC_TAPS-1)*2*f->c.width*sizeof(real));}if(mask&8)gen_reset(&f->decoder->c,s->dec);
     for(int l=0;l<f->global->c.n_layer;l+=2)if(mask&(16<<l)){const Cfg*c=&f->global->c;size_t a=node_off(c,l)*c->n*c->p,z=(node_off(c,l+1)-node_off(c,l))*c->n*c->p;memset(s->global->h+a,0,z*sizeof(real));}
 }
-static const unsigned char*ttt_ctrl=NULL;static long ttt_ctrl_n=0; /* control: train on this corpus instead of the context */
+static const unsigned char*ttt_ctrl=NULL;static long ttt_ctrl_n=0;static long ttt_ranges[64];static int ttt_nranges=0; /* control: train on this corpus instead of the context */
 /* Train on windows whose labels lie inside raw[0..e]. */
 static double ttt_train(Faithful*f,const unsigned char*raw,long e,const TTT*o,uint64_t*rng,int*t,int*y){
     int L=f->Lmax<256?f->Lmax:256;if(e<L)return 0;double loss=0;
@@ -2898,6 +2909,8 @@ static int ttt_eval_main(const char*ckpt,const char*path,long off,long len,const
         if(ttt_retr_m>0&&ttt_retr_mix>0&&ttt_use_retr){ttt_retr=retr_new(all+start,len);}
         double bpc=ttt_run(f,all+start,len,o,base,loss,0,&ts);tsec+=ts;
         for(long i=1;i<len;i++){int b=0;while((2L<<b)<=i)b++;bs[b]+=loss[i];bc[b]++;total+=loss[i];tc++;}
+        for(int r=0;r<ttt_nranges;r++){double rs=0;long rc=0;for(long i=ttt_ranges[2*r];i<ttt_ranges[2*r+1]&&i<len;i++)if(loss[i]>=0){rs+=loss[i];rc++;}
+            printf("{\"event\":\"ttt_range\",\"doc\":%d,\"from\":%ld,\"to\":%ld,\"bpc\":%.6f}\n",d,ttt_ranges[2*r],ttt_ranges[2*r+1],rc?rs/rc/log(2.):0);}
         printf("{\"event\":\"ttt_doc\",\"doc\":%d,\"start\":%ld,\"bytes\":%ld,\"bpc\":%.6f,\"seconds\":%.3f,\"train_seconds\":%.3f}\n",d,start,len,bpc,wall()-st,ts);fflush(stdout);
     }
     for(int b=0;b<=nb;b++)if(bc[b])printf("{\"event\":\"ttt_curve\",\"from\":%ld,\"to\":%ld,\"bytes\":%ld,\"bpc\":%.6f}\n",b?1L<<b:1,2L<<b,bc[b],bs[b]/bc[b]/log(2.));
@@ -3073,7 +3086,7 @@ int main(int argc,char**argv){
     const char*data=NULL,*out=NULL,*in=NULL,*mode="blt",*prompt="ROMEO:",*entropy_in=NULL,*entropy_out=NULL,*context_file=NULL;int threads=4,B=16,L=256,burn=64,sample=0,seed=0,steps=100000000,scoreonly=0,fixedsteps=0;
     double seconds=300,entropy_seconds=60,entropy_charge=0,lr=.003,target=4,temp=.8;
     Cfg gc={.vocab=256,.d=128,.n_layer=4,.T=4,.D=7,.n=16,.p=16,.K=3,.group=128,.walks=2,.temp=1,.fff_gate=1,.fw_mask=1};
-    double ssm_horizon=0;
+    double ssm_horizon=0;int carry_windows=0;long*carry_pos=NULL;int*carry_left=NULL;unsigned char*carry_buf=NULL;double repeat_p=0;
     int refine=0;const char*refine_ctx=NULL;Refine rf={.retr=0,.retr_m=32,.rounds=3,.cands=16,.keep=4,.len=400,.steps=8,.epochs=8,.edits=0,.span=12,.tail=512,.temp=1,.rep=2,.final_temp=1};
     const char*ttt_file=NULL,*ttt_control=NULL,*ttt_fit=NULL;double ttt_frac=.5;int ttt_epochs=8;long ttt_off=-1,ttt_len=0,ttt_stride=0;int ttt_docs=1;
     TTT tt={.rnd=0,.lr=0,.decay=0,.clip=1,.beta2=.99,.steps=1,.batch=4,.chunk=192,.ctx=64,.stream=0,.freeze=0,.optim=0};
@@ -3088,6 +3101,7 @@ int main(int argc,char**argv){
         if(!strcmp(argv[i],"--check"))return check_gated_fff()||check_tree_fw();
         if(!strcmp(argv[i],"--score-only")){scoreonly=1;continue;}
         const char*a=argv[i],*v=i+1<argc?argv[++i]:NULL;if(!v)return 2;
+        if(!strcmp(a,"--ttt-range")){if(ttt_nranges<32&&sscanf(v,"%ld:%ld",ttt_ranges+2*ttt_nranges,ttt_ranges+2*ttt_nranges+1)==2)ttt_nranges++;else return 2;continue;}
         if(!strcmp(a,"--ttt-optim")){if(!strcmp(v,"muon"))tt.optim=1;else if(!strcmp(v,"adamw"))tt.optim=0;else return 2;continue;}
         if(!strcmp(a,"--optimizer")){optimizer_explicit=1;if(!strcmp(v,"muon"))use_muon=1;else if(!strcmp(v,"adamw"))use_muon=0;else return 2;continue;}
         if(!strcmp(a,"--patcher")){if(strcmp(v,"neural")){fprintf(stderr,"Only the neural entropy patcher is supported.\n");return 2;}continue;}
@@ -3095,7 +3109,7 @@ int main(int argc,char**argv){
         OPT("--ssm-horizon",ssm_horizon,atof) OPT("--ttt-reset",ttt_reset,atol) OPT("--ttt-reset-mask",ttt_reset_mask,atoi) OPT("--refine",refine,atoi) OPT("--refine-context",refine_ctx,(const char*)) OPT("--refine-rounds",rf.rounds,atoi) OPT("--refine-cands",rf.cands,atoi) OPT("--refine-keep",rf.keep,atoi)
         OPT("--refine-len",rf.len,atoi) OPT("--refine-steps",rf.steps,atoi) OPT("--refine-epochs",rf.epochs,atoi) OPT("--refine-edits",rf.edits,atoi) OPT("--refine-span",rf.span,atoi) OPT("--refine-tail",rf.tail,atoi)
         OPT("--refine-retr",rf.retr,atoi) OPT("--refine-retr-m",rf.retr_m,atoi) OPT("--refine-temp",rf.temp,atof) OPT("--refine-rep",rf.rep,atof) OPT("--refine-final-temp",rf.final_temp,atof)
-        OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
+        OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
         OPT("--ttt-lr",tt.lr,atof) OPT("--ttt-decay",tt.decay,atof) OPT("--ttt-clip",tt.clip,atof) OPT("--ttt-beta2",tt.beta2,atof) OPT("--ttt-steps",tt.steps,atoi) OPT("--ttt-batch",tt.batch,atoi)
         OPT("--ttt-chunk",tt.chunk,atoi) OPT("--ttt-ctx",tt.ctx,atoi) OPT("--ttt-stream",tt.stream,atoi) OPT("--ttt-freeze",tt.freeze,atoi)
         OPT("--context-file",context_file,(const char*)) OPT("--data",data,(const char*)) OPT("--save",out,(const char*)) OPT("--load",in,(const char*)) OPT("--mode",mode,(const char*)) OPT("--prompt",prompt,(const char*))
@@ -3157,7 +3171,25 @@ int main(int argc,char**argv){
         trainsec=wall()-loop_start;
         step++;hp.step=step;hp.lr=lr*fmin(1,(trainsec+.1)/fmin(10,budget*.1))*(.1+.9*.5*(1+cos(3.141592653589793*fmin(1,trainsec/budget))));
         if(fixedsteps){double progress=steps>1?(double)(step-1)/(steps-1):1;hp.lr=lr*fmin(1,(double)step/100)*(.1+.9*.5*(1+cos(3.141592653589793*progress)));}
-        for(int b=0;b<B;b++){long at=(long)(urand(&data_rng)*(split-L-1));for(int i=0;i<L;i++){bt[b*L+i]=raw[at+i];by[b*L+i]=raw[at+i+1];}}
+        for(int b=0;b<B;b++){long at;
+            if(carry_windows>0&&blt){if(!carry_pos){carry_pos=calloc(B,sizeof(long));carry_left=calloc(B,sizeof(int));
+                    Cfg*gcp=&f->global->c;carry_sz_h=(size_t)(gcp->n_layer/2)*gcp->T*NODES(gcp)*gcp->n*gcp->p;carry_sz_hist=(size_t)gcp->n_layer*(gcp->K-1)*gcp->d;
+                    carry_bank_h=calloc((size_t)B*carry_sz_h,sizeof(real));carry_bank_hist=calloc((size_t)B*carry_sz_hist,sizeof(real));}
+                long need=(long)L*carry_windows+1;
+                if(carry_left[b]<=0){carry_left[b]=carry_windows;carry_pos[b]=0;
+                    memset(carry_bank_h+(size_t)b*carry_sz_h,0,carry_sz_h*sizeof(real));memset(carry_bank_hist+(size_t)b*carry_sz_hist,0,carry_sz_hist*sizeof(real));
+                    /* Build this row's stream: contiguous text, with pieces that re-copy earlier stream text. */
+                    if(!carry_buf){carry_buf=calloc((size_t)B*need,1);}unsigned char*sb=carry_buf+(size_t)b*need;
+                    long cur=(long)(urand(&data_rng)*(split-need-1)),len=0;
+                    while(len<need){
+                        if(len>512&&urand(&data_rng)<repeat_p){int pl=64+(int)(urand(&data_rng)*193);long gap=(long)(urand(&data_rng)*(len-pl));if(gap<0)gap=0;
+                            for(int i=0;i<pl&&len<need;i++)sb[len++]=sb[gap+i];}
+                        else{for(int i=0;i<128&&len<need;i++){sb[len++]=raw[cur++];if(cur>=split)cur=0;}}
+                    }}
+                unsigned char*sb=carry_buf+(size_t)b*need;at=carry_pos[b];carry_pos[b]+=L;carry_left[b]--;
+                for(int i=0;i<L;i++){bt[b*L+i]=sb[at+i];by[b*L+i]=sb[at+i+1];}continue;
+            }else at=(long)(urand(&data_rng)*(split-L-1));
+            for(int i=0;i<L;i++){bt[b*L+i]=raw[at+i];by[b*L+i]=raw[at+i+1];}}
         double st=wall();if(blt)loss=faithful_step(f,bt,by,B,L,&hp,&patches);else{loss=tss_train_step(&m->c,&m->P,&m->Q,&m->G,m->hit,&m->M,&m->V,m->Gt,m->hits,m->ws,threads,bt,by,B,L,&hp,m->k);patches+=(long long)B*L;}
         double step_seconds=wall()-st;if(step_seconds>max_step_seconds)max_step_seconds=step_seconds;
         trainsec=wall()-loop_start;seen+=(long long)B*L;
