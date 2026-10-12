@@ -1,0 +1,25 @@
+tune beta  8.0 gamma -4.0: single-turn 0.4944 follow-up 0.5123 topic-switch 0.4766
+tune beta  8.0 gamma  0.0: single-turn 0.4944 follow-up 0.8055 topic-switch 0.4677
+tune beta  8.0 gamma  2.0: single-turn 0.4944 follow-up 0.8219 topic-switch 0.4566
+tune beta  8.0 gamma  4.0: single-turn 0.4944 follow-up 0.8274 topic-switch 0.4432
+tune beta  8.0 gamma  8.0: single-turn 0.4944 follow-up 0.8301 topic-switch 0.4031
+tune beta 16.0 gamma -4.0: single-turn 0.5033 follow-up 0.6329 topic-switch 0.4944
+tune beta 16.0 gamma  0.0: single-turn 0.5033 follow-up 0.8411 topic-switch 0.4833
+tune beta 16.0 gamma  2.0: single-turn 0.5033 follow-up 0.8658 topic-switch 0.4699
+tune beta 16.0 gamma  4.0: single-turn 0.5033 follow-up 0.8712 topic-switch 0.4677
+tune beta 16.0 gamma  8.0: single-turn 0.5033 follow-up 0.8740 topic-switch 0.4321
+tune beta 32.0 gamma -4.0: single-turn 0.4900 follow-up 0.6438 topic-switch 0.4878
+tune beta 32.0 gamma  0.0: single-turn 0.4900 follow-up 0.8438 topic-switch 0.4855
+tune beta 32.0 gamma  2.0: single-turn 0.4900 follow-up 0.8795 topic-switch 0.4744
+tune beta 32.0 gamma  4.0: single-turn 0.4900 follow-up 0.8904 topic-switch 0.4722
+tune beta 32.0 gamma  8.0: single-turn 0.4900 follow-up 0.8932 topic-switch 0.4588
+tune beta 64.0 gamma -4.0: single-turn 0.5033 follow-up 0.5671 topic-switch 0.5033
+tune beta 64.0 gamma  0.0: single-turn 0.5033 follow-up 0.7068 topic-switch 0.5033
+tune beta 64.0 gamma  2.0: single-turn 0.5033 follow-up 0.7753 topic-switch 0.5011
+tune beta 64.0 gamma  4.0: single-turn 0.5033 follow-up 0.8082 topic-switch 0.4922
+tune beta 64.0 gamma  8.0: single-turn 0.5033 follow-up 0.8603 topic-switch 0.4744
+held-out half (n=814):
+  MLM beam only        single-turn 0.2292 (n=445)  follow-up 0.6016 (n=369)
+  n-gram cache only            single-turn 0.3865  follow-up 0.2954
+  hybrid (beta 32, gamma 4)  single-turn 0.4472  follow-up 0.8726  topic-switch 0.4202 (n=445)
+use: chat --beta 32 --gamma 4

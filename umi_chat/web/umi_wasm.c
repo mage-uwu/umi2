@@ -44,9 +44,10 @@ EMSCRIPTEN_KEEPALIVE const char*umi_say(const char*line,double thresh){
     TurnOut t;turn(&net,line,thresh,&t);size_t o=0;char b[160];
     put(&o,"{\"reply\":");jstr(&o,t.msg);
     if(t.restyle)put(&o,",\"id\":\"\",\"intent\":\"restyle previous reply\"");
+    else if(t.refine)put(&o,",\"id\":\"\",\"intent\":\"refine the widget on screen\"");
     else{Ans*a=answers+ans_at[t.r];snprintf(b,sizeof b,",\"id\":\"%d.%d.%d\",\"intent\":",ID_A(t.r),ID_B(t.r),ID_T(t.r));put(&o,b);jstr(&o,a->name);}
-    snprintf(b,sizeof b,",\"p\":%.4f,\"fallback\":%s,\"restyle\":%s,\"wrap\":%s,\"wp\":%.4f,\"seen\":",
-             t.c,t.fell?"true":"false",t.restyle?"true":"false",t.wrap?"true":"false",t.wc);put(&o,b);jstr(&o,t.text);
+    snprintf(b,sizeof b,",\"p\":%.4f,\"fallback\":%s,\"restyle\":%s,\"refine\":%s,\"wrap\":%s,\"wp\":%.4f,\"seen\":",
+             t.c,t.fell?"true":"false",t.restyle?"true":"false",t.refine?"true":"false",t.wrap?"true":"false",t.wc);put(&o,b);jstr(&o,t.text);
     put(&o,",\"name\":");jstr(&o,user_name);
     put(&o,",\"widget\":");if(t.widget){jstr(&o,t.widget);free(t.widget);}else put(&o,"null");
     put(&o,",\"widget_name\":");if(t.wname)jstr(&o,t.wname);else put(&o,"null");

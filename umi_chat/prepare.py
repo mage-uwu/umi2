@@ -34,7 +34,7 @@ def clean(msg):
     m = NAME_STRONG.sub(lambda g: g.group(1) + " " + TAG, m)
     return re.sub(r"\s+", " ", m).lower()
 
-def tsv(s): return s.replace("\t", " ").replace("\n", " ")
+def tsv(s): return fix(s).replace("\t", " ").replace("\n", " ")  # every text field: control bytes repaired
 def ids(a, b, t): return f"{a}.{b}.{t}"
 
 def main(raw, convdir, out):

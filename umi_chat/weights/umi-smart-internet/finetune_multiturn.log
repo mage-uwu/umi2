@@ -1,0 +1,23 @@
+train 59622 (14492 with context)  test 8137  answers 7888
+fine-tuning from weights/umi-smart-internet/umi-smart-internet.bin
+mode blt  core params 1287904  n-gram cache rows 98304 (6291456 values)  frozen entropy 42720
+step    287  t     36s  loss 1.0100  test@600 single-turn 0.235 follow-up 0.000
+step   3056  t    335s  loss 0.7851  test@600 single-turn 0.249 follow-up 0.064
+step   5828  t    635s  loss 0.7415  test@600 single-turn 0.229 follow-up 0.132
+step   8704  t    934s  loss 0.6797  test@600 single-turn 0.258 follow-up 0.388
+step  11590  t   1234s  loss 0.6924  test@600 single-turn 0.243 follow-up 0.384
+step  14495  t   1534s  loss 0.6408  test@600 single-turn 0.246 follow-up 0.473
+step  17368  t   1834s  loss 0.6267  test@600 single-turn 0.226 follow-up 0.477
+step  20109  t   2134s  loss 0.6203  test@600 single-turn 0.255 follow-up 0.502
+step  22887  t   2434s  loss 0.6005  test@600 single-turn 0.255 follow-up 0.537
+step  25660  t   2734s  loss 0.6161  test@600 single-turn 0.243 follow-up 0.548
+step  28523  t   3034s  loss 0.5856  test@600 single-turn 0.246 follow-up 0.569
+step  31376  t   3334s  loss 0.5869  test@600 single-turn 0.241 follow-up 0.548
+step  34187  t   3634s  loss 0.5808  test@600 single-turn 0.232 follow-up 0.548
+step  36894  t   3934s  loss 0.5404  test@600 single-turn 0.264 follow-up 0.559
+step  39665  t   4234s  loss 0.5107  test@600 single-turn 0.249 follow-up 0.612
+step  42495  t   4534s  loss 0.5283  test@600 single-turn 0.243 follow-up 0.619
+step  45477  t   4834s  loss 0.5217  test@600 single-turn 0.249 follow-up 0.630
+step  48377  t   5134s  loss 0.5181  test@600 single-turn 0.258 follow-up 0.584
+final: steps 50838  test single-turn 0.2479 (n=4514)  follow-up 0.5887 (n=3623)  | train@3000 0.8495 / 0.7829
+FT_DONE

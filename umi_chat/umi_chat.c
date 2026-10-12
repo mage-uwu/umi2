@@ -58,7 +58,9 @@ typedef struct{int id,parent,nv,last;char*name,*ans[NV],*ano[NV];}Ans;
 typedef struct{int*off,*ans;float*w,*idf;int n;}NgIdx;
 /* One retrieval cache: the answers, their ID index and the n-gram index. umi keeps two, the chat
  * cache and the umi-smart-internet widget cache, and C points at the one in use. */
-typedef struct{Ans*answers;int n_answers,*ans_at;unsigned char has_a[NA],has_ab[NA][NB];int intro_id,fallback_id,plain_id;NgIdx ng;}Cache;
+typedef struct{Ans*answers;int n_answers,*ans_at;unsigned char has_a[NA],has_ab[NA][NB];int intro_id,fallback_id,plain_id,strict_tree;NgIdx ng;}Cache;
+/* strict_tree (set for the widget cache, which has a "plain" class): a non-root conversation turn
+ * may only follow its own parent, because a widget refinement changes *that* widget */
 static Cache cache_chat={.intro_id=-1,.fallback_id=-1,.plain_id=-1},cache_web={.intro_id=-1,.fallback_id=-1,.plain_id=-1},*C=&cache_chat;
 #define answers (C->answers)
 #define n_answers (C->n_answers)
@@ -68,6 +70,7 @@ static Cache cache_chat={.intro_id=-1,.fallback_id=-1,.plain_id=-1},cache_web={.
 #define intro_id (C->intro_id)
 #define fallback_id (C->fallback_id)
 #define plain_id (C->plain_id)
+#define strict_tree (C->strict_tree)
 #define ng (C->ng)
 #define PACK(a,b,t) ((a)*NB*NT+(b)*NT+(t))
 #define ID_A(x) ((x)/(NB*NT))
@@ -101,6 +104,7 @@ static void load_answers(const char*dir){
         if(!strcmp(f[1],"umi_core/fallback_unknown"))fallback_id=id;
         if(!strncmp(f[1],"plain/",6))plain_id=id; /* widget cache: "no widget" */
     }fclose(fp);free(line);
+    strict_tree=plain_id>=0;
 }
 
 /* ---- model wrapper: BLT (Faithful) or direct byte core (Model) ---- */
@@ -230,17 +234,20 @@ static void mlm_score(Net*n,int th,const char*msg,int c1,int c2,const int*ids,in
     }
     free(lg);
 }
-static double hy_beta=8,hy_gamma=4; /* gamma: prior for a turn that directly follows the last reply */static int eval_n=0; /* eval: examples per half, 0 = all */ /* weight of the n-gram cosine against the MLM log-probability */
+static double hy_beta=8,hy_gamma=4,root_bonus=1; /* root_bonus: prefer widgets that open a refinable conversation */ /* gamma: prior for a turn that directly follows the last reply */static int eval_n=0; /* eval: examples per half, 0 = all */ /* weight of the n-gram cosine against the MLM log-probability */
 /* Hybrid retrieval: candidates = n-gram top-K plus every turn of the conversations in context;
  * decision = MLM log-prob + beta * cosine. beta<0 means n-gram only. Returns packed ID. */
-static int decide(Net*n,int th,const char*msg,int c1,int c2,double beta,double gamma,double*conf){
+static int decide(Net*n,int th,const char*msg,int c1,int c2,double beta,double gamma,double*conf,double*pplain){
     int ids[NGK+2*NT+1],na[NGK];float sc[NGK],*cos_all;int k=ngram_top(msg,NGK,na,sc,&cos_all),nc=0;double cs[NGK+2*NT+1];
-    for(int i=0;i<k;i++){ids[nc]=answers[na[i]].id;cs[nc++]=sc[i];}
+    for(int i=0;i<k;i++){Ans*a=answers+na[i];
+        if(strict_tree&&a->parent>=0&&a->parent!=c1&&a->parent!=c2)continue; /* someone else's refinement */
+        ids[nc]=a->id;cs[nc++]=sc[i];}
     /* "plain" (no widget) matches no particular n-grams, so it is always a candidate */
     if(plain_id>=0){int dup=0;for(int i=0;i<nc;i++)dup|=ids[i]==plain_id;if(!dup){ids[nc]=plain_id;cs[nc++]=cos_all[ans_at[plain_id]];}}
     for(int h=0;h<2;h++){int c=h?c2:c1;if(c<0)continue;int a=ID_A(c),b=ID_B(c);if(a<64)continue;
         for(int t=0;t<NT;t++){int id=PACK(a,b,t);if(ans_at[id]<0||answers[ans_at[id]].parent!=c)continue;int dup=0; /* only turns that follow it */for(int i=0;i<nc;i++)dup|=ids[i]==id;if(!dup){ids[nc]=id;cs[nc++]=cos_all[ans_at[id]];}}}
     free(cos_all);
+    if(pplain)*pplain=1;
     if(!nc){*conf=0;return -1;}
     if(beta<0){*conf=cs[0];return ids[0];}
     /* Two hypotheses. A turn that follows one of umi's last replies is scored by the MLM with that
@@ -249,9 +256,12 @@ static int decide(Net*n,int th,const char*msg,int c1,int c2,double beta,double g
     if(c1>=0)mlm_score(n,th,msg,-1,-1,ids,nc,lp0);
     int best=0;double mx=-1e300,z=0;
     for(int i=0;i<nc;i++){int p=answers[ans_at[ids[i]]].parent,fol=c1>=0&&(p==c1||(c2>=0&&p==c2));
+        if(strict_tree&&p<0&&ID_A(ids[i])>=64)lp[i]+=root_bonus;
         if(c1>=0&&!fol)lp[i]=lp0[i];
         lp[i]+=beta*cs[i]+(c1>=0&&p==c1?gamma:0);if(lp[i]>mx){mx=lp[i];best=i;}}
-    for(int i=0;i<nc;i++)z+=exp(lp[i]-mx);*conf=1/z;return ids[best];
+    for(int i=0;i<nc;i++)z+=exp(lp[i]-mx);*conf=1/z;
+    if(pplain){*pplain=0;for(int i=0;i<nc;i++)if(ids[i]==plain_id)*pplain=exp(lp[i]-mx)/z;}
+    return ids[best];
 }
 static void evaluate_hybrid(Net*n,Ex*e,int ne,double beta,double gamma,double*acc0,double*acc1,int*n0,int*n1){
     int h0=0,h1=0,c0=0,c1=0;
@@ -262,7 +272,7 @@ static void evaluate_hybrid(Net*n,Ex*e,int ne,double beta,double gamma,double*ac
 #else
         int th=0;
 #endif
-        double c;int r=decide(n,th,e[i].msg,e[i].c1,e[i].c2,beta,gamma,&c);
+        double c;int r=decide(n,th,e[i].msg,e[i].c1,e[i].c2,beta,gamma,&c,NULL);
         if(e[i].c1<0){c0++;h0+=r==e[i].id;}else{c1++;h1+=r==e[i].id;}
     }*acc0=c0?(double)h0/c0:0;*acc1=c1?(double)h1/c1:0;if(n0)*n0=c0;if(n1)*n1=c1;
 }
@@ -370,7 +380,7 @@ static void render(Ans*a,char*out,size_t on){
 }
 static int hist[2]={-1,-1}; /* IDs of umi's last two replies */
 /* ---- umi-smart-internet: compile the conversation into an HTML page with widgets ---- */
-static Net*webnet;static const char*html_out,*web_dir;static double web_thresh=.9,web_gamma=2; /* see the widget gate study in weights/umi-smart-internet/README.md */
+static Net*webnet;static const char*html_out,*web_dir;static double web_thresh=.995,web_gamma=4; /* see the widget gate study in weights/umi-smart-internet/README.md */
 typedef struct{char*user,*umi,*widget;}Turn;static Turn*turns;static int n_turns;
 static void html_esc(FILE*f,const char*s){for(;*s;s++){if(*s=='<')fputs("&lt;",f);else if(*s=='>')fputs("&gt;",f);else if(*s=='&')fputs("&amp;",f);else if(*s=='"')fputs("&quot;",f);else fputc(*s,f);}}
 static void write_page(void){
@@ -382,7 +392,7 @@ static void write_page(void){
         fputs("<div class=\"umi-turn\"><div class=\"msg user\">",f);html_esc(f,turns[i].user);fputs("</div>\n",f);
         const char*w=turns[i].widget,*slot=w?strstr(w,"{{answer}}"):NULL;
         if(slot){fwrite(w,1,slot-w,f);html_esc(f,turns[i].umi);fputs(slot+10,f);}  /* wrapper widget presents the reply */
-        else{fputs("<div class=\"msg umi\">",f);html_esc(f,turns[i].umi);fputs("</div>\n",f);if(w){fputs("<div class=\"umi-widget\">",f);fputs(w,f);fputs("</div>\n",f);}}
+        else{if(*turns[i].umi){fputs("<div class=\"msg umi\">",f);html_esc(f,turns[i].umi);fputs("</div>\n",f);}if(w){fputs("<div class=\"umi-widget\">",f);fputs(w,f);fputs("</div>\n",f);}}
         fputs("</div>\n",f);
     }
     fputs("</main></body></html>\n",f);fclose(f);
@@ -394,9 +404,9 @@ static int respond(Net*n,const char*line,double thresh,char*msg,size_t mn,char*t
     char alt[1024],cap[64]="",cap2[64]="";double c,c2;
     canon(line,text,1024);
     int strong=sub_name(&re_strong,2,text,alt,sizeof alt,cap,sizeof cap);if(strong)strcpy(text,alt);
-    int r=decide(n,0,text,hist[0],hist[1],hy_beta,hy_gamma,&c);
+    int r=decide(n,0,text,hist[0],hist[1],hy_beta,hy_gamma,&c,NULL);
     if(!strong&&sub_name(&re_weak,3,text,alt,sizeof alt,cap2,sizeof cap2)){
-        int r2=decide(n,0,alt,hist[0],hist[1],hy_beta,hy_gamma,&c2);
+        int r2=decide(n,0,alt,hist[0],hist[1],hy_beta,hy_gamma,&c2,NULL);
         if(r2==intro_id&&c2>c){r=r2;c=c2;strcpy(cap,cap2);strcpy(text,alt);}
     }
     if(r==intro_id&&*cap){
@@ -412,7 +422,7 @@ static int respond(Net*n,const char*line,double thresh,char*msg,size_t mn,char*t
  * card", "as flashcards") restyles umi's previous reply: the chat model is not asked and the
  * conversation context stays where it is. Otherwise the chat model replies, and a confident widget
  * is attached (a wrapper then presents the new reply). Shared by the CLI and the WebAssembly build. */
-typedef struct{int r,fell,restyle,wrap;double c,wc;char text[1024],msg[2048];char*widget;const char*wname;}TurnOut;
+typedef struct{int r,fell,restyle,wrap,refine;double c,wc;char text[1024],msg[2048];char*widget;const char*wname;}TurnOut;
 static char last_reply[2048];static int whist[2]={-1,-1}; /* IDs of the last two widgets shown */static double wrap_thresh=.5;static regex_t re_deictic;static int deictic_ok;
 /* "put THAT in a card", "make IT a flashcard": the message points back at umi's last reply */
 static int points_back(const char*text){
@@ -426,16 +436,20 @@ static void turn(Net*n,const char*line,double thresh,TurnOut*o){
     if(webnet){
         char alt[1024],cap[64];canon(line,o->text,sizeof o->text);
         if(sub_name(&re_strong,2,o->text,alt,sizeof alt,cap,sizeof cap))strcpy(o->text,alt);
-        C=&cache_web;w=decide(webnet,0,o->text,whist[0],whist[1],hy_beta,web_gamma,&wc);
+        double pp;C=&cache_web;w=decide(webnet,0,o->text,whist[0],whist[1],hy_beta,web_gamma,&wc,&pp);
+        wc=1-pp; /* gate on "show a widget at all" (all non-plain mass), then show the best one */
         if(w>=0&&w!=plain_id){Ans*wa=answers+ans_at[w];
             int restyle=is_wrapper(wa)&&*last_reply&&points_back(o->text)&&wc>=wrap_thresh;
             if(!restyle&&wc<web_thresh)w=-1;}
         else w=-1;
         if(w>=0){Ans*wa=answers+ans_at[w];o->wrap=is_wrapper(wa);o->wname=wa->name;o->wc=wc;
             size_t cap2=strlen(wa->ans[0])+strlen(wa->ano[0])+4096;o->widget=malloc(cap2);render(wa,o->widget,cap2);}
+        /* a refinement of the widget on screen is the whole answer: the chat model is not asked */
+        if(w>=0&&!o->wrap){int p=answers[ans_at[w]].parent;o->refine=p>=0&&(p==whist[0]||p==whist[1]);}
         if(w>=0&&!o->wrap){whist[1]=whist[0];whist[0]=w;} /* a content widget becomes the context for refinements */
         C=&cache_chat;
         if(w>=0&&o->wrap&&*last_reply&&points_back(o->text)){o->restyle=1;o->r=hist[0];o->c=wc;snprintf(o->msg,sizeof o->msg,"%s",last_reply);return;}
+        if(o->refine){o->r=hist[0];o->c=wc;o->msg[0]=0;return;}
     }
     o->r=respond(n,line,thresh,o->msg,sizeof o->msg,o->text,&o->c,&o->fell);
     snprintf(last_reply,sizeof last_reply,"%s",o->msg);
@@ -444,10 +458,11 @@ static void reply(Net*n,const char*line,double thresh,int verbose){
     TurnOut o;turn(n,line,thresh,&o);
     if(verbose){
         if(o.restyle)printf("  [restyle previous reply as %s | p=%.3f]\n",o.wname,o.wc);
+        else if(o.refine)printf("  [refine the widget on screen: %s | p=%.3f]\n",o.wname,o.wc);
         else{Ans*a=answers+ans_at[o.r];printf("  [%d.%d.%d %s | p=%.3f%s | seen as \"%s\"]\n",ID_A(o.r),ID_B(o.r),ID_T(o.r),a->name,o.c,o.fell?" -> fallback":"",o.text);}
-        if(o.widget&&!o.restyle)printf("  [widget %s | p=%.3f]\n",o.wname,o.wc);
+        if(o.widget&&!o.restyle&&!o.refine)printf("  [widget %s | p=%.3f]\n",o.wname,o.wc);
     }
-    printf("umi> %s\n",o.msg);fflush(stdout);
+    printf("umi> %s\n",o.refine?"[updated widget]":o.msg);fflush(stdout);
     if(webnet){turns=realloc(turns,(n_turns+1)*sizeof(Turn));turns[n_turns++]=(Turn){strdup(line),strdup(o.msg),o.widget};if(html_out)write_page();}
     else free(o.widget);
 }
@@ -462,7 +477,7 @@ int main(int argc,char**argv){
         if(!strcmp(a,"--data"))dir=v;else if(!strcmp(a,"--load"))in=v;else if(!strcmp(a,"--save"))out=v;else if(!strcmp(a,"--mode"))mode=v;
         else if(!strcmp(a,"--seconds"))seconds=atof(v);else if(!strcmp(a,"--entropy-seconds"))es=atof(v);else if(!strcmp(a,"--lr"))lr=atof(v);
         else if(!strcmp(a,"--aux"))aux=atof(v);else if(!strcmp(a,"--threshold"))thresh=atof(v);else if(!strcmp(a,"--batch"))B=atoi(v);
-        else if(!strcmp(a,"--switch"))sw=atof(v);else if(!strcmp(a,"--beta"))hy_beta=atof(v);else if(!strcmp(a,"--gamma"))hy_gamma=atof(v);else if(!strcmp(a,"--eval-n"))eval_n=atoi(v);
+        else if(!strcmp(a,"--switch"))sw=atof(v);else if(!strcmp(a,"--beta"))hy_beta=atof(v);else if(!strcmp(a,"--gamma"))hy_gamma=atof(v);else if(!strcmp(a,"--root-bonus"))root_bonus=atof(v);else if(!strcmp(a,"--eval-n"))eval_n=atoi(v);
         else if(!strcmp(a,"--web"))web_dir=v;else if(!strcmp(a,"--web-load"))wload=v;else if(!strcmp(a,"--html"))html_out=v;else if(!strcmp(a,"--web-threshold"))web_thresh=atof(v);else if(!strcmp(a,"--web-gamma"))web_gamma=atof(v);
         else if(!strcmp(a,"--threads"))threads=atoi(v);else if(!strcmp(a,"--seed"))seed=atoi(v);else if(!strcmp(a,"--width"))width=atoi(v);
         else if(!strcmp(a,"--ngram-bins"))bins=atoi(v);else if(!strcmp(a,"--ask"))ask=v;
