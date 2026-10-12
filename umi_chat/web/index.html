@@ -98,7 +98,7 @@ form{display:flex;gap:8px;padding-bottom:env(safe-area-inset-bottom,0px)}
     <section class="empty" id="empty">
       <h2>umi answers from a cache, and can show its answers as cards, charts and dashboards.</h2>
       <p>Each message goes through a 1,287,904-parameter bidirectional SSM. It fills a masked three-byte answer ID that picks one of 17,984 replies DeepSeek wrote for umi. Follow-ups use umi's last two replies as context. Your name is swapped for a <code>&lt;regex&gt;user_name&lt;/regex&gt;</code> tag before the model reads it, and filled back in afterwards.</p>
-      <p>A second model, umi-smart-internet, picks one of 3,757 HTML widgets when a message asks for something visual. Ask for a recipe card, a chart or a habit tracker, or say "put that in a card" or "make it a flashcard" to restyle umi's last reply. Everything runs on this device; nothing you type leaves the page.</p>
+      <p>A second model, umi-smart-internet, picks one of 3,757 HTML widgets when a message asks for something visual. Ask for a recipe card, a chart or a habit tracker, then refine it ("make it a pie chart", "add the weekend", "just the top 3"); umi remembers the last two widgets it showed. Say "put that in a card" or "make it a flashcard" to restyle umi's last reply. Everything runs on this device; nothing you type leaves the page.</p>
       <div class="facts">
         <div class="fact"><b>17,984 + 3,757</b><span>cached replies + widgets</span></div>
         <div class="fact"><b>68% · 82% · 64%</b><span>held-out: single turn · follow-up · topic switch</span></div>
@@ -115,9 +115,10 @@ form{display:flex;gap:8px;padding-bottom:env(safe-area-inset-bottom,0px)}
     <button type="button" disabled>what's my name?</button>
     <button type="button" disabled>explain photosynthesis</button>
     <button type="button" disabled>put that in a card</button>
+    <button type="button" disabled>make a bar chart of my weekly steps</button>
+    <button type="button" disabled>make it a line chart</button>
+    <button type="button" disabled>add the weekend</button>
     <button type="button" disabled>what's the best month to visit japan?</button>
-    <button type="button" disabled>make me a habit tracker</button>
-    <button type="button" disabled>why are you so small?</button>
   </div>
   <form id="form" autocomplete="off">
     <input id="msg" type="text" placeholder="Loading the model" aria-label="Message to umi" disabled maxlength="300">
@@ -208,7 +209,7 @@ worker.onmessage = (e) => {
   }
 };
 worker.onerror = (e) => { setStatus('Could not start', 'error'); const ll = $('loadline'); if (ll) ll.textContent = 'The WebAssembly worker failed to start: ' + (e.message || 'unknown error') + '. Reload to try again.'; };
-worker.postMessage({ type: 'load', beta: 32, gamma: 2, gate: 0.9, wrapGate: 0.5 });
+worker.postMessage({ type: 'load', beta: 32, gamma: 2, gate: 0.9, wrapGate: 0.5, webGamma: 2 });
 
 function ask(text) {
   text = text.trim(); if (!text || busy || !ready) return;

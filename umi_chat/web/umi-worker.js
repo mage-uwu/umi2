@@ -84,7 +84,7 @@ async function load(o) {
   await fetchModel('umi-smart-internet', tick);
   postMessage({ type: 'stage', text: 'Building the widget cache' });
   t0 = performance.now();
-  const w = M.ccall('umi_load_web', 'number', ['string', 'string', 'number', 'number'], ['/umi-smart-internet/model.bin', '/umi-smart-internet', o.gate, o.wrapGate]);
+  const w = M.ccall('umi_load_web', 'number', ['string', 'string', 'number', 'number', 'number'], ['/umi-smart-internet/model.bin', '/umi-smart-internet', o.gate, o.wrapGate, o.webGamma]);
   dropFiles('umi-smart-internet');
   postMessage({ type: 'widgets-ready', widgets: w, ms: Math.round(performance.now() - t0) });
 }
