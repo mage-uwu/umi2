@@ -5,8 +5,9 @@ The hashed n-gram embedding table (25 MB of float32) is stored as fp16; everythi
 checkpoint stays float32. The worker widens the table back to float32 before loading, so the
 C code is unchanged. Also writes a float32 checkpoint with the same fp16 rounding, for eval.
 
-  python3 pack_web.py CHECKPOINT DATA_DIR OUT_DIR OFFSET COUNT
-  (OFFSET COUNT from hash_offset.c)
+  python3 pack_web.py CHECKPOINT DATA_DIR OUT_DIR OFFSET COUNT [NAME]
+  (OFFSET COUNT from hash_offset.c; NAME defaults to umi-1M-chat and names the parts and
+   NAME.manifest.json, so several models can share one OUT_DIR)
 """
 import base64, gzip, json, os, sys
 import numpy as np
@@ -21,7 +22,7 @@ def b64_parts(raw, out, stem):
         open(os.path.join(out, name), "wb").write(b[i:i + PART])
     return names, len(b)
 
-def main(ckpt, data, out, off, count):
+def main(ckpt, data, out, off, count, name="umi-1M-chat"):
     off, count = int(off), int(count)
     os.makedirs(os.path.join(out, "model"), exist_ok=True); os.makedirs(os.path.join(out, "data"), exist_ok=True)
     raw = open(ckpt, "rb").read()
@@ -34,21 +35,21 @@ def main(ckpt, data, out, off, count):
           f"mean relative error {np.mean(err / (np.abs(table) + 1e-12)):.2e}")
     # float32 checkpoint carrying the fp16 rounding, for eval
     rt = raw[:off] + half.astype("<f4").tobytes() + raw[end:]
-    open(os.path.join(out, "umi-1M-chat.fp16-roundtrip.bin"), "wb").write(rt)
+    open(os.path.join(out, name + ".fp16-roundtrip.bin"), "wb").write(rt)
     # browser package: prefix (float32) + table (fp16) + suffix (float32), gzipped, base64 parts
     pack = gzip.compress(raw[:off] + half.tobytes() + raw[end:], 9, mtime=0)
-    mparts, mlen = b64_parts(pack, os.path.join(out, "model"), "umi-1M-chat.fp16.gz")
+    mparts, mlen = b64_parts(pack, os.path.join(out, "model"), name + ".fp16.gz")
     manifest = {"model": {"parts": ["model/" + n for n in mparts], "prefix": off, "count": count, "suffix": len(raw) - end,
                           "bytes": len(raw)}, "data": {}}
     total = mlen
-    for name in ("answers", "train"):
-        z = gzip.compress(open(os.path.join(data, name + ".tsv"), "rb").read(), 9, mtime=0)
-        parts, n = b64_parts(z, os.path.join(out, "data"), name + ".tsv.gz")
-        manifest["data"][name] = ["data/" + p for p in parts]; total += n
+    for table in ("answers", "train"):
+        z = gzip.compress(open(os.path.join(data, table + ".tsv"), "rb").read(), 9, mtime=0)
+        parts, n = b64_parts(z, os.path.join(out, "data"), f"{name}.{table}.tsv.gz")
+        manifest["data"][table] = ["data/" + p for p in parts]; total += n
     manifest["download_bytes"] = total
-    json.dump(manifest, open(os.path.join(out, "manifest.json"), "w"), indent=1)
+    json.dump(manifest, open(os.path.join(out, name + ".manifest.json"), "w"), indent=1)
     print(f"model: {len(raw)/1e6:.1f} MB float32 -> {len(pack)/1e6:.1f} MB packed -> {mlen/1e6:.1f} MB base64; "
           f"total download {total/1e6:.1f} MB")
 
 if __name__ == "__main__":
-    main(*sys.argv[1:6])
+    main(*sys.argv[1:7])

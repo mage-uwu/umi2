@@ -11,3 +11,19 @@ The model has the same architecture as umi-1M-chat (1,287,904 core parameters, B
 ./umi_chat chat --data data --load weights/umi-1M-chat/umi-1M-chat.bin --beta 32 --gamma 2 \
   --web data_web --web-load weights/umi-smart-internet/umi-smart-internet.bin --html umi.html -v
 ```
+
+## Widget gate (after the "plain is always a candidate" fix)
+
+These numbers come from 1,400 held-out widget requests and 641 held-out ordinary chat messages that should get no widget.
+
+| gate | widget requests shown | right widget type when shown | chat messages given a widget |
+|---|---|---|---|
+| 0.35 (old default) | 97.4% | 67.7% | 27.6% |
+| 0.60 | 87.0% | 70.0% | 20.9% |
+| **0.90 (default)** | **63.6%** | **76.0%** | **11.7%** |
+
+Before the fix, "plain" (no widget) was almost never in the n-gram top-16 candidate list, because its phrasings are 4,000 unrelated chat messages. At the old gate, 80.5% of chat messages got a widget.
+Many of the remaining "chat" hits are useful: "best month to visit Japan" gets a table and "compound interest" gets a glossary.
+With the fix, the exact-instance accuracy on the full widget test set rises from 0.409 to 0.487.
+
+Wrapper widgets ("put that in a card", "make it a flashcard") restyle umi's *previous* reply. This happens only when the message points back at it ("that", "it", "this", ...) and the widget model's confidence is at least 0.5. Then the chat model is not asked and the conversation context stays where it was.

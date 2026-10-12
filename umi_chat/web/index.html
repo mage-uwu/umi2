@@ -52,6 +52,9 @@ label.toggle{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--
 .why .bar i{display:block;height:100%;background:var(--accent)}
 .why .seen{flex-basis:100%;color:var(--ink-2)}
 body:not(.show-why) .why{display:none}
+.widget{width:100%;max-width:640px;min-width:0;overflow-x:auto}
+.turn.umi.has-widget{max-width:100%;width:min(640px,100%)}
+.restyled{font:12px var(--mono);color:var(--ink-3);padding:0 4px}
 .typing{color:var(--ink-3);font-style:italic;padding:0 4px}
 
 .empty{margin:auto 0;display:flex;flex-direction:column;gap:14px;padding:8px 2px}
@@ -84,6 +87,7 @@ form{display:flex;gap:8px;padding-bottom:env(safe-area-inset-bottom,0px)}
     <div class="brand"><h1>umi</h1><span>1M-param cache-retrieval chat · WebAssembly</span></div>
     <div class="status" id="status" role="status"><i class="dot"></i><span id="statusText">Loading</span></div>
     <span class="chip" id="nameChip" hidden>name <b id="nameVal"></b></span>
+    <span class="chip" id="widgetChip">widgets <b id="widgetVal">loading</b></span>
     <div class="tools">
       <label class="toggle" for="why"><input type="checkbox" id="why"> Show retrieval</label>
       <button class="ghost" id="newChat" type="button">New chat</button>
@@ -92,12 +96,13 @@ form{display:flex;gap:8px;padding-bottom:env(safe-area-inset-bottom,0px)}
 
   <main class="log" id="log" aria-live="polite">
     <section class="empty" id="empty">
-      <h2>umi answers from a cache. The model only decides which reply to pull.</h2>
-      <p>Each message goes through a 1,287,904-parameter bidirectional SSM. It fills a masked three-byte answer ID that picks one of 17,984 replies DeepSeek wrote for umi. Follow-ups use umi's last two replies as context. Your name is swapped for a <code>&lt;regex&gt;user_name&lt;/regex&gt;</code> tag before the model reads it, and filled back in afterwards. Everything runs on this device; nothing you type leaves the page.</p>
+      <h2>umi answers from a cache, and can show its answers as cards, charts and dashboards.</h2>
+      <p>Each message goes through a 1,287,904-parameter bidirectional SSM. It fills a masked three-byte answer ID that picks one of 17,984 replies DeepSeek wrote for umi. Follow-ups use umi's last two replies as context. Your name is swapped for a <code>&lt;regex&gt;user_name&lt;/regex&gt;</code> tag before the model reads it, and filled back in afterwards.</p>
+      <p>A second model, umi-smart-internet, picks one of 3,757 HTML widgets when a message asks for something visual. Ask for a recipe card, a chart or a habit tracker, or say "put that in a card" or "make it a flashcard" to restyle umi's last reply. Everything runs on this device; nothing you type leaves the page.</p>
       <div class="facts">
-        <div class="fact"><b>17,984</b><span>cached replies</span></div>
+        <div class="fact"><b>17,984 + 3,757</b><span>cached replies + widgets</span></div>
         <div class="fact"><b>68% · 82% · 64%</b><span>held-out: single turn · follow-up · topic switch</span></div>
-        <div class="fact"><b id="sizeFact">27 MB</b><span>model + cache to download (fp16, gzip)</span></div>
+        <div class="fact"><b id="sizeFact">52 MB</b><span>two models + caches to download (fp16, gzip)</span></div>
       </div>
       <div class="meter" aria-hidden="true"><i id="meter"></i></div>
       <div class="loadline" id="loadline">Starting the WebAssembly runtime</div>
@@ -108,9 +113,11 @@ form{display:flex;gap:8px;padding-bottom:env(safe-area-inset-bottom,0px)}
     <button type="button" disabled>hi umi!</button>
     <button type="button" disabled>my name is Sam</button>
     <button type="button" disabled>what's my name?</button>
-    <button type="button" disabled>how do i boil an egg?</button>
+    <button type="button" disabled>explain photosynthesis</button>
+    <button type="button" disabled>put that in a card</button>
+    <button type="button" disabled>what's the best month to visit japan?</button>
+    <button type="button" disabled>make me a habit tracker</button>
     <button type="button" disabled>why are you so small?</button>
-    <button type="button" disabled>tell me more</button>
   </div>
   <form id="form" autocomplete="off">
     <input id="msg" type="text" placeholder="Loading the model" aria-label="Message to umi" disabled maxlength="300">
@@ -119,7 +126,18 @@ form{display:flex;gap:8px;padding-bottom:env(safe-area-inset-bottom,0px)}
 </div>
 
 <script>
-let TOTAL_BYTES = 27424020; // replaced by manifest.json's download_bytes
+let TOTAL_BYTES = 52038058; // replaced by the manifests' download_bytes
+// Widgets render in a shadow root with umi's own design system ("Umi Cache UI", design.css),
+// so their styles and the page's styles cannot interfere. Fragments are static, sanitized HTML.
+let designCSS = '';
+fetch('design.css').then((r) => r.text()).then((t) => { designCSS = t.replace(/:root/g, ':host') + '\n:host{display:block;color:var(--ink);font-family:var(--font)}'; }).catch(() => {});
+function escapeHTML(s) { return s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]); }
+function widgetEl(html) {
+  const host = document.createElement('div'); host.className = 'widget';
+  const root = host.attachShadow({ mode: 'open' });
+  root.innerHTML = `<style>${designCSS}</style>${html}`;
+  return host;
+}
 const $ = (id) => document.getElementById(id);
 const log = $('log'), msg = $('msg'), send = $('send');
 let busy = false, ready = false, seq = 0, pending = null;
@@ -147,13 +165,13 @@ function addTurn(who, text) {
 const worker = new Worker('umi-worker.js');
 worker.onmessage = (e) => {
   const m = e.data;
-  if (m.type === 'size') { TOTAL_BYTES = m.bytes; $('sizeFact').textContent = (m.bytes / 1e6).toFixed(0) + ' MB'; }
+  if (m.type === 'size') { TOTAL_BYTES = m.bytes; const sf = $('sizeFact'); if (sf) sf.textContent = (m.bytes / 1e6).toFixed(0) + ' MB'; }
   else if (m.type === 'progress') {
     const pct = Math.min(100, (100 * m.bytes) / TOTAL_BYTES);
-    $('meter').style.width = pct.toFixed(1) + '%';
-    $('loadline').textContent = `Downloading the model and cache: ${(m.bytes / 1048576).toFixed(1)} MB`;
+    const mt = $('meter'); if (mt) mt.style.width = pct.toFixed(1) + '%';
+    const ll = $('loadline'); if (ll) ll.textContent = `Downloading the models and caches: ${(m.bytes / 1048576).toFixed(1)} MB`;
   } else if (m.type === 'stage') {
-    $('loadline').textContent = m.text; $('meter').style.width = '100%';
+    const ll = $('loadline'); if (ll) ll.textContent = m.text;
   } else if (m.type === 'ready') {
     ready = true; setStatus('Ready, running locally', 'ready'); setEnabled(true);
     const ll = $('loadline'); if (ll) ll.textContent = `Ready: ${m.answers.toLocaleString()} replies indexed in ${(m.ms / 1000).toFixed(1)} s.`;
@@ -162,14 +180,24 @@ worker.onmessage = (e) => {
     pending?.remove(); pending = null;
     const t = addTurn('umi', m.reply);
     if (m.fallback) t.firstChild.classList.add('fallback');
+    if (m.widget) {
+      t.classList.add('has-widget');
+      if (m.wrap) { // a wrapper presents umi's reply itself, in place of the plain bubble
+        t.replaceChild(widgetEl(m.widget.split('{{answer}}').join(escapeHTML(m.reply))), t.firstChild);
+        if (m.restyle) { const n = document.createElement('div'); n.className = 'restyled'; n.textContent = 'restyled umi\'s previous reply'; t.insertBefore(n, t.firstChild); }
+      } else t.appendChild(widgetEl(m.widget));
+    }
     const w = document.createElement('div'); w.className = 'why';
     const pct = Math.round(m.p * 100);
     w.innerHTML = `<code></code><span></span><span><span class="bar"><i style="width:${pct}%"></i></span> p ${m.p.toFixed(2)}${m.fallback ? ' · below threshold, fallback reply' : ''}</span><span>${m.ms} ms</span><span class="seen"></span>`;
     w.children[0].textContent = m.id; w.children[1].textContent = m.intent;
     w.querySelector('.seen').textContent = 'model saw: ' + m.seen;
+    if (m.widget_name) { const s = document.createElement('span'); s.className = 'seen'; s.textContent = `widget: ${m.widget_name} · p ${m.wp.toFixed(2)}`; w.appendChild(s); }
     t.appendChild(w); scroll();
     if (m.name) { $('nameVal').textContent = m.name; $('nameChip').hidden = false; }
     busy = false; setEnabled(true); msg.focus();
+  } else if (m.type === 'widgets-ready') {
+    $('widgetVal').textContent = 'on';
   } else if (m.type === 'reset') {
     log.innerHTML = ''; $('nameChip').hidden = true; busy = false; setEnabled(true); msg.focus();
   } else if (m.type === 'error') {
@@ -180,7 +208,7 @@ worker.onmessage = (e) => {
   }
 };
 worker.onerror = (e) => { setStatus('Could not start', 'error'); const ll = $('loadline'); if (ll) ll.textContent = 'The WebAssembly worker failed to start: ' + (e.message || 'unknown error') + '. Reload to try again.'; };
-worker.postMessage({ type: 'load', beta: 32, gamma: 2 });
+worker.postMessage({ type: 'load', beta: 32, gamma: 2, gate: 0.9, wrapGate: 0.5 });
 
 function ask(text) {
   text = text.trim(); if (!text || busy || !ready) return;
