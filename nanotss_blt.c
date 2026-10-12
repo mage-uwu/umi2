@@ -3086,7 +3086,7 @@ int main(int argc,char**argv){
     const char*data=NULL,*out=NULL,*in=NULL,*mode="blt",*prompt="ROMEO:",*entropy_in=NULL,*entropy_out=NULL,*context_file=NULL;int threads=4,B=16,L=256,burn=64,sample=0,seed=0,steps=100000000,scoreonly=0,fixedsteps=0;
     double seconds=300,entropy_seconds=60,entropy_charge=0,lr=.003,target=4,temp=.8;
     Cfg gc={.vocab=256,.d=128,.n_layer=4,.T=4,.D=7,.n=16,.p=16,.K=3,.group=128,.walks=2,.temp=1,.fff_gate=1,.fw_mask=1};
-    double ssm_horizon=0;int carry_windows=0;long*carry_pos=NULL;int*carry_left=NULL;unsigned char*carry_buf=NULL;double repeat_p=0;
+    double ssm_horizon=0;int carry_windows=0;long*carry_pos=NULL;int*carry_left=NULL;unsigned char*carry_buf=NULL;double repeat_p=0;long repeat_maxgap=0;
     int refine=0;const char*refine_ctx=NULL;Refine rf={.retr=0,.retr_m=32,.rounds=3,.cands=16,.keep=4,.len=400,.steps=8,.epochs=8,.edits=0,.span=12,.tail=512,.temp=1,.rep=2,.final_temp=1};
     const char*ttt_file=NULL,*ttt_control=NULL,*ttt_fit=NULL;double ttt_frac=.5;int ttt_epochs=8;long ttt_off=-1,ttt_len=0,ttt_stride=0;int ttt_docs=1;
     TTT tt={.rnd=0,.lr=0,.decay=0,.clip=1,.beta2=.99,.steps=1,.batch=4,.chunk=192,.ctx=64,.stream=0,.freeze=0,.optim=0};
@@ -3109,7 +3109,7 @@ int main(int argc,char**argv){
         OPT("--ssm-horizon",ssm_horizon,atof) OPT("--ttt-reset",ttt_reset,atol) OPT("--ttt-reset-mask",ttt_reset_mask,atoi) OPT("--refine",refine,atoi) OPT("--refine-context",refine_ctx,(const char*)) OPT("--refine-rounds",rf.rounds,atoi) OPT("--refine-cands",rf.cands,atoi) OPT("--refine-keep",rf.keep,atoi)
         OPT("--refine-len",rf.len,atoi) OPT("--refine-steps",rf.steps,atoi) OPT("--refine-epochs",rf.epochs,atoi) OPT("--refine-edits",rf.edits,atoi) OPT("--refine-span",rf.span,atoi) OPT("--refine-tail",rf.tail,atoi)
         OPT("--refine-retr",rf.retr,atoi) OPT("--refine-retr-m",rf.retr_m,atoi) OPT("--refine-temp",rf.temp,atof) OPT("--refine-rep",rf.rep,atof) OPT("--refine-final-temp",rf.final_temp,atof)
-        OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
+        OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--repeat-maxgap",repeat_maxgap,atol) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
         OPT("--ttt-lr",tt.lr,atof) OPT("--ttt-decay",tt.decay,atof) OPT("--ttt-clip",tt.clip,atof) OPT("--ttt-beta2",tt.beta2,atof) OPT("--ttt-steps",tt.steps,atoi) OPT("--ttt-batch",tt.batch,atoi)
         OPT("--ttt-chunk",tt.chunk,atoi) OPT("--ttt-ctx",tt.ctx,atoi) OPT("--ttt-stream",tt.stream,atoi) OPT("--ttt-freeze",tt.freeze,atoi)
         OPT("--context-file",context_file,(const char*)) OPT("--data",data,(const char*)) OPT("--save",out,(const char*)) OPT("--load",in,(const char*)) OPT("--mode",mode,(const char*)) OPT("--prompt",prompt,(const char*))
@@ -3172,8 +3172,8 @@ int main(int argc,char**argv){
         step++;hp.step=step;hp.lr=lr*fmin(1,(trainsec+.1)/fmin(10,budget*.1))*(.1+.9*.5*(1+cos(3.141592653589793*fmin(1,trainsec/budget))));
         if(fixedsteps){double progress=steps>1?(double)(step-1)/(steps-1):1;hp.lr=lr*fmin(1,(double)step/100)*(.1+.9*.5*(1+cos(3.141592653589793*progress)));}
         for(int b=0;b<B;b++){long at;
-            if(carry_windows>0&&blt){if(!carry_pos){carry_pos=calloc(B,sizeof(long));carry_left=calloc(B,sizeof(int));
-                    Cfg*gcp=&f->global->c;carry_sz_h=(size_t)(gcp->n_layer/2)*gcp->T*NODES(gcp)*gcp->n*gcp->p;carry_sz_hist=(size_t)gcp->n_layer*(gcp->K-1)*gcp->d;
+            if(carry_windows>0){if(!carry_pos){carry_pos=calloc(B,sizeof(long));carry_left=calloc(B,sizeof(int));
+                    Cfg*gcp=blt?&f->global->c:&m->c;carry_sz_h=(size_t)(gcp->n_layer/2)*gcp->T*NODES(gcp)*gcp->n*gcp->p;carry_sz_hist=(size_t)gcp->n_layer*(gcp->K-1)*gcp->d;
                     carry_bank_h=calloc((size_t)B*carry_sz_h,sizeof(real));carry_bank_hist=calloc((size_t)B*carry_sz_hist,sizeof(real));}
                 long need=(long)L*carry_windows+1;
                 if(carry_left[b]<=0){carry_left[b]=carry_windows;carry_pos[b]=0;
@@ -3182,7 +3182,7 @@ int main(int argc,char**argv){
                     if(!carry_buf){carry_buf=calloc((size_t)B*need,1);}unsigned char*sb=carry_buf+(size_t)b*need;
                     long cur=(long)(urand(&data_rng)*(split-need-1)),len=0;
                     while(len<need){
-                        if(len>512&&urand(&data_rng)<repeat_p){int pl=64+(int)(urand(&data_rng)*193);long gap=(long)(urand(&data_rng)*(len-pl));if(gap<0)gap=0;
+                        if(len>512&&urand(&data_rng)<repeat_p){int pl=64+(int)(urand(&data_rng)*193);long lo=repeat_maxgap>0&&len-pl-repeat_maxgap>0?len-pl-repeat_maxgap:0;long gap=lo+(long)(urand(&data_rng)*(len-pl-lo));if(gap<0)gap=0;
                             for(int i=0;i<pl&&len<need;i++)sb[len++]=sb[gap+i];}
                         else{for(int i=0;i<128&&len<need;i++){sb[len++]=raw[cur++];if(cur>=split)cur=0;}}
                     }}
