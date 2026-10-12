@@ -1,0 +1,6 @@
+train 479919 (305934 with context)  test 156125  answers 149595
+fine-tuning from weights/umi-1M-chat/umi-1M-chat.bin
+mode blt  core params 1287904  n-gram cache rows 98304 (6291456 values)  frozen entropy 42720
+step    295  t     35s  loss 1.1089  test@600 single-turn 0.151 follow-up 0.073
+step   2026  t    335s  loss 0.8754  test@600 single-turn 0.104 follow-up 0.545
+step   3808  t    633s  loss 0.8377  test@600 single-turn 0.132 follow-up 0.624
