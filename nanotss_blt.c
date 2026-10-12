@@ -121,6 +121,7 @@ static real sigm(real x) {
 }
 /* Reference switch retains original reduction order for validation. */
 static int runtime_fast=1;
+static real ssm_dec_cap=1; /* <1 caps SSM retention per step: horizon ~ 1/(1-cap) steps */
 #if defined(__AVX512F__) && !defined(TSS_DOUBLE)
 #include <immintrin.h>
 #endif
@@ -1151,7 +1152,7 @@ static void layer_fwd(const Cfg *c,const Params *P,const Params *Q,int l,int L,r
             const size_t row=(size_t)tr*N+node[tr],v=((size_t)t*T+tr)*(D+1)+kk;
             real *ha=h+row*n*pv,*R=tp->R+v*pv;
             if(w->prepare_state)w->prepare_state(w->prepare_state_user,ha,r_node+row,n,pv);
-            const real dec=exp(-decay_rate(k,r_node+row,A_log[row])*dtt[tr]),wdt=dtt[tr];
+            real dec=exp(-decay_rate(k,r_node+row,A_log[row])*dtt[tr]);if(dec>ssm_dec_cap)dec=ssm_dec_cap;const real wdt=dtt[tr];
 #if FAST
             if(!bf)
 #endif
@@ -2737,7 +2738,7 @@ static int check_tree_fw(void){
  * weights take --ttt-steps optimizer steps on --ttt-batch windows: the newest
  * window plus uniform replay from everything already seen. No future byte is
  * ever trained on before it is scored. */
-typedef struct {double lr,decay,clip,beta2;int steps,batch,chunk,ctx,stream,freeze,optim;} TTT;
+typedef struct {double lr,decay,clip,beta2;int steps,batch,chunk,ctx,stream,freeze,optim,rnd;} TTT;
 typedef struct {real*p[3*N_FIELDS+1];size_t n[3*N_FIELDS+1];int k;} PSet;
 static void fparams(Faithful*f,PSet*s){
     Model*mods[3]={f->global,f->encoder,f->decoder};s->k=0;
@@ -2765,12 +2766,22 @@ static void snap_pull(Faithful*f,real**b,real lambda){
     PSet s;fparams(f,&s);for(int i=0;i<s.k;i++)for(size_t j=0;j<s.n[i];j++)s.p[i][j]+=lambda*(b[i][j]-s.p[i][j]);faithful_requantize(f);
 }
 static long ttt_step_count=0;
+static long ttt_reset=0;static int ttt_reset_mask=0; /* streaming diagnostics: zero chosen states every ttt_reset bytes */
+static void gen_reset(const Cfg*c,Gen*g){memset(g->h,0,node_rows(c)*c->n*c->p*sizeof(real));memset(g->hist,0,(size_t)c->n_layer*(c->K>1?c->K-1:1)*c->d*sizeof(real));memset(g->R,0,c->p*sizeof(real));memset(g->Racc,0,c->p*sizeof(real));}
+static void fstream_reset(Faithful*f,FStream*s,int mask){
+    if((mask&1)&&s->entropy)gen_reset(&f->entropy->c,s->entropy);if(mask&2)gen_reset(&f->encoder->c,s->enc);
+    if(mask&4){gen_reset(&f->global->c,s->global);memset(s->mixhist,0,(TC_TAPS-1)*2*f->c.width*sizeof(real));}if(mask&8)gen_reset(&f->decoder->c,s->dec);
+    for(int l=0;l<f->global->c.n_layer;l+=2)if(mask&(16<<l)){const Cfg*c=&f->global->c;size_t a=node_off(c,l)*c->n*c->p,z=(node_off(c,l+1)-node_off(c,l))*c->n*c->p;memset(s->global->h+a,0,z*sizeof(real));}
+}
+static const unsigned char*ttt_ctrl=NULL;static long ttt_ctrl_n=0; /* control: train on this corpus instead of the context */
 /* Train on windows whose labels lie inside raw[0..e]. */
 static double ttt_train(Faithful*f,const unsigned char*raw,long e,const TTT*o,uint64_t*rng,int*t,int*y){
     int L=f->Lmax<256?f->Lmax:256;if(e<L)return 0;double loss=0;
     int save_muon=use_muon,save_freeze=ttt_freeze;use_muon=o->optim;ttt_freeze=o->freeze;
     for(int it=0;it<o->steps;it++){
-        for(int b=0;b<o->batch;b++){long at=b==0?e-L:(long)(urand(rng)*(e-L+1));if(at>e-L)at=e-L;
+        for(int b=0;b<o->batch;b++){
+            if(ttt_ctrl){long at=(long)(urand(rng)*(ttt_ctrl_n-L-1));for(int i=0;i<L;i++){t[b*L+i]=ttt_ctrl[at+i];y[b*L+i]=ttt_ctrl[at+i+1];}continue;}
+            long at=b==0&&!o->rnd?e-L:(long)(urand(rng)*(e-L+1));if(at>e-L)at=e-L;
             for(int i=0;i<L;i++){t[b*L+i]=raw[at+i];y[b*L+i]=raw[at+i+1];}}
         Hyper h={.lr=o->lr,.beta1=.9,.beta2=o->beta2,.eps=1e-8,.weight_decay=0,.clip=o->clip,.step=++ttt_step_count};
         loss+=faithful_step(f,t,y,o->batch,L,&h,NULL);
@@ -2791,6 +2802,7 @@ static double ttt_run(Faithful*f,const unsigned char*raw,long n,const TTT*o,real
                 if(!have){fstream_step(f,fs,raw[i],slg);}
                 double mx=-1e30,z=0;for(int v=0;v<256;v++)mx=slg[v]>mx?slg[v]:mx;for(int v=0;v<256;v++)z+=exp(slg[v]-mx);
                 double li=log(z)+mx-slg[raw[i+1]];if(loss)loss[i+1]=li;if(i+1>=skip){tot+=li;cnt++;}
+                if(ttt_reset&&(i+1)%ttt_reset==0)fstream_reset(f,fs,ttt_reset_mask);
                 fstream_step(f,fs,raw[i+1],slg);have=1;
             }
         }else{
@@ -2809,8 +2821,9 @@ static unsigned char*read_file(const char*path,long*n){
     if(fread(r,1,*n,fp)!=(size_t)*n){fclose(fp);free(r);return NULL;}fclose(fp);return r;
 }
 /* --ttt-eval FILE: score a document online. Prints overall bpc and a log2 position curve. */
-static int ttt_eval_main(const char*ckpt,const char*path,long off,long len,const TTT*o,int threads,int docs,long docstride){
+static int ttt_eval_main(const char*ckpt,const char*path,long off,long len,const TTT*o,int threads,int docs,long docstride,const char*ctrl){
     long n;unsigned char*all=read_file(path,&n);if(!all)return 1;
+    if(ctrl){unsigned char*c=read_file(ctrl,&ttt_ctrl_n);if(!c)return 1;ttt_ctrl_n=(long)(ttt_ctrl_n*.9);ttt_ctrl=c;}
     if(off<0)off=(long)(n*.9);if(len<=0||off+len>n)len=n-off;
     int W=o->ctx+o->chunk;Faithful*f=faithful_load(ckpt,threads,W>256?W:256);if(!f){fprintf(stderr,"ttt-eval needs a BLT checkpoint\n");return 1;}
     real**base=snap_take(f);int nb=0;while((1L<<nb)<len)nb++;double*bs=calloc(nb+1,sizeof(double));long*bc=calloc(nb+1,sizeof(long));
@@ -2823,9 +2836,136 @@ static int ttt_eval_main(const char*ckpt,const char*path,long off,long len,const
         printf("{\"event\":\"ttt_doc\",\"doc\":%d,\"start\":%ld,\"bytes\":%ld,\"bpc\":%.6f,\"seconds\":%.3f,\"train_seconds\":%.3f}\n",d,start,len,bpc,wall()-st,ts);fflush(stdout);
     }
     for(int b=0;b<=nb;b++)if(bc[b])printf("{\"event\":\"ttt_curve\",\"from\":%ld,\"to\":%ld,\"bytes\":%ld,\"bpc\":%.6f}\n",b?1L<<b:1,2L<<b,bc[b],bs[b]/bc[b]/log(2.));
-    printf("{\"event\":\"ttt_eval\",\"lr\":%g,\"steps\":%d,\"batch\":%d,\"chunk\":%d,\"ctx\":%d,\"stream\":%d,\"freeze\":%d,\"optim\":\"%s\",\"decay\":%g,\"bytes\":%ld,\"bpc\":%.6f,\"train_seconds\":%.3f}\n",
-        o->lr,o->steps,o->batch,o->chunk,o->ctx,o->stream,o->freeze,o->optim?"muon":"adamw",o->decay,tc,total/tc/log(2.),tsec);
+    printf("{\"event\":\"ttt_eval\",\"lr\":%g,\"steps\":%d,\"batch\":%d,\"chunk\":%d,\"ctx\":%d,\"stream\":%d,\"freeze\":%d,\"optim\":\"%s\",\"decay\":%g,\"control\":%d,\"bytes\":%ld,\"bpc\":%.6f,\"train_seconds\":%.3f}\n",
+        o->lr,o->steps,o->batch,o->chunk,o->ctx,o->stream,o->freeze,o->optim?"muon":"adamw",o->decay,ttt_ctrl!=NULL,tc,total/tc/log(2.),tsec);
     return 0;
+}
+
+/* --ttt-fit FILE: read the first fraction of each document as context for E epochs of TTT,
+ * then score the held-out remainder (windowed, weights fixed) after every epoch. */
+static int ttt_fit_main(const char*ckpt,const char*paths,double frac,int epochs,const TTT*o0,int threads){
+    Faithful*f=faithful_load(ckpt,threads,256);if(!f){fprintf(stderr,"ttt-fit needs a BLT checkpoint\n");return 1;}
+    real**base=snap_take(f);TTT o=*o0;o.rnd=1;int L=256;
+    int*t=malloc((size_t)L*o.batch*sizeof(int)),*y=malloc((size_t)L*o.batch*sizeof(int));
+    char buf[4096];strncpy(buf,paths,sizeof(buf)-1);buf[sizeof(buf)-1]=0;
+    for(char*path=strtok(buf,",");path;path=strtok(NULL,",")){
+        long n;unsigned char*raw=read_file(path,&n);if(!raw)return 1;long c=(long)(n*frac);
+        snap_restore(f,base);uint64_t rng=0x243F6A8885A308D3ULL;long cnt;double tsec=0;
+        double q=score_data(f,NULL,raw,c,n,L,64,&cnt);
+        printf("{\"event\":\"ttt_fit\",\"doc\":\"%s\",\"context_bytes\":%ld,\"query_bytes\":%ld,\"epoch\":0,\"query_bpc\":%.6f,\"train_seconds\":0}\n",path,c,cnt,q);fflush(stdout);
+        long per=c/((long)L*o.batch);if(per<1)per=1;o.steps=per;
+        for(int e=1;e<=epochs;e++){
+            double st=wall();ttt_train(f,raw,c,&o,&rng,t,y);if(o.decay>0)snap_pull(f,base,o.decay);tsec+=wall()-st;
+            if((e&(e-1))==0||e==epochs){q=score_data(f,NULL,raw,c,n,L,64,&cnt);
+            printf("{\"event\":\"ttt_fit\",\"doc\":\"%s\",\"context_bytes\":%ld,\"query_bytes\":%ld,\"epoch\":%d,\"query_bpc\":%.6f,\"train_seconds\":%.3f}\n",path,c,cnt,e,q,tsec);fflush(stdout);}
+        }free(raw);
+    }return 0;
+}
+/* ---------------- Iterative refinement: drafts as test-time training data ----------------
+ * 1. Optionally read a context file for E epochs of TTT (the scratchpad lives in the weights).
+ * 2. Each round: sample K drafts after (context tail + prompt), score each by mean byte NLL
+ *    under the current weights plus a repetition penalty, keep the best m, and take TTT steps
+ *    on windows ending in those drafts mixed with replay windows from the context.
+ * 3. Optionally polish the final best draft by local search: resample a short span starting
+ *    at a high-surprisal byte, keep the edit only if the whole-draft score improves. */
+typedef struct {int rounds,cands,keep,len,steps,epochs,edits,span,tail;double temp,rep,final_temp;} Refine;
+static int sample_rng(const real*lg,double temp,uint64_t*rng){
+    double mx=-1e300,z=0,p[256];for(int v=0;v<256;v++)mx=lg[v]>mx?lg[v]:mx;
+    for(int v=0;v<256;v++){p[v]=exp((lg[v]-mx)/temp);z+=p[v];}double r=urand(rng)*z;
+    for(int v=0;v<256;v++)if((r-=p[v])<=0)return v;return 255;
+}
+/* Sample n bytes after prefix into out. */
+static void draft_sample(Faithful*f,const unsigned char*pre,int np,unsigned char*out,int n,double temp,uint64_t*rng){
+    FStream*s=fstream_new(f);real lg[256];for(int i=0;i<np;i++)fstream_step(f,s,pre[i],lg);
+    for(int i=0;i<n;i++){int v=sample_rng(lg,temp,rng);out[i]=v;fstream_step(f,s,v,lg);}
+}
+/* Mean NLL (nats) of seq[from..n) given seq[0..from), windowed with 64 bytes of left context. Thread th. */
+static double seq_nll(Faithful*f,int th,const unsigned char*seq,int n,int from,float*per){
+    int t[256],y[256];static __thread real*lg=NULL;if(!lg)lg=malloc(256*256*sizeof(real));double tot=0;int cnt=0;
+    for(int s=from;s<n-1+1&&s<n;s+=192){int e=s+192<n?s+192:n;int a=s-64<0?0:s-64;int Lw=e-a;
+        for(int i=0;i<Lw;i++){t[i]=seq[a+i];y[i]=-1;}int ns;faithful_eval(f,th,t,y,Lw,&ns,lg);
+        for(int i=s;i<e;i++){if(i==0)continue;real*l=lg+(size_t)(i-1-a)*256;if(i-1<a)continue;
+            double mx=-1e30,z=0;for(int v=0;v<256;v++)mx=l[v]>mx?l[v]:mx;for(int v=0;v<256;v++)z+=exp(l[v]-mx);
+            double li=log(z)+mx-l[seq[i]];if(per)per[i-from]=li;tot+=li;cnt++;}}
+    return cnt?tot/cnt:0;
+}
+/* Fraction of repeated 6-byte grams: 0 for no repetition. */
+static double rep_frac(const unsigned char*x,int n){
+    if(n<7)return 0;int dup=0;uint64_t*h=malloc((size_t)n*sizeof(uint64_t));
+    for(int i=0;i+6<=n;i++){uint64_t v=0;for(int k=0;k<6;k++)v=v*257+x[i+k];h[i]=v;int seen=0;for(int j=0;j<i;j++)if(h[j]==v){seen=1;break;}dup+=seen;}
+    free(h);return (double)dup/(n-5);
+}
+static void json_str(FILE*o,const unsigned char*x,int n){fputc('"',o);for(int i=0;i<n;i++){int c=x[i];if(c=='"'||c=='\\')fprintf(o,"\\%c",c);else if(c=='\n')fputs("\\n",o);else if(c<32||c>126)fprintf(o,"\\u%04x",c);else fputc(c,o);}fputc('"',o);}
+static int refine_main(const char*ckpt,const char*ctxpath,const char*prompt,const Refine*R,const TTT*o0,int threads,int seed){
+    Faithful*f=faithful_load(ckpt,threads,256);if(!f){fprintf(stderr,"refine needs a BLT checkpoint\n");return 1;}
+    long nc=0;unsigned char*ctx=ctxpath?read_file(ctxpath,&nc):NULL;if(ctxpath&&!ctx)return 1;
+    TTT o=*o0;o.rnd=1;int L=256;uint64_t rng=0x9E3779B97F4A7C15ULL^((uint64_t)seed*0xD1B54A32D192ED03ULL);
+    int*t=malloc((size_t)L*(o.batch>8?o.batch:8)*sizeof(int)),*y=malloc((size_t)L*(o.batch>8?o.batch:8)*sizeof(int));double t0=wall();
+    if(ctx&&R->epochs>0&&o.lr>0){long per=nc/((long)L*o.batch);if(per<1)per=1;TTT oc=o;oc.steps=per;
+        for(int e=0;e<R->epochs;e++)ttt_train(f,ctx,nc,&oc,&rng,t,y);}
+    fprintf(stderr,"{\"event\":\"refine_context\",\"bytes\":%ld,\"epochs\":%d,\"seconds\":%.3f}\n",nc,R->epochs,wall()-t0);
+    int tail=ctx?(nc<R->tail?(int)nc:R->tail):0,pl=strlen(prompt),np=tail+pl,N=R->len,K=R->cands;
+    unsigned char*pre=malloc(np+1);if(tail)memcpy(pre,ctx+nc-tail,tail);memcpy(pre+tail,prompt,pl);
+    unsigned char*cand=malloc((size_t)K*N),*seq=malloc((size_t)K*(np+N));double*score=malloc(K*sizeof(double)),*nll=malloc(K*sizeof(double));int*ord=malloc(K*sizeof(int));
+    uint64_t*rs=malloc(K*sizeof(uint64_t));unsigned char*best=malloc(N);double bests=1e30;
+    for(int r=0;r<=R->rounds;r++){
+        double temp=r==R->rounds?R->final_temp:R->temp;
+        for(int k=0;k<K;k++)rs[k]=rng^((uint64_t)(r*1000+k+1)*0x9E3779B97F4A7C15ULL);
+#pragma omp parallel for num_threads(threads) schedule(dynamic,1)
+        for(int k=0;k<K;k++){
+#ifdef _OPENMP
+            int th=omp_get_thread_num();
+#else
+            int th=0;
+#endif
+            draft_sample(f,pre,np,cand+(size_t)k*N,N,temp,rs+k);unsigned char*sq=seq+(size_t)k*(np+N);memcpy(sq,pre,np);memcpy(sq+np,cand+(size_t)k*N,N);
+            nll[k]=seq_nll(f,th,sq,np+N,np,NULL);score[k]=nll[k]+R->rep*rep_frac(cand+(size_t)k*N,N);
+        }
+        for(int k=0;k<K;k++)ord[k]=k;for(int i=1;i<K;i++){int v=ord[i],j=i;while(j>0&&score[ord[j-1]]>score[v]){ord[j]=ord[j-1];j--;}ord[j]=v;}
+        double mean=0,mrep=0;for(int k=0;k<K;k++){mean+=nll[k];mrep+=rep_frac(cand+(size_t)k*N,N);}
+        printf("{\"event\":\"refine_round\",\"round\":%d,\"temp\":%.3f,\"mean_nll_bpc\":%.4f,\"best_nll_bpc\":%.4f,\"mean_rep\":%.4f,\"best\":",r,temp,mean/K/log(2.),nll[ord[0]]/log(2.),mrep/K);
+        json_str(stdout,cand+(size_t)ord[0]*N,N);printf(",\"cands\":[");for(int k=0;k<K;k++){if(k)putchar(',');json_str(stdout,cand+(size_t)k*N,N);}printf("]}\n");fflush(stdout);
+        memcpy(best,cand+(size_t)ord[0]*N,N);bests=score[ord[0]];
+        if(r==R->rounds||o.lr<=0)continue;
+        /* Self-training: windows ending inside kept drafts, half replay from context. */
+        int save_muon=use_muon,save_freeze=ttt_freeze;use_muon=o.optim;ttt_freeze=o.freeze;
+        for(int it=0;it<R->steps;it++){
+            for(int b=0;b<o.batch;b++){
+                if(ctx&&(b&1)&&nc>L+1){long at=(long)(urand(&rng)*(nc-L-1));for(int i=0;i<L;i++){t[b*L+i]=ctx[at+i];y[b*L+i]=ctx[at+i+1];}continue;}
+                int k=ord[(int)(urand(&rng)*R->keep)%R->keep];unsigned char*sq=seq+(size_t)k*(np+N);int n=np+N;
+                int lo=np-L+1>0?np-L+1:0,hi=n-L-1;if(hi<lo)hi=lo;int at=lo+(int)(urand(&rng)*(hi-lo+1));if(at+L+1>n)at=n-L-1;if(at<0)at=0;
+                for(int i=0;i<L;i++){int a=at+i;t[b*L+i]=a<n?sq[a]:'\n';y[b*L+i]=a+1<n?sq[a+1]:-1;}
+            }
+            Hyper h={.lr=o.lr,.beta1=.9,.beta2=o.beta2,.eps=1e-8,.weight_decay=0,.clip=o.clip,.step=++ttt_step_count};faithful_step(f,t,y,o.batch,L,&h,NULL);
+        }use_muon=save_muon;ttt_freeze=save_freeze;
+    }
+    /* Local search on the best draft. */
+    if(R->edits>0){
+        unsigned char*cur=malloc(np+N),*prop=malloc((size_t)threads*(np+N));float*per=malloc(N*sizeof(float));memcpy(cur,pre,np);memcpy(cur+np,best,N);
+        double cs=seq_nll(f,0,cur,np+N,np,per)+R->rep*rep_frac(cur+np,N);int acc=0;
+        for(int e=0;e<R->edits;e+=threads){
+            double ps[64];
+#pragma omp parallel for num_threads(threads) schedule(static,1)
+            for(int j=0;j<threads;j++){
+#ifdef _OPENMP
+                int th=omp_get_thread_num();
+#else
+                int th=0;
+#endif
+                uint64_t lr=rng^((uint64_t)(e+j+7)*0xA24BAED4963EE407ULL);unsigned char*p=prop+(size_t)j*(np+N);memcpy(p,cur,np+N);
+                double tot=0;for(int i=0;i<N;i++)tot+=per[i];double u=urand(&lr)*tot;int pos=0;for(;pos<N-1;pos++)if((u-=per[pos])<=0)break;
+                int w=R->span;if(pos+w>N)w=N-pos;
+                FStream*s=fstream_new(f);real lg[256];for(int i=0;i<np+pos;i++)fstream_step(f,s,p[i],lg);
+                for(int i=0;i<w;i++){int v=sample_rng(lg,R->temp,&lr);p[np+pos+i]=v;fstream_step(f,s,v,lg);}
+                ps[j]=seq_nll(f,th,p,np+N,np,NULL)+R->rep*rep_frac(p+np,N);
+            }
+            int bj=-1;for(int j=0;j<threads;j++)if(ps[j]<cs&&(bj<0||ps[j]<ps[bj]))bj=j;
+            if(bj>=0){memcpy(cur,prop+(size_t)bj*(np+N),np+N);cs=seq_nll(f,0,cur,np+N,np,per)+R->rep*rep_frac(cur+np,N);acc++;}
+        }
+        printf("{\"event\":\"refine_edit\",\"edits\":%d,\"accepted\":%d,\"score\":%.4f,\"text\":",R->edits,acc,cs/log(2.));json_str(stdout,cur+np,N);printf("}\n");
+        memcpy(best,cur+np,N);
+    }
+    printf("{\"event\":\"refine_final\",\"seconds\":%.3f,\"text\":",wall()-t0);json_str(stdout,best,N);printf("}\n");return 0;
 }
 static void usage(void){
     puts("nanotss-plastic: protected plastic -> FFF -> SSM -> FFF\n"
@@ -2854,8 +2994,10 @@ int main(int argc,char**argv){
     const char*data=NULL,*out=NULL,*in=NULL,*mode="blt",*prompt="ROMEO:",*entropy_in=NULL,*entropy_out=NULL,*context_file=NULL;int threads=4,B=16,L=256,burn=64,sample=0,seed=0,steps=100000000,scoreonly=0,fixedsteps=0;
     double seconds=300,entropy_seconds=60,entropy_charge=0,lr=.003,target=4,temp=.8;
     Cfg gc={.vocab=256,.d=128,.n_layer=4,.T=4,.D=7,.n=16,.p=16,.K=3,.group=128,.walks=2,.temp=1,.fff_gate=1,.fw_mask=1};
-    const char*ttt_file=NULL;long ttt_off=-1,ttt_len=0,ttt_stride=0;int ttt_docs=1;
-    TTT tt={.lr=0,.decay=0,.clip=1,.beta2=.99,.steps=1,.batch=4,.chunk=192,.ctx=64,.stream=0,.freeze=0,.optim=0};
+    double ssm_horizon=0;
+    int refine=0;const char*refine_ctx=NULL;Refine rf={.rounds=3,.cands=16,.keep=4,.len=400,.steps=8,.epochs=8,.edits=0,.span=12,.tail=512,.temp=1,.rep=2,.final_temp=1};
+    const char*ttt_file=NULL,*ttt_control=NULL,*ttt_fit=NULL;double ttt_frac=.5;int ttt_epochs=8;long ttt_off=-1,ttt_len=0,ttt_stride=0;int ttt_docs=1;
+    TTT tt={.rnd=0,.lr=0,.decay=0,.clip=1,.beta2=.99,.steps=1,.batch=4,.chunk=192,.ctx=64,.stream=0,.freeze=0,.optim=0};
     FConfig cfg={.width=64,.heads=4,.bins=256,.maxpatch=8,.enc_layers=2,.dec_layers=4,.local_depth=4,.local_trees=2,.local_state=8,.neural=1,.mixer=2,.target=4};
     for(int i=1;i<argc;i++){
         if(!strcmp(argv[i],"--cpu-reference")){cpu_fast=0;continue;}
@@ -2871,7 +3013,10 @@ int main(int argc,char**argv){
         if(!strcmp(a,"--optimizer")){optimizer_explicit=1;if(!strcmp(v,"muon"))use_muon=1;else if(!strcmp(v,"adamw"))use_muon=0;else return 2;continue;}
         if(!strcmp(a,"--patcher")){if(strcmp(v,"neural")){fprintf(stderr,"Only the neural entropy patcher is supported.\n");return 2;}continue;}
 #define OPT(n,x,cv) if(!strcmp(a,n)){x=cv(v);continue;}
-        OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
+        OPT("--ssm-horizon",ssm_horizon,atof) OPT("--ttt-reset",ttt_reset,atol) OPT("--ttt-reset-mask",ttt_reset_mask,atoi) OPT("--refine",refine,atoi) OPT("--refine-context",refine_ctx,(const char*)) OPT("--refine-rounds",rf.rounds,atoi) OPT("--refine-cands",rf.cands,atoi) OPT("--refine-keep",rf.keep,atoi)
+        OPT("--refine-len",rf.len,atoi) OPT("--refine-steps",rf.steps,atoi) OPT("--refine-epochs",rf.epochs,atoi) OPT("--refine-edits",rf.edits,atoi) OPT("--refine-span",rf.span,atoi) OPT("--refine-tail",rf.tail,atoi)
+        OPT("--refine-temp",rf.temp,atof) OPT("--refine-rep",rf.rep,atof) OPT("--refine-final-temp",rf.final_temp,atof)
+        OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
         OPT("--ttt-lr",tt.lr,atof) OPT("--ttt-decay",tt.decay,atof) OPT("--ttt-clip",tt.clip,atof) OPT("--ttt-beta2",tt.beta2,atof) OPT("--ttt-steps",tt.steps,atoi) OPT("--ttt-batch",tt.batch,atoi)
         OPT("--ttt-chunk",tt.chunk,atoi) OPT("--ttt-ctx",tt.ctx,atoi) OPT("--ttt-stream",tt.stream,atoi) OPT("--ttt-freeze",tt.freeze,atoi)
         OPT("--context-file",context_file,(const char*)) OPT("--data",data,(const char*)) OPT("--save",out,(const char*)) OPT("--load",in,(const char*)) OPT("--mode",mode,(const char*)) OPT("--prompt",prompt,(const char*))
@@ -2893,7 +3038,10 @@ int main(int argc,char**argv){
     if(use_muon&&strcmp(mode,"blt")){if(optimizer_explicit){fprintf(stderr,"CPU Muon is integrated in full BLT training; byte mode uses AdamW.\n");return 2;}use_muon=0;}
     if(!strcmp(mode,"byte")&&cfg.mixer){fprintf(stderr,"Standalone byte mode requires --conv-mix 0; the integrated mixer acts on global BLT states.\n");return 2;}
     g_rng^=((uint64_t)seed+1)*0x9E3779B97F4A7C15ULL;
-    if(ttt_file){if(!in)return 2;return ttt_eval_main(in,ttt_file,ttt_off,ttt_len,&tt,threads,ttt_docs,ttt_stride?ttt_stride:ttt_len);}
+    if(ssm_horizon>0)ssm_dec_cap=(real)(1-1/ssm_horizon);
+    if(refine){if(!in||rf.cands<1||rf.keep<1||rf.keep>rf.cands||rf.len<1||threads>64)return 2;return refine_main(in,refine_ctx,prompt,&rf,&tt,threads,seed);}
+    if(ttt_fit){if(!in)return 2;return ttt_fit_main(in,ttt_fit,ttt_frac,ttt_epochs,&tt,threads);}
+    if(ttt_file){if(!in)return 2;return ttt_eval_main(in,ttt_file,ttt_off,ttt_len,&tt,threads,ttt_docs,ttt_stride?ttt_stride:ttt_len,ttt_control);}
     if(context_file){if(!in||data||scoreonly||sample<0){fprintf(stderr,"--context-file requires --load and generation mode\n");return 2;}return context_generate(in,context_file,prompt,sample,temp);}
     if(in&&!data){
         Faithful*f=faithful_load(in,1,L);if(!f){Model*m=load(in,1,L);if(!m){fprintf(stderr,"cannot load checkpoint\n");return 1;}generate(m,prompt,sample,temp);return 0;}
