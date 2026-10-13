@@ -167,12 +167,70 @@ Samples (base2h, *Faustus* context, seed 1, prompt `FAUSTUS:`):
 > What art thou, man? FAUSTUS: Why, this is tell--fits, and do not so arch the prince for: This
 > is well. ... MEPHIST: I pray thee hell. ... FAUSTUS: Well, I warrant.*
 
+## 5. Native long-range memory: can the recurrent state learn it?
+
+Recall test (`experiments/recall_test.py`): a 256-byte unseen passage, then D bytes of other unseen
+text, then the same passage again, streamed with no TTT. The gain is the drop in BPC on the second
+copy. Perfect recall would be about 2.4 BPC.
+
+| Model (30 min, 8 vCPU unless noted) | Recall gain, gap 0 / 1K / 4K / 16K / 64K |
+|---|---|
+| BLT, D=7, independent windows | 0.05 / 0.08 / 0.07 / 0.07 / 0.06 |
+| BLT, D=7, carried state (+ 25% / 50% repeats) | about 0 |
+| BLT, global D=3, carried state + 25% repeats (0.29M and 1.23M) | about 0 |
+| byte mode, D=3, carried + 25% repeats, 171K | 0.035 / 0.039 / 0.047 / 0.051 / 0.047 |
+| byte mode, D=3, carried + 25% repeats, 512K | 0.033 / 0.049 / 0.059 / 0.021 / 0.014 |
+| byte mode, D=7, carried + 25% repeats, 1.16M | 0.018 / 0.017 / 0.007 / 0.024 / 0.012 |
+| *TTT on base2h (reference)* | *0.66 / 1.40 / 1.46 / 1.32 / 0.97* |
+
+`--carry-windows N` carries the plastic-memory/SSM state and conv history across N consecutive
+windows (truncated BPTT). `--repeat-p` re-copies earlier stream pieces into the training data.
+
+**Tree depth is what blocks learnable memory.** Pure copy task (random 32-letter string, then an
+exact copy; no memory ≈ 4.56 BPC, perfect ≈ 2.3), byte mode, 10 minutes:
+
+| depth | 0 | 0 with n=64 | **3** | 4 | 5 | 7 |
+|---|---|---|---|---|---|---|
+| val BPC | 4.20 | 2.37 | **2.35** | 4.38 | 4.45 | 4.36 |
+
+There's a sharp cliff between depth 3 and depth 4. With 255 nodes per tree, writes and later
+reads seldom meet at the same node, so the routing has to learn to align them from sparse
+gradients. Even a model that can copy, though, does not carry exact bytes across kilobytes. The
+fast memory (about 1,000 key slots at depth 3) is far too small, and through BLT the global
+memory only sees patch averages. **Conclusion: the context memory has to be TTT.**
+
+Depth also trades against speed. Streaming speed (single thread): D=7 width 64 (1.29M params)
+29.5K bytes/s; D=3 width 64 (0.29M) 35.5K bytes/s; D=3 width 192 (1.23M) 13.2K bytes/s. At equal
+parameter count the deep tree is 2.2× faster, because each step evaluates only D+1 nodes.
+
+## 6. Final design: byte-mode deep-tree LM + TTT memory
+
+Byte mode (no BLT), depth 7, 1.16M parameters (`checkpoints/byte1200_d7_1p2M.bin`), trained for
+1200 s on 8 vCPUs (best of 600 / 1200 / 2400 s: val 2.272 / **2.222** / 2.226).
+
+| | BLT 1.4M (base2h) | BLT 4.2M (big600) | **byte 1.16M** |
+|---|---|---|---|
+| TinyShakespeare val, no TTT | 2.515 | 2.420 | **2.231** |
+| val, online TTT (control on training text) | 2.221 (2.518) | 2.231 | **2.077** (2.242) |
+| Unseen plays, half → half: no TTT → TTT | 3.352 → 2.498 | 3.167 → 2.477 | **2.978 → 2.275** |
+| Plays, last 20%, context 0 / 2K / 8K / 32K / full | 3.365 / 3.040 / 2.803 / 2.520 / 2.355 | 3.170 / – / – / – / 2.331 | **2.970 / 2.709 / 2.492 / 2.271 / 2.141** |
+| Recall with TTT, gap 0 / 1K / 4K / 16K / 64K | 0.66 / 1.40 / 1.46 / 1.32 / 0.97 | | 0.58 / 1.19 / 1.13 / 0.92 / 0.55 |
+| Recall, native state only | ≈ 0 | | −0.02 to −0.10 |
+
+The byte-mode deep-tree model is the best language model measured here, and it gains the most
+from TTT on unseen text. With TTT it beats the 4.2M BLT model on every BPC test. Context still
+scales like a compute knob: about −0.2 BPC per 4× more context, still falling at the full play
+length. Its native state recall is slightly negative at long gaps, so for this model the
+scratchpad has to live in the weights. Iterative refinement (`--refine`) still needs a BLT
+checkpoint; porting it to byte mode is the remaining step.
+
 ## What did not work
 
 * Recurrent streaming as long-context memory (section 1).
 * Self-training on drafts, including with likelihood-guided edits.
 * A larger hashed n-gram table, a lexical step multiplier, and Muon for TTT.
 * Training 4.2M parameters for 2 hours on 1 MB of text (val 3.13): budget matters more than size here.
+* Native long-range memory through carried state and repeat augmentation, at any tree depth (section 5).
 
 ## Commands
 
@@ -198,6 +256,7 @@ Harnesses: `experiments/compare_gen.sh` (generation methods), `experiments/genme
 
 * Train for TTT: short inner-loop TTT during pretraining so that the slow weights learn to be
   quick to adapt (meta-learning). This is the most likely route to larger gains.
-* Train with carried recurrent state or longer windows, so the global SSM itself can use context.
+* Port `--refine` (retrieval-guided refinement) to byte-mode checkpoints, then rerun the generation comparison.
+* A much larger fast memory (wider fast matrices or a dedicated delta-rule layer) if native recall is still wanted; section 5 shows that depth and carried state alone are not enough.
 * An LLM judge (DeepSeek via OpenRouter, blocked this session because no key is attached) and
   DeepSeek-written synthetic plays, for 1 MB scratchpad tests with controlled facts and names.
