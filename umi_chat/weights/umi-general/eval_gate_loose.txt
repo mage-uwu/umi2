@@ -1,0 +1,38 @@
+tune beta  8.0 gamma -4.0: single-turn 0.7047 follow-up 0.8317 topic-switch 0.4352
+tune beta  8.0 gamma  0.0: single-turn 0.7047 follow-up 0.8960 topic-switch 0.3731
+tune beta  8.0 gamma  2.0: single-turn 0.7047 follow-up 0.9022 topic-switch 0.3575
+tune beta  8.0 gamma  4.0: single-turn 0.7047 follow-up 0.9022 topic-switch 0.3005
+tune beta  8.0 gamma  8.0: single-turn 0.7047 follow-up 0.9035 topic-switch 0.2642
+tune beta 16.0 gamma -4.0: single-turn 0.7254 follow-up 0.8428 topic-switch 0.5855
+tune beta 16.0 gamma  0.0: single-turn 0.7254 follow-up 0.9072 topic-switch 0.4508
+tune beta 16.0 gamma  2.0: single-turn 0.7254 follow-up 0.9134 topic-switch 0.4093
+tune beta 16.0 gamma  4.0: single-turn 0.7254 follow-up 0.9146 topic-switch 0.3834
+tune beta 16.0 gamma  8.0: single-turn 0.7254 follow-up 0.9158 topic-switch 0.3109
+tune beta 32.0 gamma -4.0: single-turn 0.7461 follow-up 0.7760 topic-switch 0.7254
+tune beta 32.0 gamma  0.0: single-turn 0.7461 follow-up 0.8676 topic-switch 0.6839
+tune beta 32.0 gamma  2.0: single-turn 0.7461 follow-up 0.8800 topic-switch 0.6218
+tune beta 32.0 gamma  4.0: single-turn 0.7461 follow-up 0.8861 topic-switch 0.5855
+tune beta 32.0 gamma  8.0: single-turn 0.7461 follow-up 0.9183 topic-switch 0.4715
+tune beta 64.0 gamma -4.0: single-turn 0.7461 follow-up 0.6646 topic-switch 0.7461
+tune beta 64.0 gamma  0.0: single-turn 0.7461 follow-up 0.7327 topic-switch 0.7461
+tune beta 64.0 gamma  2.0: single-turn 0.7461 follow-up 0.7574 topic-switch 0.7306
+tune beta 64.0 gamma  4.0: single-turn 0.7461 follow-up 0.7834 topic-switch 0.7254
+tune beta 64.0 gamma  8.0: single-turn 0.7461 follow-up 0.8205 topic-switch 0.6943
+held-out half (n=1001):
+  MLM beam only        single-turn 0.1005 (n=189)  follow-up 0.7783 (n=812)
+  n-gram cache only            single-turn 0.4709  follow-up 0.3916
+  hybrid (beta 32, gamma 0)  single-turn 0.6508  follow-up 0.8756  topic-switch 0.5820 (n=189)
+gate study (held-out half; 'follow' = the chosen reply continues the conversation):
+  tau  | fresh replies: in-cache answered  correct-of-answered | refused: conversation hidden  topic group hidden | follow-ups: answered  correct-of-answered
+  0.0  |  1.000   0.515 |  0.000   0.000 |  1.000   0.933
+  0.1  |  0.921   0.536 |  0.214   0.235 |  0.789   0.955
+  0.2  |  0.887   0.547 |  0.312   0.342 |  0.736   0.963
+  0.3  |  0.849   0.552 |  0.421   0.459 |  0.699   0.966
+  0.4  |  0.745   0.562 |  0.543   0.574 |  0.634   0.967
+  0.5  |  0.657   0.554 |  0.621   0.650 |  0.562   0.977
+  0.6  |  0.590   0.553 |  0.698   0.718 |  0.488   0.978
+  0.7  |  0.469   0.509 |  0.751   0.767 |  0.423   0.981
+  0.8  |  0.381   0.429 |  0.794   0.803 |  0.379   0.983
+  0.9  |  0.347   0.410 |  0.819   0.824 |  0.345   0.985
+  1.0  |  0.322   0.364 |  0.838   0.843 |  0.322   0.984
+use: chat --beta 32 --gamma 0

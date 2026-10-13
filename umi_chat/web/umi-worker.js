@@ -1,7 +1,7 @@
-/* umi-1M-chat worker: loads the WebAssembly build of umi_chat.c and the trained
+/* umi-general worker: loads the WebAssembly build of umi_chat.c and the trained
  * checkpoint, then answers one message at a time. Everything runs in the browser.
  *
- * Two models: umi-1M-chat picks the reply, umi-smart-internet picks an optional widget.
+ * Two models: umi-general picks the reply, umi-smart-internet picks an optional widget.
  * Downloads are listed in NAME.manifest.json (written by pack_web.py). Each file is gzip,
  * base64-encoded into .txt parts because artifacts serve text, not binary. The model's
  * hashed n-gram table is fp16 and is widened back to float32 here, so the C code loads
@@ -68,15 +68,16 @@ function dropFiles(name) { for (const f of ['model.bin', 'train.tsv']) M.FS.unli
 
 async function load(o) {
   let got = 0;
-  const sizes = await Promise.all(['umi-1M-chat', 'umi-smart-internet'].map(async (n) => (await (await fetch(n + '.manifest.json')).json()).download_bytes));
+  const sizes = await Promise.all(['umi-general', 'umi-smart-internet'].map(async (n) => (await (await fetch(n + '.manifest.json')).json()).download_bytes));
   postMessage({ type: 'size', bytes: sizes[0] + sizes[1], chat: sizes[0] });
   const tick = (n) => { got += n; postMessage({ type: 'progress', bytes: got }); };
   M = await createUmi({ locateFile: (p) => p });
-  await fetchModel('umi-1M-chat', tick);
+  await fetchModel('umi-general', tick);
   postMessage({ type: 'stage', text: 'Building the chat cache' });
   let t0 = performance.now();
-  const n = M.ccall('umi_load', 'number', ['string', 'string', 'number', 'number'], ['/umi-1M-chat/model.bin', '/umi-1M-chat', o.beta, o.gamma]);
-  dropFiles('umi-1M-chat');
+  const n = M.ccall('umi_load', 'number', ['string', 'string', 'number', 'number'], ['/umi-general/model.bin', '/umi-general', o.beta, o.gamma]);
+  M.ccall('umi_set_gate', null, ['number', 'number'], [o.gateRoot, o.gateFollow]);
+  dropFiles('umi-general');
   say = M.cwrap('umi_say', 'string', ['string', 'number']);
   reset = M.cwrap('umi_reset', null, []);
   postMessage({ type: 'ready', answers: n, ms: Math.round(performance.now() - t0) });

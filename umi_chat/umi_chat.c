@@ -62,13 +62,20 @@ static int abyte(int a){return idbyte(a);}
 static int bbyte(int b){return idbyte(b);}
 
 typedef struct{int id,c1,c2;char*msg;}Ex;               /* ids packed as a*4096+b*64+t, -1 = none */
-typedef struct{int id,parent,nv,last;char*name,*ans[NV],*ano[NV];}Ans;
+typedef struct{int id,parent,nv,last;uint32_t grp;char*name,*ans[NV],*ano[NV];}Ans; /* grp: topic group (domain or conv/.../group/) */
 typedef struct{int*off,*ans;float*w,*idf;int n;}NgIdx;
+/* Word index for the near-miss gate: each answer's training messages as word-hash lists, plus document
+ * frequencies. Hashes with the low bit set are numbers. */
+typedef struct{uint32_t*key;int*df,cap,used,nmsg,*am_off,*m_off;uint32_t*tok;}WIdx;
 /* One retrieval cache: the answers, their ID index and the n-gram index. umi keeps two, the chat
  * cache and the umi-smart-internet widget cache, and C points at the one in use. */
-typedef struct{Ans*answers;int n_answers,*ans_at;unsigned char has_a[NA],has_ab[NA][NB];int intro_id,fallback_id,plain_id,strict_tree;NgIdx ng;}Cache;
+typedef struct{Ans*answers;int n_answers,*ans_at;unsigned char has_a[NA],has_ab[NA][NB];int intro_id,fallback_id,plain_id,strict_tree;NgIdx ng;WIdx widx;}Cache;
 /* strict_tree (set for the widget cache, which has a "plain" class): a non-root conversation turn
  * may only follow its own parent, because a widget refinement changes *that* widget */
+/* strict_all: in the chat cache too, a conversation turn below the root is only a candidate right after its
+ * parent. A mid-conversation reply ("why does that work?") taken from another conversation answers that
+ * conversation, not this one. */
+static int strict_all=1;
 static Cache cache_chat={.intro_id=-1,.fallback_id=-1,.plain_id=-1},cache_web={.intro_id=-1,.fallback_id=-1,.plain_id=-1},*C=&cache_chat;
 #define answers (C->answers)
 #define n_answers (C->n_answers)
@@ -80,6 +87,7 @@ static Cache cache_chat={.intro_id=-1,.fallback_id=-1,.plain_id=-1},cache_web={.
 #define plain_id (C->plain_id)
 #define strict_tree (C->strict_tree)
 #define ng (C->ng)
+#define widx (C->widx)
 #define PACK(a,b,t) ((a)*NB*NT+(b)*NT+(t))
 #define ID_A(x) ((x)/(NB*NT))
 #define ID_B(x) ((x)/NT%NB)
@@ -106,13 +114,15 @@ static void load_answers(const char*dir){
         if(k<4)continue;int id=parse_id(f[0]);if(id<0)continue;
         if(ans_at[id]>=0){Ans*r=answers+ans_at[id];if(r->nv<NV){r->ans[r->nv]=strdup(f[2]);r->ano[r->nv++]=strdup(f[3]);}continue;}
         if(n_answers==cap)answers=realloc(answers,(cap*=2)*sizeof(Ans));
-        Ans*r=answers+n_answers;*r=(Ans){.id=id,.parent=k>4?parse_id(f[4]):-1,.nv=1,.last=-1,.name=strdup(f[1])};r->ans[0]=strdup(f[2]);r->ano[0]=strdup(f[3]);ans_at[id]=n_answers++;
+        Ans*r=answers+n_answers;*r=(Ans){.id=id,.parent=k>4?parse_id(f[4]):-1,.nv=1,.last=-1,.name=strdup(f[1])};
+        {int sl=strncmp(f[1],"conv/general/",13)?(strncmp(f[1],"conv/",5)?1:2):3;uint32_t h=2166136261u; /* group = name up to its sl-th '/' */
+         for(const char*q=f[1];*q&&sl;q++){if(*q=='/')sl--;h=(h^(unsigned char)*q)*16777619u;}r->grp=h;}r->ans[0]=strdup(f[2]);r->ano[0]=strdup(f[3]);ans_at[id]=n_answers++;
         has_a[ID_A(id)]=1;has_ab[ID_A(id)][ID_B(id)]=1;
         if(!strcmp(f[1],"umi_core/user_introduces_name"))intro_id=id;
         if(!strcmp(f[1],"umi_core/fallback_unknown"))fallback_id=id;
         if(!strncmp(f[1],"plain/",6))plain_id=id; /* widget cache: "no widget" */
     }fclose(fp);free(line);
-    strict_tree=plain_id>=0;
+    strict_tree=plain_id>=0||strict_all;
 }
 
 /* ---- model wrapper: BLT (Faithful) or direct byte core (Model) ---- */
@@ -183,6 +193,7 @@ static int grams(const char*msg,uint32_t*out){
         if(set[h]==0xffffffffu){set[h]=v;out[u++]=v;}}
     return u;
 }
+static void words_build(Ex*e,int ne);
 /* Counting sort by bucket. Messages are visited in answer order, so each bucket's list comes out
  * already sorted by answer and equal answers are adjacent: no comparison sort is needed. */
 static void ngram_build(Ex*e,int ne){
@@ -208,7 +219,73 @@ static void ngram_build(Ex*e,int ne){
     ng.off[NGB]=(int)k;
     for(size_t q=0;q<k;q++)ng.w[q]/=(float)sqrt(norm[ng.ans[q]]+1e-9);
     free(list);free(cnt);free(norm);ng.n=n_answers;
+    words_build(e,ne);
 }
+/* ---- near-miss gate ----
+ * The n-gram cosine and the MLM both rank candidates; neither says whether the best one answers *this*
+ * question. The gate asks: do the user's informative words appear in one of the questions the chosen
+ * reply was cached for? Words are weighted by inverse document frequency (very common words count zero)
+ * and every number in the message must appear, so "15% of 80" cannot take the reply cached for "25% of 80". */
+static double gate_root=.3,gate_follow=0,last_cov=1; /* see the gate study in weights/umi-general/README.md */
+static int words(const char*s,uint32_t*out,int max){
+    int m=0;
+    while(*s&&m<max){
+        while(*s&&!isalnum((unsigned char)*s))s++;if(!*s)break;
+        uint32_t h=2166136261u;int dig=0;
+        while(*s&&(isalnum((unsigned char)*s)||*s=='\'')){unsigned char c=tolower((unsigned char)*s++);if(c=='\'')continue;dig|=isdigit(c)!=0;h=(h^c)*16777619u;}
+        h=dig?(h|1u):(h&~1u);if(!h)h=2;
+        int dup=0;for(int j=0;j<m;j++)dup|=out[j]==h;if(!dup)out[m++]=h;
+    }
+    return m;
+}
+static int*df_slot(WIdx*w,uint32_t h){
+    uint32_t i=(h*2654435761u)&(w->cap-1);while(w->key[i]&&w->key[i]!=h)i=(i+1)&(w->cap-1);
+    if(!w->key[i])w->key[i]=h,w->used++;return w->df+i;
+}
+static void df_add(WIdx*w,uint32_t h){
+    if(2*(w->used+1)>w->cap){ /* grow */
+        WIdx o=*w;w->cap=o.cap?o.cap*2:1<<16;w->key=calloc(w->cap,sizeof(uint32_t));w->df=calloc(w->cap,sizeof(int));w->used=0;
+        for(int i=0;i<o.cap;i++)if(o.key[i])*df_slot(w,o.key[i])=o.df[i];free(o.key);free(o.df);
+    }
+    (*df_slot(w,h))++;
+}
+static double word_weight(const WIdx*w,uint32_t h){
+    uint32_t i=(h*2654435761u)&(w->cap-1);int df=0;
+    while(w->key[i]){if(w->key[i]==h){df=w->df[i];break;}i=(i+1)&(w->cap-1);}
+    double x=log((w->nmsg+1.0)/(df+1.0))-log(200.0); /* words in more than 1 message in 200 count zero */
+    return x>0?x:0;
+}
+static void words_build(Ex*e,int ne){
+    WIdx*w=&widx;int*cnt=calloc(n_answers+1,sizeof(int)),*ord=malloc(ne*sizeof(int));uint32_t buf[64];
+    for(int i=0;i<ne;i++)if(ans_at[e[i].id]>=0)cnt[ans_at[e[i].id]+1]++;
+    for(int a=0;a<n_answers;a++)cnt[a+1]+=cnt[a];
+    w->am_off=malloc((n_answers+1)*sizeof(int));memcpy(w->am_off,cnt,(n_answers+1)*sizeof(int));
+    for(int i=0;i<ne;i++)if(ans_at[e[i].id]>=0)ord[cnt[ans_at[e[i].id]]++]=i;
+    int nm=w->am_off[n_answers];size_t cap=(size_t)nm*8+64,nt=0;
+    w->m_off=malloc((nm+1)*sizeof(int));w->tok=malloc(cap*sizeof(uint32_t));w->nmsg=nm;
+    for(int k=0;k<nm;k++){
+        int m=words(e[ord[k]].msg,buf,64);w->m_off[k]=(int)nt;
+        if(nt+m>cap)w->tok=realloc(w->tok,(cap=cap*2+m)*sizeof(uint32_t));
+        for(int j=0;j<m;j++){w->tok[nt++]=buf[j];df_add(w,buf[j]);}
+    }
+    w->m_off[nm]=(int)nt;free(cnt);free(ord);
+}
+/* Best share of the message's word weight found in one of the reply's training questions (0..1). */
+static double coverage(const char*msg,int id){
+    const WIdx*w=&widx;if(!w->tok||id<0||ans_at[id]<0)return 1;
+    uint32_t u[64];double wu[64],tot=0;int m=words(msg,u,64),nnum=0;
+    for(int j=0;j<m;j++){wu[j]=word_weight(w,u[j]);tot+=wu[j];nnum+=u[j]&1;}
+    if(tot<=0&&!nnum)return 1;
+    int a=ans_at[id];double best=0;
+    for(int k=w->am_off[a];k<w->am_off[a+1];k++){
+        const uint32_t*t=w->tok+w->m_off[k];int nt=w->m_off[k+1]-w->m_off[k],numok=1;double got=0;
+        for(int j=0;j<m;j++){int in=0;for(int q=0;q<nt&&!in;q++)in=t[q]==u[j];if(in)got+=wu[j];else if(u[j]&1)numok=0;}
+        if(!numok)continue;double c=tot>0?got/tot:1;if(c>best)best=c;
+    }
+    return best;
+}
+static int excl_ab1[256]; /* eval only, per thread: 1 + (a*NB+b) of a conversation or intent to hide, 0 = none */
+static uint32_t excl_grp[256]; /* eval only, per thread: topic group to hide, 0 = none */
 /* top-k answers by cosine similarity; returns count, fills answer indices and scores.
  * If all is non-NULL it receives the cosine of every answer (caller frees). */
 static int ngram_top(const char*msg,int k,int*out,float*sc,float**all){
@@ -247,12 +324,15 @@ static double hy_beta=8,hy_gamma=4,root_bonus=1; /* root_bonus: prefer widgets t
  * decision = MLM log-prob + beta * cosine. beta<0 means n-gram only. Returns packed ID. */
 static int decide(Net*n,int th,const char*msg,int c1,int c2,double beta,double gamma,double*conf,double*pplain){
     int ids[NGK+2*NT+1],na[NGK];float sc[NGK],*cos_all;int k=ngram_top(msg,NGK,na,sc,&cos_all),nc=0;double cs[NGK+2*NT+1];
+    int hide=excl_ab1[th]-1;
     for(int i=0;i<k;i++){Ans*a=answers+na[i];
+        if(hide>=0&&ID_A(a->id)*NB+ID_B(a->id)==hide)continue;
+        if(excl_grp[th]&&a->grp==excl_grp[th])continue;
         if(strict_tree&&a->parent>=0&&a->parent!=c1&&a->parent!=c2)continue; /* someone else's refinement */
         ids[nc]=a->id;cs[nc++]=sc[i];}
     /* "plain" (no widget) matches no particular n-grams, so it is always a candidate */
     if(plain_id>=0){int dup=0;for(int i=0;i<nc;i++)dup|=ids[i]==plain_id;if(!dup){ids[nc]=plain_id;cs[nc++]=cos_all[ans_at[plain_id]];}}
-    for(int h=0;h<2;h++){int c=h?c2:c1;if(c<0)continue;int a=ID_A(c),b=ID_B(c);if(a<64)continue;
+    for(int h=0;h<2;h++){int c=h?c2:c1;if(c<0)continue;int a=ID_A(c),b=ID_B(c);if(a<64||a*NB+b==hide||(excl_grp[th]&&answers[ans_at[c]].grp==excl_grp[th]))continue;
         for(int t=0;t<NT;t++){int id=PACK(a,b,t);if(ans_at[id]<0||answers[ans_at[id]].parent!=c)continue;int dup=0; /* only turns that follow it */for(int i=0;i<nc;i++)dup|=ids[i]==id;if(!dup){ids[nc]=id;cs[nc++]=cos_all[ans_at[id]];}}}
     free(cos_all);
     if(pplain)*pplain=1;
@@ -264,7 +344,7 @@ static int decide(Net*n,int th,const char*msg,int c1,int c2,double beta,double g
     if(c1>=0)mlm_score(n,th,msg,-1,-1,ids,nc,lp0);
     int best=0;double mx=-1e300,z=0;
     for(int i=0;i<nc;i++){int p=answers[ans_at[ids[i]]].parent,fol=c1>=0&&(p==c1||(c2>=0&&p==c2));
-        if(strict_tree&&p<0&&ID_A(ids[i])>=64)lp[i]+=root_bonus;
+        if(plain_id>=0&&p<0&&ID_A(ids[i])>=64)lp[i]+=root_bonus;
         if(c1>=0&&!fol)lp[i]=lp0[i];
         lp[i]+=beta*cs[i]+(c1>=0&&p==c1?gamma:0);if(lp[i]>mx){mx=lp[i];best=i;}}
     for(int i=0;i<nc;i++)z+=exp(lp[i]-mx);*conf=1/z;
@@ -437,7 +517,12 @@ static int respond(Net*n,const char*line,double thresh,char*msg,size_t mn,char*t
         snprintf(user_name,sizeof user_name,"%s",cap);user_name[0]=toupper((unsigned char)user_name[0]);
         for(char*p=user_name+1;*p;p++)*p=tolower((unsigned char)*p);
     }
-    *fell=r<0||c<thresh;if(*fell&&fallback_id>=0)r=fallback_id;
+    int gated=0;last_cov=1;
+    if(r>=0&&r!=intro_id&&r!=fallback_id){ /* near-miss gate */
+        int p=answers[ans_at[r]].parent,fol=p>=0&&(p==hist[0]||p==hist[1]);
+        last_cov=coverage(text,r);gated=last_cov<(fol?gate_follow:gate_root);
+    }
+    *fell=r<0||c<thresh||gated;if(*fell&&fallback_id>=0)r=fallback_id;
     render(answers+ans_at[r],msg,mn);*conf=c;
     hist[1]=hist[0];hist[0]=r;return r;
 }
@@ -454,7 +539,7 @@ static int points_back(const char*text){
     return deictic_ok==1&&!regexec(&re_deictic,text,0,NULL,0);
 }
 static int is_wrapper(const Ans*a){return strstr(a->ans[0],"{{answer}}")!=NULL;}
-static void turn(Net*n,const char*line,double thresh,TurnOut*o){
+static void turn(Net*n,const char*line,double thresh,TurnOut*o){last_cov=1;
     memset(o,0,sizeof*o);o->r=-1;
     int w=-1;double wc=0;
     if(webnet){
@@ -483,7 +568,7 @@ static void reply(Net*n,const char*line,double thresh,int verbose){
     if(verbose){
         if(o.restyle)printf("  [restyle previous reply as %s | p=%.3f]\n",o.wname,o.wc);
         else if(o.refine)printf("  [refine the widget on screen: %s | p=%.3f]\n",o.wname,o.wc);
-        else{Ans*a=answers+ans_at[o.r];printf("  [%d.%d.%d %s | p=%.3f%s | seen as \"%s\"]\n",ID_A(o.r),ID_B(o.r),ID_T(o.r),a->name,o.c,o.fell?" -> fallback":"",o.text);}
+        else{Ans*a=answers+ans_at[o.r];printf("  [%d.%d.%d %s | p=%.3f cov=%.2f%s | seen as \"%s\"]\n",ID_A(o.r),ID_B(o.r),ID_T(o.r),a->name,o.c,last_cov,o.fell?" -> fallback":"",o.text);}
         if(o.widget&&!o.restyle&&!o.refine)printf("  [widget %s | p=%.3f]\n",o.wname,o.wc);
     }
     printf("umi> %s\n",o.refine?"[updated widget]":o.msg);fflush(stdout);
@@ -496,7 +581,7 @@ int main(int argc,char**argv){
     const char*cmd=argv[1],*dir="data",*in=NULL,*out=NULL,*mode="blt",*ask=NULL,*wload=NULL;
     double seconds=600,es=60,lr=.003,aux=.08,thresh=.05,sw=.3;int B=32,threads=4,seed=0,verbose=0,width=128,bins=16384;
     for(int i=2;i<argc;i++){
-        const char*a=argv[i];if(!strcmp(a,"-v")){verbose=1;continue;}
+        const char*a=argv[i];if(!strcmp(a,"-v")){verbose=1;continue;}if(!strcmp(a,"--loose")){strict_all=0;continue;}
         const char*v=i+1<argc?argv[++i]:NULL;if(!v){fprintf(stderr,"missing value for %s\n",a);return 2;}
         if(!strcmp(a,"--data"))dir=v;else if(!strcmp(a,"--load"))in=v;else if(!strcmp(a,"--save"))out=v;else if(!strcmp(a,"--mode"))mode=v;
         else if(!strcmp(a,"--seconds"))seconds=atof(v);else if(!strcmp(a,"--entropy-seconds"))es=atof(v);else if(!strcmp(a,"--lr"))lr=atof(v);
@@ -505,6 +590,7 @@ int main(int argc,char**argv){
         else if(!strcmp(a,"--web"))web_dir=v;else if(!strcmp(a,"--web-load"))wload=v;else if(!strcmp(a,"--html"))html_out=v;else if(!strcmp(a,"--web-threshold"))web_thresh=atof(v);else if(!strcmp(a,"--web-gamma"))web_gamma=atof(v);
         else if(!strcmp(a,"--threads"))threads=atoi(v);else if(!strcmp(a,"--seed"))seed=atoi(v);else if(!strcmp(a,"--width"))width=atoi(v);
         else if(!strcmp(a,"--ngram-bins"))bins=atoi(v);else if(!strcmp(a,"--ask"))ask=v;
+        else if(!strcmp(a,"--gate"))gate_root=atof(v);else if(!strcmp(a,"--gate-follow"))gate_follow=atof(v);
         else{fprintf(stderr,"unknown option %s\n",a);return 2;}
     }
     if(!strcmp(cmd,"train"))return cmd_train(dir,mode,seconds,es,B,threads,lr,aux,sw,seed,out,width,bins,in);
@@ -532,6 +618,31 @@ int main(int argc,char**argv){
         evaluate_hybrid(&n,te,nr,-1,0,&a0,&a1,&n0,&n1);printf("  n-gram cache only            single-turn %.4f  follow-up %.4f\n",a0,a1);
         evaluate_hybrid(&n,te,nr,bb,bg,&a0,&a1,&n0,&n1);evaluate_hybrid(&n,swr,nsr,bb,bg,&dummy,&as,&ns0,&ns1);
         printf("  hybrid (beta %.0f, gamma %.0f)  single-turn %.4f  follow-up %.4f  topic-switch %.4f (n=%d)\n",bb,bg,a0,a1,as,ns1);
+        /* Gate study. In cache: the held-out message as is. Out of cache: the same message with its own
+         * conversation (or intent) hidden, so whatever comes back is a near miss by construction. */
+        {int*ok=malloc(nr*sizeof(int)),*fi=malloc(nr*sizeof(int)),*fo=malloc(nr*sizeof(int));double*ci=malloc(nr*sizeof(double)),*co=malloc(nr*sizeof(double)),*cg=malloc(nr*sizeof(double));
+#pragma omp parallel for num_threads(n.threads) schedule(dynamic,4)
+        for(int i=0;i<nr;i++){
+#ifdef _OPENMP
+            int th=omp_get_thread_num();
+#else
+            int th=0;
+#endif
+            double c;int r=decide(&n,th,te[i].msg,te[i].c1,te[i].c2,bb,bg,&c,NULL);
+            ok[i]=r==te[i].id;ci[i]=coverage(te[i].msg,r);
+            int p=r>=0?answers[ans_at[r]].parent:-1;fi[i]=p>=0&&(p==te[i].c1||p==te[i].c2);
+            excl_ab1[th]=ID_A(te[i].id)*NB+ID_B(te[i].id)+1;r=decide(&n,th,te[i].msg,te[i].c1,te[i].c2,bb,bg,&c,NULL);excl_ab1[th]=0;
+            co[i]=coverage(te[i].msg,r);p=r>=0?answers[ans_at[r]].parent:-1;fo[i]=p>=0&&(p==te[i].c1||p==te[i].c2);
+            excl_grp[th]=answers[ans_at[te[i].id]].grp;r=decide(&n,th,te[i].msg,te[i].c1,te[i].c2,bb,bg,&c,NULL);excl_grp[th]=0;
+            cg[i]=r>=0?coverage(te[i].msg,r):0;
+        }
+        printf("gate study (held-out half; 'follow' = the chosen reply continues the conversation):\n");
+        printf("  tau  | fresh replies: in-cache answered  correct-of-answered | refused: conversation hidden  topic group hidden | follow-ups: answered  correct-of-answered\n");
+        for(int g=0;g<=10;g++){double tau=g/10.;int na[2]={0},nc[2]={0},ni[2]={0},no=0,nref=0,nhid=0;
+            for(int i=0;i<nr;i++){ni[fi[i]]++;if(ci[i]>=tau){na[fi[i]]++;nc[fi[i]]+=ok[i];}if(!fo[i]){no++;nref+=co[i]<tau;}nhid+=cg[i]<tau;}
+            printf("  %.1f  | %6.3f  %6.3f | %6.3f  %6.3f | %6.3f  %6.3f\n",tau,(double)na[0]/(ni[0]?ni[0]:1),(double)nc[0]/(na[0]?na[0]:1),
+                   (double)nref/(no?no:1),(double)nhid/nr,(double)na[1]/(ni[1]?ni[1]:1),(double)nc[1]/(na[1]?na[1]:1));}
+        free(ok);free(fi);free(fo);free(ci);free(co);free(cg);}
         printf("use: chat --beta %.0f --gamma %.0f\n",bb,bg);
         return 0;
     }

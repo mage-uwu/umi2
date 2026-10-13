@@ -1,4 +1,4 @@
-<title>umi-1M-chat</title>
+<title>umi-general</title>
 <style>
 /* Layout: one column chat. A slim header shows model status and the remembered name; replies can
    reveal the retrieval decision (answer ID, intent, confidence, the text the model saw).
@@ -97,12 +97,12 @@ form{display:flex;gap:8px;padding-bottom:env(safe-area-inset-bottom,0px)}
   <main class="log" id="log" aria-live="polite">
     <section class="empty" id="empty">
       <h2>umi answers from a cache, and can show its answers as cards, charts and dashboards.</h2>
-      <p>Each message goes through a 1,287,904-parameter bidirectional SSM. It fills a masked three-byte answer ID that picks one of 17,984 replies DeepSeek wrote for umi. Follow-ups use umi's last two replies as context. Your name is swapped for a <code>&lt;regex&gt;user_name&lt;/regex&gt;</code> tag before the model reads it, and filled back in afterwards.</p>
+      <p>Each message goes through a 1,287,904-parameter bidirectional SSM. It fills a masked three-byte answer ID that picks one of 133,481 cached replies: umi's own, written by DeepSeek, and 16,297 general-assistant conversations (topics and simulated users by DeepSeek, conversations by gpt-oss-120b, fact-checked by DeepSeek). Follow-ups use umi's last two replies as context. If the important words of your message (and every number) don't appear in any question the chosen reply was cached for, umi says it doesn't know instead of guessing. Your name is swapped for a <code>&lt;regex&gt;user_name&lt;/regex&gt;</code> tag before the model reads it, and filled back in afterwards.</p>
       <p>A second model, umi-smart-internet, picks one of 3,757 HTML widgets when a message asks for something visual. Ask for a recipe card, a chart or a habit tracker, then refine it ("swap the shrimp for tofu", "make it a pie chart", "just the top 3"); umi remembers the last two widgets it showed and pulls the matching refinement from that widget's own conversation. Say "put that in a card" or "make it a flashcard" to restyle umi's last reply. Everything runs on this device; nothing you type leaves the page.</p>
       <div class="facts">
-        <div class="fact"><b>17,984 + 3,757</b><span>cached replies + widgets</span></div>
-        <div class="fact"><b>68% · 82% · 64%</b><span>held-out: single turn · follow-up · topic switch</span></div>
-        <div class="fact"><b id="sizeFact">52 MB</b><span>two models + caches to download (fp16, gzip)</span></div>
+        <div class="fact"><b>133,481 + 3,757</b><span>cached replies + widgets</span></div>
+        <div class="fact"><b>67% · 91% · 64%</b><span>held-out: single turn · follow-up · topic switch</span></div>
+        <div class="fact"><b id="sizeFact">75 MB</b><span>two models + caches to download (fp16, gzip)</span></div>
       </div>
       <div class="meter" aria-hidden="true"><i id="meter"></i></div>
       <div class="loadline" id="loadline">Starting the WebAssembly runtime</div>
@@ -194,7 +194,7 @@ worker.onmessage = (e) => {
     }
     const w = document.createElement('div'); w.className = 'why';
     const pct = Math.round(m.p * 100);
-    w.innerHTML = `<code></code><span></span><span><span class="bar"><i style="width:${pct}%"></i></span> p ${m.p.toFixed(2)}${m.fallback ? ' · below threshold, fallback reply' : ''}</span><span>${m.ms} ms</span><span class="seen"></span>`;
+    w.innerHTML = `<code></code><span></span><span><span class="bar"><i style="width:${pct}%"></i></span> p ${m.p.toFixed(2)} · words ${m.cov.toFixed(2)}${m.fallback ? (m.cov < 0.3 ? ' · near miss, fallback reply' : ' · below threshold, fallback reply') : ''}</span><span>${m.ms} ms</span><span class="seen"></span>`;
     w.children[0].textContent = m.id; w.children[1].textContent = m.intent;
     w.querySelector('.seen').textContent = 'model saw: ' + m.seen;
     if (m.widget_name) { const s = document.createElement('span'); s.className = 'seen'; s.textContent = `widget: ${m.widget_name} · p ${m.wp.toFixed(2)}`; w.appendChild(s); }
@@ -213,7 +213,7 @@ worker.onmessage = (e) => {
   }
 };
 worker.onerror = (e) => { setStatus('Could not start', 'error'); const ll = $('loadline'); if (ll) ll.textContent = 'The WebAssembly worker failed to start: ' + (e.message || 'unknown error') + '. Reload to try again.'; };
-worker.postMessage({ type: 'load', beta: 32, gamma: 2, gate: 0.995, wrapGate: 0.5, webGamma: 4 });
+worker.postMessage({ type: 'load', beta: 64, gamma: 4, gateRoot: 0.3, gateFollow: 0, gate: 0.995, wrapGate: 0.5, webGamma: 4 });
 
 function ask(text) {
   text = text.trim(); if (!text || busy || !ready) return;
