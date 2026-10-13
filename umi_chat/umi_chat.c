@@ -406,6 +406,21 @@ static void write_page(void){
     }
     fputs("</main></body></html>\n",f);fclose(f);
 }
+/* A weak match ("i'm X", "it's X") can only be a name when X ends the message or nearly does
+ * ("i'm sam", "hi i'm sam btw") and is not a common word ("i'm stressed about...", "it's for a job"). */
+static int weak_ok(const char*text){
+    static const char*stop[]={"a","an","the","not","so","just","really","very","too","also","still","good","fine","ok","okay",
+        "great","tired","sad","happy","stressed","worried","bored","busy","sick","hungry","lost","confused","sorry","glad","sure",
+        "back","here","home","done","ready","new","going","trying","feeling","about","for","from","in","on","at","with","to",
+        "like","kinda","pretty","literally","always","never","gonna","getting","doing","having","looking","thinking","learning",
+        "working","writing","making","cooking","planning","stuck","late","early","fine","alright","cool","nice","bad","awful",NULL};
+    regmatch_t m[4];if(regexec(&re_weak,text,4,m,0))return 0;
+    char w[64];int wl=m[3].rm_eo-m[3].rm_so;if(wl<=0||wl>=64)return 0;
+    for(int i=0;i<wl;i++)w[i]=tolower((unsigned char)text[m[3].rm_so+i]);w[wl]=0;
+    for(int i=0;stop[i];i++)if(!strcmp(w,stop[i]))return 0;
+    int words=0,in=0;for(const char*q=text+m[3].rm_eo;*q;q++){int a=isalnum((unsigned char)*q);words+=a&&!in;in=a;}
+    return words<=2;
+}
 /* One chat turn: canonicalise names, retrieve, remember the name and the reply.
  * Writes umi's rendered reply to msg and the canonical text the model saw to seen;
  * returns the packed answer ID. Shared by the CLI and the WebAssembly build. */
@@ -414,7 +429,7 @@ static int respond(Net*n,const char*line,double thresh,char*msg,size_t mn,char*t
     canon(line,text,1024);
     int strong=sub_name(&re_strong,2,text,alt,sizeof alt,cap,sizeof cap);if(strong)strcpy(text,alt);
     int r=decide(n,0,text,hist[0],hist[1],hy_beta,hy_gamma,&c,NULL);
-    if(!strong&&sub_name(&re_weak,3,text,alt,sizeof alt,cap2,sizeof cap2)){
+    if(!strong&&weak_ok(text)&&sub_name(&re_weak,3,text,alt,sizeof alt,cap2,sizeof cap2)){
         int r2=decide(n,0,alt,hist[0],hist[1],hy_beta,hy_gamma,&c2,NULL);
         if(r2==intro_id&&c2>c){r=r2;c=c2;strcpy(cap,cap2);strcpy(text,alt);}
     }

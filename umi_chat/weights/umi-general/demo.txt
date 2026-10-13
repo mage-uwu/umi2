@@ -1,0 +1,60 @@
+you> hi umi!
+  [3.21.0 umi_emotions_and_attunement/user_greeting | p=0.704 | seen as "hi umi!"]
+umi> Oh hey. Welcome back to the little cache. 😊
+you> my name is Sam
+  [0.0.0 umi_core/user_introduces_name | p=1.000 | seen as "my name is <regex>user_name</regex>"]
+umi> Oh, that one's a keeper, Sam. I'll tuck your name into the drawer where I keep the good stuff.
+you> how do i get my sourdough to rise more?
+  [78.125.0 conv/general/books_and_literature/prompts_1791837559.jsonl:5416/t1 | p=0.994 | seen as "how do i get my sourdough to rise more?"]
+umi> Hm-hm. Let me rummage… a common cause is temperature; starters like around 75°F (24°C). If it’s cooler, the yeast stays sleepy.
+you> why does that work?
+  [71.126.5 conv/technology_and_everyday_devices/How to make your phone charge faster/t6 | p=0.889 | seen as "why does that work?"]
+umi> Good question. Fast charging pushes more current, which generates heat, and heat is the main enemy of battery longevity. So it's a trade-off: speed now, slightly shorter lifespan later. If you're not in a rush, a slower charge is gentler. That's the honest version.
+you> thanks! what's my name?
+  [0.1.0 umi_core/user_asks_own_name | p=1.000 | seen as "thanks! what's my name?"]
+umi> You're Sam—I've got it right here in the drawer. I don't forget the important ones.
+---
+you> why did the roman empire fall?
+  [29.41.0 history_and_culture_snippets/ask_about_ottoman_empire | p=0.997 | seen as "why did the roman empire fall?"]
+umi> Think of it as a long-running empire that left its mark on everything from architecture to cuisine.
+you> wait really?
+  [180.127.5 conv/general/relationships_and_dating/prompts_1791837559.jsonl:5766/t6 | p=0.969 | seen as "wait really?"]
+umi> as magma rises, dissolved gases expand, pushing against surrounding rock until it fractures.
+you> ok what about the byzantines
+  [29.40.0 history_and_culture_snippets/ask_about_byzantine_empire | p=1.000 | seen as "ok what about the byzantines"]
+umi> It preserved Greek and Roman knowledge and dazzled with art, architecture, and the Hagia Sophia.
+---
+you> my laptop fan is super loud all of a sudden
+  [192.111.0 conv/general/technology_and_computers/prompts_1791837559.jsonl:2302/t1 | p=0.986 | seen as "my laptop fan is super loud all of a sudden"]
+umi> Sounds like the back‑light control got stuck. Try a hard reset: shut down, unplug, hold the power button 15 seconds, then power on. If that doesn’t help, check the adaptive‑brightness setting in Windows or the graphics driver panel.
+you> it's a dell, about 4 years old
+  [192.111.1 conv/general/technology_and_computers/prompts_1791837559.jsonl:2302/t2 | p=1.000 | seen as "it's a dell, about 4 years old"]
+umi> If the popup appears but the level stays flat, the OS‑level slider is likely broken. Updating or rolling back the display driver often fixes it.
+you> lol ok
+  [192.111.5 conv/general/technology_and_computers/prompts_1791837559.jsonl:2302/t6 | p=0.692 | seen as "lol ok"]
+umi> Go to Settings → System → Power & sleep → Additional power settings. Edit the plan and ensure the ‘Display brightness’ slider isn’t set to 0.
+---
+you> i'm stressed about a job interview tomorrow
+  [37.23.0 fashion_and_personal_style/interview_professional_attire | p=0.566 | seen as "i'm stressed about a job interview tomorrow"]
+umi> When in doubt: tailored, simple, and comfortable enough that you forget you're wearing it. That's the whole trick.
+you> it's for a nursing job
+  [94.19.0 conv/general/culture_and_society/prompts_1791837559.jsonl:9798/t1 | p=0.382 | seen as "it's for a nursing job"]
+umi> Sure. First, assess the parent's needs with a professional assessment. Second, research local facilities and check licensing. Third, tour preferred homes and compare services. Fourth, handle insurance and financing paperwork. Finally, transition with a moving plan and orientation.
+you> thanks umi
+  [6.45.0 small_but_mighty_running_bit/express_appreciation_for_umi | p=0.898 | seen as "thanks umi"]
+umi> That's kind of you to say. I'm just a small thing trying my best—glad it lands.
+---
+you> what's 15% of 80
+  [155.8.0 conv/general/mathematics/prompts_1791837559.jsonl:6665/t1 | p=0.994 | seen as "what's 15% of 80"]
+umi> 25 % of 80 is 20.
+you> how many cups in a liter
+  [89.59.7 conv/general/conversions_and_measurements/prompts_1791837559.jsonl:7853/t8 | p=0.346 | seen as "how many cups in a liter"]
+umi> Roughly 1.7 cups of loosely packed shredded cheese (200 ÷ 115).
+---
+you> how do i reverse a list in python
+  [74.69.7 conv/general/ai_and_data/prompts_1791837559.jsonl:6799/t8 | p=0.704 | seen as "how do i reverse a list in python"]
+umi> # This is a comment in Python – starts with a hash.
+you> what about a string
+  [127.113.0 conv/general/hat_ideas/prompts_1791837559.jsonl:10324/t1 | p=0.999 | seen as "what about a string"]
+umi> Oh, that one's a keeper—string theory suggests particles are tiny vibrating strings. It unifies forces by treating everything as different modes of these strings.
+---
