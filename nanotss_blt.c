@@ -497,6 +497,16 @@ typedef struct {
     const Tape *reuse_fw_input;
 }
 Work;
+/* Global-stack state carried across consecutive training windows (one slot per batch row). */
+static real*carry_bank_h=NULL,*carry_bank_hist=NULL;static size_t carry_sz_h=0,carry_sz_hist=0;
+/* Seed an even (stateful) layer's state from the carry slot, or zero it. */
+static void carry_pre(const Cfg*c,Work*w,int l,real*h){size_t S=(size_t)c->T*NODES(c)*c->n*c->p;
+    if(w->carry_h)memcpy(h,w->carry_h+(size_t)(l/2)*S,S*sizeof(real));else memset(h,0,S*sizeof(real));}
+/* Save an even layer's final state and its last K-1 conv inputs into the carry slot. */
+static void carry_post(const Cfg*c,Work*w,int l,int L,const real*h){if(!w->carry_h)return;size_t S=(size_t)c->T*NODES(c)*c->n*c->p;
+    memcpy(w->carry_h+(size_t)(l/2)*S,h,S*sizeof(real));int K=c->K,d=c->d;
+    if(w->carry_hist&&K>1){real*hb=w->carry_hist+(size_t)l*(K-1)*d;
+        for(int i=K-2;i>=0;i--){int t=L-1-i;if(t>=0)memcpy(hb+(size_t)i*d,w->tp[l].u+(size_t)t*d,d*sizeof(real));else if(i-L>=0)memcpy(hb+(size_t)i*d,hb+(size_t)(i-L)*d,d*sizeof(real));}}}
 static inline real urand(uint64_t *s) {
     *s^=*s>>12;
     *s^=*s<<25;
@@ -1588,9 +1598,11 @@ real tss_train_seq(const Cfg *c,const Params *P,const Params *Q,Params *G,const 
     real *x=w->x,*h=w->h;
     for(int t=0;t<L;t++)memcpy(x+(size_t)t*d,P->embed+(size_t)tokens[t]*d,sizeof(real)*d);
     for(int l=0;l<nl;l++) {
-        if(!(l&1))memset(h,0,sizeof(real)*(size_t)T*N*c->n*c->p);
+        if(!(l&1))carry_pre(c,w,l,h);
         layer_fwd(c,P,Q,l,L,x,h,tp+l,w);
+        if(!(l&1))carry_post(c,w,l,L,h);
     }
+    (void)N;(void)T;
     real *g=w->g;
     int ns=0;
     memset(g,0,sizeof(real)*(size_t)L*d);
@@ -1691,8 +1703,10 @@ real tss_train_step(const Cfg *c,Params *P,Params *Q,Params *G,unsigned char *hi
 #pragma omp for schedule(static) reduction(+:loss,scored)
         for(int b=0;b<B;b++) {
             int ns=0;tss_work_seed(ws[th],(uint64_t)h->step*1000003ULL+(uint64_t)b);
+            ws[th]->carry_h=carry_bank_h?carry_bank_h+(size_t)b*carry_sz_h:NULL;ws[th]->carry_hist=carry_bank_hist?carry_bank_hist+(size_t)b*carry_sz_hist:NULL;
             loss+=tss_train_seq(c,P,Q,Gt+th,tokens+(size_t)b*L,labels+(size_t)b*L,L,
                                hits+rows*th,&ns,ws[th],k);
+            ws[th]->carry_h=ws[th]->carry_hist=NULL;
             scored+=ns;
         }
 #pragma omp for schedule(static,16) reduction(+:nrm)
@@ -2203,14 +2217,9 @@ static void core_fwd(Model*m,int th,int L,int training){
     Work*w=m->ws[th];w->k=m->k;w->no_alt=!training;
     if(!L)return;
     for(int l=0;l<m->c.n_layer;l++){
-        size_t S=(size_t)m->c.T*NODES(&m->c)*m->c.n*m->c.p;
-        if(!(l&1)){if(w->carry_h)memcpy(w->h,w->carry_h+(size_t)(l/2)*S,S*sizeof(real));else memset(w->h,0,S*sizeof(real));}
+        if(!(l&1))carry_pre(&m->c,w,l,w->h);
         layer_fwd(&m->c,&m->P,&m->Q,l,L,w->x,w->h,w->tp+l,w);
-        if(!(l&1)&&w->carry_h){
-            memcpy(w->carry_h+(size_t)(l/2)*S,w->h,S*sizeof(real));
-            int K=m->c.K,d=m->c.d;if(w->carry_hist&&K>1){real*hb=w->carry_hist+(size_t)l*(K-1)*d;
-                for(int i=0;i<K-1;i++){int t=L-1-i;if(t>=0)memcpy(hb+(size_t)i*d,w->tp[l].u+(size_t)t*d,d*sizeof(real));else memmove(hb+(size_t)i*d,hb+(size_t)(i-L)*d,d*sizeof(real));}}
-        }
+        if(!(l&1))carry_post(&m->c,w,l,L,w->h);
     }
 }
 static void core_bwd(Model*m,int th,int L){
@@ -2317,8 +2326,6 @@ static double faithful_eval(Faithful*f,int th,const int*t,const int*y,int L,int*
  * Blocks stay within a tree/matrix. Inactive routed rows are untouched.
  * This is blockwise active-row Muon, not full-matrix Muon. */
 static int use_muon=1,muon_steps=5,muon_block=16;
-/* Global-stack state carried across consecutive training windows (one slot per batch row). */
-static real*carry_bank_h=NULL,*carry_bank_hist=NULL;static size_t carry_sz_h=0,carry_sz_hist=0;
 static int ttt_freeze=0; /* test-time training: 1 keeps ternary matrices fixed */
 static real muon_scale=3;
 typedef struct {real*p,*g,*m,*q;unsigned char*hit;Model*model;int field,rows,d;size_t row;} MuonJob;
@@ -2900,7 +2907,22 @@ static int ttt_eval_main(const char*ckpt,const char*path,long off,long len,const
     long n;unsigned char*all=read_file(path,&n);if(!all)return 1;
     if(ctrl){unsigned char*c=read_file(ctrl,&ttt_ctrl_n);if(!c)return 1;ttt_ctrl_n=(long)(ttt_ctrl_n*.9);ttt_ctrl=c;}
     if(off<0)off=(long)(n*.9);if(len<=0||off+len>n)len=n-off;
-    int W=o->ctx+o->chunk;Faithful*f=faithful_load(ckpt,threads,W>256?W:256);if(!f){fprintf(stderr,"ttt-eval needs a BLT checkpoint\n");return 1;}
+    int W=o->ctx+o->chunk;Faithful*f=faithful_load(ckpt,threads,W>256?W:256);
+    if(!f){ /* byte-mode checkpoint: recurrent streaming only, no TTT */
+        Model*m=load(ckpt,1,8);if(!m||m->c.vocab!=256){fprintf(stderr,"cannot load checkpoint\n");return 1;}
+        if(!o->stream||o->lr>0){fprintf(stderr,"byte-mode checkpoints support --ttt-stream 1 without TTT\n");return 2;}
+        float*loss=malloc((size_t)len*sizeof(float));double total=0;long tc=0;
+        for(int d=0;d<docs;d++){long start=off+d*docstride;if(start+len>n)break;const unsigned char*raw=all+start;
+            Gen*g=gen_new(&m->c);real lg[256];double st=wall(),dt=0;long dc=0;loss[0]=-1;
+            for(long i=0;i+1<len;i++){gen_step(m,g,raw[i],lg);double mx=-1e30,z=0;for(int v=0;v<256;v++)mx=lg[v]>mx?lg[v]:mx;for(int v=0;v<256;v++)z+=exp(lg[v]-mx);
+                double li=log(z)+mx-lg[raw[i+1]];loss[i+1]=li;dt+=li;dc++;}
+            total+=dt;tc+=dc;
+            printf("{\"event\":\"ttt_doc\",\"doc\":%d,\"start\":%ld,\"bytes\":%ld,\"bpc\":%.6f,\"seconds\":%.3f,\"train_seconds\":0}\n",d,start,len,dc?dt/dc/log(2.):0,wall()-st);
+            for(int r=0;r<ttt_nranges;r++){double rs=0;long rc=0;for(long i=ttt_ranges[2*r];i<ttt_ranges[2*r+1]&&i<len;i++)if(loss[i]>=0){rs+=loss[i];rc++;}
+                printf("{\"event\":\"ttt_range\",\"doc\":%d,\"from\":%ld,\"to\":%ld,\"bpc\":%.6f}\n",d,ttt_ranges[2*r],ttt_ranges[2*r+1],rc?rs/rc/log(2.):0);}
+        }
+        printf("{\"event\":\"ttt_eval\",\"mode\":\"byte\",\"stream\":1,\"bytes\":%ld,\"bpc\":%.6f}\n",tc,tc?total/tc/log(2.):0);return 0;
+    }
     real**base=snap_take(f);int nb=0;while((1L<<nb)<len)nb++;double*bs=calloc(nb+1,sizeof(double));long*bc=calloc(nb+1,sizeof(long));
     float*loss=malloc((size_t)len*sizeof(float));double total=0,tsec=0;long tc=0;
     for(int d=0;d<docs;d++){
