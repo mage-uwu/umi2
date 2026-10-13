@@ -2759,7 +2759,10 @@ static int check_tree_fw(void){
  * ever trained on before it is scored. */
 typedef struct {double lr,decay,clip,beta2;int steps,batch,chunk,ctx,stream,freeze,optim,rnd;} TTT;
 typedef struct {real*p[3*N_FIELDS+1];size_t n[3*N_FIELDS+1];int k;} PSet;
+/* TTT works on a BLT model, or on the byte-mode model ttt_byte when the Faithful pointer is NULL. */
+static Model*ttt_byte=NULL;
 static void fparams(Faithful*f,PSet*s){
+    if(!f){size_t z[N_FIELDS];real*p[N_FIELDS];sizes(&ttt_byte->c,z);fields(&ttt_byte->P,p);s->k=0;for(int i=0;i<N_FIELDS;i++){s->p[s->k]=p[i];s->n[s->k++]=z[i];}return;}
     Model*mods[3]={f->global,f->encoder,f->decoder};s->k=0;
     for(int j=0;j<3;j++){size_t z[N_FIELDS];real*p[N_FIELDS];sizes(&mods[j]->c,z);fields(&mods[j]->P,p);for(int i=0;i<N_FIELDS;i++){s->p[s->k]=p[i];s->n[s->k++]=z[i];}}
     s->p[s->k]=f->p;s->n[s->k++]=f->dense+f->hashsize;
@@ -2769,9 +2772,12 @@ static real**snap_take(Faithful*f){
     for(int i=0;i<s.k;i++){b[i]=malloc(s.n[i]*sizeof(real));memcpy(b[i],s.p[i],s.n[i]*sizeof(real));}return b;
 }
 static void faithful_requantize(Faithful*f){
+    if(!f){model_requantize(ttt_byte);return;}
     model_requantize(f->global);model_requantize(f->encoder);model_requantize(f->decoder);if(f->c.mixer)tc_pack(f->p+f->mixoff,f->mixcode);
 }
 static void opt_reset(Faithful*f){
+    if(!f){size_t z[N_FIELDS];real*m[N_FIELDS],*v[N_FIELDS];sizes(&ttt_byte->c,z);fields(&ttt_byte->M,m);fields(&ttt_byte->V,v);
+        for(int i=0;i<N_FIELDS;i++){memset(m[i],0,z[i]*sizeof(real));memset(v[i],0,z[i]*sizeof(real));}return;}
     Model*mods[3]={f->global,f->encoder,f->decoder};
     for(int j=0;j<3;j++){size_t z[N_FIELDS];real*m[N_FIELDS],*v[N_FIELDS];sizes(&mods[j]->c,z);fields(&mods[j]->M,m);fields(&mods[j]->V,v);
         for(int i=0;i<N_FIELDS;i++){memset(m[i],0,z[i]*sizeof(real));memset(v[i],0,z[i]*sizeof(real));}}
@@ -2852,7 +2858,7 @@ static void fstream_reset(Faithful*f,FStream*s,int mask){
 static const unsigned char*ttt_ctrl=NULL;static long ttt_ctrl_n=0;static long ttt_ranges[64];static int ttt_nranges=0; /* control: train on this corpus instead of the context */
 /* Train on windows whose labels lie inside raw[0..e]. */
 static double ttt_train(Faithful*f,const unsigned char*raw,long e,const TTT*o,uint64_t*rng,int*t,int*y){
-    int L=f->Lmax<256?f->Lmax:256;if(e<L)return 0;double loss=0;
+    int Lm=f?f->Lmax:ttt_byte->Lmax,L=Lm<256?Lm:256;if(e<L)return 0;double loss=0;
     int save_muon=use_muon,save_freeze=ttt_freeze;use_muon=o->optim;ttt_freeze=o->freeze;
     if(ttt_retr&&!ttt_ctrl){retr_admit(ttt_retr,e);long q0=e-ttt_qlen<0?0:e-ttt_qlen;ttt_nids=retr_query(ttt_retr,raw+q0,e-q0,ttt_retr_m,ttt_ids,q0);}
     for(int it=0;it<o->steps;it++){
@@ -2863,6 +2869,7 @@ static double ttt_train(Faithful*f,const unsigned char*raw,long e,const TTT*o,ui
             if(at>e-L)at=e-L;
             for(int i=0;i<L;i++){t[b*L+i]=raw[at+i];y[b*L+i]=raw[at+i+1];}}
         Hyper h={.lr=o->lr,.beta1=.9,.beta2=o->beta2,.eps=1e-8,.weight_decay=0,.clip=o->clip,.step=++ttt_step_count};
+        if(!f){Model*m=ttt_byte;loss+=tss_train_step(&m->c,&m->P,&m->Q,&m->G,m->hit,&m->M,&m->V,m->Gt,m->hits,m->ws,m->threads,t,y,o->batch,L,&h,m->k);continue;}
         if(ttt_only||ttt_lex_mult!=1)ttt_hold_take(f);
         loss+=faithful_step(f,t,y,o->batch,L,&h,NULL);
         if(ttt_lex_mult!=1)ttt_lex_scale(f);
@@ -2873,24 +2880,24 @@ static double ttt_train(Faithful*f,const unsigned char*raw,long e,const TTT*o,ui
 /* Online score-then-adapt over raw[0..n). Fills per-position byte losses (nats) if loss!=NULL.
  * Returns bits per byte over positions >= skip. */
 static double ttt_run(Faithful*f,const unsigned char*raw,long n,const TTT*o,real**anchor,float*loss,long skip,double*train_seconds){
-    int C=o->chunk,W=o->ctx+C;if(W>f->Lmax){fprintf(stderr,"ttt: ctx+chunk exceeds Lmax\n");exit(2);}
+    int C=o->chunk,W=o->ctx+C;if(W>(f?f->Lmax:ttt_byte->Lmax)){fprintf(stderr,"ttt: ctx+chunk exceeds Lmax\n");exit(2);}
     int*t=malloc((size_t)(W>256?W:256)*(o->batch>1?o->batch:1)*sizeof(int)),*y=malloc((size_t)(W>256?W:256)*(o->batch>1?o->batch:1)*sizeof(int));
     real*lg=malloc((size_t)W*256*sizeof(real));uint64_t rng=0x9E3779B97F4A7C15ULL;double tot=0,tsec=0;long cnt=0;
-    FStream*fs=o->stream?fstream_new(f):NULL;real slg[256];int have=0;
+    FStream*fs=o->stream&&f?fstream_new(f):NULL;Gen*bg=o->stream&&!f?gen_new(&ttt_byte->c):NULL;real slg[256];int have=0;
     for(long s=0;s<n-1;s+=C){
         long e=s+C<n-1?s+C:n-1;
-        if(fs){
+        if(fs||bg){
             for(long i=s;i<e;i++){
-                if(!have){fstream_step(f,fs,raw[i],slg);}
+                if(!have){if(fs)fstream_step(f,fs,raw[i],slg);else gen_step(ttt_byte,bg,raw[i],slg);}
                 double mx=-1e30,z=0;for(int v=0;v<256;v++)mx=slg[v]>mx?slg[v]:mx;for(int v=0;v<256;v++)z+=exp(slg[v]-mx);
                 double li=log(z)+mx-slg[raw[i+1]];if(loss)loss[i+1]=li;if(i+1>=skip){tot+=li;cnt++;}
-                if(ttt_reset&&(i+1)%ttt_reset==0)fstream_reset(f,fs,ttt_reset_mask);
-                fstream_step(f,fs,raw[i+1],slg);have=1;
+                if(fs&&ttt_reset&&(i+1)%ttt_reset==0)fstream_reset(f,fs,ttt_reset_mask);
+                if(fs)fstream_step(f,fs,raw[i+1],slg);else gen_step(ttt_byte,bg,raw[i+1],slg);have=1;
             }
         }else{
             long a=s-o->ctx<0?0:s-o->ctx;int Lw=(int)(e-a);
             for(int i=0;i<Lw;i++){t[i]=raw[a+i];y[i]=a+i<s?-1:raw[a+i+1];}
-            int ns;faithful_eval(f,0,t,y,Lw,&ns,lg);
+            int ns;if(f)faithful_eval(f,0,t,y,Lw,&ns,lg);else eval_seq(ttt_byte,t,y,Lw,ttt_byte->ws[0],&ns,lg);
             for(long i=s;i<e;i++){real*l=lg+(size_t)(i-a)*256;double mx=-1e30,z=0;for(int v=0;v<256;v++)mx=l[v]>mx?l[v]:mx;for(int v=0;v<256;v++)z+=exp(l[v]-mx);
                 double li=log(z)+mx-l[raw[i+1]];if(loss)loss[i+1]=li;if(i+1>=skip){tot+=li;cnt++;}}
         }
@@ -2908,21 +2915,7 @@ static int ttt_eval_main(const char*ckpt,const char*path,long off,long len,const
     if(ctrl){unsigned char*c=read_file(ctrl,&ttt_ctrl_n);if(!c)return 1;ttt_ctrl_n=(long)(ttt_ctrl_n*.9);ttt_ctrl=c;}
     if(off<0)off=(long)(n*.9);if(len<=0||off+len>n)len=n-off;
     int W=o->ctx+o->chunk;Faithful*f=faithful_load(ckpt,threads,W>256?W:256);
-    if(!f){ /* byte-mode checkpoint: recurrent streaming only, no TTT */
-        Model*m=load(ckpt,1,8);if(!m||m->c.vocab!=256){fprintf(stderr,"cannot load checkpoint\n");return 1;}
-        if(!o->stream||o->lr>0){fprintf(stderr,"byte-mode checkpoints support --ttt-stream 1 without TTT\n");return 2;}
-        float*loss=malloc((size_t)len*sizeof(float));double total=0;long tc=0;
-        for(int d=0;d<docs;d++){long start=off+d*docstride;if(start+len>n)break;const unsigned char*raw=all+start;
-            Gen*g=gen_new(&m->c);real lg[256];double st=wall(),dt=0;long dc=0;loss[0]=-1;
-            for(long i=0;i+1<len;i++){gen_step(m,g,raw[i],lg);double mx=-1e30,z=0;for(int v=0;v<256;v++)mx=lg[v]>mx?lg[v]:mx;for(int v=0;v<256;v++)z+=exp(lg[v]-mx);
-                double li=log(z)+mx-lg[raw[i+1]];loss[i+1]=li;dt+=li;dc++;}
-            total+=dt;tc+=dc;
-            printf("{\"event\":\"ttt_doc\",\"doc\":%d,\"start\":%ld,\"bytes\":%ld,\"bpc\":%.6f,\"seconds\":%.3f,\"train_seconds\":0}\n",d,start,len,dc?dt/dc/log(2.):0,wall()-st);
-            for(int r=0;r<ttt_nranges;r++){double rs=0;long rc=0;for(long i=ttt_ranges[2*r];i<ttt_ranges[2*r+1]&&i<len;i++)if(loss[i]>=0){rs+=loss[i];rc++;}
-                printf("{\"event\":\"ttt_range\",\"doc\":%d,\"from\":%ld,\"to\":%ld,\"bpc\":%.6f}\n",d,ttt_ranges[2*r],ttt_ranges[2*r+1],rc?rs/rc/log(2.):0);}
-        }
-        printf("{\"event\":\"ttt_eval\",\"mode\":\"byte\",\"stream\":1,\"bytes\":%ld,\"bpc\":%.6f}\n",tc,tc?total/tc/log(2.):0);return 0;
-    }
+    if(!f){ttt_byte=load(ckpt,threads,W>256?W:256);if(!ttt_byte||ttt_byte->c.vocab!=256){fprintf(stderr,"cannot load checkpoint\n");return 1;}}
     real**base=snap_take(f);int nb=0;while((1L<<nb)<len)nb++;double*bs=calloc(nb+1,sizeof(double));long*bc=calloc(nb+1,sizeof(long));
     float*loss=malloc((size_t)len*sizeof(float));double total=0,tsec=0;long tc=0;
     for(int d=0;d<docs;d++){
@@ -2945,7 +2938,7 @@ static int ttt_eval_main(const char*ckpt,const char*path,long off,long len,const
  * then score the held-out remainder (windowed, weights fixed) after every epoch. */
 static long ttt_ctxlen=0; /* >0: use only the last ttt_ctxlen context bytes before the query */
 static int ttt_fit_main(const char*ckpt,const char*paths,double frac,int epochs,const TTT*o0,int threads){
-    Faithful*f=faithful_load(ckpt,threads,256);if(!f){fprintf(stderr,"ttt-fit needs a BLT checkpoint\n");return 1;}
+    Faithful*f=faithful_load(ckpt,threads,256);if(!f){ttt_byte=load(ckpt,threads,256);if(!ttt_byte){fprintf(stderr,"cannot load checkpoint\n");return 1;}}
     real**base=snap_take(f);TTT o=*o0;o.rnd=1;int L=256;
     int*t=malloc((size_t)L*o.batch*sizeof(int)),*y=malloc((size_t)L*o.batch*sizeof(int));
     char buf[4096];strncpy(buf,paths,sizeof(buf)-1);buf[sizeof(buf)-1]=0;
@@ -2953,12 +2946,12 @@ static int ttt_fit_main(const char*ckpt,const char*paths,double frac,int epochs,
         long n;unsigned char*full=read_file(path,&n);if(!full)return 1;long c=(long)(n*frac);unsigned char*raw=full;
         if(ttt_ctxlen>0&&ttt_ctxlen<c){raw=full+(c-ttt_ctxlen);n-=c-ttt_ctxlen;c=ttt_ctxlen;}
         snap_restore(f,base);uint64_t rng=0x243F6A8885A308D3ULL;long cnt;double tsec=0;
-        double q=score_data(f,NULL,raw,c,n,L,64,&cnt);
+        double q=score_data(f,ttt_byte,raw,c,n,L,64,&cnt);
         printf("{\"event\":\"ttt_fit\",\"doc\":\"%s\",\"context_bytes\":%ld,\"query_bytes\":%ld,\"epoch\":0,\"query_bpc\":%.6f,\"train_seconds\":0}\n",path,c,cnt,q);fflush(stdout);
         long per=c/((long)L*o.batch);if(per<1)per=1;o.steps=per;
         for(int e=1;e<=epochs;e++){
             double st=wall();ttt_train(f,raw,c,&o,&rng,t,y);if(o.decay>0)snap_pull(f,base,o.decay);tsec+=wall()-st;
-            if((e&(e-1))==0||e==epochs){q=score_data(f,NULL,raw,c,n,L,64,&cnt);
+            if((e&(e-1))==0||e==epochs){q=score_data(f,ttt_byte,raw,c,n,L,64,&cnt);
             printf("{\"event\":\"ttt_fit\",\"doc\":\"%s\",\"context_bytes\":%ld,\"query_bytes\":%ld,\"epoch\":%d,\"query_bpc\":%.6f,\"train_seconds\":%.3f}\n",path,c,cnt,e,q,tsec);fflush(stdout);}
         }free(full);
     }return 0;
