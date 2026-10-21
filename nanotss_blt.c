@@ -2878,20 +2878,62 @@ static double ttt_train(Faithful*f,const unsigned char*raw,long e,const TTT*o,ui
     }
     use_muon=save_muon;ttt_freeze=save_freeze;return loss/o->steps;
 }
+/* ---------------- Match model (PAQ-style long-range copy) ----------------
+ * Hashes the last MM_MIN bytes to the most recent earlier position with the same bytes, verifies
+ * the match backwards, and predicts the byte that followed it. The prediction is mixed into the
+ * model's distribution as p = lam*[x==pred] + (1-lam)*p_lm, with lam learned online per
+ * match-length bucket by gradient steps on the log loss. Strictly causal: when predicting
+ * raw[i+1] it has seen raw[0..i] only. */
+#define MM_MIN 5
+#define MM_BITS 22
+typedef struct{int on,bits;const unsigned char*buf;long*tab;long ptr;int len;double lam[16];long learn_from;double lr;} Match;
+static Match mm={.on=0,.bits=MM_BITS,.lr=.02};
+static int mm_bucket(int len){int b=0;while(len>0&&b<15){len>>=1;b++;}return b;}
+static void mmx_reset(Match*m,const unsigned char*buf,int keep_lam){
+    if(!m->bits)m->bits=MM_BITS;if(!m->tab)m->tab=malloc(sizeof(long)<<m->bits);memset(m->tab,0,sizeof(long)<<m->bits);m->buf=buf;m->ptr=0;m->len=0;
+    if(!keep_lam)for(int b=0;b<16;b++)m->lam[b]=b<3?0:b<4?.1:b<5?.3:.6;m->learn_from=0;
+}
+static void mm_reset(const unsigned char*buf){mmx_reset(&mm,buf,0);}
+static uint32_t mm_hash(const unsigned char*x,int bits){uint32_t h=2166136261u;for(int k=0;k<MM_MIN;k++)h=(h^x[k])*16777619u;return h>>(32-bits);}
+/* Incorporate byte buf[i]; afterwards the match predicts buf[i+1]. Call for every i in order. */
+static void mmx_advance(Match*m,long i){
+    const unsigned char*x=m->buf;
+    if(m->len>0&&x[m->ptr]==x[i]){m->ptr++;m->len++;}else m->len=0;
+    if(i>=MM_MIN-1){uint32_t h=mm_hash(x+i-MM_MIN+1,m->bits);
+        if(m->len==0){long c=m->tab[h];if(c>0){int k=0;while(k<400&&c-1-k>=0&&x[c-1-k]==x[i-k])k++;if(k>=MM_MIN){m->len=k;m->ptr=c;}}}
+        m->tab[h]=i+1;}
+}
+static void mm_advance(long i){mmx_advance(&mm,i);}
+static int mmx_pred(const Match*m){return m->len>0?m->buf[m->ptr]:-1;}
+/* Loss (nats) of target y under the mixture, given model logits; learns lam when pos>=learn_from. */
+static double mm_mix_loss(const real*l,int y,long pos){
+    double mx=-1e30,z=0;for(int v=0;v<256;v++)mx=l[v]>mx?l[v]:mx;for(int v=0;v<256;v++)z+=exp(l[v]-mx);
+    double py=exp(l[y]-mx)/z;int pr=mm.on?mmx_pred(&mm):-1;if(pr<0)return -log(py);
+    int b=mm_bucket(mm.len);double lam=mm.lam[b],d=pr==y,p=lam*d+(1-lam)*py;if(p<1e-12)p=1e-12;
+    if(pos>=mm.learn_from){lam+=mm.lr*(d-py)/p;mm.lam[b]=lam<0?0:lam>.999?.999:lam;}
+    return -log(p);
+}
+/* Mix a match prediction into a logits vector (used when sampling). */
+static void mmx_mix_logits(const Match*m,real*l){
+    int pr=mmx_pred(m);if(pr<0)return;double lam=m->lam[mm_bucket(m->len)];if(lam<=0)return;
+    double mx=-1e30,z=0;for(int v=0;v<256;v++)mx=l[v]>mx?l[v]:mx;for(int v=0;v<256;v++)z+=exp(l[v]-mx);
+    for(int v=0;v<256;v++){double p=(1-lam)*exp(l[v]-mx)/z+(v==pr?lam:0);l[v]=(real)log(p>1e-30?p:1e-30);}
+}
 /* Online score-then-adapt over raw[0..n). Fills per-position byte losses (nats) if loss!=NULL.
  * Returns bits per byte over positions >= skip. */
 static double ttt_run(Faithful*f,const unsigned char*raw,long n,const TTT*o,real**anchor,float*loss,long skip,double*train_seconds){
     int C=o->chunk,W=o->ctx+C;if(W>(f?f->Lmax:ttt_byte->Lmax)){fprintf(stderr,"ttt: ctx+chunk exceeds Lmax\n");exit(2);}
     int*t=malloc((size_t)(W>256?W:256)*(o->batch>1?o->batch:1)*sizeof(int)),*y=malloc((size_t)(W>256?W:256)*(o->batch>1?o->batch:1)*sizeof(int));
     real*lg=malloc((size_t)W*256*sizeof(real));uint64_t rng=0x9E3779B97F4A7C15ULL;double tot=0,tsec=0;long cnt=0;
+    if(mm.on){mm_reset(raw);mm.learn_from=o->lr>0?0:skip;}
     FStream*fs=o->stream&&f?fstream_new(f):NULL;Gen*bg=o->stream&&!f?gen_new(&ttt_byte->c):NULL;real slg[256];int have=0;
     for(long s=0;s<n-1;s+=C){
         long e=s+C<n-1?s+C:n-1;
         if(fs||bg){
             for(long i=s;i<e;i++){
                 if(!have){if(fs)fstream_step(f,fs,raw[i],slg);else gen_step(ttt_byte,bg,raw[i],slg);}
-                double mx=-1e30,z=0;for(int v=0;v<256;v++)mx=slg[v]>mx?slg[v]:mx;for(int v=0;v<256;v++)z+=exp(slg[v]-mx);
-                double li=log(z)+mx-slg[raw[i+1]];if(loss)loss[i+1]=li;if(i+1>=skip){tot+=li;cnt++;}
+                if(mm.on)mm_advance(i);
+                double li=mm_mix_loss(slg,raw[i+1],i+1);if(loss)loss[i+1]=li;if(i+1>=skip){tot+=li;cnt++;}
                 if(fs&&ttt_reset&&(i+1)%ttt_reset==0)fstream_reset(f,fs,ttt_reset_mask);
                 if(fs)fstream_step(f,fs,raw[i+1],slg);else gen_step(ttt_byte,bg,raw[i+1],slg);have=1;
             }
@@ -2899,8 +2941,9 @@ static double ttt_run(Faithful*f,const unsigned char*raw,long n,const TTT*o,real
             long a=s-o->ctx<0?0:s-o->ctx;int Lw=(int)(e-a);
             for(int i=0;i<Lw;i++){t[i]=raw[a+i];y[i]=a+i<s?-1:raw[a+i+1];}
             int ns;if(f)faithful_eval(f,0,t,y,Lw,&ns,lg);else eval_seq(ttt_byte,t,y,Lw,ttt_byte->ws[0],&ns,lg);
-            for(long i=s;i<e;i++){real*l=lg+(size_t)(i-a)*256;double mx=-1e30,z=0;for(int v=0;v<256;v++)mx=l[v]>mx?l[v]:mx;for(int v=0;v<256;v++)z+=exp(l[v]-mx);
-                double li=log(z)+mx-l[raw[i+1]];if(loss)loss[i+1]=li;if(i+1>=skip){tot+=li;cnt++;}}
+            for(long i=s;i<e;i++){real*l=lg+(size_t)(i-a)*256;
+                if(mm.on)mm_advance(i);
+                double li=mm_mix_loss(l,raw[i+1],i+1);if(loss)loss[i+1]=li;if(i+1>=skip){tot+=li;cnt++;}}
         }
         if(o->lr>0){double st=wall();ttt_train(f,raw,e,o,&rng,t,y);if(anchor&&o->decay>0)snap_pull(f,anchor,o->decay);tsec+=wall()-st;}
     }
@@ -2938,6 +2981,12 @@ static int ttt_eval_main(const char*ckpt,const char*path,long off,long len,const
 /* --ttt-fit FILE: read the first fraction of each document as context for E epochs of TTT,
  * then score the held-out remainder (windowed, weights fixed) after every epoch. */
 static long ttt_ctxlen=0; /* >0: use only the last ttt_ctxlen context bytes before the query */
+/* Held-out query BPC. With the match model on, score sequentially so the match table holds the
+ * whole context (lam learns on the query only); otherwise the parallel windowed scorer. */
+static double fit_score(Faithful*f,const unsigned char*raw,long c,long n,long*cnt){
+    if(!mm.on)return score_data(f,ttt_byte,raw,c,n,256,64,cnt);
+    TTT e={.lr=0,.ctx=64,.chunk=192,.steps=1,.batch=1};*cnt=n-1-c;return ttt_run(f,raw,n,&e,NULL,NULL,c,NULL);
+}
 static int ttt_fit_main(const char*ckpt,const char*paths,double frac,int epochs,const TTT*o0,int threads){
     Faithful*f=faithful_load(ckpt,threads,256);if(!f){ttt_byte=load(ckpt,threads,256);if(!ttt_byte){fprintf(stderr,"cannot load checkpoint\n");return 1;}}
     real**base=snap_take(f);TTT o=*o0;o.rnd=1;int L=256;
@@ -2947,12 +2996,12 @@ static int ttt_fit_main(const char*ckpt,const char*paths,double frac,int epochs,
         long n;unsigned char*full=read_file(path,&n);if(!full)return 1;long c=(long)(n*frac);unsigned char*raw=full;
         if(ttt_ctxlen>0&&ttt_ctxlen<c){raw=full+(c-ttt_ctxlen);n-=c-ttt_ctxlen;c=ttt_ctxlen;}
         snap_restore(f,base);uint64_t rng=0x243F6A8885A308D3ULL;long cnt;double tsec=0;
-        double q=score_data(f,ttt_byte,raw,c,n,L,64,&cnt);
+        double q=fit_score(f,raw,c,n,&cnt);
         printf("{\"event\":\"ttt_fit\",\"doc\":\"%s\",\"context_bytes\":%ld,\"query_bytes\":%ld,\"epoch\":0,\"query_bpc\":%.6f,\"train_seconds\":0}\n",path,c,cnt,q);fflush(stdout);
         long per=c/((long)L*o.batch);if(per<1)per=1;o.steps=per;
         for(int e=1;e<=epochs;e++){
             double st=wall();ttt_train(f,raw,c,&o,&rng,t,y);if(o.decay>0)snap_pull(f,base,o.decay);tsec+=wall()-st;
-            if((e&(e-1))==0||e==epochs){q=score_data(f,ttt_byte,raw,c,n,L,64,&cnt);
+            if((e&(e-1))==0||e==epochs){q=fit_score(f,raw,c,n,&cnt);
             printf("{\"event\":\"ttt_fit\",\"doc\":\"%s\",\"context_bytes\":%ld,\"query_bytes\":%ld,\"epoch\":%d,\"query_bpc\":%.6f,\"train_seconds\":%.3f}\n",path,c,cnt,e,q,tsec);fflush(stdout);}
         }free(full);
     }return 0;
@@ -2964,7 +3013,7 @@ static int ttt_fit_main(const char*ckpt,const char*paths,double frac,int epochs,
  *    on windows ending in those drafts mixed with replay windows from the context.
  * 3. Optionally polish the final best draft by local search: resample a short span starting
  *    at a high-surprisal byte, keep the edit only if the whole-draft score improves. */
-typedef struct {int rounds,cands,keep,len,steps,epochs,edits,span,tail,retr,retr_m;double temp,rep,final_temp;} Refine;
+typedef struct {int rounds,cands,keep,len,steps,epochs,edits,span,tail,retr,retr_m,match;double temp,rep,final_temp;} Refine;
 static int sample_rng(const real*lg,double temp,uint64_t*rng){
     double mx=-1e300,z=0,p[256];for(int v=0;v<256;v++)mx=lg[v]>mx?lg[v]:mx;
     for(int v=0;v<256;v++){p[v]=exp((lg[v]-mx)/temp);z+=p[v];}double r=urand(rng)*z;
@@ -2977,6 +3026,18 @@ static void draft_sample(Faithful*f,const unsigned char*pre,int np,unsigned char
         for(int i=0;i<n;i++){int v=sample_rng(lg,temp,rng);out[i]=v;gen_step(ttt_byte,g,v,lg);}gen_free(g);return;}
     FStream*s=fstream_new(f);for(int i=0;i<np;i++)fstream_step(f,s,pre[i],lg);
     for(int i=0;i<n;i++){int v=sample_rng(lg,temp,rng);out[i]=v;fstream_step(f,s,v,lg);}
+}
+/* Draft sampling with the match model over the full context + prompt + draft so far; the model
+ * itself is fed only pre (context tail + prompt). lam: calibrated match trust per length bucket. */
+static void draft_sample_mm(Faithful*f,const unsigned char*pre,int np,unsigned char*out,int n,double temp,uint64_t*rng,
+                            const unsigned char*ctx,long nc,const unsigned char*prompt,int pl,const double*lam){
+    long base=nc+pl;unsigned char*sb=malloc(base+n+1);memcpy(sb,ctx,nc);memcpy(sb+nc,prompt,pl);
+    Match m={.on=1,.bits=20};mmx_reset(&m,sb,0);memcpy(m.lam,lam,sizeof(m.lam));for(long i=0;i<base;i++)mmx_advance(&m,i);
+    real lg[256];Gen*g=f?NULL:gen_new(&ttt_byte->c);FStream*s=f?fstream_new(f):NULL;
+    for(int i=0;i<np;i++){if(f)fstream_step(f,s,pre[i],lg);else gen_step(ttt_byte,g,pre[i],lg);}
+    for(int i=0;i<n;i++){mmx_mix_logits(&m,lg);int v=sample_rng(lg,temp,rng);out[i]=v;sb[base+i]=v;mmx_advance(&m,base+i);
+        if(f)fstream_step(f,s,v,lg);else gen_step(ttt_byte,g,v,lg);}
+    if(g)gen_free(g);free(m.tab);free(sb);
 }
 /* One TTT optimizer step on B windows, for either model kind. */
 static void lm_step(Faithful*f,const int*t,const int*y,int B,int L,const Hyper*h){
@@ -3008,6 +3069,9 @@ static int refine_main(const char*ckpt,const char*ctxpath,const char*prompt,cons
     if(ctx&&R->epochs>0&&o.lr>0){long per=nc/((long)L*o.batch);if(per<1)per=1;TTT oc=o;oc.steps=per;
         for(int e=0;e<R->epochs;e++)ttt_train(f,ctx,nc,&oc,&rng,t,y);}
     fprintf(stderr,"{\"event\":\"refine_context\",\"bytes\":%ld,\"epochs\":%d,\"seconds\":%.3f}\n",nc,R->epochs,wall()-t0);
+    double mlam[16]={0};if(R->match&&ctx){long cl=nc<32768?nc:32768;TTT e={.lr=0,.ctx=64,.chunk=192,.steps=1,.batch=1};int was=mm.on;mm.on=1;
+        double cb=ttt_run(f,ctx+nc-cl,cl,&e,NULL,NULL,0,NULL);memcpy(mlam,mm.lam,sizeof(mlam));mm.on=was;
+        fprintf(stderr,"{\"event\":\"refine_match_calibration\",\"bytes\":%ld,\"bpc\":%.4f,\"lam8\":%.3f,\"lam32\":%.3f}\n",cl,cb,mlam[4],mlam[6]);}
     int tail=ctx?(nc<R->tail?(int)nc:R->tail):0,pl=strlen(prompt),np=tail+pl,N=R->len,K=R->cands;
     unsigned char*pre=malloc(np+1);if(tail)memcpy(pre,ctx+nc-tail,tail);memcpy(pre+tail,prompt,pl);
     unsigned char*cand=malloc((size_t)K*N),*seq=malloc((size_t)K*(np+N));double*score=malloc(K*sizeof(double)),*nll=malloc(K*sizeof(double));int*ord=malloc(K*sizeof(int));
@@ -3022,7 +3086,8 @@ static int refine_main(const char*ckpt,const char*ctxpath,const char*prompt,cons
 #else
             int th=0;
 #endif
-            draft_sample(f,pre,np,cand+(size_t)k*N,N,temp,rs+k);unsigned char*sq=seq+(size_t)k*(np+N);memcpy(sq,pre,np);memcpy(sq+np,cand+(size_t)k*N,N);
+            if(R->match&&ctx)draft_sample_mm(f,pre,np,cand+(size_t)k*N,N,temp,rs+k,ctx,nc,(const unsigned char*)prompt,pl,mlam);
+            else draft_sample(f,pre,np,cand+(size_t)k*N,N,temp,rs+k);unsigned char*sq=seq+(size_t)k*(np+N);memcpy(sq,pre,np);memcpy(sq+np,cand+(size_t)k*N,N);
             nll[k]=seq_nll(f,th,sq,np+N,np,NULL);score[k]=nll[k]+R->rep*rep_frac(cand+(size_t)k*N,N);
         }
         for(int k=0;k<K;k++)ord[k]=k;for(int i=1;i<K;i++){int v=ord[i],j=i;while(j>0&&score[ord[j-1]]>score[v]){ord[j]=ord[j-1];j--;}ord[j]=v;}
@@ -3110,7 +3175,7 @@ int main(int argc,char**argv){
     double seconds=300,entropy_seconds=60,entropy_charge=0,lr=.003,target=4,temp=.8;
     Cfg gc={.vocab=256,.d=128,.n_layer=4,.T=4,.D=7,.n=16,.p=16,.K=3,.group=128,.walks=2,.temp=1,.fff_gate=1,.fw_mask=1};
     double ssm_horizon=0;int carry_windows=0;long*carry_pos=NULL;int*carry_left=NULL;unsigned char*carry_buf=NULL;double repeat_p=0;long repeat_maxgap=0;
-    int refine=0;const char*refine_ctx=NULL;Refine rf={.retr=0,.retr_m=32,.rounds=3,.cands=16,.keep=4,.len=400,.steps=8,.epochs=8,.edits=0,.span=12,.tail=512,.temp=1,.rep=2,.final_temp=1};
+    int refine=0;const char*refine_ctx=NULL;Refine rf={.match=0,.retr=0,.retr_m=32,.rounds=3,.cands=16,.keep=4,.len=400,.steps=8,.epochs=8,.edits=0,.span=12,.tail=512,.temp=1,.rep=2,.final_temp=1};
     const char*ttt_file=NULL,*ttt_control=NULL,*ttt_fit=NULL;double ttt_frac=.5;int ttt_epochs=8;long ttt_off=-1,ttt_len=0,ttt_stride=0;int ttt_docs=1;
     TTT tt={.rnd=0,.lr=0,.decay=0,.clip=1,.beta2=.99,.steps=1,.batch=4,.chunk=192,.ctx=64,.stream=0,.freeze=0,.optim=0};
     FConfig cfg={.width=64,.heads=4,.bins=256,.maxpatch=8,.enc_layers=2,.dec_layers=4,.local_depth=4,.local_trees=2,.local_state=8,.neural=1,.mixer=2,.target=4};
@@ -3131,8 +3196,8 @@ int main(int argc,char**argv){
 #define OPT(n,x,cv) if(!strcmp(a,n)){x=cv(v);continue;}
         OPT("--ssm-horizon",ssm_horizon,atof) OPT("--ttt-reset",ttt_reset,atol) OPT("--ttt-reset-mask",ttt_reset_mask,atoi) OPT("--refine",refine,atoi) OPT("--refine-context",refine_ctx,(const char*)) OPT("--refine-rounds",rf.rounds,atoi) OPT("--refine-cands",rf.cands,atoi) OPT("--refine-keep",rf.keep,atoi)
         OPT("--refine-len",rf.len,atoi) OPT("--refine-steps",rf.steps,atoi) OPT("--refine-epochs",rf.epochs,atoi) OPT("--refine-edits",rf.edits,atoi) OPT("--refine-span",rf.span,atoi) OPT("--refine-tail",rf.tail,atoi)
-        OPT("--refine-retr",rf.retr,atoi) OPT("--refine-retr-m",rf.retr_m,atoi) OPT("--refine-temp",rf.temp,atof) OPT("--refine-rep",rf.rep,atof) OPT("--refine-final-temp",rf.final_temp,atof)
-        OPT("--fw-writes",fw_associative_writes,atoi) OPT("--depth",gc.D,atoi) OPT("--state-n",gc.n,atoi) OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--repeat-maxgap",repeat_maxgap,atol) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
+        OPT("--refine-match",rf.match,atoi) OPT("--refine-retr",rf.retr,atoi) OPT("--refine-retr-m",rf.retr_m,atoi) OPT("--refine-temp",rf.temp,atof) OPT("--refine-rep",rf.rep,atof) OPT("--refine-final-temp",rf.final_temp,atof)
+        OPT("--match",mm.on,atoi) OPT("--match-lr",mm.lr,atof) OPT("--fw-writes",fw_associative_writes,atoi) OPT("--depth",gc.D,atoi) OPT("--state-n",gc.n,atoi) OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--repeat-maxgap",repeat_maxgap,atol) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
         OPT("--ttt-lr",tt.lr,atof) OPT("--ttt-decay",tt.decay,atof) OPT("--ttt-clip",tt.clip,atof) OPT("--ttt-beta2",tt.beta2,atof) OPT("--ttt-steps",tt.steps,atoi) OPT("--ttt-batch",tt.batch,atoi)
         OPT("--ttt-chunk",tt.chunk,atoi) OPT("--ttt-ctx",tt.ctx,atoi) OPT("--ttt-stream",tt.stream,atoi) OPT("--ttt-freeze",tt.freeze,atoi)
         OPT("--context-file",context_file,(const char*)) OPT("--data",data,(const char*)) OPT("--save",out,(const char*)) OPT("--load",in,(const char*)) OPT("--mode",mode,(const char*)) OPT("--prompt",prompt,(const char*))
