@@ -127,6 +127,13 @@ static real ssm_dec_cap=1;
  * semi-implicit Euler, unit step): dec = 1/(1 + 1/tau + f), gain = f*dec, with 1/tau = exp(A_log)
  * per node and the input-dependent gate f = softplus(dt preactivation). Must match at train and load. */
 static int ssm_ltc=0;
+/* ssm_ltc=2 ("true liquid"): the gate also depends on the state. Per visited node,
+ * f = softplus(z + Z . (C^T H_prev)), z the input gate preactivation, Z the input-dependent read-out
+ * vector and C the query: the time constant follows how strongly the node's memory answers the query. */
+static inline real ltc2_gate(real z,const real*Z,const real*C,const real*H,int n,int pv){
+    real a=z;for(int q=0;q<pv;q++){real gq=0;for(int j=0;j<n;j++)gq+=C[j]*H[j*pv+q];a+=Z[q]*gq;}return a;
+}
+static inline real _cvtsh_ss_bf(uint16_t b){uint32_t u=(uint32_t)b<<16;float f;memcpy(&f,&u,4);return f;}
 static inline void ssm_coef(real ea,real dt,real*dec,real*gain){if(ssm_ltc){real q=1/(1+ea+dt);*dec=q;*gain=dt*q;}else{*dec=exp(-ea*dt);*gain=dt;}} /* <1 caps SSM retention per step: horizon ~ 1/(1-cap) steps */
 #if defined(__AVX512F__) && !defined(TSS_DOUBLE)
 #include <immintrin.h>
@@ -1169,7 +1176,7 @@ static void layer_fwd(const Cfg *c,const Params *P,const Params *Q,int l,int L,r
             const size_t row=(size_t)tr*N+node[tr],v=((size_t)t*T+tr)*(D+1)+kk;
             real *ha=h+row*n*pv,*R=tp->R+v*pv;
             if(w->prepare_state)w->prepare_state(w->prepare_state_user,ha,r_node+row,n,pv);
-            real dec,wdt;ssm_coef(decay_rate(k,r_node+row,A_log[row]),dtt[tr],&dec,&wdt);if(dec>ssm_dec_cap)dec=ssm_dec_cap;
+            real dec,wdt;ssm_coef(decay_rate(k,r_node+row,A_log[row]),ssm_ltc==2?softplus(ltc2_gate(pt[2*n+2*pv+tr]+dt_bias[tr],Z,C,ha,n,pv)):dtt[tr],&dec,&wdt);if(dec>ssm_dec_cap)dec=ssm_dec_cap;
 #if FAST
             if(!bf)
 #endif
@@ -1241,7 +1248,7 @@ static void layer_fwd(const Cfg *c,const Params *P,const Params *Q,int l,int L,r
             for(int kk=0,base=0;kk<j;base+=D-kk,kk++) {
                 if(tp->bw[((size_t)t*T+tr)*(D+1)+kk]==0)continue;
                 const size_t ai=ab+base+(j-kk-1),row=(size_t)tr*N+cn[tr*(D+1)+kk];
-                real dec,gn_;ssm_coef(decay_rate(k,r_node+row,A_log[row]),dtt[tr],&dec,&gn_);const real*hr=h+row*n*pv;
+                const real*hr=h+row*n*pv;real dec,gn_;ssm_coef(decay_rate(k,r_node+row,A_log[row]),ssm_ltc==2?softplus(ltc2_gate(pt[2*n+2*pv+tr]+dt_bias[tr],Z,C,hr,n,pv)):dtt[tr],&dec,&gn_);
                 real *R=tp->aR+ai*pv;
 #if FAST
                 if(vec) {
@@ -1378,7 +1385,7 @@ static void layer_bwd(const Cfg *c,const Params *P,const Params *Q,Params *G,int
                 const size_t v=((size_t)t*T+tr)*(D+1)+kk,row=tp->node[v];
                 real *la=lam+row*n*pv;
                 const real *hp=tp->hprev+v*n*pv,dec=tp->decay[v],*dRv=dR+v*pv;
-                const real ea_=decay_rate(k,r_node+row,A_log[row]),gv=ssm_ltc?dtv*dec:dtv;
+                const real ea_=decay_rate(k,r_node+row,A_log[row]),fv=ssm_ltc==2?1/dec-1-ea_:dtv,gv=ssm_ltc?fv*dec:dtv;
                 real ddec=0,dgain=0;
 #if FAST
                 if(vec) {
@@ -1412,7 +1419,20 @@ static void layer_bwd(const Cfg *c,const Params *P,const Params *Q,Params *G,int
                     }
                 }
                 if(ssm_ltc){const real d2=dec*dec; /* dec=1/(1+ea+f), gain=f*dec */
-                    ddt[tr]+=dgain*(1+ea_)*d2-ddec*d2;gA[row]+=(-dgain*dtv*d2-ddec*d2)*ea_;}
+                    const real df=dgain*(1+ea_)*d2-ddec*d2;gA[row]+=(-dgain*fv*d2-ddec*d2)*ea_;
+                    if(ssm_ltc==2){ /* f=softplus(a), a=z+Z.(C^T H_prev): chain into z, Z, C and H_prev */
+                        real hq[64*64];for(int i=0;i<n*pv;i++){
+#if FAST
+                            hq[i]=bf?_cvtsh_ss_bf(hp16[v*n*pv+i]):hp[i];
+#else
+                            hq[i]=hp[i];
+#endif
+                        }
+                        const real*Zv=Vv+pv;real a=ltc2_gate(pt[2*n+2*pv+tr]+dt_bias[tr],Zv,C,hq,n,pv),da=df*sigm(a);
+                        real*dZ=dpt+2*n+pv;ddt[tr]+=da;
+                        for(int q=0;q<pv;q++){real gq=0;for(int j=0;j<n;j++)gq+=C[j]*hq[j*pv+q];dZ[q]+=da*gq;const real dg=da*Zv[q];
+                            for(int j=0;j<n;j++){dC[j]+=dg*hq[j*pv+q];la[j*pv+q]+=C[j]*dg;}}
+                    }else ddt[tr]+=df;}
                 else{ddt[tr]+=dgain;gA[row]+=ddec*dec*-ea_*dtv;ddt[tr]+=ddec*dec*-ea_;}
             }
         }
@@ -1425,7 +1445,7 @@ static void layer_bwd(const Cfg *c,const Params *P,const Params *Q,Params *G,int
         real *dpt=dp+(size_t)t*Pd,*dxt=dx+(size_t)t*d;
         for(int tr=0;tr<T;tr++) {
             const real z=pt[2*n+2*pv+tr]+dt_bias[tr];
-            const real dz=dpt[2*n+2*pv+tr]*(z>20?1:sigm(z));
+            const real dz=ssm_ltc==2?dpt[2*n+2*pv+tr]:dpt[2*n+2*pv+tr]*(z>20?1:sigm(z));
             dpt[2*n+2*pv+tr]=dz;
             gdtb[tr]+=dz;
         }
