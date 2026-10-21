@@ -122,7 +122,12 @@ static real sigm(real x) {
 }
 /* Reference switch retains original reduction order for validation. */
 static int runtime_fast=1;
-static real ssm_dec_cap=1; /* <1 caps SSM retention per step: horizon ~ 1/(1-cap) steps */
+static real ssm_dec_cap=1;
+/* ssm_ltc=1: SSM tree nodes use the liquid time-constant update (Hasani et al. 2020, fused
+ * semi-implicit Euler, unit step): dec = 1/(1 + 1/tau + f), gain = f*dec, with 1/tau = exp(A_log)
+ * per node and the input-dependent gate f = softplus(dt preactivation). Must match at train and load. */
+static int ssm_ltc=0;
+static inline void ssm_coef(real ea,real dt,real*dec,real*gain){if(ssm_ltc){real q=1/(1+ea+dt);*dec=q;*gain=dt*q;}else{*dec=exp(-ea*dt);*gain=dt;}} /* <1 caps SSM retention per step: horizon ~ 1/(1-cap) steps */
 #if defined(__AVX512F__) && !defined(TSS_DOUBLE)
 #include <immintrin.h>
 #endif
@@ -1164,7 +1169,7 @@ static void layer_fwd(const Cfg *c,const Params *P,const Params *Q,int l,int L,r
             const size_t row=(size_t)tr*N+node[tr],v=((size_t)t*T+tr)*(D+1)+kk;
             real *ha=h+row*n*pv,*R=tp->R+v*pv;
             if(w->prepare_state)w->prepare_state(w->prepare_state_user,ha,r_node+row,n,pv);
-            real dec=exp(-decay_rate(k,r_node+row,A_log[row])*dtt[tr]);if(dec>ssm_dec_cap)dec=ssm_dec_cap;const real wdt=dtt[tr];
+            real dec,wdt;ssm_coef(decay_rate(k,r_node+row,A_log[row]),dtt[tr],&dec,&wdt);if(dec>ssm_dec_cap)dec=ssm_dec_cap;
 #if FAST
             if(!bf)
 #endif
@@ -1236,7 +1241,7 @@ static void layer_fwd(const Cfg *c,const Params *P,const Params *Q,int l,int L,r
             for(int kk=0,base=0;kk<j;base+=D-kk,kk++) {
                 if(tp->bw[((size_t)t*T+tr)*(D+1)+kk]==0)continue;
                 const size_t ai=ab+base+(j-kk-1),row=(size_t)tr*N+cn[tr*(D+1)+kk];
-                const real dec=exp(-decay_rate(k,r_node+row,A_log[row])*dtt[tr]),*hr=h+row*n*pv;
+                real dec,gn_;ssm_coef(decay_rate(k,r_node+row,A_log[row]),dtt[tr],&dec,&gn_);const real*hr=h+row*n*pv;
                 real *R=tp->aR+ai*pv;
 #if FAST
                 if(vec) {
@@ -1373,7 +1378,8 @@ static void layer_bwd(const Cfg *c,const Params *P,const Params *Q,Params *G,int
                 const size_t v=((size_t)t*T+tr)*(D+1)+kk,row=tp->node[v];
                 real *la=lam+row*n*pv;
                 const real *hp=tp->hprev+v*n*pv,dec=tp->decay[v],*dRv=dR+v*pv;
-                real ddec=0;
+                const real ea_=decay_rate(k,r_node+row,A_log[row]),gv=ssm_ltc?dtv*dec:dtv;
+                real ddec=0,dgain=0;
 #if FAST
                 if(vec) {
                     const __m512 vV=_mm512_loadu_ps(Vv),vdR=_mm512_loadu_ps(dRv),vd=_mm512_set1_ps(dec);
@@ -1382,32 +1388,32 @@ static void layer_bwd(const Cfg *c,const Params *P,const Params *Q,Params *G,int
                     for(int j=0;j<n;j++) {
                         const __m512 lv=_mm512_loadu_ps(la+j*16);
                         const __m512 hv=bf?_mm512_castsi512_ps(_mm512_slli_epi32(_mm512_cvtepu16_epi32(_mm256_loadu_si256((const __m256i *)(hb+j*16))),16)):_mm512_loadu_ps(hp+j*16);
-                        dB[j]+=dtv*_mm512_reduce_add_ps(_mm512_mul_ps(lv,vV));
+                        dB[j]+=gv*_mm512_reduce_add_ps(_mm512_mul_ps(lv,vV));
                         vBl=_mm512_fmadd_ps(_mm512_set1_ps(B[j]),lv,vBl);
                         dC[j]+=dec*_mm512_reduce_add_ps(_mm512_mul_ps(hv,vdR));
                         const __m512 dht=_mm512_fmadd_ps(_mm512_set1_ps(C[j]),vdR,lv);
                         vdec=_mm512_fmadd_ps(dht,hv,vdec);
                         _mm512_storeu_ps(la+j*16,_mm512_mul_ps(vd,dht));
-                    } _mm512_storeu_ps(dV,_mm512_fmadd_ps(_mm512_set1_ps(dtv),vBl,_mm512_loadu_ps(dV)));
-                    ddt[tr]+=_mm512_reduce_add_ps(_mm512_mul_ps(vBl,vV));
+                    } _mm512_storeu_ps(dV,_mm512_fmadd_ps(_mm512_set1_ps(gv),vBl,_mm512_loadu_ps(dV)));
+                    dgain=_mm512_reduce_add_ps(_mm512_mul_ps(vBl,vV));
                     ddec=_mm512_reduce_add_ps(vdec);
                 }else
 #endif
                {
                     for(int j=0;j<n;j++)for(int q=0;q<pv;q++) {
                         const real lv=la[j*pv+q];
-                        dB[j]+=dtv*lv*Vv[q];
-                        dV[q]+=dtv*lv*B[j];
-                        ddt[tr]+=lv*B[j]*Vv[q];
+                        dB[j]+=gv*lv*Vv[q];
+                        dV[q]+=gv*lv*B[j];
+                        dgain+=lv*B[j]*Vv[q];
                         dC[j]+=dec*hp[j*pv+q]*dRv[q];
                         const real dht=lv+C[j]*dRv[q];
                         ddec+=dht*hp[j*pv+q];
                         la[j*pv+q]=dec*dht;
                     }
                 }
-                const real ea=decay_rate(k,r_node+row,A_log[row]);
-                gA[row]+=ddec*dec*-ea*dtv;
-                ddt[tr]+=ddec*dec*-ea;
+                if(ssm_ltc){const real d2=dec*dec; /* dec=1/(1+ea+f), gain=f*dec */
+                    ddt[tr]+=dgain*(1+ea_)*d2-ddec*d2;gA[row]+=(-dgain*dtv*d2-ddec*d2)*ea_;}
+                else{ddt[tr]+=dgain;gA[row]+=ddec*dec*-ea_*dtv;ddt[tr]+=ddec*dec*-ea_;}
             }
         }
     }
@@ -1808,7 +1814,7 @@ static void params_init(const Cfg *c,Params *P) {
             for(int i=0;i<d;i++)P->w_in[r*d+i]=UNI(k_in);
             P->bias[r]=UNI(k_in);
             for(int i=0;i<d;i++)P->w_out[r*d+i]=UNI(k_out);
-            P->A_log[r]=(real)log(1+15*rand01());
+            P->A_log[r]=ssm_ltc?(real)(-rand01()*log(1000.)):(real)log(1+15*rand01()); /* LTC: tau log-uniform in [1,1000] */
         }
         for(size_t i=0;i<(size_t)BASE_PDIM(c)*d;i++)P->proj[(size_t)l*Pd*d+i]=UNI(k_in);
         for(int t=0;t<T;t++) {
@@ -3184,6 +3190,7 @@ int main(int argc,char**argv){
         if(!strcmp(argv[i],"--fw-scalar")){fw_fast=0;continue;}
         if(!strcmp(argv[i],"--help")){usage();return 0;}
         if(!strcmp(argv[i],"--check-neural"))return check_neural();
+        if(!strcmp(argv[i],"--check-ssm"))return check_block_gradient(0);
         if(!strcmp(argv[i],"--check-tree-fw"))return check_tree_fw();
         if(!strcmp(argv[i],"--runtime-reference")){runtime_fast=0;continue;}
         if(!strcmp(argv[i],"--check"))return check_gated_fff()||check_tree_fw();
@@ -3197,7 +3204,7 @@ int main(int argc,char**argv){
         OPT("--ssm-horizon",ssm_horizon,atof) OPT("--ttt-reset",ttt_reset,atol) OPT("--ttt-reset-mask",ttt_reset_mask,atoi) OPT("--refine",refine,atoi) OPT("--refine-context",refine_ctx,(const char*)) OPT("--refine-rounds",rf.rounds,atoi) OPT("--refine-cands",rf.cands,atoi) OPT("--refine-keep",rf.keep,atoi)
         OPT("--refine-len",rf.len,atoi) OPT("--refine-steps",rf.steps,atoi) OPT("--refine-epochs",rf.epochs,atoi) OPT("--refine-edits",rf.edits,atoi) OPT("--refine-span",rf.span,atoi) OPT("--refine-tail",rf.tail,atoi)
         OPT("--refine-match",rf.match,atoi) OPT("--refine-retr",rf.retr,atoi) OPT("--refine-retr-m",rf.retr_m,atoi) OPT("--refine-temp",rf.temp,atof) OPT("--refine-rep",rf.rep,atof) OPT("--refine-final-temp",rf.final_temp,atof)
-        OPT("--match",mm.on,atoi) OPT("--match-lr",mm.lr,atof) OPT("--fw-writes",fw_associative_writes,atoi) OPT("--depth",gc.D,atoi) OPT("--state-n",gc.n,atoi) OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--repeat-maxgap",repeat_maxgap,atol) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
+        OPT("--ssm-ltc",ssm_ltc,atoi) OPT("--match",mm.on,atoi) OPT("--match-lr",mm.lr,atof) OPT("--fw-writes",fw_associative_writes,atoi) OPT("--depth",gc.D,atoi) OPT("--state-n",gc.n,atoi) OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--repeat-maxgap",repeat_maxgap,atol) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
         OPT("--ttt-lr",tt.lr,atof) OPT("--ttt-decay",tt.decay,atof) OPT("--ttt-clip",tt.clip,atof) OPT("--ttt-beta2",tt.beta2,atof) OPT("--ttt-steps",tt.steps,atoi) OPT("--ttt-batch",tt.batch,atoi)
         OPT("--ttt-chunk",tt.chunk,atoi) OPT("--ttt-ctx",tt.ctx,atoi) OPT("--ttt-stream",tt.stream,atoi) OPT("--ttt-freeze",tt.freeze,atoi)
         OPT("--context-file",context_file,(const char*)) OPT("--data",data,(const char*)) OPT("--save",out,(const char*)) OPT("--load",in,(const char*)) OPT("--mode",mode,(const char*)) OPT("--prompt",prompt,(const char*))
