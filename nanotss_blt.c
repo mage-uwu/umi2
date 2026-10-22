@@ -1712,6 +1712,10 @@ static double reduce_span(real *dst, real *tf[64][N_FIELDS], int f,
     for(size_t i=0;i<len;i++)norm+=(double)dst[off+i]*dst[off+i];
     return norm;
 }
+/* Byte-mode Muon: when byte_muon is set, the matrix fields (tree-node w_in/w_out rows, proj, U) of
+ * byte_muon_model skip AdamW here and are updated by blockwise Muon (NorMuon when normuon is set). */
+static int byte_muon=0,normuon=0;static void*byte_muon_model=NULL;
+static void byte_muon_update(const Hyper*h,real scale,int threads);
 real tss_train_step(const Cfg *c,Params *P,Params *Q,Params *G,unsigned char *hit,
                     Params *M,Params *Vm,Params *Gt,unsigned char *hits,Work **ws,
                     int threads,const int *tokens,const int *labels,int B,int L,
@@ -1774,17 +1778,20 @@ real tss_train_step(const Cfg *c,Params *P,Params *Q,Params *G,unsigned char *hi
             if((size_t)job<rows) {
                 const size_t r=(size_t)job;if(!hit[r])continue;
                 for(int f=4;f<=7;f++) {
+                    if(byte_muon&&(f==4||f==6))continue;
                     const size_t width=(f==4||f==6)?(size_t)d:1,off=r*width;
                     adam(pf[f]+off,gf[f]+off,mf[f]+off,vf[f]+off,width,h,scale,c1,c2);
                 }
                 Q->A_log[r]=P->A_log[r];if(k)k->decay_rates[r]=exp(P->A_log[r]);
+                if(!byte_muon){
                 tss_ternary(P->w_in+r*d,Q->w_in+r*d,1,d,c->group);
                 tss_ternary(P->w_out+r*d,Q->w_out+r*d,1,d,c->group);
-                if(k&&k->ok){plane_rows(Q->w_in,&k->w_in,r,r+1,d,c->group);plane_rows(Q->w_out,&k->w_out,r,r+1,d,c->group);}
+                if(k&&k->ok){plane_rows(Q->w_in,&k->w_in,r,r+1,d,c->group);plane_rows(Q->w_out,&k->w_out,r,r+1,d,c->group);}}
             } else {
                 const size_t dj=(size_t)job-rows;int f=0;
                 while(dj>=ends[f+1])f++;
                 const size_t off=(dj-ends[f])*chunk[f],len=z[f]-off<chunk[f]?z[f]-off:chunk[f];
+                if(byte_muon&&(f==8||f==10))continue;
                 adam(pf[f]+off,gf[f]+off,mf[f]+off,vf[f]+off,len,h,scale,c1,c2);
                 if(f==8||f==10) {
                     real *qm=f==8?Q->proj:Q->U;const size_t r=off/d;
@@ -1794,6 +1801,7 @@ real tss_train_step(const Cfg *c,Params *P,Params *Q,Params *G,unsigned char *hi
             }
         }
     }
+    if(byte_muon)byte_muon_update(h,scale,threads);
     return scored?loss/scored:0;
 }
 
@@ -2374,7 +2382,7 @@ static double faithful_eval(Faithful*f,int th,const int*t,const int*y,int L,int*
 static int use_muon=1,muon_steps=5,muon_block=16;
 static int ttt_freeze=0; /* test-time training: 1 keeps ternary matrices fixed */
 static real muon_scale=3;
-typedef struct {real*p,*g,*m,*q;unsigned char*hit;Model*model;int field,rows,d;size_t row;} MuonJob;
+typedef struct {real*p,*g,*m,*q;unsigned char*hit;Model*model;int field,rows,d;size_t row;real*v;} MuonJob;
 static void muon_apply(MuonJob*j,const Hyper*h,real scale){
     if(j->rows>32||j->d>512){fprintf(stderr,"Muon block exceeds CPU workspace bounds\n");exit(2);}
     int map[32],r=0,d=j->d;real X[32*512],Y[32*512],A[32*32],B[32*32];double norm=0;
@@ -2394,6 +2402,13 @@ static void muon_apply(MuonJob*j,const Hyper*h,real scale){
             for(int k=0;k<r;k++)axpy(Y+i*d,B[i*r+k],X+k*d,d);
         }memcpy(X,Y,(size_t)r*d*sizeof(real));
     }
+    /* NorMuon: per-row second moment of the orthogonalized update, normalized per row, then rescaled
+     * to keep the block's Frobenius norm. Row moments live in v[row*d]. */
+    if(normuon&&j->v){double before=0,after=0;for(int i=0;i<r*d;i++)before+=(double)X[i]*X[i];
+        for(int i=0;i<r;i++){real*xi=X+i*d;double ms=0;for(int k=0;k<d;k++)ms+=(double)xi[k]*xi[k];ms/=d;
+            real*vv=j->v+(size_t)map[i]*d;*vv=(real)(.95*(*vv)+.05*ms);real inv=(real)(1/sqrt(*vv/(1-pow(.95,(double)h->step))+1e-12));
+            for(int k=0;k<d;k++){xi[k]*=inv;after+=(double)xi[k]*xi[k];}}
+        real sc=(real)sqrt(before/(after+1e-30));for(int i=0;i<r*d;i++)X[i]*=sc;}
     /* AdamW-comparable update RMS convention; separate multiplier available. */
     real lr=h->lr*muon_scale*(real)(.2*sqrt(fmax(r,d)));
     for(int i=0;i<r;i++){
@@ -2409,7 +2424,7 @@ static void muon_apply(MuonJob*j,const Hyper*h,real scale){
 }
 static void muon_jobs_add(MuonJob*jobs,int*count,real*p,real*g,real*m,real*q,unsigned char*hit,Model*model,int field,size_t row,int rows,int d){
     for(int at=0;at<rows;at+=muon_block){int nr=rows-at<muon_block?rows-at:muon_block;
-        jobs[(*count)++]=(MuonJob){p+(size_t)at*d,g+(size_t)at*d,m+(size_t)at*d,q?q+(size_t)at*d:NULL,hit?hit+at:NULL,model,field,nr,d,row+at};
+        jobs[(*count)++]=(MuonJob){p+(size_t)at*d,g+(size_t)at*d,m+(size_t)at*d,q?q+(size_t)at*d:NULL,hit?hit+at:NULL,model,field,nr,d,row+at,NULL};
     }
 }
 static int muon_build(Faithful*f,MuonJob*jobs){
@@ -2435,6 +2450,24 @@ static int muon_build(Faithful*f,MuonJob*jobs){
     }return count;
 }
 
+static MuonJob*bm_jobs=NULL;static int bm_n=0;
+static void byte_muon_update(const Hyper*h,real scale,int threads){
+    Model*m=(Model*)byte_muon_model;if(!m)return;Cfg*c=&m->c;
+    if(!bm_jobs){size_t cap=4*node_rows(c)+4*c->n_layer*(PDIM(c)+c->T*c->p)+64;bm_jobs=malloc(cap*sizeof(MuonJob));
+        real*p[N_FIELDS],*g[N_FIELDS],*mom[N_FIELDS],*q[N_FIELDS],*vv[N_FIELDS];fields(&m->P,p);fields(&m->G,g);fields(&m->M,mom);fields(&m->Q,q);fields(&m->V,vv);
+        for(int l=0;l<c->n_layer;l++){
+            int n=(l&1)?fff_nodes(c):NODES(c);
+            for(int tr=0;tr<c->T;tr++)for(int field=4;field<=6;field+=2){size_t row=node_off(c,l)+(size_t)tr*n;int st=bm_n;
+                muon_jobs_add(bm_jobs,&bm_n,p[field]+row*c->d,g[field]+row*c->d,mom[field]+row*c->d,q[field]+row*c->d,m->hit+row,m,field,row,n,c->d);
+                for(int j=st;j<bm_n;j++)bm_jobs[j].v=vv[field]+(bm_jobs[j].p-p[field]);}
+            for(int field=8;field<=10;field+=2){int nrow=field==8?PDIM(c):c->T*c->p;size_t row=(size_t)l*nrow;int st=bm_n;
+                int active=(l&1)?(c->fff_gate?c->n:0):nrow;
+                muon_jobs_add(bm_jobs,&bm_n,p[field]+row*c->d,g[field]+row*c->d,mom[field]+row*c->d,q[field]+row*c->d,NULL,m,field,row,active,c->d);
+                for(int j=st;j<bm_n;j++)bm_jobs[j].v=vv[field]+(bm_jobs[j].p-p[field]);}
+        }}
+#pragma omp parallel for num_threads(threads) schedule(static,1)
+    for(int j=0;j<bm_n;j++)muon_apply(bm_jobs+j,h,scale);
+}
 /* One OpenMP team: sequence work, unified clipping, sparse row updates.
  * Free-budget n-gram weights still participate in clipping and AdamW. */
 typedef struct {
@@ -3320,7 +3353,7 @@ int main(int argc,char**argv){
         const char*a=argv[i],*v=i+1<argc?argv[++i]:NULL;if(!v)return 2;
         if(!strcmp(a,"--ttt-range")){if(ttt_nranges<32&&sscanf(v,"%ld:%ld",ttt_ranges+2*ttt_nranges,ttt_ranges+2*ttt_nranges+1)==2)ttt_nranges++;else return 2;continue;}
         if(!strcmp(a,"--ttt-optim")){if(!strcmp(v,"muon"))tt.optim=1;else if(!strcmp(v,"adamw"))tt.optim=0;else return 2;continue;}
-        if(!strcmp(a,"--optimizer")){optimizer_explicit=1;if(!strcmp(v,"muon"))use_muon=1;else if(!strcmp(v,"adamw"))use_muon=0;else return 2;continue;}
+        if(!strcmp(a,"--optimizer")){optimizer_explicit=1;if(!strcmp(v,"muon"))use_muon=1;else if(!strcmp(v,"normuon")){use_muon=1;normuon=1;}else if(!strcmp(v,"adamw"))use_muon=0;else return 2;continue;}
         if(!strcmp(a,"--patcher")){if(strcmp(v,"neural")){fprintf(stderr,"Only the neural entropy patcher is supported.\n");return 2;}continue;}
 #define OPT(n,x,cv) if(!strcmp(a,n)){x=cv(v);continue;}
         OPT("--ssm-horizon",ssm_horizon,atof) OPT("--ttt-reset",ttt_reset,atol) OPT("--ttt-reset-mask",ttt_reset_mask,atoi) OPT("--session",session,atoi) OPT("--session-score",sess_score,atoi) OPT("--session-speed",sess_speed,(const char*)) OPT("--refine",refine,atoi) OPT("--refine-context",refine_ctx,(const char*)) OPT("--refine-rounds",rf.rounds,atoi) OPT("--refine-cands",rf.cands,atoi) OPT("--refine-keep",rf.keep,atoi)
@@ -3351,7 +3384,7 @@ int main(int argc,char**argv){
     if((gc.fw_mask&~0x5)||gc.fff_gate<0||gc.fff_gate>1)return 2;
     if(threads<1||threads>64||B<1||L<8||burn<0||burn>=L||seconds<=0||temp<=0||cfg.bins<0||cfg.bins>1048576||cfg.maxpatch<1||cfg.maxpatch>1024||target<1||target>cfg.maxpatch||cfg.enc_layers<0||cfg.dec_layers<0||cfg.local_depth<1||cfg.local_depth>12||cfg.local_trees<1)return 2;
     if(strcmp(mode,"byte")&&strcmp(mode,"blt"))return 2;
-    if(use_muon&&strcmp(mode,"blt")){if(optimizer_explicit){fprintf(stderr,"CPU Muon is integrated in full BLT training; byte mode uses AdamW.\n");return 2;}use_muon=0;}
+    if(use_muon&&strcmp(mode,"blt")){byte_muon=optimizer_explicit;use_muon=0;} /* byte mode: AdamW unless --optimizer muon|normuon */
     if(!strcmp(mode,"byte")&&cfg.mixer){fprintf(stderr,"Standalone byte mode requires --conv-mix 0; the integrated mixer acts on global BLT states.\n");return 2;}
     g_rng^=((uint64_t)seed+1)*0x9E3779B97F4A7C15ULL;
     gc.d=2*cfg.width;
@@ -3373,6 +3406,7 @@ int main(int argc,char**argv){
     if(in){f=faithful_load(in,threads,L);if(!f)m=load(in,threads,L);if(!f&&!m)return 1;blt=f!=NULL;}
     else if(blt){cfg.target=target;f=faithful_new(gc,cfg,threads,L,1);}
     else {m=model_new(&gc,threads,L);params_init(&gc,&m->P);model_requantize(m);}
+    if(m&&byte_muon)byte_muon_model=m;else byte_muon=0;
     if(scoreonly){if(!in)return 2;long scored;double bpc=score_data(f,m,raw,split,n,L,burn,&scored);printf("{\"event\":\"score\",\"val_bpc\":%.6f,\"scored_bytes\":%ld,\"burn\":%d}\n",bpc,scored,burn);return 0;}
     if(blt&&!in){
         if(f->c.neural){
