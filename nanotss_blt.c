@@ -152,18 +152,25 @@ static inline real ltc2_gate(real z,const real*Z,const real*C,const real*H,int n
     real a=z;for(int q=0;q<pv;q++){real gq=0;for(int j=0;j<n;j++)gq+=C[j]*H[j*pv+q];a+=Z[q]*gq;}return a;
 }
 static inline real _cvtsh_ss_bf(uint16_t b){uint32_t u=(uint32_t)b<<16;float f;memcpy(&f,&u,4);return f;}
+/* Rotary angles for position pos: one cos/sin per coordinate pair, shared by every key and query. */
+static void rope_angles(long pos,int n,real*cs,real*sn){
+    static double th[32];static int tn=0;if(tn!=n){for(int k=0;k+1<n&&k/2<32;k+=2)th[k/2]=pow(10000.,-(double)k/n);tn=n;}
+    for(int k=0;k+1<n;k+=2){double a=pos*th[k/2];cs[k/2]=(real)cos(a);sn[k/2]=(real)sin(a);}
+}
 static void ssm_prep(real*pt,int n,int G,long pos,real*inv){
+    real cs[32],sn[32];if(ssm_rope)rope_angles(pos,n,cs,sn);
     for(int part=0;part<2;part++)for(int g=0;g<G;g++){real*v=pt+(size_t)part*G*n+(size_t)g*n;
         if(ssm_qknorm){real ss=0;for(int j=0;j<n;j++)ss+=v[j]*v[j];real r=1/sqrt(ss+(real)1e-6);inv[part*G+g]=r;for(int j=0;j<n;j++)v[j]*=r;}
-        if(ssm_rope)for(int k=0;k+1<n;k+=2){real th=(real)(pos*pow(10000.,-(double)k/n)),cs=cos(th),sn=sin(th),a=v[k],b=v[k+1];v[k]=a*cs-b*sn;v[k+1]=a*sn+b*cs;}
+        if(ssm_rope)for(int k=0;k+1<n;k+=2){real c_=cs[k/2],s_=sn[k/2],a=v[k],b=v[k+1];v[k]=a*c_-b*s_;v[k+1]=a*s_+b*c_;}
     }
 }
 /* Gradient through ssm_prep: dpt holds d/d(prepared values); pt the prepared values. */
 static void ssm_prep_bwd(const real*pt,real*dpt,int n,int G,long pos,const real*inv){
+    real cs[32],sn[32];if(ssm_rope)rope_angles(pos,n,cs,sn);
     for(int part=0;part<2;part++)for(int g=0;g<G;g++){const real*v=pt+(size_t)part*G*n+(size_t)g*n;real*dv=dpt+(size_t)part*G*n+(size_t)g*n;real u[64];
         memcpy(u,v,n*sizeof(real));
-        if(ssm_rope)for(int k=0;k+1<n;k+=2){real th=(real)(pos*pow(10000.,-(double)k/n)),cs=cos(th),sn=sin(th),a=dv[k],b=dv[k+1];dv[k]=a*cs+b*sn;dv[k+1]=-a*sn+b*cs;
-            real x=u[k],y=u[k+1];u[k]=x*cs+y*sn;u[k+1]=-x*sn+y*cs;}
+        if(ssm_rope)for(int k=0;k+1<n;k+=2){real c_=cs[k/2],s_=sn[k/2],a=dv[k],b=dv[k+1];dv[k]=a*c_+b*s_;dv[k+1]=-a*s_+b*c_;
+            real x=u[k],y=u[k+1];u[k]=x*c_+y*s_;u[k+1]=-x*s_+y*c_;}
         if(ssm_qknorm){real r=inv[part*G+g],dot=0;for(int j=0;j<n;j++)dot+=u[j]*dv[j];for(int j=0;j<n;j++)dv[j]=r*(dv[j]-u[j]*dot);}
     }
 }
