@@ -548,7 +548,7 @@ typedef struct {
     double *head_exp;
     real *stream_hist;
     real *carry_h,*carry_hist; /* training state carry: per even layer h, per layer K-1 conv inputs */
-    real *qkn; long pos; int lv; real *mtp_g,*lat_g,*lat_u; /* per-thread MTP / latent-thought gradients; latent inputs */ /* per-thread gradient of the MTP head matrix */ /* lv: current virtual layer (buffer index when looping) */ /* SSM QK-norm inverse norms per (layer,t,group,B/C); stream position for rotary */
+    real *qkn; long pos; int lv; real *mtp_g,*lat_g,*lat_u,*pos_loss,*lat_l1; int *lat_b; uint64_t lat_rng; /* per-thread MTP / latent-thought gradients; latent inputs */ /* per-thread gradient of the MTP head matrix */ /* lv: current virtual layer (buffer index when looping) */ /* SSM QK-norm inverse norms per (layer,t,group,B/C); stream position for rotary */
     void (*prepare_state)(void*,real*,size_t,int,int);
     void *prepare_state_user;
     const Tape *reuse_fw_input;
@@ -1655,6 +1655,7 @@ static real head_train(const Cfg *c,const Params *P,Params *G,const real *x, con
             // Cache double exponentials, preserving original summation/rounding.
             head_exponentials(pt,mx,w->head_exp,V);
             for(int v=0;v<V;v++)z+=w->head_exp[v]; loss+=log(z)+mx-pt[labels[t0+t]];
+            if(w->pos_loss)w->pos_loss[t0+t]=log(z)+mx-pt[labels[t0+t]];
             (*ns)++;
             for(int v=0;v<V;v++)pt[v]=w->head_exp[v]/z-(v==labels[t0+t]);
         }
@@ -1691,24 +1692,56 @@ static real head_train(const Cfg *c,const Params *P,Params *G,const real *x, con
 /* bwd_layers>0: backpropagate only through the top bwd_layers layers (cheaper test-time training);
  * lower layers and the input embedding get no gradient. The tied output head still learns. */
 static int bwd_layers=0;
-/* Latent thoughts (--latent 1, with --pause K): a first forward pass runs the window as usual; then each
- * pause slot's input becomes embed[pause] + Wl rmsnorm(final state of the previous position, pass 1), so
- * the model reads its own dense state instead of a fixed byte. Pass 1 is treated as a constant (stop-
- * gradient); Wl (d x d, zero init, so training starts from the plain pause model) learns from the
- * input gradient at pause slots. Wl is training-time state only for now. */
-static int latent_on=0;static real*lat_W=NULL,*lat_m=NULL,*lat_v=NULL;static int lat_d=0;
-static void latent_inputs(const Cfg*c,const Params*P,const Params*Q,const int*tok,int L,real*x,real*h,Tape*tp,Work*w){
+/* Thoughts in pause slots (--pause K). A first forward pass runs the window with plain pause slots
+ * (only the bottom --latent-layers M layers when M>0). Its state u_t = rmsnorm(x_{t-1}) at each slot
+ * then fills the slot for the second, trained pass:
+ *   --latent 1  dense:    input = embed[pause] + Wl u_t        (Wl d x d, zero init)
+ *   --latent 2  discrete: input = embed[pause] + embed[b_t], b_t ~ softmax(E Wt u_t), Wt identity init.
+ * Pass 1 is a constant (stop-gradient). Wl learns from the input gradient. Wt is trained by REINFORCE:
+ * the reward of a word's thoughts is (pass-1 loss - pass-2 loss) on the next rl_n real bytes, so the
+ * no-thought baseline comes free from pass 1. Wl/Wt are training-time state only for now. */
+static int latent_on=0,latent_layers=0,rl_n=4;static real rl_beta=1;static real*lat_W=NULL,*lat_m=NULL,*lat_v=NULL;static int lat_d=0;
+static double rl_rsum=0;static long rl_rcount=0;
+static void thought_logits(const Cfg*c,const Params*P,const real*u,real*z,real*q){const int d=c->d;
+    for(int i=0;i<d;i++)z[i]=dotr(lat_W+(size_t)i*d,u,d);for(int v=0;v<c->vocab;v++)q[v]=v?dotr(P->embed+(size_t)v*d,z,d):-INFINITY;}
+static real pos_ce(const Cfg*c,const Params*P,const real*x,int y){const int d=c->d;real u[512],r,mx=-INFINITY,lg[256];double z=0;
+    rmsnorm_fwd(x,P->norm_f,u,d,&r);for(int v=0;v<c->vocab;v++){lg[v]=dotr(P->embed+(size_t)v*d,u,d);mx=lg[v]>mx?lg[v]:mx;}
+    for(int v=0;v<c->vocab;v++)z+=exp(lg[v]-mx);return (real)(log(z)+mx-lg[y]);}
+static void latent_inputs(const Cfg*c,const Params*P,const Params*Q,const int*tok,const int*lab,int L,real*x,real*h,Tape*tp,Work*w){
     const int d=c->d;if(!lat_W||lat_d!=d)return;int any=0;for(int t=1;t<L;t++)if(tok[t]==0){any=1;break;}if(!any)return;
-    if(!w->lat_u)w->lat_u=calloc((size_t)w->Lmax*d,sizeof(real));
+    if(!w->lat_u){w->lat_u=calloc((size_t)w->Lmax*d,sizeof(real));w->lat_b=calloc(w->Lmax,sizeof(int));w->lat_l1=calloc(w->Lmax,sizeof(real));w->lat_rng=0x9E3779B97F4A7C15ULL^(uint64_t)(uintptr_t)w;}
     real*x0=malloc((size_t)L*d*sizeof(real));memcpy(x0,x,(size_t)L*d*sizeof(real));
-    for(int l=0;l<c->n_layer*n_loops;l++){if(!(l&1))memset(h,0,sizeof(real)*(size_t)c->T*NODES(c)*c->n*c->p);layer_fwd(c,P,Q,l,L,x,h,tp+l,w);}
-    for(int t=0;t<L;t++){real*u=w->lat_u+(size_t)t*d;if(t==0||tok[t]!=0){memset(u,0,d*sizeof(real));continue;}real r;
-        rmsnorm_fwd(x+(size_t)(t-1)*d,P->norm_f,u,d,&r);for(int i=0;i<d;i++)x0[(size_t)t*d+i]+=dotr(lat_W+(size_t)i*d,u,d);}
+    int nv=c->n_layer*n_loops,M=latent_on==1&&latent_layers>0&&latent_layers<nv?latent_layers:nv;
+    for(int l=0;l<M;l++){if(!(l&1))memset(h,0,sizeof(real)*(size_t)c->T*NODES(c)*c->n*c->p);layer_fwd(c,P,Q,l,L,x,h,tp+l,w);}
+    if(latent_on==2&&lab)for(int t=0;t<L;t++)w->lat_l1[t]=lab[t]>=0?pos_ce(c,P,x+(size_t)t*d,lab[t]):0;
+    real z[512],q[256];
+    for(int t=0;t<L;t++){real*u=w->lat_u+(size_t)t*d;w->lat_b[t]=-1;if(t==0||tok[t]!=0){memset(u,0,d*sizeof(real));continue;}real r;
+        rmsnorm_fwd(x+(size_t)(t-1)*d,P->norm_f,u,d,&r);
+        if(latent_on==1){for(int i=0;i<d;i++)x0[(size_t)t*d+i]+=dotr(lat_W+(size_t)i*d,u,d);continue;}
+        thought_logits(c,P,u,z,q);real mx=-INFINITY;for(int v=1;v<c->vocab;v++)mx=q[v]>mx?q[v]:mx;
+        double zs=0;for(int v=1;v<c->vocab;v++)zs+=exp(q[v]-mx);double a=urand(&w->lat_rng)*zs;int b=c->vocab-1;
+        for(int v=1;v<c->vocab;v++){a-=exp(q[v]-mx);if(a<=0){b=v;break;}}
+        w->lat_b[t]=b;axpy(x0+(size_t)t*d,1,P->embed+(size_t)b*d,d);}
     memcpy(x,x0,(size_t)L*d*sizeof(real));free(x0);
 }
-static void latent_grad(const Cfg*c,const int*tok,int L,const real*g,Work*w){
+/* After the trained pass: Wl gradient (dense) or the thought-embedding gradient plus REINFORCE on Wt. */
+static void latent_grad(const Cfg*c,const Params*P,Params*G,const int*tok,const int*lab,int L,const real*g,Work*w){
     const int d=c->d;if(!lat_W||!w->lat_u)return;if(!w->lat_g)w->lat_g=calloc((size_t)d*d,sizeof(real));
-    for(int t=1;t<L;t++)if(tok[t]==0)for(int i=0;i<d;i++)axpy(w->lat_g+(size_t)i*d,g[(size_t)t*d+i],w->lat_u+(size_t)t*d,d);
+    if(latent_on==1){for(int t=1;t<L;t++)if(tok[t]==0)for(int i=0;i<d;i++)axpy(w->lat_g+(size_t)i*d,g[(size_t)t*d+i],w->lat_u+(size_t)t*d,d);return;}
+    real z[512],q[256],dz[512];double pe[256];
+    for(int t=1;t<L;t++){if(w->lat_b[t]<0)continue;axpy(G->embed+(size_t)w->lat_b[t]*d,1,g+(size_t)t*d,d);
+        int e=t;while(e<L&&tok[e]==0)e++;e--; /* last slot of this word's run predicts its first real byte */
+        double R=0;int cnt=0;for(int p=e;p<L&&p<e+rl_n;p++)if(lab[p]>=0&&w->pos_loss){R+=w->lat_l1[p]-w->pos_loss[p];cnt++;}
+        if(!cnt)continue;R/=cnt;
+#pragma omp atomic
+        rl_rsum+=R;
+#pragma omp atomic
+        rl_rcount++;
+        thought_logits(c,P,w->lat_u+(size_t)t*d,z,q);real mx=-INFINITY;for(int v=1;v<c->vocab;v++)mx=q[v]>mx?q[v]:mx;
+        double zs=0;for(int v=1;v<c->vocab;v++){pe[v]=exp(q[v]-mx);zs+=pe[v];}
+        memset(dz,0,d*sizeof(real));real A=(real)(rl_beta*R);if(A>2)A=2;if(A<-2)A=-2;
+        for(int v=1;v<c->vocab;v++){real dq=A*(real)(pe[v]/zs-(v==w->lat_b[t]));axpy(dz,dq,P->embed+(size_t)v*d,d);}
+        for(int i=0;i<d;i++)axpy(w->lat_g+(size_t)i*d,dz[i],w->lat_u+(size_t)t*d,d);}
 }
 real tss_train_seq(const Cfg *c,const Params *P,const Params *Q,Params *G,const int *tokens,const int *labels,int L,unsigned char *hit,int *n_scored,Work *w,const Codes *k) {
     const int d=c->d,N=NODES(c),T=c->T,nl=c->n_layer;
@@ -1718,7 +1751,7 @@ real tss_train_seq(const Cfg *c,const Params *P,const Params *Q,Params *G,const 
     real *x=w->x,*h=w->h;
     for(int t=0;t<L;t++)memcpy(x+(size_t)t*d,P->embed+(size_t)tokens[t]*d,sizeof(real)*d);
     if(pos_feat>0){int kw=0,kl=0;for(int t=0;t<L;t++){pos_feat_next(tokens[t],&kw,&kl);pos_feat_add(x+(size_t)t*d,kw,kl,d);}}
-    if(latent_on)latent_inputs(c,P,Q,tokens,L,x,h,tp,w);
+    if(latent_on)latent_inputs(c,P,Q,tokens,labels,L,x,h,tp,w);
     for(int l=0;l<nl*n_loops;l++) {
         if(!(l&1))carry_pre(c,w,l,h);
         layer_fwd(c,P,Q,l,L,x,h,tp+l,w);
@@ -1729,6 +1762,7 @@ real tss_train_seq(const Cfg *c,const Params *P,const Params *Q,Params *G,const 
     real *g=w->g;
     int ns=0;
     memset(g,0,sizeof(real)*(size_t)L*d);
+    if(latent_on==2&&!w->pos_loss)w->pos_loss=calloc(w->Lmax,sizeof(real));
     real loss=head_train(c,P,G,x,labels,L,g,&ns,w);
     if(mtp_lambda>0)mtp_head(c,P,G,x,labels,L,g,w);
     real *lam=w->lam;const int nv=nl*n_loops;int lstop=bwd_layers>0&&bwd_layers<nv?nv-bwd_layers:0;
@@ -1737,7 +1771,7 @@ real tss_train_seq(const Cfg *c,const Params *P,const Params *Q,Params *G,const 
         layer_bwd(c,P,Q,G,l,L,g,lam,hit+node_off(c,l%nl),tp+l,w);
     }
     if(!lstop)for(int t=0;t<L;t++)for(int i=0;i<d;i++)G->embed[(size_t)tokens[t]*d+i]+=g[(size_t)t*d+i];
-    if(latent_on&&!lstop)latent_grad(c,tokens,L,g,w);
+    if(latent_on&&!lstop)latent_grad(c,P,G,tokens,labels,L,g,w);
     *n_scored=ns;
     return loss;
 }
@@ -2006,7 +2040,7 @@ static double eval_seq(Model *m,const int *tok,const int *lab,int L,Work *w,int 
     real *x=w->x,*h=w->h,*xn=w->xn,*lg=w->lg;
     for(int t=0;t<L;t++)memcpy(x+(size_t)t*d,m->P.embed+(size_t)tok[t]*d,sizeof(real)*d);
     if(pos_feat>0){int kw=0,kl=0;for(int t=0;t<L;t++){pos_feat_next(tok[t],&kw,&kl);pos_feat_add(x+(size_t)t*d,kw,kl,d);}}
-    if(latent_on)latent_inputs(c,&m->P,&m->Q,tok,L,x,h,w->tp,w);
+    if(latent_on)latent_inputs(c,&m->P,&m->Q,tok,NULL,L,x,h,w->tp,w);
     for(int l=0;l<c->n_layer*n_loops;l++) {
         if(!(l&1))memset(h,0,sizeof(real)*(size_t)T*N*c->n*c->p);
         layer_fwd(c,&m->P,&m->Q,l,L,x,h,w->tp+l,w);
@@ -3487,7 +3521,7 @@ int main(int argc,char**argv){
         OPT("--ssm-horizon",ssm_horizon,atof) OPT("--ttt-reset",ttt_reset,atol) OPT("--ttt-reset-mask",ttt_reset_mask,atoi) OPT("--session",session,atoi) OPT("--session-score",sess_score,atoi) OPT("--session-speed",sess_speed,(const char*)) OPT("--refine",refine,atoi) OPT("--refine-context",refine_ctx,(const char*)) OPT("--refine-rounds",rf.rounds,atoi) OPT("--refine-cands",rf.cands,atoi) OPT("--refine-keep",rf.keep,atoi)
         OPT("--refine-len",rf.len,atoi) OPT("--refine-steps",rf.steps,atoi) OPT("--refine-epochs",rf.epochs,atoi) OPT("--refine-edits",rf.edits,atoi) OPT("--refine-span",rf.span,atoi) OPT("--refine-tail",rf.tail,atoi)
         OPT("--refine-match",rf.match,atoi) OPT("--refine-retr",rf.retr,atoi) OPT("--refine-retr-m",rf.retr_m,atoi) OPT("--refine-temp",rf.temp,atof) OPT("--refine-rep",rf.rep,atof) OPT("--refine-final-temp",rf.final_temp,atof)
-        OPT("--mtp",mtp_lambda,atof) OPT("--pause",pause_k,atoi) OPT("--latent",latent_on,atoi) OPT("--loops",n_loops,atoi) OPT("--layers",gc.n_layer,atoi) OPT("--ssm-groups",groups_arg,atoi) OPT("--pos-feat",pos_feat,atof) OPT("--ssm-qknorm",qk_arg,atoi) OPT("--ssm-rope",rope_arg,atoi) OPT("--ttt-adaptive",ttt_adaptive,atof) OPT("--ttt-win",ttt_win,atoi) OPT("--ttt-bwd-layers",bwd_layers,atoi) OPT("--ssm-ltc",ssm_ltc,atoi) OPT("--match",mm.on,atoi) OPT("--match-lr",mm.lr,atof) OPT("--fw-writes",fw_associative_writes,atoi) OPT("--depth",gc.D,atoi) OPT("--state-n",gc.n,atoi) OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--repeat-maxgap",repeat_maxgap,atol) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
+        OPT("--mtp",mtp_lambda,atof) OPT("--pause",pause_k,atoi) OPT("--latent",latent_on,atoi) OPT("--latent-layers",latent_layers,atoi) OPT("--rl-n",rl_n,atoi) OPT("--rl-beta",rl_beta,atof) OPT("--loops",n_loops,atoi) OPT("--layers",gc.n_layer,atoi) OPT("--ssm-groups",groups_arg,atoi) OPT("--pos-feat",pos_feat,atof) OPT("--ssm-qknorm",qk_arg,atoi) OPT("--ssm-rope",rope_arg,atoi) OPT("--ttt-adaptive",ttt_adaptive,atof) OPT("--ttt-win",ttt_win,atoi) OPT("--ttt-bwd-layers",bwd_layers,atoi) OPT("--ssm-ltc",ssm_ltc,atoi) OPT("--match",mm.on,atoi) OPT("--match-lr",mm.lr,atof) OPT("--fw-writes",fw_associative_writes,atoi) OPT("--depth",gc.D,atoi) OPT("--state-n",gc.n,atoi) OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--repeat-maxgap",repeat_maxgap,atol) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
         OPT("--ttt-lr",tt.lr,atof) OPT("--ttt-decay",tt.decay,atof) OPT("--ttt-clip",tt.clip,atof) OPT("--ttt-beta2",tt.beta2,atof) OPT("--ttt-steps",tt.steps,atoi) OPT("--ttt-batch",tt.batch,atoi)
         OPT("--ttt-chunk",tt.chunk,atoi) OPT("--ttt-ctx",tt.ctx,atoi) OPT("--ttt-stream",tt.stream,atoi) OPT("--ttt-freeze",tt.freeze,atoi)
         OPT("--context-file",context_file,(const char*)) OPT("--data",data,(const char*)) OPT("--save",out,(const char*)) OPT("--load",in,(const char*)) OPT("--mode",mode,(const char*)) OPT("--prompt",prompt,(const char*))
@@ -3543,7 +3577,7 @@ int main(int argc,char**argv){
     else {m=model_new(&gc,threads,L);params_init(&gc,&m->P);model_requantize(m);}
     byte_muon=m&&want_byte_muon;if(byte_muon)byte_muon_model=m;
     if(latent_on&&(!m||pause_k<1||carry_windows>0||bwd_layers>0)){fprintf(stderr,"--latent needs byte mode, --pause K, no carry and full backward\n");return 2;}
-    if(latent_on){lat_d=m->c.d;size_t n=(size_t)lat_d*lat_d;lat_W=calloc(n,sizeof(real));lat_m=calloc(n,sizeof(real));lat_v=calloc(n,sizeof(real));}
+    if(latent_on){lat_d=m->c.d;size_t n=(size_t)lat_d*lat_d;lat_W=calloc(n,sizeof(real));lat_m=calloc(n,sizeof(real));lat_v=calloc(n,sizeof(real));if(latent_on==2)for(int i=0;i<lat_d;i++)lat_W[(size_t)i*lat_d+i]=1;}
     if(m&&mtp_lambda>0){mtp_d=m->c.d;size_t n=(size_t)mtp_d*mtp_d;mtp_W=calloc(n,sizeof(real));mtp_m=calloc(n,sizeof(real));mtp_v=calloc(n,sizeof(real));for(int i=0;i<mtp_d;i++)mtp_W[(size_t)i*mtp_d+i]=1;}
     if(scoreonly){if(!in)return 2;long scored;double bpc=score_data(f,m,raw,split,n,L,burn,&scored);printf("{\"event\":\"score\",\"val_bpc\":%.6f,\"scored_bytes\":%ld,\"burn\":%d}\n",bpc,scored,burn);return 0;}
     if(blt&&!in){
@@ -3594,7 +3628,7 @@ int main(int argc,char**argv){
         if(trainsec>=nextlog){printf("{\"event\":\"progress\",\"step\":%d,\"main_train_seconds\":%.6f,\"train_bytes\":%lld,\"train_bpc\":%.6f}\n",step,trainsec,seen,loss/log(2.));fflush(stdout);nextlog+=60;}
     }
     trainsec=wall()-loop_start;
-    if(latent_on&&lat_W){double q=0;for(size_t i=0;i<(size_t)lat_d*lat_d;i++)q+=(double)lat_W[i]*lat_W[i];printf("{\"event\":\"latent\",\"W_frobenius\":%.6f}\n",sqrt(q));}
+    if(latent_on&&lat_W){double q=0;for(size_t i=0;i<(size_t)lat_d*lat_d;i++)q+=(double)lat_W[i]*lat_W[i];printf("{\"event\":\"latent\",\"W_frobenius\":%.6f,\"mean_reward_nats\":%.6f,\"rewards\":%ld}\n",sqrt(q),rl_rcount?rl_rsum/rl_rcount:0,rl_rcount);}
     long final_scored;double eval_start=wall();double final_bpc=score_data(f,m,raw,split,n,L,burn,&final_scored);
     printf("{\"event\":\"eval\",\"step\":%d,\"main_train_seconds\":%.6f,\"charged_seconds\":%.6f,\"train_bytes\":%lld,\"global_steps\":%lld,\"online_bytes_per_second\":%.3f,\"train_bpc\":%.6f,\"val_bpc\":%.6f,\"val_scored_bytes\":%ld,\"eval_seconds\":%.6f}\n",step,trainsec,trainsec+overhead,seen,patches,seen/trainsec,loss/log(2.),final_bpc,final_scored,wall()-eval_start);fflush(stdout);
     if(ep&&frozen!=param_fingerprint(f->entropy)){fprintf(stderr,"frozen entropy model changed\n");return 3;}
