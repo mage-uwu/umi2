@@ -1616,6 +1616,9 @@ static real head_train(const Cfg *c,const Params *P,Params *G,const real *x, con
     }
     return loss;
 }
+/* bwd_layers>0: backpropagate only through the top bwd_layers layers (cheaper test-time training);
+ * lower layers and the input embedding get no gradient. The tied output head still learns. */
+static int bwd_layers=0;
 real tss_train_seq(const Cfg *c,const Params *P,const Params *Q,Params *G,const int *tokens,const int *labels,int L,unsigned char *hit,int *n_scored,Work *w,const Codes *k) {
     const int d=c->d,N=NODES(c),T=c->T,nl=c->n_layer;
     if(L>w->Lmax)return NAN;
@@ -1633,12 +1636,12 @@ real tss_train_seq(const Cfg *c,const Params *P,const Params *Q,Params *G,const 
     int ns=0;
     memset(g,0,sizeof(real)*(size_t)L*d);
     real loss=head_train(c,P,G,x,labels,L,g,&ns,w);
-    real *lam=w->lam;
-    for(int l=nl-1;l>=0;l--) {
+    real *lam=w->lam;int lstop=bwd_layers>0&&bwd_layers<nl?nl-bwd_layers:0;
+    for(int l=nl-1;l>=lstop;l--) {
         if(!(l&1))memset(lam,0,sizeof(real)*(size_t)T*N*c->n*c->p);
         layer_bwd(c,P,Q,G,l,L,g,lam,hit+node_off(c,l),tp+l,w);
     }
-    for(int t=0;t<L;t++)for(int i=0;i<d;i++)G->embed[(size_t)tokens[t]*d+i]+=g[(size_t)t*d+i];
+    if(!lstop)for(int t=0;t<L;t++)for(int i=0;i<d;i++)G->embed[(size_t)tokens[t]*d+i]+=g[(size_t)t*d+i];
     *n_scored=ns;
     return loss;
 }
@@ -2862,7 +2865,11 @@ static int retr_query(Retr*r,const unsigned char*q,long qn,int m,long*ids,long e
 static Retr*ttt_retr=NULL;static int ttt_retr_m=16;static double ttt_retr_mix=.5;static long ttt_qlen=512;
 static long ttt_ids[1024];static int ttt_nids=0;
 static int ttt_use_retr=0;
-static long ttt_step_count=0;
+static long ttt_step_count=0;static int ttt_win=256;
+/* ttt_adaptive>0: steps per chunk follow surprise. With r = chunk loss / running mean of chunk
+ * losses, steps = clamp(round(ttt_adaptive * r^2), 0, 2*ttt_adaptive): well-predicted chunks get
+ * fewer steps, surprising ones more. */
+static double ttt_adaptive=0; /* TTT training window length */
 /* ttt_only bitmask of groups TTT may change (0 = all): 1 global stack, 2 encoder, 4 decoder,
  * 8 byte embedding/head, 16 hashed n-gram rows, 32 dense cross-attention/projection/mixer. */
 static int ttt_only=0;static real**ttt_hold=NULL;static double ttt_lex_mult=1; /* scales the TTT update of byte embedding + hash rows */
@@ -2885,7 +2892,7 @@ static void fstream_reset(Faithful*f,FStream*s,int mask){
 static const unsigned char*ttt_ctrl=NULL;static long ttt_ctrl_n=0;static long ttt_ranges[64];static int ttt_nranges=0; /* control: train on this corpus instead of the context */
 /* Train on windows whose labels lie inside raw[0..e]. */
 static double ttt_train(Faithful*f,const unsigned char*raw,long e,const TTT*o,uint64_t*rng,int*t,int*y){
-    int Lm=f?f->Lmax:ttt_byte->Lmax,L=Lm<256?Lm:256;if(e<L)return 0;double loss=0;
+    int Lm=f?f->Lmax:ttt_byte->Lmax,L=Lm<ttt_win?Lm:ttt_win;if(e<L)return 0;double loss=0;
     int save_muon=use_muon,save_freeze=ttt_freeze;use_muon=o->optim;ttt_freeze=o->freeze;
     if(ttt_retr&&!ttt_ctrl){retr_admit(ttt_retr,e);long q0=e-ttt_qlen<0?0:e-ttt_qlen;ttt_nids=retr_query(ttt_retr,raw+q0,e-q0,ttt_retr_m,ttt_ids,q0);}
     for(int it=0;it<o->steps;it++){
@@ -2953,8 +2960,9 @@ static double ttt_run(Faithful*f,const unsigned char*raw,long n,const TTT*o,real
     real*lg=malloc((size_t)W*256*sizeof(real));uint64_t rng=0x9E3779B97F4A7C15ULL;double tot=0,tsec=0;long cnt=0;
     if(mm.on){mm_reset(raw);mm.learn_from=o->lr>0?0:skip;}
     FStream*fs=o->stream&&f?fstream_new(f):NULL;Gen*bg=o->stream&&!f?gen_new(&ttt_byte->c):NULL;real slg[256];int have=0;
+    double ema=0;
     for(long s=0;s<n-1;s+=C){
-        long e=s+C<n-1?s+C:n-1;
+        long e=s+C<n-1?s+C:n-1;double ctot=tot;long ccnt=cnt;
         if(fs||bg){
             for(long i=s;i<e;i++){
                 if(!have){if(fs)fstream_step(f,fs,raw[i],slg);else gen_step(ttt_byte,bg,raw[i],slg);}
@@ -2971,7 +2979,10 @@ static double ttt_run(Faithful*f,const unsigned char*raw,long n,const TTT*o,real
                 if(mm.on)mm_advance(i);
                 double li=mm_mix_loss(l,raw[i+1],i+1);if(loss)loss[i+1]=li;if(i+1>=skip){tot+=li;cnt++;}}
         }
-        if(o->lr>0){double st=wall();ttt_train(f,raw,e,o,&rng,t,y);if(anchor&&o->decay>0)snap_pull(f,anchor,o->decay);tsec+=wall()-st;}
+        if(o->lr>0){double st=wall();TTT oo=*o;
+            if(ttt_adaptive>0&&cnt>ccnt){double cl=(tot-ctot)/(cnt-ccnt);ema=ema>0?.95*ema+.05*cl:cl;double r=cl/ema;
+                int k=(int)floor(ttt_adaptive*r*r+.5);int mx=(int)(2*ttt_adaptive+.5);oo.steps=k<0?0:k>mx?mx:k;}
+            if(oo.steps>0)ttt_train(f,raw,e,&oo,&rng,t,y);if(anchor&&o->decay>0)snap_pull(f,anchor,o->decay);tsec+=wall()-st;}
     }
     free(t);free(y);free(lg);if(train_seconds)*train_seconds=tsec;return cnt?tot/cnt/log(2.):0;
 }
@@ -3058,7 +3069,7 @@ static void draft_sample(Faithful*f,const unsigned char*pre,int np,unsigned char
 static void draft_sample_mm(Faithful*f,const unsigned char*pre,int np,unsigned char*out,int n,double temp,uint64_t*rng,
                             const unsigned char*ctx,long nc,const unsigned char*prompt,int pl,const double*lam){
     long base=nc+pl;unsigned char*sb=malloc(base+n+1);memcpy(sb,ctx,nc);memcpy(sb+nc,prompt,pl);
-    Match m={.on=1,.bits=20};mmx_reset(&m,sb,0);memcpy(m.lam,lam,sizeof(m.lam));for(long i=0;i<base;i++)mmx_advance(&m,i);
+    Match m={.on=1,.bits=base>(1L<<19)?22:20};mmx_reset(&m,sb,0);memcpy(m.lam,lam,sizeof(m.lam));for(long i=0;i<base;i++)mmx_advance(&m,i);
     real lg[256];Gen*g=f?NULL:gen_new(&ttt_byte->c);FStream*s=f?fstream_new(f):NULL;
     for(int i=0;i<np;i++){if(f)fstream_step(f,s,pre[i],lg);else gen_step(ttt_byte,g,pre[i],lg);}
     for(int i=0;i<n;i++){mmx_mix_logits(&m,lg);int v=sample_rng(lg,temp,rng);out[i]=v;sb[base+i]=v;mmx_advance(&m,base+i);
@@ -3173,6 +3184,78 @@ static int refine_main(const char*ckpt,const char*ctxpath,const char*prompt,cons
     }
     printf("{\"event\":\"refine_final\",\"seconds\":%.3f,\"text\":",wall()-t0);json_str(stdout,best,N);printf("}\n");return 0;
 }
+/* ---------------- --session: one tool that reads, adapts online and generates on demand ----------------
+ * stdin protocol. A line that does not start with "@@" is context: it is appended (with its newline),
+ * learned online by TTT one chunk at a time, and added to the match model. Commands:
+ *   @@gen N [temp] [cands]  generate N bytes after the current context (best of cands drafts)
+ *   @@file PATH             ingest a file as context
+ *   @@keep 0|1              whether generated text is appended to the context (default 0)
+ *   @@stats                 report bytes read, online BPC and time
+ *   @@reset                 restore the loaded weights and clear the context
+ * Each chunk is scored before it is trained on (when scoring is on), so the reported BPC is honest. */
+typedef struct {Faithful*f;real**base;unsigned char*buf;long len,cap,done;TTT o;int score,keep,tail;double loss,secs,tsecs;long scored;uint64_t rng;int*t,*y;real*lg;} Session;
+static void sess_append(Session*S,const unsigned char*x,long n){
+    if(S->len+n+1>S->cap){S->cap=(S->len+n+1)*2;S->buf=realloc(S->buf,S->cap);}memcpy(S->buf+S->len,x,n);S->len+=n;mm.buf=S->buf;
+}
+/* Learn every complete chunk; with flush, also the trailing partial one. */
+static void sess_learn(Session*S,int flush){
+    int C=S->o.chunk;
+    while(S->len-1-S->done>=C||(flush&&S->len-1>S->done)){
+        long s=S->done,e=s+C<S->len-1?s+C:S->len-1;double st=wall();
+        if(S->score){long a=s-S->o.ctx<0?0:s-S->o.ctx;int Lw=(int)(e-a);
+            for(int i=0;i<Lw;i++){S->t[i]=S->buf[a+i];S->y[i]=-1;}int ns;
+            if(S->f)faithful_eval(S->f,0,S->t,S->y,Lw,&ns,S->lg);else eval_seq(ttt_byte,S->t,S->y,Lw,ttt_byte->ws[0],&ns,S->lg);
+            for(long i=s;i<e;i++){mm_advance(i);S->loss+=mm_mix_loss(S->lg+(size_t)(i-a)*256,S->buf[i+1],i+1);S->scored++;}}
+        else for(long i=s;i<e;i++)mm_advance(i);
+        double tt=wall();if(S->o.lr>0)ttt_train(S->f,S->buf,e,&S->o,&S->rng,S->t,S->y);S->tsecs+=wall()-tt;
+        S->done=e;S->secs+=wall()-st;
+    }
+}
+static void sess_reset(Session*S){snap_restore(S->f,S->base);S->len=S->done=0;S->loss=S->secs=S->tsecs=0;S->scored=0;mm_reset(S->buf);}
+static void sess_generate(Session*S,int n,double temp,int cands,int threads){
+    sess_learn(S,1);if(n<1)return;if(cands<1)cands=1;if(cands>64)cands=64;
+    long tl=S->len<S->tail?S->len:S->tail;const unsigned char*pre=S->buf+S->len-tl;
+    unsigned char*out=malloc((size_t)cands*n);double sc[64];uint64_t rs[64];for(int k=0;k<cands;k++)rs[k]=S->rng^((uint64_t)(k+1)*0x9E3779B97F4A7C15ULL^(uint64_t)S->len);S->rng+=0x632BE59BD9B4E019ULL;
+#pragma omp parallel for num_threads(threads) schedule(dynamic,1)
+    for(int k=0;k<cands;k++){
+#ifdef _OPENMP
+        int th=omp_get_thread_num();
+#else
+        int th=0;
+#endif
+        draft_sample_mm(S->f,pre,(int)tl,out+(size_t)k*n,n,temp,rs+k,S->buf,S->len,(const unsigned char*)"",0,mm.lam);
+        if(cands>1){unsigned char*sq=malloc(tl+n);memcpy(sq,pre,tl);memcpy(sq+tl,out+(size_t)k*n,n);sc[k]=seq_nll(S->f,th,sq,(int)(tl+n),(int)tl,NULL);free(sq);}else sc[k]=0;
+    }
+    int b=0;for(int k=1;k<cands;k++)if(sc[k]<sc[b])b=k;
+    fwrite(out+(size_t)b*n,1,n,stdout);fputs("\n@@end\n",stdout);fflush(stdout);
+    if(S->keep)sess_append(S,out+(size_t)b*n,n);free(out);
+}
+static int session_main(const char*ckpt,const TTT*o0,int threads,int score,int tail){
+    Session S={0};S.f=faithful_load(ckpt,threads,256);if(!S.f){ttt_byte=load(ckpt,threads,256);if(!ttt_byte){fprintf(stderr,"cannot load checkpoint\n");return 1;}}
+    S.base=snap_take(S.f);S.o=*o0;S.o.rnd=0;S.score=score;S.tail=tail;S.rng=0x243F6A8885A308D3ULL;S.cap=1<<16;S.buf=malloc(S.cap);
+    int W=S.o.ctx+S.o.chunk;if(W<256)W=256;S.t=malloc((size_t)W*(S.o.batch>1?S.o.batch:1)*sizeof(int)*2);S.y=malloc((size_t)W*(S.o.batch>1?S.o.batch:1)*sizeof(int)*2);S.lg=malloc((size_t)W*256*sizeof(real));
+    mm.on=1;mm_reset(S.buf);
+    fprintf(stderr,"{\"event\":\"session_ready\",\"model\":\"%s\",\"lr\":%g,\"steps\":%d,\"window\":%d,\"chunk\":%d,\"score\":%d}\n",S.f?"blt":"byte",S.o.lr,S.o.steps,ttt_win,S.o.chunk,score);
+    char*line=NULL;size_t cap=0;ssize_t r;
+    while((r=getline(&line,&cap,stdin))>0){
+        if(!strncmp(line,"@@",2)){
+            char cmd[32]={0};int n=0;double temp=.7;int cands=1;char path[1024]={0};
+            if(sscanf(line+2,"%31s",cmd)!=1)continue;
+            if(!strcmp(cmd,"gen")){sscanf(line+2,"%*s %d %lf %d",&n,&temp,&cands);sess_generate(&S,n,temp,cands,threads);}
+            else if(!strcmp(cmd,"file")){if(sscanf(line+2,"%*s %1023s",path)==1){long fn;unsigned char*fb=read_file(path,&fn);if(fb){sess_append(&S,fb,fn);free(fb);sess_learn(&S,0);}}}
+            else if(!strcmp(cmd,"keep")){sscanf(line+2,"%*s %d",&S.keep);}
+            else if(!strcmp(cmd,"reset")){sess_reset(&S);}
+            else if(!strcmp(cmd,"stats")){sess_learn(&S,1);}
+            if(!strcmp(cmd,"stats")||!strcmp(cmd,"file")||!strcmp(cmd,"reset"))
+                fprintf(stderr,"{\"event\":\"session_stats\",\"bytes\":%ld,\"learned\":%ld,\"bpc\":%.4f,\"seconds\":%.2f,\"ttt_seconds\":%.2f,\"bytes_per_second\":%.0f}\n",
+                    S.len,S.done,S.scored?S.loss/S.scored/log(2.):0,S.secs,S.tsecs,S.secs>0?S.done/S.secs:0);
+            continue;
+        }
+        sess_append(&S,(unsigned char*)line,r);sess_learn(&S,0);
+    }
+    sess_learn(&S,1);fprintf(stderr,"{\"event\":\"session_end\",\"bytes\":%ld,\"bpc\":%.4f,\"seconds\":%.2f}\n",S.len,S.scored?S.loss/S.scored/log(2.):0,S.secs);
+    return 0;
+}
 static void usage(void){
     puts("nanotss-plastic: protected plastic -> FFF -> SSM -> FFF\n"
          "  --data FILE [--save FILE] [--seconds 300] [--entropy-seconds 60]\n"
@@ -3201,6 +3284,7 @@ int main(int argc,char**argv){
     double seconds=300,entropy_seconds=60,entropy_charge=0,lr=.003,target=4,temp=.8;
     Cfg gc={.vocab=256,.d=128,.n_layer=4,.T=4,.D=7,.n=16,.p=16,.K=3,.group=128,.walks=2,.temp=1,.fff_gate=1,.fw_mask=1};
     double ssm_horizon=0;int carry_windows=0;long*carry_pos=NULL;int*carry_left=NULL;unsigned char*carry_buf=NULL;double repeat_p=0;long repeat_maxgap=0;
+    int session=0,sess_score=1;const char*sess_speed="balanced";
     int refine=0;const char*refine_ctx=NULL;Refine rf={.match=0,.retr=0,.retr_m=32,.rounds=3,.cands=16,.keep=4,.len=400,.steps=8,.epochs=8,.edits=0,.span=12,.tail=512,.temp=1,.rep=2,.final_temp=1};
     const char*ttt_file=NULL,*ttt_control=NULL,*ttt_fit=NULL;double ttt_frac=.5;int ttt_epochs=8;long ttt_off=-1,ttt_len=0,ttt_stride=0;int ttt_docs=1;
     TTT tt={.rnd=0,.lr=0,.decay=0,.clip=1,.beta2=.99,.steps=1,.batch=4,.chunk=192,.ctx=64,.stream=0,.freeze=0,.optim=0};
@@ -3221,10 +3305,10 @@ int main(int argc,char**argv){
         if(!strcmp(a,"--optimizer")){optimizer_explicit=1;if(!strcmp(v,"muon"))use_muon=1;else if(!strcmp(v,"adamw"))use_muon=0;else return 2;continue;}
         if(!strcmp(a,"--patcher")){if(strcmp(v,"neural")){fprintf(stderr,"Only the neural entropy patcher is supported.\n");return 2;}continue;}
 #define OPT(n,x,cv) if(!strcmp(a,n)){x=cv(v);continue;}
-        OPT("--ssm-horizon",ssm_horizon,atof) OPT("--ttt-reset",ttt_reset,atol) OPT("--ttt-reset-mask",ttt_reset_mask,atoi) OPT("--refine",refine,atoi) OPT("--refine-context",refine_ctx,(const char*)) OPT("--refine-rounds",rf.rounds,atoi) OPT("--refine-cands",rf.cands,atoi) OPT("--refine-keep",rf.keep,atoi)
+        OPT("--ssm-horizon",ssm_horizon,atof) OPT("--ttt-reset",ttt_reset,atol) OPT("--ttt-reset-mask",ttt_reset_mask,atoi) OPT("--session",session,atoi) OPT("--session-score",sess_score,atoi) OPT("--session-speed",sess_speed,(const char*)) OPT("--refine",refine,atoi) OPT("--refine-context",refine_ctx,(const char*)) OPT("--refine-rounds",rf.rounds,atoi) OPT("--refine-cands",rf.cands,atoi) OPT("--refine-keep",rf.keep,atoi)
         OPT("--refine-len",rf.len,atoi) OPT("--refine-steps",rf.steps,atoi) OPT("--refine-epochs",rf.epochs,atoi) OPT("--refine-edits",rf.edits,atoi) OPT("--refine-span",rf.span,atoi) OPT("--refine-tail",rf.tail,atoi)
         OPT("--refine-match",rf.match,atoi) OPT("--refine-retr",rf.retr,atoi) OPT("--refine-retr-m",rf.retr_m,atoi) OPT("--refine-temp",rf.temp,atof) OPT("--refine-rep",rf.rep,atof) OPT("--refine-final-temp",rf.final_temp,atof)
-        OPT("--ssm-ltc",ssm_ltc,atoi) OPT("--match",mm.on,atoi) OPT("--match-lr",mm.lr,atof) OPT("--fw-writes",fw_associative_writes,atoi) OPT("--depth",gc.D,atoi) OPT("--state-n",gc.n,atoi) OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--repeat-maxgap",repeat_maxgap,atol) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
+        OPT("--ttt-adaptive",ttt_adaptive,atof) OPT("--ttt-win",ttt_win,atoi) OPT("--ttt-bwd-layers",bwd_layers,atoi) OPT("--ssm-ltc",ssm_ltc,atoi) OPT("--match",mm.on,atoi) OPT("--match-lr",mm.lr,atof) OPT("--fw-writes",fw_associative_writes,atoi) OPT("--depth",gc.D,atoi) OPT("--state-n",gc.n,atoi) OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--repeat-maxgap",repeat_maxgap,atol) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
         OPT("--ttt-lr",tt.lr,atof) OPT("--ttt-decay",tt.decay,atof) OPT("--ttt-clip",tt.clip,atof) OPT("--ttt-beta2",tt.beta2,atof) OPT("--ttt-steps",tt.steps,atoi) OPT("--ttt-batch",tt.batch,atoi)
         OPT("--ttt-chunk",tt.chunk,atoi) OPT("--ttt-ctx",tt.ctx,atoi) OPT("--ttt-stream",tt.stream,atoi) OPT("--ttt-freeze",tt.freeze,atoi)
         OPT("--context-file",context_file,(const char*)) OPT("--data",data,(const char*)) OPT("--save",out,(const char*)) OPT("--load",in,(const char*)) OPT("--mode",mode,(const char*)) OPT("--prompt",prompt,(const char*))
@@ -3248,6 +3332,9 @@ int main(int argc,char**argv){
     g_rng^=((uint64_t)seed+1)*0x9E3779B97F4A7C15ULL;
     gc.d=2*cfg.width;
     if(ssm_horizon>0)ssm_dec_cap=(real)(1-1/ssm_horizon);
+    if(session){if(!in)return 2;
+        if(!strcmp(sess_speed,"fast")){tt.steps=1;ttt_win=128;}else if(!strcmp(sess_speed,"quality")){tt.steps=2;ttt_win=256;}else{tt.steps=1;ttt_win=256;}
+        if(tt.lr==0)tt.lr=2e-4;return session_main(in,&tt,threads,sess_score,512);}
     if(refine){if(!in||rf.cands<1||rf.keep<1||rf.keep>rf.cands||rf.len<1||threads>64)return 2;return refine_main(in,refine_ctx,prompt,&rf,&tt,threads,seed);}
     if(ttt_fit){if(!in)return 2;return ttt_fit_main(in,ttt_fit,ttt_frac,ttt_epochs,&tt,threads);}
     if(ttt_file){if(!in)return 2;return ttt_eval_main(in,ttt_file,ttt_off,ttt_len,&tt,threads,ttt_docs,ttt_stride?ttt_stride:ttt_len,ttt_control);}

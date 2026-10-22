@@ -260,3 +260,28 @@ Harnesses: `experiments/compare_gen.sh` (generation methods), `experiments/genme
 * A much larger fast memory (wider fast matrices or a dedicated delta-rule layer) if native recall is still wanted; section 5 shows that depth and carried state alone are not enough.
 * An LLM judge (DeepSeek via OpenRouter, blocked this session because no key is attached) and
   DeepSeek-written synthetic plays, for 1 MB scratchpad tests with controlled facts and names.
+
+## 7. `--session`: one tool that reads, adapts online and generates
+
+```
+./nanotss --load checkpoints/byte1200_d7_1p2M.bin --session 1 [--session-speed fast|balanced|quality] [--session-score 0]
+```
+
+Stdin is the session. Plain lines are context: they are learned online one 192-byte chunk at a time
+(scored first, then a TTT step) and added to the match model. Commands:
+`@@gen N [temp] [cands]` (generate N bytes, best of `cands` drafts, match-assisted), `@@file PATH`,
+`@@keep 0|1` (append generations to the context), `@@stats`, `@@reset`.
+
+TTT acceleration (TinyShakespeare val, 111 KB, 4 threads; match model on unless noted):
+
+| setting | val BPC | unseen play BPC | throughput |
+|---|---|---|---|
+| original: 2 steps / 256-byte windows, no match | 2.078 | – | 2.3 KB/s |
+| quality preset (2 steps) | 2.060 | 2.290 | 2.4 KB/s |
+| **balanced preset (1 step), default** | **2.053** | 2.318 | **4.1 KB/s** |
+| fast preset (1 step / 128-byte windows) | 2.065 | 2.354 | 10 KB/s without scoring |
+
+With the match model on, one TTT step per chunk is as good as two on familiar text: the match model
+covers the exact repeats that the second step was learning. On unseen text the second step is still
+worth about 0.03 BPC. Surprise-adaptive step counts (`--ttt-adaptive`) and truncated backward
+(`--ttt-bwd-layers`) land on the same quality/cost curve rather than beating it.
