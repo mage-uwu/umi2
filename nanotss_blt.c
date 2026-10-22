@@ -8,14 +8,16 @@
  *   cc -O3 -march=native -fopenmp nanotss_blt.c -lm -o nanotss_blt
  * Check:
  *   ./nanotss_blt --check
- * Train on TinyShakespeare (save the corpus as input.txt; BLT is default):
+ * Train on TinyShakespeare (save the corpus as input.txt). Default architecture: byte mode,
+ * pure SSM trees (no plastic layer) with per-tree SSM keys/queries:
  *   ./nanotss_blt --data input.txt --seconds 300 --save model.bin
+ * Previous BLT stack (patching, plastic layer, conv mixer): add --mode blt
+ * Session (read, adapt online with TTT + match model, generate on demand):
+ *   ./nanotss_blt --load model.bin --session 1   (stdin; @@gen N [temp] [cands], @@file, @@stats)
  * Sample:
  *   ./nanotss_blt --load model.bin --sample 600 --prompt "ROMEO:"
  * Stream a context file without resetting recurrent memory:
  *   ./nanotss_blt --load model.bin --context-file context.txt --sample 200
- * Direct byte core, bypassing BLT and its optional mixer:
- *   ./nanotss_blt --mode byte --conv-mix 0 --data input.txt --save core.bin
  * Define NANOTSS_NO_MAIN to include this file in your own C translation unit.
  *
  * GLOBAL STACK (default fw_mask=1):
@@ -1967,9 +1969,12 @@ static int save(const Model *m,const char *path) {
     real *pf[N_FIELDS];
     fields(&m->P,pf);
     const int rs=sizeof(real);
-    fwrite(PROTECTED_FW&&m->c.fw_mask?"TFP1":"TFW1",1,4,f);
+    /* TFX1 adds an extension header after Cfg: {ssm_groups, ssm_ltc, 0, 0}. Older magics imply {1, 0}. */
+    const int ext=ssm_groups!=1||ssm_ltc;
+    fwrite(ext?"TFX1":PROTECTED_FW&&m->c.fw_mask?"TFP1":"TFW1",1,4,f);
     fwrite(&rs,sizeof(int),1,f);
     fwrite(&m->c,sizeof(Cfg),1,f);
+    if(ext){int e[4]={ssm_groups,ssm_ltc,0,0};fwrite(e,sizeof(int),4,f);}
     for(int i=0;i<N_FIELDS;i++)fwrite(pf[i],sizeof(real),z[i],f);
     return fclose(f);
 }
@@ -1979,10 +1984,15 @@ static Model *load(const char *path,int threads,int Lmax) {
     char magic[4];
     int rs;
     Cfg c;
-    if(fread(magic,1,4,f)!=4||(memcmp(magic,"TSFM",4)&&memcmp(magic,"TSFK",4)&&memcmp(magic,"TFW1",4)&&memcmp(magic,"TFP1",4))||fread(&rs,sizeof(int),1,f)!=1||rs!=(int)sizeof(real)||!read_cfg(f,&c,!memcmp(magic,"TSFM",4))) {
+    if(fread(magic,1,4,f)!=4||(memcmp(magic,"TSFM",4)&&memcmp(magic,"TSFK",4)&&memcmp(magic,"TFW1",4)&&memcmp(magic,"TFP1",4)&&memcmp(magic,"TFX1",4))||fread(&rs,sizeof(int),1,f)!=1||rs!=(int)sizeof(real)||!read_cfg(f,&c,!memcmp(magic,"TSFM",4))) {
         fclose(f);
         return NULL;
-    } if((c.fw_mask && (PROTECTED_FW ? memcmp(magic,"TFP1",4) : !memcmp(magic,"TFP1",4))) || (memcmp(magic,"TFW1",4)&&memcmp(magic,"TFP1",4)&&c.fw_mask)||(c.fw_mask&~0x5555)||c.n_layer<1||c.n_layer>16||(c.fw_mask>>c.n_layer)||c.fff_gate<0||c.fff_gate>1){fclose(f);return NULL;}
+    }
+    const int ext=!memcmp(magic,"TFX1",4);int e[4]={1,0,0,0};
+    if(ext&&(fread(e,sizeof(int),4,f)!=4||e[0]<1||e[0]>c.T||c.T%e[0]||e[1]<0||e[1]>2)){fclose(f);return NULL;}
+    ssm_groups=e[0];ssm_ltc=e[1];
+    if(!ext&&((c.fw_mask && (PROTECTED_FW ? memcmp(magic,"TFP1",4) : !memcmp(magic,"TFP1",4))) || (memcmp(magic,"TFW1",4)&&memcmp(magic,"TFP1",4)&&c.fw_mask))){fclose(f);return NULL;}
+    if((c.fw_mask&~0x5555)||c.n_layer<1||c.n_layer>16||(c.fw_mask>>c.n_layer)||c.fff_gate<0||c.fff_gate>1){fclose(f);return NULL;}
     Model *m=model_new(&c,threads,Lmax);
     size_t z[N_FIELDS];
     sizes(&c,z);
@@ -2593,7 +2603,7 @@ static int faithful_save(Faithful*f,const char*path){
     if(fclose(fp))ok=0;return ok?0:-1;
 }
 static Faithful*faithful_load(const char*path,int threads,int L){
-    FILE*fp=fopen(path,"rb");if(!fp)return NULL;char magic[4];int rs;Cfg gc;FConfig c;
+    FILE*fp=fopen(path,"rb");if(!fp)return NULL;ssm_groups=1; /* BLT checkpoints always use shared SSM projections */char magic[4];int rs;Cfg gc;FConfig c;
     if(fread(magic,1,4,fp)!=4||(memcmp(magic,"TFB1",4)&&memcmp(magic,"TCM1",4)&&memcmp(magic,"TPC1",4))||fread(&rs,sizeof(int),1,fp)!=1||rs!=sizeof(real)||fread(&gc,sizeof(Cfg),1,fp)!=1){fclose(fp);return NULL;}
     if(gc.fw_mask && (PROTECTED_FW ? memcmp(magic,"TPC1",4) : !memcmp(magic,"TPC1",4))){fclose(fp);return NULL;}
     memset(&c,0,sizeof(c));
@@ -3276,9 +3286,11 @@ static void usage(void){
          "  --cpu-reference (disable VNNI, vector libm, and batched FFF activations)\n"
          "  --conv-mix 2 (before global stack; 1 legacy after-stack; 0 off)\n"
          "  --fw-scalar (reference kernel; default is optimized)\n"
-         "  --fw-mask 1 (default: plastic first; 0=SSM only, 4=plastic third, 5=both)\n"
+         "  --fw-mask 0 (byte default: SSM only; BLT default 1 = plastic first; 4=plastic third, 5=both)\n"
          "  --fff-gate 1 --ngram-bins 256 --patch-size 4 --max-patch 8\n"
-         "  --mode blt|byte --check --check-tree-fw --check-neural --help\n"
+         "  --mode byte|blt (default byte) --ssm-groups G (default 4 in byte mode) --ssm-ltc 0|1|2\n"
+         "  --session 1 [--session-speed fast|balanced|quality] --match 1 --ttt-eval/--ttt-fit/--refine (see report)\n"
+         "  --check --check-tree-fw --check-neural --check-ssm --help\n"
          "New runs enable FFF gates; loaded checkpoints retain their saved setting.");
 }
 
@@ -3286,15 +3298,15 @@ static void usage(void){
 #ifndef NANOTSS_NO_MAIN
 int main(int argc,char**argv){
     int optimizer_explicit=0;
-    const char*data=NULL,*out=NULL,*in=NULL,*mode="blt",*prompt="ROMEO:",*entropy_in=NULL,*entropy_out=NULL,*context_file=NULL;int threads=4,B=16,L=256,burn=64,sample=0,seed=0,steps=100000000,scoreonly=0,fixedsteps=0;
+    const char*data=NULL,*out=NULL,*in=NULL,*mode="byte",*prompt="ROMEO:",*entropy_in=NULL,*entropy_out=NULL,*context_file=NULL;int threads=4,B=16,L=256,burn=64,sample=0,seed=0,steps=100000000,scoreonly=0,fixedsteps=0;
     double seconds=300,entropy_seconds=60,entropy_charge=0,lr=.003,target=4,temp=.8;
-    Cfg gc={.vocab=256,.d=128,.n_layer=4,.T=4,.D=7,.n=16,.p=16,.K=3,.group=128,.walks=2,.temp=1,.fff_gate=1,.fw_mask=1};
+    Cfg gc={.vocab=256,.d=128,.n_layer=4,.T=4,.D=7,.n=16,.p=16,.K=3,.group=128,.walks=2,.temp=1,.fff_gate=1,.fw_mask=-1};int groups_arg=-1;
     double ssm_horizon=0;int carry_windows=0;long*carry_pos=NULL;int*carry_left=NULL;unsigned char*carry_buf=NULL;double repeat_p=0;long repeat_maxgap=0;
     int session=0,sess_score=1;const char*sess_speed="balanced";
     int refine=0;const char*refine_ctx=NULL;Refine rf={.match=0,.retr=0,.retr_m=32,.rounds=3,.cands=16,.keep=4,.len=400,.steps=8,.epochs=8,.edits=0,.span=12,.tail=512,.temp=1,.rep=2,.final_temp=1};
     const char*ttt_file=NULL,*ttt_control=NULL,*ttt_fit=NULL;double ttt_frac=.5;int ttt_epochs=8;long ttt_off=-1,ttt_len=0,ttt_stride=0;int ttt_docs=1;
     TTT tt={.rnd=0,.lr=0,.decay=0,.clip=1,.beta2=.99,.steps=1,.batch=4,.chunk=192,.ctx=64,.stream=0,.freeze=0,.optim=0};
-    FConfig cfg={.width=64,.heads=4,.bins=256,.maxpatch=8,.enc_layers=2,.dec_layers=4,.local_depth=4,.local_trees=2,.local_state=8,.neural=1,.mixer=2,.target=4};
+    FConfig cfg={.width=64,.heads=4,.bins=256,.maxpatch=8,.enc_layers=2,.dec_layers=4,.local_depth=4,.local_trees=2,.local_state=8,.neural=1,.mixer=-1,.target=4};
     for(int i=1;i<argc;i++){
         if(!strcmp(argv[i],"--cpu-reference")){cpu_fast=0;continue;}
         if(!strcmp(argv[i],"--fw-scalar")){fw_fast=0;continue;}
@@ -3314,7 +3326,7 @@ int main(int argc,char**argv){
         OPT("--ssm-horizon",ssm_horizon,atof) OPT("--ttt-reset",ttt_reset,atol) OPT("--ttt-reset-mask",ttt_reset_mask,atoi) OPT("--session",session,atoi) OPT("--session-score",sess_score,atoi) OPT("--session-speed",sess_speed,(const char*)) OPT("--refine",refine,atoi) OPT("--refine-context",refine_ctx,(const char*)) OPT("--refine-rounds",rf.rounds,atoi) OPT("--refine-cands",rf.cands,atoi) OPT("--refine-keep",rf.keep,atoi)
         OPT("--refine-len",rf.len,atoi) OPT("--refine-steps",rf.steps,atoi) OPT("--refine-epochs",rf.epochs,atoi) OPT("--refine-edits",rf.edits,atoi) OPT("--refine-span",rf.span,atoi) OPT("--refine-tail",rf.tail,atoi)
         OPT("--refine-match",rf.match,atoi) OPT("--refine-retr",rf.retr,atoi) OPT("--refine-retr-m",rf.retr_m,atoi) OPT("--refine-temp",rf.temp,atof) OPT("--refine-rep",rf.rep,atof) OPT("--refine-final-temp",rf.final_temp,atof)
-        OPT("--ssm-groups",ssm_groups,atoi) OPT("--ttt-adaptive",ttt_adaptive,atof) OPT("--ttt-win",ttt_win,atoi) OPT("--ttt-bwd-layers",bwd_layers,atoi) OPT("--ssm-ltc",ssm_ltc,atoi) OPT("--match",mm.on,atoi) OPT("--match-lr",mm.lr,atof) OPT("--fw-writes",fw_associative_writes,atoi) OPT("--depth",gc.D,atoi) OPT("--state-n",gc.n,atoi) OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--repeat-maxgap",repeat_maxgap,atol) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
+        OPT("--ssm-groups",groups_arg,atoi) OPT("--ttt-adaptive",ttt_adaptive,atof) OPT("--ttt-win",ttt_win,atoi) OPT("--ttt-bwd-layers",bwd_layers,atoi) OPT("--ssm-ltc",ssm_ltc,atoi) OPT("--match",mm.on,atoi) OPT("--match-lr",mm.lr,atof) OPT("--fw-writes",fw_associative_writes,atoi) OPT("--depth",gc.D,atoi) OPT("--state-n",gc.n,atoi) OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--repeat-maxgap",repeat_maxgap,atol) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
         OPT("--ttt-lr",tt.lr,atof) OPT("--ttt-decay",tt.decay,atof) OPT("--ttt-clip",tt.clip,atof) OPT("--ttt-beta2",tt.beta2,atof) OPT("--ttt-steps",tt.steps,atoi) OPT("--ttt-batch",tt.batch,atoi)
         OPT("--ttt-chunk",tt.chunk,atoi) OPT("--ttt-ctx",tt.ctx,atoi) OPT("--ttt-stream",tt.stream,atoi) OPT("--ttt-freeze",tt.freeze,atoi)
         OPT("--context-file",context_file,(const char*)) OPT("--data",data,(const char*)) OPT("--save",out,(const char*)) OPT("--load",in,(const char*)) OPT("--mode",mode,(const char*)) OPT("--prompt",prompt,(const char*))
@@ -3326,6 +3338,12 @@ int main(int argc,char**argv){
 #undef OPT
         fprintf(stderr,"unknown argument %s\n",a);return 2;
     }
+    /* Defaults: byte mode, pure SSM (no plastic layer), per-tree SSM keys/queries, no conv mixer.
+     * --mode blt keeps the BLT defaults (plastic layer, mixer 2, shared projections). */
+    {int byte=!strcmp(mode,"byte");if(gc.fw_mask<0)gc.fw_mask=byte?0:1;if(cfg.mixer<0)cfg.mixer=byte?0:2;
+     ssm_groups=groups_arg>0?groups_arg:byte?gc.T:1;
+     if(ssm_groups<1||ssm_groups>gc.T||gc.T%ssm_groups){fprintf(stderr,"--ssm-groups must divide the tree count\n");return 2;}
+     if(!byte&&ssm_groups!=1){fprintf(stderr,"BLT mode supports only --ssm-groups 1\n");return 2;}}
     if(muon_steps<1||muon_steps>10||muon_block<1||muon_block>32||muon_scale<=0)return 2;
     if(cfg.mixer<0||cfg.mixer>2)return 2;
     if(fixedsteps<0)return 2;

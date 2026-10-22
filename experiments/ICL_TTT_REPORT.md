@@ -285,3 +285,22 @@ With the match model on, one TTT step per chunk is as good as two on familiar te
 covers the exact repeats that the second step was learning. On unseen text the second step is still
 worth about 0.03 BPC. Surprise-adaptive step counts (`--ttt-adaptive`) and truncated backward
 (`--ttt-bwd-layers`) land on the same quality/cost curve rather than beating it.
+
+## 8. Default architecture: pure SSM trees with per-tree keys/queries
+
+`./nanotss --data input.txt --save model.bin` now trains, by default: byte mode, layers
+SSM tree → gated FFF tree → SSM tree → gated FFF tree (no plastic layer), with the SSM key B and
+query C computed **per tree** (`--ssm-groups 4`, a GQA analogue: previously one B/C was shared by
+all four trees). 1.19M budgeted parameters. `--mode blt` restores the BLT stack and its defaults.
+
+Evidence (byte mode, 4 threads):
+
+| change | equal time (5 min) | equal steps |
+|---|---|---|
+| plastic layer → SSM (`--fw-mask 0`) | 2.389 → 2.361 | – |
+| shared → per-tree SSM keys/queries | 2.379 → 2.373 | 2.416 → 2.380 (2,600 steps) |
+| LTC update (input gate / state gate) | 2.361 → 2.381 / 2.484 | state gate: 2.462 → 2.489 (1,800 steps) |
+
+Checkpoints written with a non-default group count or LTC mode use magic `TFX1`, which stores
+`{ssm_groups, ssm_ltc}` after the config; older checkpoints load as groups 1, no LTC.
+BLT checkpoints always use shared projections.
