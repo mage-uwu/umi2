@@ -2726,6 +2726,13 @@ static Faithful*faithful_load(const char*path,int threads,int L){
 }
 static size_t core_parameters(const Cfg*c){size_t z[N_FIELDS],n=0;sizes(c,z);for(int i=0;i<N_FIELDS;i++)n+=z[i];n-=(size_t)(c->n_layer/2)*(c->K*c->d+c->T*fff_nodes(c)+PDIM(c)*c->d+c->T+c->T*c->p*c->d);if(c->fff_gate)n+=(size_t)(c->n_layer/2)*2*c->n*c->d;return n-(size_t)c->vocab*c->d-c->d;}
 
+/* Pause tokens (--pause K): K think bytes (NUL) are inserted after every space in train and val text,
+ * giving the model K extra recurrent steps before predicting each word's first byte. Predictions whose
+ * target is a pause byte are not scored, so BPB counts real bytes only. */
+static int pause_k=0;
+#define PLAB(v) (pause_k&&(v)==0?-1:(int)(v))
+static unsigned char*pause_expand(const unsigned char*r,long n,long*out){long m=0;for(long i=0;i<n;i++)m+=1+(r[i]==' ')*pause_k;
+    unsigned char*o=malloc(m);long j=0;for(long i=0;i<n;i++){o[j++]=r[i];if(r[i]==' ')for(int k=0;k<pause_k;k++)o[j++]=0;}*out=m;return o;}
 static double score_data(Faithful*f,Model*m,const unsigned char*raw,long start,long end,int L,int burn,long*count){
     int threads=f?f->threads:m->threads;long nw=(end-start-1)/L,total=0;double loss=0;
 #pragma omp parallel for num_threads(threads) reduction(+:loss,total) schedule(static)
@@ -2735,7 +2742,7 @@ static double score_data(Faithful*f,Model*m,const unsigned char*raw,long start,l
 #else
         int th=0;
 #endif
-        int*t=malloc(L*sizeof(int)),*y=malloc(L*sizeof(int));for(int i=0;i<L;i++){t[i]=raw[start+w*L+i];y[i]=i<burn?-1:raw[start+w*L+i+1];}
+        int*t=malloc(L*sizeof(int)),*y=malloc(L*sizeof(int));for(int i=0;i<L;i++){t[i]=raw[start+w*L+i];y[i]=i<burn?-1:PLAB(raw[start+w*L+i+1]);}
         int ns;loss+=f?faithful_eval(f,th,t,y,L,&ns,NULL):eval_seq(m,t,y,L,m->ws[th],&ns,NULL);total+=ns;free(t);free(y);
     }*count=total;return loss/total/log(2.);
 }
@@ -3455,7 +3462,7 @@ int main(int argc,char**argv){
         OPT("--ssm-horizon",ssm_horizon,atof) OPT("--ttt-reset",ttt_reset,atol) OPT("--ttt-reset-mask",ttt_reset_mask,atoi) OPT("--session",session,atoi) OPT("--session-score",sess_score,atoi) OPT("--session-speed",sess_speed,(const char*)) OPT("--refine",refine,atoi) OPT("--refine-context",refine_ctx,(const char*)) OPT("--refine-rounds",rf.rounds,atoi) OPT("--refine-cands",rf.cands,atoi) OPT("--refine-keep",rf.keep,atoi)
         OPT("--refine-len",rf.len,atoi) OPT("--refine-steps",rf.steps,atoi) OPT("--refine-epochs",rf.epochs,atoi) OPT("--refine-edits",rf.edits,atoi) OPT("--refine-span",rf.span,atoi) OPT("--refine-tail",rf.tail,atoi)
         OPT("--refine-match",rf.match,atoi) OPT("--refine-retr",rf.retr,atoi) OPT("--refine-retr-m",rf.retr_m,atoi) OPT("--refine-temp",rf.temp,atof) OPT("--refine-rep",rf.rep,atof) OPT("--refine-final-temp",rf.final_temp,atof)
-        OPT("--mtp",mtp_lambda,atof) OPT("--loops",n_loops,atoi) OPT("--layers",gc.n_layer,atoi) OPT("--ssm-groups",groups_arg,atoi) OPT("--pos-feat",pos_feat,atof) OPT("--ssm-qknorm",qk_arg,atoi) OPT("--ssm-rope",rope_arg,atoi) OPT("--ttt-adaptive",ttt_adaptive,atof) OPT("--ttt-win",ttt_win,atoi) OPT("--ttt-bwd-layers",bwd_layers,atoi) OPT("--ssm-ltc",ssm_ltc,atoi) OPT("--match",mm.on,atoi) OPT("--match-lr",mm.lr,atof) OPT("--fw-writes",fw_associative_writes,atoi) OPT("--depth",gc.D,atoi) OPT("--state-n",gc.n,atoi) OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--repeat-maxgap",repeat_maxgap,atol) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
+        OPT("--mtp",mtp_lambda,atof) OPT("--pause",pause_k,atoi) OPT("--loops",n_loops,atoi) OPT("--layers",gc.n_layer,atoi) OPT("--ssm-groups",groups_arg,atoi) OPT("--pos-feat",pos_feat,atof) OPT("--ssm-qknorm",qk_arg,atoi) OPT("--ssm-rope",rope_arg,atoi) OPT("--ttt-adaptive",ttt_adaptive,atof) OPT("--ttt-win",ttt_win,atoi) OPT("--ttt-bwd-layers",bwd_layers,atoi) OPT("--ssm-ltc",ssm_ltc,atoi) OPT("--match",mm.on,atoi) OPT("--match-lr",mm.lr,atof) OPT("--fw-writes",fw_associative_writes,atoi) OPT("--depth",gc.D,atoi) OPT("--state-n",gc.n,atoi) OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--repeat-maxgap",repeat_maxgap,atol) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
         OPT("--ttt-lr",tt.lr,atof) OPT("--ttt-decay",tt.decay,atof) OPT("--ttt-clip",tt.clip,atof) OPT("--ttt-beta2",tt.beta2,atof) OPT("--ttt-steps",tt.steps,atoi) OPT("--ttt-batch",tt.batch,atoi)
         OPT("--ttt-chunk",tt.chunk,atoi) OPT("--ttt-ctx",tt.ctx,atoi) OPT("--ttt-stream",tt.stream,atoi) OPT("--ttt-freeze",tt.freeze,atoi)
         OPT("--context-file",context_file,(const char*)) OPT("--data",data,(const char*)) OPT("--save",out,(const char*)) OPT("--load",in,(const char*)) OPT("--mode",mode,(const char*)) OPT("--prompt",prompt,(const char*))
@@ -3501,7 +3508,10 @@ int main(int argc,char**argv){
         FStream*s=fstream_new(f);real lg[256];const char*p=*prompt?prompt:"\n";for(const char*q=p;*q;q++){fstream_step(f,s,(unsigned char)*q,lg);putchar(*q);}for(int i=0;i<sample;i++){int v=sample_logits(lg,256,temp);putchar(v);fstream_step(f,s,v,lg);}putchar('\n');return 0;
     }
     if(!data){usage();return 2;}
-    FILE*fp=fopen(data,"rb");if(!fp)return 1;fseek(fp,0,SEEK_END);long n=ftell(fp);rewind(fp);unsigned char*raw=malloc(n);if(fread(raw,1,n,fp)!=(size_t)n)return 1;fclose(fp);long split=(long)(n*.9);if(split<L+2||n-split<L+2)return 2;
+    FILE*fp=fopen(data,"rb");if(!fp)return 1;fseek(fp,0,SEEK_END);long n=ftell(fp);rewind(fp);unsigned char*raw=malloc(n);if(fread(raw,1,n,fp)!=(size_t)n)return 1;fclose(fp);long split=(long)(n*.9);
+    if(pause_k>0){if(memchr(raw,0,n)){fprintf(stderr,"--pause needs text without NUL bytes\n");return 2;}long a,b;unsigned char*tr=pause_expand(raw,split,&a),*va=pause_expand(raw+split,n-split,&b);
+        free(raw);raw=malloc(a+b);memcpy(raw,tr,a);memcpy(raw+a,va,b);free(tr);free(va);split=a;n=a+b;}
+    if(split<L+2||n-split<L+2)return 2;
     Faithful*f=NULL;Model*m=NULL;double aux_seconds=0,calibration_seconds=0,avg=1,setup0=wall();int blt=!strcmp(mode,"blt");
     if(in){f=faithful_load(in,threads,L);if(!f)m=load(in,threads,L);if(!f&&!m)return 1;blt=f!=NULL;}
     else if(blt){cfg.target=target;f=faithful_new(gc,cfg,threads,L,1);}
@@ -3550,7 +3560,7 @@ int main(int argc,char**argv){
                 unsigned char*sb=carry_buf+(size_t)b*need;at=carry_pos[b];carry_pos[b]+=L;carry_left[b]--;
                 for(int i=0;i<L;i++){bt[b*L+i]=sb[at+i];by[b*L+i]=sb[at+i+1];}continue;
             }else at=(long)(urand(&data_rng)*(split-L-1));
-            for(int i=0;i<L;i++){bt[b*L+i]=raw[at+i];by[b*L+i]=raw[at+i+1];}}
+            for(int i=0;i<L;i++){bt[b*L+i]=raw[at+i];by[b*L+i]=PLAB(raw[at+i+1]);}}
         double st=wall();if(blt)loss=faithful_step(f,bt,by,B,L,&hp,&patches);else{loss=tss_train_step(&m->c,&m->P,&m->Q,&m->G,m->hit,&m->M,&m->V,m->Gt,m->hits,m->ws,threads,bt,by,B,L,&hp,m->k);patches+=(long long)B*L;}
         double step_seconds=wall()-st;if(step_seconds>max_step_seconds)max_step_seconds=step_seconds;
         trainsec=wall()-loop_start;seen+=(long long)B*L;
