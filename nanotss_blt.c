@@ -106,6 +106,10 @@ typedef struct {
 /* ssm_groups (GQA analogue): the SSM key B and query C are computed per group of trees instead of
  * once for all trees (1 = shared, as before; T = one per tree). Values V, read-out Z and steps stay as they were. */
 static int ssm_groups=1;
+/* ssm_qknorm: L2-normalize each group's SSM key B and query C. ssm_rope: rotate coordinate pairs of
+ * B and C by angle pos*theta_k (theta_k = 10000^(-2k/n)), so a state written at s and read at t
+ * responds to t-s. Both act on the projections right after they are computed. */
+static int ssm_qknorm=0,ssm_rope=0;
 #define BASE_PDIM(c) (2*(c)->n*ssm_groups+2*(c)->p+(c)->T)
 #define PDIM(c) BASE_PDIM(c)
 /* Nine leaves per FFF tree gain two children: 273 rather than 255 nodes.
@@ -139,6 +143,21 @@ static inline real ltc2_gate(real z,const real*Z,const real*C,const real*H,int n
     real a=z;for(int q=0;q<pv;q++){real gq=0;for(int j=0;j<n;j++)gq+=C[j]*H[j*pv+q];a+=Z[q]*gq;}return a;
 }
 static inline real _cvtsh_ss_bf(uint16_t b){uint32_t u=(uint32_t)b<<16;float f;memcpy(&f,&u,4);return f;}
+static void ssm_prep(real*pt,int n,int G,long pos,real*inv){
+    for(int part=0;part<2;part++)for(int g=0;g<G;g++){real*v=pt+(size_t)part*G*n+(size_t)g*n;
+        if(ssm_qknorm){real ss=0;for(int j=0;j<n;j++)ss+=v[j]*v[j];real r=1/sqrt(ss+(real)1e-6);inv[part*G+g]=r;for(int j=0;j<n;j++)v[j]*=r;}
+        if(ssm_rope)for(int k=0;k+1<n;k+=2){real th=(real)(pos*pow(10000.,-(double)k/n)),cs=cos(th),sn=sin(th),a=v[k],b=v[k+1];v[k]=a*cs-b*sn;v[k+1]=a*sn+b*cs;}
+    }
+}
+/* Gradient through ssm_prep: dpt holds d/d(prepared values); pt the prepared values. */
+static void ssm_prep_bwd(const real*pt,real*dpt,int n,int G,long pos,const real*inv){
+    for(int part=0;part<2;part++)for(int g=0;g<G;g++){const real*v=pt+(size_t)part*G*n+(size_t)g*n;real*dv=dpt+(size_t)part*G*n+(size_t)g*n;real u[64];
+        memcpy(u,v,n*sizeof(real));
+        if(ssm_rope)for(int k=0;k+1<n;k+=2){real th=(real)(pos*pow(10000.,-(double)k/n)),cs=cos(th),sn=sin(th),a=dv[k],b=dv[k+1];dv[k]=a*cs+b*sn;dv[k+1]=-a*sn+b*cs;
+            real x=u[k],y=u[k+1];u[k]=x*cs+y*sn;u[k+1]=-x*sn+y*cs;}
+        if(ssm_qknorm){real r=inv[part*G+g],dot=0;for(int j=0;j<n;j++)dot+=u[j]*dv[j];for(int j=0;j<n;j++)dv[j]=r*(dv[j]-u[j]*dot);}
+    }
+}
 static inline void ssm_coef(real ea,real dt,real*dec,real*gain){if(ssm_ltc){real q=1/(1+ea+dt);*dec=q;*gain=dt*q;}else{*dec=exp(-ea*dt);*gain=dt;}} /* <1 caps SSM retention per step: horizon ~ 1/(1-cap) steps */
 #if defined(__AVX512F__) && !defined(TSS_DOUBLE)
 #include <immintrin.h>
@@ -509,6 +528,7 @@ typedef struct {
     double *head_exp;
     real *stream_hist;
     real *carry_h,*carry_hist; /* training state carry: per even layer h, per layer K-1 conv inputs */
+    real *qkn; long pos; /* SSM QK-norm inverse norms per (layer,t,group,B/C); stream position for rotary */
     void (*prepare_state)(void*,real*,size_t,int,int);
     void *prepare_state_user;
     const Tape *reuse_fw_input;
@@ -1167,6 +1187,7 @@ static void layer_fwd(const Cfg *c,const Params *P,const Params *Q,int l,int L,r
         quant8(mx,tp->x+(size_t)t*d,tp->xq+(size_t)t*d,tp->xs+t,d);
     }
     qrows_dot8_batch(k,pproj,Q->proj,r_proj,tp->x,tp->xq,tp->xs,tp->p,L,Pd,d,g);
+    if(ssm_qknorm||ssm_rope)for(int t=0;t<L;t++)ssm_prep(tp->p+(size_t)t*Pd,n,ssm_groups,w->pos+t,w->qkn+((size_t)l*w->Lmax+t)*2*16);
     for(int t=0;t<L;t++) {
         real *xt=tp->x+(size_t)t*d,*ut=tp->u+(size_t)t*d,*pt=tp->p+(size_t)t*Pd,*dtt=tp->dt+(size_t)t*T;
         int8_t *xq=tp->xq+(size_t)t*d;
@@ -1458,6 +1479,7 @@ static void layer_bwd(const Cfg *c,const Params *P,const Params *Q,Params *G,int
             gdtb[tr]+=dz;
         }
     }
+    if(ssm_qknorm||ssm_rope)for(int t=0;t<L;t++)ssm_prep_bwd(tp->p+(size_t)t*Pd,dp+(size_t)t*Pd,n,ssm_groups,w->pos+t,w->qkn+((size_t)l*w->Lmax+t)*2*16);
     outer_rows(gproj,dp,tp->x,L,Pd,d);
     qrows_axpy_batch(k,pproj,Q->proj,r_proj,dp,dx,L,Pd,d,gs);
     for(int t=0;t<L;t++) {
@@ -1474,7 +1496,7 @@ Work *tss_work_new(const Cfg *c,int Lmax) {
     const size_t tr=tape_reals(c,Lmax),ti=(size_t)Lmax*T*(c->D+2+(c->D+1)*(c->D+2)/2);
     const size_t V=(size_t)Lmax*T*(c->D+1),S=(size_t)T*N*c->n*c->p;
     Work *w=calloc(1,sizeof(Work));
-    w->Lmax=Lmax;
+    w->Lmax=Lmax;w->qkn=calloc((size_t)nl*Lmax*2*16,sizeof(real));
     w->ys=calloc((size_t)Lmax*d,sizeof(real));w->rs=calloc((size_t)Lmax*T*c->p,sizeof(real));w->drs=calloc((size_t)Lmax*T*c->p,sizeof(real));
     w->head=calloc((size_t)8*(2*d+c->vocab+1),sizeof(real));
     w->head_exp=calloc(c->vocab,sizeof(double));
@@ -1958,6 +1980,7 @@ static void gen_core(Model*m,Gen*g,const real*input,real*logits) {
     const Cfg*c=&m->c;int d=c->d;Work*w=g->work;w->k=m->k;w->no_alt=1;
     memcpy(g->x,input,sizeof(real)*d);
     for(int l=0;l<c->n_layer;l++)layer_fwd(c,&m->P,&m->Q,l,1,g->x,g->h+node_off(c,l)*c->n*c->p,w->tp+l,w);
+    w->pos++;
     if(logits){real rr;rmsnorm_fwd(g->x,m->P.norm_f,g->u,d,&rr);for(int v=0;v<c->vocab;v++)logits[v]=dotr(m->P.embed+(size_t)v*d,g->u,d);}
 }
 static void gen_step(Model*m,Gen*g,int token,real*logits){gen_core(m,g,m->P.embed+(size_t)token*m->c.d,logits);}
@@ -1978,11 +2001,11 @@ static int save(const Model *m,const char *path) {
     fields(&m->P,pf);
     const int rs=sizeof(real);
     /* TFX1 adds an extension header after Cfg: {ssm_groups, ssm_ltc, 0, 0}. Older magics imply {1, 0}. */
-    const int ext=ssm_groups!=1||ssm_ltc;
+    const int ext=ssm_groups!=1||ssm_ltc||ssm_qknorm||ssm_rope;
     fwrite(ext?"TFX1":PROTECTED_FW&&m->c.fw_mask?"TFP1":"TFW1",1,4,f);
     fwrite(&rs,sizeof(int),1,f);
     fwrite(&m->c,sizeof(Cfg),1,f);
-    if(ext){int e[4]={ssm_groups,ssm_ltc,0,0};fwrite(e,sizeof(int),4,f);}
+    if(ext){int e[4]={ssm_groups,ssm_ltc,ssm_qknorm|(ssm_rope<<1),0};fwrite(e,sizeof(int),4,f);}
     for(int i=0;i<N_FIELDS;i++)fwrite(pf[i],sizeof(real),z[i],f);
     return fclose(f);
 }
@@ -1998,7 +2021,7 @@ static Model *load(const char *path,int threads,int Lmax) {
     }
     const int ext=!memcmp(magic,"TFX1",4);int e[4]={1,0,0,0};
     if(ext&&(fread(e,sizeof(int),4,f)!=4||e[0]<1||e[0]>c.T||c.T%e[0]||e[1]<0||e[1]>2)){fclose(f);return NULL;}
-    ssm_groups=e[0];ssm_ltc=e[1];
+    ssm_groups=e[0];ssm_ltc=e[1];ssm_qknorm=e[2]&1;ssm_rope=(e[2]>>1)&1;
     if(!ext&&((c.fw_mask && (PROTECTED_FW ? memcmp(magic,"TFP1",4) : !memcmp(magic,"TFP1",4))) || (memcmp(magic,"TFW1",4)&&memcmp(magic,"TFP1",4)&&c.fw_mask))){fclose(f);return NULL;}
     if((c.fw_mask&~0x5555)||c.n_layer<1||c.n_layer>16||(c.fw_mask>>c.n_layer)||c.fff_gate<0||c.fff_gate>1){fclose(f);return NULL;}
     Model *m=model_new(&c,threads,Lmax);
@@ -3345,7 +3368,7 @@ int main(int argc,char**argv){
         if(!strcmp(argv[i],"--fw-scalar")){fw_fast=0;continue;}
         if(!strcmp(argv[i],"--help")){usage();return 0;}
         if(!strcmp(argv[i],"--check-neural"))return check_neural();
-        if(!strcmp(argv[i],"--check-ssm"))return check_block_gradient(0);
+        if(!strcmp(argv[i],"--check-ssm")){if(groups_arg>0)ssm_groups=groups_arg;return check_block_gradient(0);}
         if(!strcmp(argv[i],"--check-tree-fw"))return check_tree_fw();
         if(!strcmp(argv[i],"--runtime-reference")){runtime_fast=0;continue;}
         if(!strcmp(argv[i],"--check"))return check_gated_fff()||check_tree_fw();
@@ -3359,7 +3382,7 @@ int main(int argc,char**argv){
         OPT("--ssm-horizon",ssm_horizon,atof) OPT("--ttt-reset",ttt_reset,atol) OPT("--ttt-reset-mask",ttt_reset_mask,atoi) OPT("--session",session,atoi) OPT("--session-score",sess_score,atoi) OPT("--session-speed",sess_speed,(const char*)) OPT("--refine",refine,atoi) OPT("--refine-context",refine_ctx,(const char*)) OPT("--refine-rounds",rf.rounds,atoi) OPT("--refine-cands",rf.cands,atoi) OPT("--refine-keep",rf.keep,atoi)
         OPT("--refine-len",rf.len,atoi) OPT("--refine-steps",rf.steps,atoi) OPT("--refine-epochs",rf.epochs,atoi) OPT("--refine-edits",rf.edits,atoi) OPT("--refine-span",rf.span,atoi) OPT("--refine-tail",rf.tail,atoi)
         OPT("--refine-match",rf.match,atoi) OPT("--refine-retr",rf.retr,atoi) OPT("--refine-retr-m",rf.retr_m,atoi) OPT("--refine-temp",rf.temp,atof) OPT("--refine-rep",rf.rep,atof) OPT("--refine-final-temp",rf.final_temp,atof)
-        OPT("--ssm-groups",groups_arg,atoi) OPT("--ttt-adaptive",ttt_adaptive,atof) OPT("--ttt-win",ttt_win,atoi) OPT("--ttt-bwd-layers",bwd_layers,atoi) OPT("--ssm-ltc",ssm_ltc,atoi) OPT("--match",mm.on,atoi) OPT("--match-lr",mm.lr,atof) OPT("--fw-writes",fw_associative_writes,atoi) OPT("--depth",gc.D,atoi) OPT("--state-n",gc.n,atoi) OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--repeat-maxgap",repeat_maxgap,atol) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
+        OPT("--ssm-groups",groups_arg,atoi) OPT("--ssm-qknorm",ssm_qknorm,atoi) OPT("--ssm-rope",ssm_rope,atoi) OPT("--ttt-adaptive",ttt_adaptive,atof) OPT("--ttt-win",ttt_win,atoi) OPT("--ttt-bwd-layers",bwd_layers,atoi) OPT("--ssm-ltc",ssm_ltc,atoi) OPT("--match",mm.on,atoi) OPT("--match-lr",mm.lr,atof) OPT("--fw-writes",fw_associative_writes,atoi) OPT("--depth",gc.D,atoi) OPT("--state-n",gc.n,atoi) OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--repeat-maxgap",repeat_maxgap,atol) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
         OPT("--ttt-lr",tt.lr,atof) OPT("--ttt-decay",tt.decay,atof) OPT("--ttt-clip",tt.clip,atof) OPT("--ttt-beta2",tt.beta2,atof) OPT("--ttt-steps",tt.steps,atoi) OPT("--ttt-batch",tt.batch,atoi)
         OPT("--ttt-chunk",tt.chunk,atoi) OPT("--ttt-ctx",tt.ctx,atoi) OPT("--ttt-stream",tt.stream,atoi) OPT("--ttt-freeze",tt.freeze,atoi)
         OPT("--context-file",context_file,(const char*)) OPT("--data",data,(const char*)) OPT("--save",out,(const char*)) OPT("--load",in,(const char*)) OPT("--mode",mode,(const char*)) OPT("--prompt",prompt,(const char*))
