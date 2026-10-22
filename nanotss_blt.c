@@ -110,6 +110,15 @@ static int ssm_groups=1;
  * B and C by angle pos*theta_k (theta_k = 10000^(-2k/n)), so a state written at s and read at t
  * responds to t-s. Both act on the projections right after they are computed. */
 static int ssm_qknorm=0,ssm_rope=0;
+/* pos_feat>0: add fixed sinusoidal codes of (bytes since the last space/newline) to dims 0..31 and
+ * (bytes since the last newline) to dims 32..63 of the input embedding, amplitude pos_feat. No parameters. */
+static real pos_feat=0;
+static void pos_feat_add(real*x,int kw,int kl,int d){
+    if(pos_feat<=0||d<64)return;
+    for(int j=0;j<16;j++){double w=pow(1.5,-(double)j);x[2*j]+=pos_feat*(real)sin(kw*w);x[2*j+1]+=pos_feat*(real)cos(kw*w);
+        double wl=pow(1.7,-(double)j);x[32+2*j]+=pos_feat*(real)sin(kl*wl);x[32+2*j+1]+=pos_feat*(real)cos(kl*wl);}
+}
+static inline void pos_feat_next(int tok,int*kw,int*kl){if(tok=='\n'){*kw=0;*kl=0;}else if(tok==' '){*kw=0;(*kl)++;}else{(*kw)++;(*kl)++;}}
 #define BASE_PDIM(c) (2*(c)->n*ssm_groups+2*(c)->p+(c)->T)
 #define PDIM(c) BASE_PDIM(c)
 /* Nine leaves per FFF tree gain two children: 273 rather than 255 nodes.
@@ -1656,6 +1665,7 @@ real tss_train_seq(const Cfg *c,const Params *P,const Params *Q,Params *G,const 
     Tape *tp=w->tp;
     real *x=w->x,*h=w->h;
     for(int t=0;t<L;t++)memcpy(x+(size_t)t*d,P->embed+(size_t)tokens[t]*d,sizeof(real)*d);
+    if(pos_feat>0){int kw=0,kl=0;for(int t=0;t<L;t++){pos_feat_next(tokens[t],&kw,&kl);pos_feat_add(x+(size_t)t*d,kw,kl,d);}}
     for(int l=0;l<nl;l++) {
         if(!(l&1))carry_pre(c,w,l,h);
         layer_fwd(c,P,Q,l,L,x,h,tp+l,w);
@@ -1933,6 +1943,7 @@ static double eval_seq(Model *m,const int *tok,const int *lab,int L,Work *w,int 
     w->no_alt=1;
     real *x=w->x,*h=w->h,*xn=w->xn,*lg=w->lg;
     for(int t=0;t<L;t++)memcpy(x+(size_t)t*d,m->P.embed+(size_t)tok[t]*d,sizeof(real)*d);
+    if(pos_feat>0){int kw=0,kl=0;for(int t=0;t<L;t++){pos_feat_next(tok[t],&kw,&kl);pos_feat_add(x+(size_t)t*d,kw,kl,d);}}
     for(int l=0;l<c->n_layer;l++) {
         if(!(l&1))memset(h,0,sizeof(real)*(size_t)T*N*c->n*c->p);
         layer_fwd(c,&m->P,&m->Q,l,L,x,h,w->tp+l,w);
@@ -1957,6 +1968,7 @@ typedef struct {
     real *h,*hist,*x,*u,*mx,*xt,*y,*p,*R,*Racc;
     int8_t *xq;
     Work *work;
+    int kw,kl; /* structural position counters for pos_feat */
 } Gen;
 static Gen *gen_new(const Cfg *c) {
     Gen *g=calloc(1,sizeof(Gen));
@@ -1983,7 +1995,10 @@ static void gen_core(Model*m,Gen*g,const real*input,real*logits) {
     w->pos++;
     if(logits){real rr;rmsnorm_fwd(g->x,m->P.norm_f,g->u,d,&rr);for(int v=0;v<c->vocab;v++)logits[v]=dotr(m->P.embed+(size_t)v*d,g->u,d);}
 }
-static void gen_step(Model*m,Gen*g,int token,real*logits){gen_core(m,g,m->P.embed+(size_t)token*m->c.d,logits);}
+static void gen_step(Model*m,Gen*g,int token,real*logits){
+    if(pos_feat<=0){gen_core(m,g,m->P.embed+(size_t)token*m->c.d,logits);return;}
+    real x[512];int d=m->c.d;memcpy(x,m->P.embed+(size_t)token*d,d*sizeof(real));pos_feat_next(token,&g->kw,&g->kl);pos_feat_add(x,g->kw,g->kl,d);gen_core(m,g,x,logits);
+}
 static int sample_logits(const real *lg,int V,double temp) {
     double mx=-1e300,z=0;
     for(int v=0;v<V;v++)mx=lg[v]>mx?lg[v]:mx;
@@ -2001,11 +2016,11 @@ static int save(const Model *m,const char *path) {
     fields(&m->P,pf);
     const int rs=sizeof(real);
     /* TFX1 adds an extension header after Cfg: {ssm_groups, ssm_ltc, 0, 0}. Older magics imply {1, 0}. */
-    const int ext=ssm_groups!=1||ssm_ltc||ssm_qknorm||ssm_rope;
+    const int ext=ssm_groups!=1||ssm_ltc||ssm_qknorm||ssm_rope||pos_feat>0;
     fwrite(ext?"TFX1":PROTECTED_FW&&m->c.fw_mask?"TFP1":"TFW1",1,4,f);
     fwrite(&rs,sizeof(int),1,f);
     fwrite(&m->c,sizeof(Cfg),1,f);
-    if(ext){int e[4]={ssm_groups,ssm_ltc,ssm_qknorm|(ssm_rope<<1),0};fwrite(e,sizeof(int),4,f);}
+    if(ext){int e[4]={ssm_groups,ssm_ltc,ssm_qknorm|(ssm_rope<<1),(int)(pos_feat*1e6+.5)};fwrite(e,sizeof(int),4,f);}
     for(int i=0;i<N_FIELDS;i++)fwrite(pf[i],sizeof(real),z[i],f);
     return fclose(f);
 }
@@ -2021,7 +2036,7 @@ static Model *load(const char *path,int threads,int Lmax) {
     }
     const int ext=!memcmp(magic,"TFX1",4);int e[4]={1,0,0,0};
     if(ext&&(fread(e,sizeof(int),4,f)!=4||e[0]<1||e[0]>c.T||c.T%e[0]||e[1]<0||e[1]>2)){fclose(f);return NULL;}
-    ssm_groups=e[0];ssm_ltc=e[1];ssm_qknorm=e[2]&1;ssm_rope=(e[2]>>1)&1;
+    ssm_groups=e[0];ssm_ltc=e[1];ssm_qknorm=e[2]&1;ssm_rope=(e[2]>>1)&1;pos_feat=(real)(e[3]/1e6);
     if(!ext&&((c.fw_mask && (PROTECTED_FW ? memcmp(magic,"TFP1",4) : !memcmp(magic,"TFP1",4))) || (memcmp(magic,"TFW1",4)&&memcmp(magic,"TFP1",4)&&c.fw_mask))){fclose(f);return NULL;}
     if((c.fw_mask&~0x5555)||c.n_layer<1||c.n_layer>16||(c.fw_mask>>c.n_layer)||c.fff_gate<0||c.fff_gate>1){fclose(f);return NULL;}
     Model *m=model_new(&c,threads,Lmax);
@@ -3382,7 +3397,7 @@ int main(int argc,char**argv){
         OPT("--ssm-horizon",ssm_horizon,atof) OPT("--ttt-reset",ttt_reset,atol) OPT("--ttt-reset-mask",ttt_reset_mask,atoi) OPT("--session",session,atoi) OPT("--session-score",sess_score,atoi) OPT("--session-speed",sess_speed,(const char*)) OPT("--refine",refine,atoi) OPT("--refine-context",refine_ctx,(const char*)) OPT("--refine-rounds",rf.rounds,atoi) OPT("--refine-cands",rf.cands,atoi) OPT("--refine-keep",rf.keep,atoi)
         OPT("--refine-len",rf.len,atoi) OPT("--refine-steps",rf.steps,atoi) OPT("--refine-epochs",rf.epochs,atoi) OPT("--refine-edits",rf.edits,atoi) OPT("--refine-span",rf.span,atoi) OPT("--refine-tail",rf.tail,atoi)
         OPT("--refine-match",rf.match,atoi) OPT("--refine-retr",rf.retr,atoi) OPT("--refine-retr-m",rf.retr_m,atoi) OPT("--refine-temp",rf.temp,atof) OPT("--refine-rep",rf.rep,atof) OPT("--refine-final-temp",rf.final_temp,atof)
-        OPT("--ssm-groups",groups_arg,atoi) OPT("--ssm-qknorm",ssm_qknorm,atoi) OPT("--ssm-rope",ssm_rope,atoi) OPT("--ttt-adaptive",ttt_adaptive,atof) OPT("--ttt-win",ttt_win,atoi) OPT("--ttt-bwd-layers",bwd_layers,atoi) OPT("--ssm-ltc",ssm_ltc,atoi) OPT("--match",mm.on,atoi) OPT("--match-lr",mm.lr,atof) OPT("--fw-writes",fw_associative_writes,atoi) OPT("--depth",gc.D,atoi) OPT("--state-n",gc.n,atoi) OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--repeat-maxgap",repeat_maxgap,atol) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
+        OPT("--ssm-groups",groups_arg,atoi) OPT("--pos-feat",pos_feat,atof) OPT("--ssm-qknorm",ssm_qknorm,atoi) OPT("--ssm-rope",ssm_rope,atoi) OPT("--ttt-adaptive",ttt_adaptive,atof) OPT("--ttt-win",ttt_win,atoi) OPT("--ttt-bwd-layers",bwd_layers,atoi) OPT("--ssm-ltc",ssm_ltc,atoi) OPT("--match",mm.on,atoi) OPT("--match-lr",mm.lr,atof) OPT("--fw-writes",fw_associative_writes,atoi) OPT("--depth",gc.D,atoi) OPT("--state-n",gc.n,atoi) OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--repeat-maxgap",repeat_maxgap,atol) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
         OPT("--ttt-lr",tt.lr,atof) OPT("--ttt-decay",tt.decay,atof) OPT("--ttt-clip",tt.clip,atof) OPT("--ttt-beta2",tt.beta2,atof) OPT("--ttt-steps",tt.steps,atoi) OPT("--ttt-batch",tt.batch,atoi)
         OPT("--ttt-chunk",tt.chunk,atoi) OPT("--ttt-ctx",tt.ctx,atoi) OPT("--ttt-stream",tt.stream,atoi) OPT("--ttt-freeze",tt.freeze,atoi)
         OPT("--context-file",context_file,(const char*)) OPT("--data",data,(const char*)) OPT("--save",out,(const char*)) OPT("--load",in,(const char*)) OPT("--mode",mode,(const char*)) OPT("--prompt",prompt,(const char*))
