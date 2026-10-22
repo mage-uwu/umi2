@@ -101,7 +101,10 @@ typedef struct {
     real *embed,*norm_f,*norm,*conv,*w_in,*bias,*w_out,*A_log,*proj,*dt_bias,*U;
 } Params;
 #define NODES(c) ((1 << ((c)->D + 1)) - 1)
-#define BASE_PDIM(c) (2*(c)->n+2*(c)->p+(c)->T)
+/* ssm_groups (GQA analogue): the SSM key B and query C are computed per group of trees instead of
+ * once for all trees (1 = shared, as before; T = one per tree). Values V, read-out Z and steps stay as they were. */
+static int ssm_groups=1;
+#define BASE_PDIM(c) (2*(c)->n*ssm_groups+2*(c)->p+(c)->T)
 #define PDIM(c) BASE_PDIM(c)
 /* Nine leaves per FFF tree gain two children: 273 rather than 255 nodes.
  * Two TSS + two FFF blocks: 1,155,584 active parameters at width 128. */
@@ -1166,17 +1169,18 @@ static void layer_fwd(const Cfg *c,const Params *P,const Params *Q,int l,int L,r
         real *xt=tp->x+(size_t)t*d,*ut=tp->u+(size_t)t*d,*pt=tp->p+(size_t)t*Pd,*dtt=tp->dt+(size_t)t*T;
         int8_t *xq=tp->xq+(size_t)t*d;
         const real xs=tp->xs[t];y=w->ys+(size_t)t*d;
-        const real *B=pt,*C=pt+n,*V=pt+2*n,*Z=pt+2*n+pv;
-        for(int tr=0;tr<T;tr++)dtt[tr]=softplus(pt[2*n+2*pv+tr]+dt_bias[tr]);
+        const int G=ssm_groups;const real *B0=pt,*C0=pt+G*n,*V=pt+2*G*n,*Z=pt+2*G*n+pv;
+        for(int tr=0;tr<T;tr++)dtt[tr]=softplus(pt[2*G*n+2*pv+tr]+dt_bias[tr]);
         memset(y,0,sizeof(real)*d);
         memset(Racc,0,sizeof(real)*T*pv);
         int *node=w->walk;
         for(int tr=0;tr<T;tr++)node[tr]=0;
         for(int kk=0;kk<=D;kk++)for(int tr=0;tr<T;tr++) {
             const size_t row=(size_t)tr*N+node[tr],v=((size_t)t*T+tr)*(D+1)+kk;
+            const real*B=B0+(size_t)(tr*G/T)*n,*C=C0+(size_t)(tr*G/T)*n;
             real *ha=h+row*n*pv,*R=tp->R+v*pv;
             if(w->prepare_state)w->prepare_state(w->prepare_state_user,ha,r_node+row,n,pv);
-            real dec,wdt;ssm_coef(decay_rate(k,r_node+row,A_log[row]),ssm_ltc==2?softplus(ltc2_gate(pt[2*n+2*pv+tr]+dt_bias[tr],Z,C,ha,n,pv)):dtt[tr],&dec,&wdt);if(dec>ssm_dec_cap)dec=ssm_dec_cap;
+            real dec,wdt;ssm_coef(decay_rate(k,r_node+row,A_log[row]),ssm_ltc==2?softplus(ltc2_gate(pt[2*G*n+2*pv+tr]+dt_bias[tr],Z,C,ha,n,pv)):dtt[tr],&dec,&wdt);if(dec>ssm_dec_cap)dec=ssm_dec_cap;
 #if FAST
             if(!bf)
 #endif
@@ -1248,7 +1252,8 @@ static void layer_fwd(const Cfg *c,const Params *P,const Params *Q,int l,int L,r
             for(int kk=0,base=0;kk<j;base+=D-kk,kk++) {
                 if(tp->bw[((size_t)t*T+tr)*(D+1)+kk]==0)continue;
                 const size_t ai=ab+base+(j-kk-1),row=(size_t)tr*N+cn[tr*(D+1)+kk];
-                const real*hr=h+row*n*pv;real dec,gn_;ssm_coef(decay_rate(k,r_node+row,A_log[row]),ssm_ltc==2?softplus(ltc2_gate(pt[2*n+2*pv+tr]+dt_bias[tr],Z,C,hr,n,pv)):dtt[tr],&dec,&gn_);
+                const real*C=C0+(size_t)(tr*G/T)*n;
+                const real*hr=h+row*n*pv;real dec,gn_;ssm_coef(decay_rate(k,r_node+row,A_log[row]),ssm_ltc==2?softplus(ltc2_gate(pt[2*G*n+2*pv+tr]+dt_bias[tr],Z,C,hr,n,pv)):dtt[tr],&dec,&gn_);
                 real *R=tp->aR+ai*pv;
 #if FAST
                 if(vec) {
@@ -1318,8 +1323,8 @@ static void layer_bwd(const Cfg *c,const Params *P,const Params *Q,Params *G,int
     outer_rows(gU,w->rs,g,L,T*pv,d);
     // A: local output and branch gradients.
     for(int t=0;t<L;t++) {
-        const real *gy=g+(size_t)t*d,*pt=tp->p+(size_t)t*Pd,*Z=pt+2*n+pv;
-        real *dZ=dp+(size_t)t*Pd+2*n+pv,*dxt=dx+(size_t)t*d;
+        const real *gy=g+(size_t)t*d,*pt=tp->p+(size_t)t*Pd,*Z=pt+2*ssm_groups*n+pv;
+        real *dZ=dp+(size_t)t*Pd+2*ssm_groups*n+pv,*dxt=dx+(size_t)t*d;
         for(int tr=0;tr<T;tr++) {
             const size_t vb=((size_t)t*T+tr)*(D+1),ab=((size_t)t*T+tr)*AL;
             gUr=w->drs+((size_t)t*T+tr)*pv;
@@ -1377,10 +1382,11 @@ static void layer_bwd(const Cfg *c,const Params *P,const Params *Q,Params *G,int
     }
     // B: recurrent state adjoints, reverse time.
     for(int t=L-1;t>=0;t--) {
-        const real *pt=tp->p+(size_t)t*Pd,*B=pt,*C=pt+n,*Vv=pt+2*n;
-        real *dpt=dp+(size_t)t*Pd,*dB=dpt,*dC=dpt+n,*dV=dpt+2*n,*ddt=dpt+2*n+2*pv;
+        const int G=ssm_groups;const real *pt=tp->p+(size_t)t*Pd,*B0=pt,*C0=pt+G*n,*Vv=pt+2*G*n;
+        real *dpt=dp+(size_t)t*Pd,*dB0=dpt,*dC0=dpt+G*n,*dV=dpt+2*G*n,*ddt=dpt+2*G*n+2*pv;
         for(int tr=0;tr<T;tr++) {
             const real dtv=tp->dt[(size_t)t*T+tr];
+            const real*B=B0+(size_t)(tr*G/T)*n,*C=C0+(size_t)(tr*G/T)*n;real*dB=dB0+(size_t)(tr*G/T)*n,*dC=dC0+(size_t)(tr*G/T)*n;
             for(int kk=0;kk<=D;kk++) {
                 const size_t v=((size_t)t*T+tr)*(D+1)+kk,row=tp->node[v];
                 real *la=lam+row*n*pv;
@@ -1428,8 +1434,8 @@ static void layer_bwd(const Cfg *c,const Params *P,const Params *Q,Params *G,int
                             hq[i]=hp[i];
 #endif
                         }
-                        const real*Zv=Vv+pv;real a=ltc2_gate(pt[2*n+2*pv+tr]+dt_bias[tr],Zv,C,hq,n,pv),da=df*sigm(a);
-                        real*dZ=dpt+2*n+pv;ddt[tr]+=da;
+                        const real*Zv=Vv+pv;real a=ltc2_gate(pt[2*ssm_groups*n+2*pv+tr]+dt_bias[tr],Zv,C,hq,n,pv),da=df*sigm(a);
+                        real*dZ=dpt+2*G*n+pv;ddt[tr]+=da;
                         for(int q=0;q<pv;q++){real gq=0;for(int j=0;j<n;j++)gq+=C[j]*hq[j*pv+q];dZ[q]+=da*gq;const real dg=da*Zv[q];
                             for(int j=0;j<n;j++){dC[j]+=dg*hq[j*pv+q];la[j*pv+q]+=C[j]*dg;}}
                     }else ddt[tr]+=df;}
@@ -1444,9 +1450,9 @@ static void layer_bwd(const Cfg *c,const Params *P,const Params *Q,Params *G,int
         const real *pt=tp->p+(size_t)t*Pd,*xt=tp->x+(size_t)t*d;
         real *dpt=dp+(size_t)t*Pd,*dxt=dx+(size_t)t*d;
         for(int tr=0;tr<T;tr++) {
-            const real z=pt[2*n+2*pv+tr]+dt_bias[tr];
-            const real dz=ssm_ltc==2?dpt[2*n+2*pv+tr]:dpt[2*n+2*pv+tr]*(z>20?1:sigm(z));
-            dpt[2*n+2*pv+tr]=dz;
+            const real z=pt[2*ssm_groups*n+2*pv+tr]+dt_bias[tr];
+            const real dz=ssm_ltc==2?dpt[2*ssm_groups*n+2*pv+tr]:dpt[2*ssm_groups*n+2*pv+tr]*(z>20?1:sigm(z));
+            dpt[2*ssm_groups*n+2*pv+tr]=dz;
             gdtb[tr]+=dz;
         }
     }
@@ -3308,7 +3314,7 @@ int main(int argc,char**argv){
         OPT("--ssm-horizon",ssm_horizon,atof) OPT("--ttt-reset",ttt_reset,atol) OPT("--ttt-reset-mask",ttt_reset_mask,atoi) OPT("--session",session,atoi) OPT("--session-score",sess_score,atoi) OPT("--session-speed",sess_speed,(const char*)) OPT("--refine",refine,atoi) OPT("--refine-context",refine_ctx,(const char*)) OPT("--refine-rounds",rf.rounds,atoi) OPT("--refine-cands",rf.cands,atoi) OPT("--refine-keep",rf.keep,atoi)
         OPT("--refine-len",rf.len,atoi) OPT("--refine-steps",rf.steps,atoi) OPT("--refine-epochs",rf.epochs,atoi) OPT("--refine-edits",rf.edits,atoi) OPT("--refine-span",rf.span,atoi) OPT("--refine-tail",rf.tail,atoi)
         OPT("--refine-match",rf.match,atoi) OPT("--refine-retr",rf.retr,atoi) OPT("--refine-retr-m",rf.retr_m,atoi) OPT("--refine-temp",rf.temp,atof) OPT("--refine-rep",rf.rep,atof) OPT("--refine-final-temp",rf.final_temp,atof)
-        OPT("--ttt-adaptive",ttt_adaptive,atof) OPT("--ttt-win",ttt_win,atoi) OPT("--ttt-bwd-layers",bwd_layers,atoi) OPT("--ssm-ltc",ssm_ltc,atoi) OPT("--match",mm.on,atoi) OPT("--match-lr",mm.lr,atof) OPT("--fw-writes",fw_associative_writes,atoi) OPT("--depth",gc.D,atoi) OPT("--state-n",gc.n,atoi) OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--repeat-maxgap",repeat_maxgap,atol) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
+        OPT("--ssm-groups",ssm_groups,atoi) OPT("--ttt-adaptive",ttt_adaptive,atof) OPT("--ttt-win",ttt_win,atoi) OPT("--ttt-bwd-layers",bwd_layers,atoi) OPT("--ssm-ltc",ssm_ltc,atoi) OPT("--match",mm.on,atoi) OPT("--match-lr",mm.lr,atof) OPT("--fw-writes",fw_associative_writes,atoi) OPT("--depth",gc.D,atoi) OPT("--state-n",gc.n,atoi) OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--repeat-maxgap",repeat_maxgap,atol) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
         OPT("--ttt-lr",tt.lr,atof) OPT("--ttt-decay",tt.decay,atof) OPT("--ttt-clip",tt.clip,atof) OPT("--ttt-beta2",tt.beta2,atof) OPT("--ttt-steps",tt.steps,atoi) OPT("--ttt-batch",tt.batch,atoi)
         OPT("--ttt-chunk",tt.chunk,atoi) OPT("--ttt-ctx",tt.ctx,atoi) OPT("--ttt-stream",tt.stream,atoi) OPT("--ttt-freeze",tt.freeze,atoi)
         OPT("--context-file",context_file,(const char*)) OPT("--data",data,(const char*)) OPT("--save",out,(const char*)) OPT("--load",in,(const char*)) OPT("--mode",mode,(const char*)) OPT("--prompt",prompt,(const char*))
