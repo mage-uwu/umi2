@@ -329,3 +329,22 @@ structural position codes −0.017 alone but nothing on top of rotary.
 
 The run completed 22% fewer steps (17,700 vs 22,600), and TTT on random training text still
 helped it (2.211 → 2.201), so it is likely undertrained at 20 minutes.
+
+### Universal-transformer looping (`--loops R`, `--layers N`): not adopted
+
+The layer stack is applied R times per byte with shared weights (own state per pass); the
+whole-model gradient is exact for R = 1–4 (`--check-loops`). Byte default, 4 threads, seed 0:
+
+| layers × loops | params | val BPC, 5 min (steps) | val BPC, 1,300 steps (time) |
+|---|---|---|---|
+| 4 × 1 | 1.19M | **2.372** (2,517) | 2.456 (149 s) |
+| 4 × 2 | 1.19M | 2.458 (1,365) | 2.442 (266 s) |
+| 4 × 4 | 1.19M | 2.557 (769) | 2.433 (500 s) |
+| 2 × 1 | 0.61M | – | 2.577 (73 s) |
+| 2 × 2 | 0.61M | 2.417 (2,794) | 2.539 (133 s) |
+| 2 × 4 | 0.61M | 2.536 (1,402) | 2.533 (252 s) |
+
+Looping helps per step (−0.014 to −0.023 for 4 layers, −0.038 to −0.044 for 2 layers) but each extra
+pass costs about 1.8× compute, so it loses at any fixed budget. It stays off by default; it is an
+option for very small models (2 × 2 at 0.61M is within 0.045 of the 1.19M model at equal time).
+Adaptive per-byte looping would be the version worth revisiting.
