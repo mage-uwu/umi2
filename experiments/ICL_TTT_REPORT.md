@@ -304,3 +304,28 @@ Evidence (byte mode, 4 threads):
 Checkpoints written with a non-default group count or LTC mode use magic `TFX1`, which stores
 `{ssm_groups, ssm_ltc}` after the config; older checkpoints load as groups 1, no LTC.
 BLT checkpoints always use shared projections.
+
+### Default update: Muon + SSM QK-norm + rotary
+
+New byte models now also default to blockwise **Muon** for training (`--optimizer adamw` to opt
+out; TTT always uses AdamW), **L2-normalized** SSM keys/queries (`--ssm-qknorm 1`) and **rotary**
+SSM keys/queries (`--ssm-rope 1`), both stored in the TFX1 header. Checkpoint:
+`checkpoints/muon_qk_rope1200_1p19M.bin`.
+
+Smoke tests (byte mode, 4 threads, two seeds): Muon vs AdamW at 5 min 2.356 vs 2.382 (seed spread
+0.005 vs 0.067); on Muon at 2,500 steps, QK-norm −0.019, rotary −0.022, both −0.031 (two batches),
+structural position codes −0.017 alone but nothing on top of rotary.
+
+20 minutes on 8 vCPU:
+
+| BPC | previous default (AdamW) | Muon + QK-norm + rotary |
+|---|---|---|
+| val, no TTT | 2.215 | **2.206** |
+| val, TTT 2 steps | 2.075 | **2.054** |
+| val, session default (TTT 1 step + match) | 2.051 | **2.036** |
+| unseen plays, half → half, no TTT / TTT | 3.005 / 2.266 | **2.967 / 2.259** |
+| same with match | 2.477 / 2.161 | **2.469 / 2.154** |
+| plays, full context → last 20%, TTT (with match) | **2.114 (2.048)** | 2.130 (2.053) |
+
+The run completed 22% fewer steps (17,700 vs 22,600), and TTT on random training text still
+helped it (2.211 → 2.201), so it is likely undertrained at 20 minutes.

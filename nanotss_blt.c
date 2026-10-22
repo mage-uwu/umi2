@@ -9,7 +9,8 @@
  * Check:
  *   ./nanotss_blt --check
  * Train on TinyShakespeare (save the corpus as input.txt). Default architecture: byte mode,
- * pure SSM trees (no plastic layer) with per-tree SSM keys/queries:
+ * pure SSM trees (no plastic layer) with per-tree, L2-normalized, rotary SSM keys/queries,
+ * trained with blockwise Muon:
  *   ./nanotss_blt --data input.txt --seconds 300 --save model.bin
  * Previous BLT stack (patching, plastic layer, conv mixer): add --mode blt
  * Session (read, adapt online with TTT + match model, generate on demand):
@@ -3366,7 +3367,8 @@ static void usage(void){
          "  --fw-scalar (reference kernel; default is optimized)\n"
          "  --fw-mask 0 (byte default: SSM only; BLT default 1 = plastic first; 4=plastic third, 5=both)\n"
          "  --fff-gate 1 --ngram-bins 256 --patch-size 4 --max-patch 8\n"
-         "  --mode byte|blt (default byte) --ssm-groups G (default 4 in byte mode) --ssm-ltc 0|1|2\n"
+         "  --mode byte|blt (default byte) --ssm-groups G (default 4) --ssm-qknorm 0|1 --ssm-rope 0|1 (default 1) --ssm-ltc 0|1|2\n"
+         "  --optimizer muon|normuon|adamw (byte default: muon; TTT always uses AdamW)\n"
          "  --session 1 [--session-speed fast|balanced|quality] --match 1 --ttt-eval/--ttt-fit/--refine (see report)\n"
          "  --check --check-tree-fw --check-neural --check-ssm --help\n"
          "New runs enable FFF gates; loaded checkpoints retain their saved setting.");
@@ -3378,7 +3380,7 @@ int main(int argc,char**argv){
     int optimizer_explicit=0;
     const char*data=NULL,*out=NULL,*in=NULL,*mode="byte",*prompt="ROMEO:",*entropy_in=NULL,*entropy_out=NULL,*context_file=NULL;int threads=4,B=16,L=256,burn=64,sample=0,seed=0,steps=100000000,scoreonly=0,fixedsteps=0;
     double seconds=300,entropy_seconds=60,entropy_charge=0,lr=.003,target=4,temp=.8;
-    Cfg gc={.vocab=256,.d=128,.n_layer=4,.T=4,.D=7,.n=16,.p=16,.K=3,.group=128,.walks=2,.temp=1,.fff_gate=1,.fw_mask=-1};int groups_arg=-1;
+    Cfg gc={.vocab=256,.d=128,.n_layer=4,.T=4,.D=7,.n=16,.p=16,.K=3,.group=128,.walks=2,.temp=1,.fff_gate=1,.fw_mask=-1};int groups_arg=-1,qk_arg=-1,rope_arg=-1,want_byte_muon=0;
     double ssm_horizon=0;int carry_windows=0;long*carry_pos=NULL;int*carry_left=NULL;unsigned char*carry_buf=NULL;double repeat_p=0;long repeat_maxgap=0;
     int session=0,sess_score=1;const char*sess_speed="balanced";
     int refine=0;const char*refine_ctx=NULL;Refine rf={.match=0,.retr=0,.retr_m=32,.rounds=3,.cands=16,.keep=4,.len=400,.steps=8,.epochs=8,.edits=0,.span=12,.tail=512,.temp=1,.rep=2,.final_temp=1};
@@ -3390,7 +3392,7 @@ int main(int argc,char**argv){
         if(!strcmp(argv[i],"--fw-scalar")){fw_fast=0;continue;}
         if(!strcmp(argv[i],"--help")){usage();return 0;}
         if(!strcmp(argv[i],"--check-neural"))return check_neural();
-        if(!strcmp(argv[i],"--check-ssm")){if(groups_arg>0)ssm_groups=groups_arg;return check_block_gradient(0);}
+        if(!strcmp(argv[i],"--check-ssm")){if(groups_arg>0)ssm_groups=groups_arg;if(qk_arg>=0)ssm_qknorm=qk_arg;if(rope_arg>=0)ssm_rope=rope_arg;return check_block_gradient(0);}
         if(!strcmp(argv[i],"--check-tree-fw"))return check_tree_fw();
         if(!strcmp(argv[i],"--runtime-reference")){runtime_fast=0;continue;}
         if(!strcmp(argv[i],"--check"))return check_gated_fff()||check_tree_fw();
@@ -3404,7 +3406,7 @@ int main(int argc,char**argv){
         OPT("--ssm-horizon",ssm_horizon,atof) OPT("--ttt-reset",ttt_reset,atol) OPT("--ttt-reset-mask",ttt_reset_mask,atoi) OPT("--session",session,atoi) OPT("--session-score",sess_score,atoi) OPT("--session-speed",sess_speed,(const char*)) OPT("--refine",refine,atoi) OPT("--refine-context",refine_ctx,(const char*)) OPT("--refine-rounds",rf.rounds,atoi) OPT("--refine-cands",rf.cands,atoi) OPT("--refine-keep",rf.keep,atoi)
         OPT("--refine-len",rf.len,atoi) OPT("--refine-steps",rf.steps,atoi) OPT("--refine-epochs",rf.epochs,atoi) OPT("--refine-edits",rf.edits,atoi) OPT("--refine-span",rf.span,atoi) OPT("--refine-tail",rf.tail,atoi)
         OPT("--refine-match",rf.match,atoi) OPT("--refine-retr",rf.retr,atoi) OPT("--refine-retr-m",rf.retr_m,atoi) OPT("--refine-temp",rf.temp,atof) OPT("--refine-rep",rf.rep,atof) OPT("--refine-final-temp",rf.final_temp,atof)
-        OPT("--ssm-groups",groups_arg,atoi) OPT("--pos-feat",pos_feat,atof) OPT("--ssm-qknorm",ssm_qknorm,atoi) OPT("--ssm-rope",ssm_rope,atoi) OPT("--ttt-adaptive",ttt_adaptive,atof) OPT("--ttt-win",ttt_win,atoi) OPT("--ttt-bwd-layers",bwd_layers,atoi) OPT("--ssm-ltc",ssm_ltc,atoi) OPT("--match",mm.on,atoi) OPT("--match-lr",mm.lr,atof) OPT("--fw-writes",fw_associative_writes,atoi) OPT("--depth",gc.D,atoi) OPT("--state-n",gc.n,atoi) OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--repeat-maxgap",repeat_maxgap,atol) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
+        OPT("--ssm-groups",groups_arg,atoi) OPT("--pos-feat",pos_feat,atof) OPT("--ssm-qknorm",qk_arg,atoi) OPT("--ssm-rope",rope_arg,atoi) OPT("--ttt-adaptive",ttt_adaptive,atof) OPT("--ttt-win",ttt_win,atoi) OPT("--ttt-bwd-layers",bwd_layers,atoi) OPT("--ssm-ltc",ssm_ltc,atoi) OPT("--match",mm.on,atoi) OPT("--match-lr",mm.lr,atof) OPT("--fw-writes",fw_associative_writes,atoi) OPT("--depth",gc.D,atoi) OPT("--state-n",gc.n,atoi) OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--repeat-maxgap",repeat_maxgap,atol) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
         OPT("--ttt-lr",tt.lr,atof) OPT("--ttt-decay",tt.decay,atof) OPT("--ttt-clip",tt.clip,atof) OPT("--ttt-beta2",tt.beta2,atof) OPT("--ttt-steps",tt.steps,atoi) OPT("--ttt-batch",tt.batch,atoi)
         OPT("--ttt-chunk",tt.chunk,atoi) OPT("--ttt-ctx",tt.ctx,atoi) OPT("--ttt-stream",tt.stream,atoi) OPT("--ttt-freeze",tt.freeze,atoi)
         OPT("--context-file",context_file,(const char*)) OPT("--data",data,(const char*)) OPT("--save",out,(const char*)) OPT("--load",in,(const char*)) OPT("--mode",mode,(const char*)) OPT("--prompt",prompt,(const char*))
@@ -3421,7 +3423,10 @@ int main(int argc,char**argv){
     {int byte=!strcmp(mode,"byte");if(gc.fw_mask<0)gc.fw_mask=byte?0:1;if(cfg.mixer<0)cfg.mixer=byte?0:2;
      ssm_groups=groups_arg>0?groups_arg:byte?gc.T:1;
      if(ssm_groups<1||ssm_groups>gc.T||gc.T%ssm_groups){fprintf(stderr,"--ssm-groups must divide the tree count\n");return 2;}
-     if(!byte&&ssm_groups!=1){fprintf(stderr,"BLT mode supports only --ssm-groups 1\n");return 2;}}
+     if(!byte&&ssm_groups!=1){fprintf(stderr,"BLT mode supports only --ssm-groups 1\n");return 2;}
+     /* Byte defaults also: SSM QK-norm and rotary keys/queries; Muon for training (TTT keeps AdamW). */
+     ssm_qknorm=qk_arg>=0?qk_arg:byte;ssm_rope=rope_arg>=0?rope_arg:byte;
+     if(!byte&&(ssm_qknorm||ssm_rope)){fprintf(stderr,"BLT mode does not support --ssm-qknorm/--ssm-rope\n");return 2;}}
     if(muon_steps<1||muon_steps>10||muon_block<1||muon_block>32||muon_scale<=0)return 2;
     if(cfg.mixer<0||cfg.mixer>2)return 2;
     if(fixedsteps<0)return 2;
@@ -3429,7 +3434,7 @@ int main(int argc,char**argv){
     if((gc.fw_mask&~0x5)||gc.fff_gate<0||gc.fff_gate>1)return 2;
     if(threads<1||threads>64||B<1||L<8||burn<0||burn>=L||seconds<=0||temp<=0||cfg.bins<0||cfg.bins>1048576||cfg.maxpatch<1||cfg.maxpatch>1024||target<1||target>cfg.maxpatch||cfg.enc_layers<0||cfg.dec_layers<0||cfg.local_depth<1||cfg.local_depth>12||cfg.local_trees<1)return 2;
     if(strcmp(mode,"byte")&&strcmp(mode,"blt"))return 2;
-    if(use_muon&&strcmp(mode,"blt")){byte_muon=optimizer_explicit;use_muon=0;} /* byte mode: AdamW unless --optimizer muon|normuon */
+    if(strcmp(mode,"blt")){want_byte_muon=optimizer_explicit?use_muon:1;use_muon=0;} /* byte mode: Muon unless --optimizer adamw */
     if(!strcmp(mode,"byte")&&cfg.mixer){fprintf(stderr,"Standalone byte mode requires --conv-mix 0; the integrated mixer acts on global BLT states.\n");return 2;}
     g_rng^=((uint64_t)seed+1)*0x9E3779B97F4A7C15ULL;
     gc.d=2*cfg.width;
@@ -3451,7 +3456,7 @@ int main(int argc,char**argv){
     if(in){f=faithful_load(in,threads,L);if(!f)m=load(in,threads,L);if(!f&&!m)return 1;blt=f!=NULL;}
     else if(blt){cfg.target=target;f=faithful_new(gc,cfg,threads,L,1);}
     else {m=model_new(&gc,threads,L);params_init(&gc,&m->P);model_requantize(m);}
-    if(m&&byte_muon)byte_muon_model=m;else byte_muon=0;
+    byte_muon=m&&want_byte_muon;if(byte_muon)byte_muon_model=m;
     if(scoreonly){if(!in)return 2;long scored;double bpc=score_data(f,m,raw,split,n,L,burn,&scored);printf("{\"event\":\"score\",\"val_bpc\":%.6f,\"scored_bytes\":%ld,\"burn\":%d}\n",bpc,scored,burn);return 0;}
     if(blt&&!in){
         if(f->c.neural){
@@ -3466,7 +3471,7 @@ int main(int argc,char**argv){
     size_t core=blt?core_parameters(&f->global->c):core_parameters(&m->c),enc=blt?core_parameters(&f->encoder->c):0,dec=blt?core_parameters(&f->decoder->c):0;
     size_t base=blt?core+enc+dec+f->dense+(size_t)257*f->c.width:core+257*m->c.d,ng=blt?f->hashsize:0,ep=blt&&f->c.neural?core_parameters(&f->entropy->c)+(size_t)257*f->entropy->c.d:0;
     printf("{\"event\":\"config\",\"mode\":\"%s\",\"patcher\":\"%s\",\"main_budgeted_parameters\":%zu,\"frozen_entropy_parameters\":%zu,\"budgeted_parameters\":%zu,\"free_ngram_parameters\":%zu,\"trainable_main_parameters\":%zu,\"total_inference_parameters\":%zu,\"threads\":%d,\"seq_bytes\":%d,\"batch\":%d,\"seed\":%d,\"avg_patch_calibration\":%.6f,\"threshold_nats\":%.7f,\"entropy_training_seconds\":%.6f,\"calibration_seconds\":%.6f,\"setup_wall_seconds\":%.6f}\n",blt?"blt":"byte",blt?"neural":"none",base,ep,base+ep,ng,base+ng,base+ng+ep,threads,L,B,seed,avg,blt?f->c.threshold:0,aux_seconds,calibration_seconds,wall()-setup0);fflush(stdout);
-    printf("{\"event\":\"optimizer\",\"name\":\"%s\",\"block_rows\":%d,\"ns_steps\":%d,\"muon_scale\":%.6f}\n",use_muon?"cpu_block_muon":"adamw",muon_block,muon_steps,muon_scale);fflush(stdout);
+    printf("{\"event\":\"optimizer\",\"name\":\"%s\",\"block_rows\":%d,\"ns_steps\":%d,\"muon_scale\":%.6f}\n",use_muon?"cpu_block_muon":byte_muon?(normuon?"byte_block_normuon":"byte_block_muon"):"adamw",muon_block,muon_steps,muon_scale);fflush(stdout);
     double overhead=aux_seconds+calibration_seconds,budget=seconds-overhead;if(budget<=0)return 2;
     uint64_t frozen=ep?param_fingerprint(f->entropy):0,data_rng=((uint64_t)seed+1)*0xD1B54A32D192ED03ULL;
     int*bt=malloc((size_t)B*L*sizeof(int)),*by=malloc((size_t)B*L*sizeof(int));
