@@ -107,6 +107,9 @@ typedef struct {
 /* ssm_groups (GQA analogue): the SSM key B and query C are computed per group of trees instead of
  * once for all trees (1 = shared, as before; T = one per tree). Values V, read-out Z and steps stay as they were. */
 static int ssm_groups=1;
+/* n_loops (universal-transformer style): the layer stack is applied n_loops times per position with
+ * shared weights. Virtual layer v uses the parameters of layer v % n_layer and its own buffers/state. */
+static int n_loops=1;
 /* ssm_qknorm: L2-normalize each group's SSM key B and query C. ssm_rope: rotate coordinate pairs of
  * B and C by angle pos*theta_k (theta_k = 10000^(-2k/n)), so a state written at s and read at t
  * responds to t-s. Both act on the projections right after they are computed. */
@@ -545,7 +548,7 @@ typedef struct {
     double *head_exp;
     real *stream_hist;
     real *carry_h,*carry_hist; /* training state carry: per even layer h, per layer K-1 conv inputs */
-    real *qkn; long pos; /* SSM QK-norm inverse norms per (layer,t,group,B/C); stream position for rotary */
+    real *qkn; long pos; int lv; /* lv: current virtual layer (buffer index when looping) */ /* SSM QK-norm inverse norms per (layer,t,group,B/C); stream position for rotary */
     void (*prepare_state)(void*,real*,size_t,int,int);
     void *prepare_state_user;
     const Tape *reuse_fw_input;
@@ -888,7 +891,7 @@ static void fw_fwd(const Cfg *c,const Params *P,const Params *Q,int l,int L,real
         const real *ut=tp->u+(size_t)t*d;
         for(int i=0;i<d;i++)mx[i]=conv[i]*ut[i];
         for(int j=1;j<K;j++) {
-            const real *past=t>=j?tp->u+(size_t)(t-j)*d:(w->stream_hist?w->stream_hist+(size_t)l*(K-1)*d+(size_t)(j-t-1)*d:w->carry_hist?w->carry_hist+(size_t)l*(K-1)*d+(size_t)(j-t-1)*d:NULL);
+            const real *past=t>=j?tp->u+(size_t)(t-j)*d:(w->stream_hist?w->stream_hist+(size_t)w->lv*(K-1)*d+(size_t)(j-t-1)*d:w->carry_hist?w->carry_hist+(size_t)w->lv*(K-1)*d+(size_t)(j-t-1)*d:NULL);
             if(past)for(int i=0;i<d;i++)mx[i]+=conv[j*d+i]*past[i];
         }
         quant8(mx,tp->x+(size_t)t*d,tp->xq+(size_t)t*d,tp->xs+t,d);
@@ -1014,7 +1017,7 @@ static void fw_fwd(const Cfg *c,const Params *P,const Params *Q,int l,int L,real
     for(size_t i=0;i<(size_t)L*d;i++)xres[i]+=w->ys[i];
     if(w->stream_hist&&K>1) {
         if(L!=1)abort();
-        real *hb=w->stream_hist+(size_t)l*(K-1)*d;
+        real *hb=w->stream_hist+(size_t)w->lv*(K-1)*d;
         memmove(hb+d,hb,sizeof(real)*(size_t)(K-2)*d);
         memcpy(hb,tp->u,sizeof(real)*d);
     }
@@ -1174,6 +1177,7 @@ static void fw_bwd(const Cfg *c,const Params *P,const Params *Q,Params *G,int l,
     for(int t=0;t<L;t++)rmsnorm_bwd(tp->xin+(size_t)t*d,norm,tp->rn[t],du+(size_t)t*d,g+(size_t)t*d,gnorm,d);
 }
 static void layer_fwd(const Cfg *c,const Params *P,const Params *Q,int l,int L,real *xres,real *h,Tape *tp,Work *w) {
+    w->lv=l;l%=c->n_layer;
     if(l&1){fff_fwd(c,P,Q,l,L,xres,tp,w);return;}
     if((c->fw_mask>>l)&1){fw_fwd(c,P,Q,l,L,xres,h,tp,w);return;}
 
@@ -1186,7 +1190,7 @@ static void layer_fwd(const Cfg *c,const Params *P,const Params *Q,int l,int L,r
     const int AL=D*(D+1)/2;
 #if FAST
     const int vec=k&&k->ok&&pv==16;
-    uint16_t *hp16=w->hp16+(size_t)l*w->Lmax*T*(D+1)*n*pv;
+    uint16_t *hp16=w->hp16+(size_t)w->lv*w->Lmax*T*(D+1)*n*pv;
     const int bf=vec&&w->tape_bf16;
 #endif
     real *mx=w->mx,*y=w->y,*Racc=w->Racc;
@@ -1198,13 +1202,13 @@ static void layer_fwd(const Cfg *c,const Params *P,const Params *Q,int l,int L,r
         const real *ut=tp->u+(size_t)t*d;
         for(int i=0;i<d;i++)mx[i]=conv[i]*ut[i];
         for(int j=1;j<K;j++) {
-            const real *past=t>=j?tp->u+(size_t)(t-j)*d:(w->stream_hist?w->stream_hist+(size_t)l*(K-1)*d+(size_t)(j-t-1)*d:w->carry_hist?w->carry_hist+(size_t)l*(K-1)*d+(size_t)(j-t-1)*d:NULL);
+            const real *past=t>=j?tp->u+(size_t)(t-j)*d:(w->stream_hist?w->stream_hist+(size_t)w->lv*(K-1)*d+(size_t)(j-t-1)*d:w->carry_hist?w->carry_hist+(size_t)w->lv*(K-1)*d+(size_t)(j-t-1)*d:NULL);
             if(past)for(int i=0;i<d;i++)mx[i]+=conv[j*d+i]*past[i];
         }
         quant8(mx,tp->x+(size_t)t*d,tp->xq+(size_t)t*d,tp->xs+t,d);
     }
     qrows_dot8_batch(k,pproj,Q->proj,r_proj,tp->x,tp->xq,tp->xs,tp->p,L,Pd,d,g);
-    if(ssm_qknorm||ssm_rope)for(int t=0;t<L;t++)ssm_prep(tp->p+(size_t)t*Pd,n,ssm_groups,w->pos+t,w->qkn+((size_t)l*w->Lmax+t)*2*16);
+    if(ssm_qknorm||ssm_rope)for(int t=0;t<L;t++)ssm_prep(tp->p+(size_t)t*Pd,n,ssm_groups,w->pos+t,w->qkn+((size_t)w->lv*w->Lmax+t)*2*16);
     for(int t=0;t<L;t++) {
         real *xt=tp->x+(size_t)t*d,*ut=tp->u+(size_t)t*d,*pt=tp->p+(size_t)t*Pd,*dtt=tp->dt+(size_t)t*T;
         int8_t *xq=tp->xq+(size_t)t*d;
@@ -1326,12 +1330,13 @@ static void layer_fwd(const Cfg *c,const Params *P,const Params *Q,int l,int L,r
     for(size_t i=0;i<(size_t)L*d;i++)xres[i]+=w->ys[i];
     if(w->stream_hist&&K>1) {
         if(L!=1)abort();
-        real *hb=w->stream_hist+(size_t)l*(K-1)*d;
+        real *hb=w->stream_hist+(size_t)w->lv*(K-1)*d;
         memmove(hb+d,hb,sizeof(real)*(size_t)(K-2)*d);
         memcpy(hb,tp->u,sizeof(real)*d);
     }
 }
 static void layer_bwd(const Cfg *c,const Params *P,const Params *Q,Params *G,int l,int L,real *g,real *lam,unsigned char *hit,const Tape *tp,Work *w) {
+    w->lv=l;l%=c->n_layer;
     if(l&1){fff_bwd(c,P,Q,G,l,L,g,hit,tp,w);return;}
     if((c->fw_mask>>l)&1){fw_bwd(c,P,Q,G,l,L,g,lam,hit,tp,w);return;}
 
@@ -1344,7 +1349,7 @@ static void layer_bwd(const Cfg *c,const Params *P,const Params *Q,Params *G,int
     const Plane *pin=k?&k->w_in:NULL,*pout=k?&k->w_out:NULL,*pproj=k?&k->proj:NULL,*pU=k?&k->U:NULL;
 #if FAST
     const int vec=k&&k->ok&&pv==16;
-    const uint16_t *hp16=w->hp16+(size_t)l*w->Lmax*T*(D+1)*n*pv;
+    const uint16_t *hp16=w->hp16+(size_t)w->lv*w->Lmax*T*(D+1)*n*pv;
     const int bf=vec&&w->tape_bf16;
 #endif
     const size_t V=(size_t)L*T*(D+1);
@@ -1496,7 +1501,7 @@ static void layer_bwd(const Cfg *c,const Params *P,const Params *Q,Params *G,int
             gdtb[tr]+=dz;
         }
     }
-    if(ssm_qknorm||ssm_rope)for(int t=0;t<L;t++)ssm_prep_bwd(tp->p+(size_t)t*Pd,dp+(size_t)t*Pd,n,ssm_groups,w->pos+t,w->qkn+((size_t)l*w->Lmax+t)*2*16);
+    if(ssm_qknorm||ssm_rope)for(int t=0;t<L;t++)ssm_prep_bwd(tp->p+(size_t)t*Pd,dp+(size_t)t*Pd,n,ssm_groups,w->pos+t,w->qkn+((size_t)w->lv*w->Lmax+t)*2*16);
     outer_rows(gproj,dp,tp->x,L,Pd,d);
     qrows_axpy_batch(k,pproj,Q->proj,r_proj,dp,dx,L,Pd,d,gs);
     for(int t=0;t<L;t++) {
@@ -1509,7 +1514,7 @@ static void layer_bwd(const Cfg *c,const Params *P,const Params *Q,Params *G,int
     for(int t=0;t<L;t++)rmsnorm_bwd(tp->xin+(size_t)t*d,norm,tp->rn[t],du+(size_t)t*d,g+(size_t)t*d,gnorm,d);
 }
 Work *tss_work_new(const Cfg *c,int Lmax) {
-    const int d=c->d,N=NODES(c),T=c->T,nl=c->n_layer;
+    const int d=c->d,N=NODES(c),T=c->T,nl=c->n_layer*n_loops;
     const size_t tr=tape_reals(c,Lmax),ti=(size_t)Lmax*T*(c->D+2+(c->D+1)*(c->D+2)/2);
     const size_t V=(size_t)Lmax*T*(c->D+1),S=(size_t)T*N*c->n*c->p;
     Work *w=calloc(1,sizeof(Work));
@@ -1674,20 +1679,21 @@ real tss_train_seq(const Cfg *c,const Params *P,const Params *Q,Params *G,const 
     real *x=w->x,*h=w->h;
     for(int t=0;t<L;t++)memcpy(x+(size_t)t*d,P->embed+(size_t)tokens[t]*d,sizeof(real)*d);
     if(pos_feat>0){int kw=0,kl=0;for(int t=0;t<L;t++){pos_feat_next(tokens[t],&kw,&kl);pos_feat_add(x+(size_t)t*d,kw,kl,d);}}
-    for(int l=0;l<nl;l++) {
+    for(int l=0;l<nl*n_loops;l++) {
         if(!(l&1))carry_pre(c,w,l,h);
         layer_fwd(c,P,Q,l,L,x,h,tp+l,w);
         if(!(l&1))carry_post(c,w,l,L,h);
     }
     (void)N;(void)T;
+    if(continuous_check)for(int l=0;l<nl*n_loops;l++)memset(tp[l].bw,0,(size_t)L*T*(c->D+2)*sizeof(real)); /* fixed-path check: no routing credit */
     real *g=w->g;
     int ns=0;
     memset(g,0,sizeof(real)*(size_t)L*d);
     real loss=head_train(c,P,G,x,labels,L,g,&ns,w);
-    real *lam=w->lam;int lstop=bwd_layers>0&&bwd_layers<nl?nl-bwd_layers:0;
-    for(int l=nl-1;l>=lstop;l--) {
+    real *lam=w->lam;const int nv=nl*n_loops;int lstop=bwd_layers>0&&bwd_layers<nv?nv-bwd_layers:0;
+    for(int l=nv-1;l>=lstop;l--) {
         if(!(l&1))memset(lam,0,sizeof(real)*(size_t)T*N*c->n*c->p);
-        layer_bwd(c,P,Q,G,l,L,g,lam,hit+node_off(c,l),tp+l,w);
+        layer_bwd(c,P,Q,G,l,L,g,lam,hit+node_off(c,l%nl),tp+l,w);
     }
     if(!lstop)for(int t=0;t<L;t++)for(int i=0;i<d;i++)G->embed[(size_t)tokens[t]*d+i]+=g[(size_t)t*d+i];
     *n_scored=ns;
@@ -1952,7 +1958,7 @@ static double eval_seq(Model *m,const int *tok,const int *lab,int L,Work *w,int 
     real *x=w->x,*h=w->h,*xn=w->xn,*lg=w->lg;
     for(int t=0;t<L;t++)memcpy(x+(size_t)t*d,m->P.embed+(size_t)tok[t]*d,sizeof(real)*d);
     if(pos_feat>0){int kw=0,kl=0;for(int t=0;t<L;t++){pos_feat_next(tok[t],&kw,&kl);pos_feat_add(x+(size_t)t*d,kw,kl,d);}}
-    for(int l=0;l<c->n_layer;l++) {
+    for(int l=0;l<c->n_layer*n_loops;l++) {
         if(!(l&1))memset(h,0,sizeof(real)*(size_t)T*N*c->n*c->p);
         layer_fwd(c,&m->P,&m->Q,l,L,x,h,w->tp+l,w);
     }
@@ -1981,8 +1987,8 @@ typedef struct {
 static Gen *gen_new(const Cfg *c) {
     Gen *g=calloc(1,sizeof(Gen));
     const int d=c->d;
-    g->h=calloc(node_rows(c)*c->n*c->p,sizeof(real));
-    g->hist=calloc((size_t)c->n_layer*(c->K>1?c->K-1:1)*d,sizeof(real));
+    g->h=calloc(node_rows(c)*c->n*c->p*n_loops,sizeof(real));
+    g->hist=calloc((size_t)c->n_layer*n_loops*(c->K>1?c->K-1:1)*d,sizeof(real));
     g->x=calloc(d,sizeof(real));
     g->u=calloc(d,sizeof(real));
     g->mx=calloc(d,sizeof(real));
@@ -1999,7 +2005,7 @@ static void gen_free(Gen*g){free(g->h);free(g->hist);free(g->x);free(g->u);free(
 static void gen_core(Model*m,Gen*g,const real*input,real*logits) {
     const Cfg*c=&m->c;int d=c->d;Work*w=g->work;w->k=m->k;w->no_alt=1;
     memcpy(g->x,input,sizeof(real)*d);
-    for(int l=0;l<c->n_layer;l++)layer_fwd(c,&m->P,&m->Q,l,1,g->x,g->h+node_off(c,l)*c->n*c->p,w->tp+l,w);
+    for(int l=0;l<c->n_layer*n_loops;l++)layer_fwd(c,&m->P,&m->Q,l,1,g->x,g->h+((size_t)(l/c->n_layer)*node_rows(c)+node_off(c,l%c->n_layer))*c->n*c->p,w->tp+l,w);
     w->pos++;
     if(logits){real rr;rmsnorm_fwd(g->x,m->P.norm_f,g->u,d,&rr);for(int v=0;v<c->vocab;v++)logits[v]=dotr(m->P.embed+(size_t)v*d,g->u,d);}
 }
@@ -2024,11 +2030,11 @@ static int save(const Model *m,const char *path) {
     fields(&m->P,pf);
     const int rs=sizeof(real);
     /* TFX1 adds an extension header after Cfg: {ssm_groups, ssm_ltc, 0, 0}. Older magics imply {1, 0}. */
-    const int ext=ssm_groups!=1||ssm_ltc||ssm_qknorm||ssm_rope||pos_feat>0;
+    const int ext=ssm_groups!=1||ssm_ltc||ssm_qknorm||ssm_rope||pos_feat>0||n_loops>1;
     fwrite(ext?"TFX1":PROTECTED_FW&&m->c.fw_mask?"TFP1":"TFW1",1,4,f);
     fwrite(&rs,sizeof(int),1,f);
     fwrite(&m->c,sizeof(Cfg),1,f);
-    if(ext){int e[4]={ssm_groups,ssm_ltc,ssm_qknorm|(ssm_rope<<1),(int)(pos_feat*1e6+.5)};fwrite(e,sizeof(int),4,f);}
+    if(ext){int e[4]={ssm_groups,ssm_ltc|(n_loops>1?n_loops<<4:0),ssm_qknorm|(ssm_rope<<1),(int)(pos_feat*1e6+.5)};fwrite(e,sizeof(int),4,f);}
     for(int i=0;i<N_FIELDS;i++)fwrite(pf[i],sizeof(real),z[i],f);
     return fclose(f);
 }
@@ -2043,8 +2049,8 @@ static Model *load(const char *path,int threads,int Lmax) {
         return NULL;
     }
     const int ext=!memcmp(magic,"TFX1",4);int e[4]={1,0,0,0};
-    if(ext&&(fread(e,sizeof(int),4,f)!=4||e[0]<1||e[0]>c.T||c.T%e[0]||e[1]<0||e[1]>2)){fclose(f);return NULL;}
-    ssm_groups=e[0];ssm_ltc=e[1];ssm_qknorm=e[2]&1;ssm_rope=(e[2]>>1)&1;pos_feat=(real)(e[3]/1e6);
+    if(ext&&(fread(e,sizeof(int),4,f)!=4||e[0]<1||e[0]>c.T||c.T%e[0]||e[1]<0||(e[1]&15)>2||(e[1]>>4)>16)){fclose(f);return NULL;}
+    ssm_groups=e[0];ssm_ltc=e[1]&15;n_loops=(e[1]>>4)>1?(e[1]>>4):1;ssm_qknorm=e[2]&1;ssm_rope=(e[2]>>1)&1;pos_feat=(real)(e[3]/1e6);
     if(!ext&&((c.fw_mask && (PROTECTED_FW ? memcmp(magic,"TFP1",4) : !memcmp(magic,"TFP1",4))) || (memcmp(magic,"TFW1",4)&&memcmp(magic,"TFP1",4)&&c.fw_mask))){fclose(f);return NULL;}
     if((c.fw_mask&~0x5555)||c.n_layer<1||c.n_layer>16||(c.fw_mask>>c.n_layer)||c.fff_gate<0||c.fff_gate>1){fclose(f);return NULL;}
     Model *m=model_new(&c,threads,Lmax);
@@ -2804,6 +2810,24 @@ static int check_block_gradient(int l){
     }
     continuous_check=0;printf("%s continuous fixed-path gradient: %d coordinates; worst scaled %.9g; bad %d\n",l?"FFF gate":"Tree SSM",tested,worst,bad);return bad!=0;
 }
+/* Whole-model gradient check with looping: tss_train_seq gradients vs central differences of its loss. */
+static int check_loops(int loops){
+    int saved=n_loops;n_loops=loops;
+    Cfg c={.vocab=16,.d=8,.n_layer=2,.T=2,.D=2,.n=3,.p=4,.K=3,.group=4,.walks=0,.temp=1,.fw_mask=0,.fff_gate=1};
+    size_t z[N_FIELDS];sizes(&c,z);Params P,G,G2;params_alloc(&c,&P);params_alloc(&c,&G);params_alloc(&c,&G2);params_init(&c,&P);
+    real*pf[N_FIELDS],*gf[N_FIELDS],*g2[N_FIELDS];fields(&P,pf);fields(&G,gf);fields(&G2,g2);
+    for(size_t i=0;i<z[8];i++)P.proj[i]=.09*sin((double)i+.3);for(size_t i=0;i<z[10];i++)P.U[i]=.07*cos((double)i+.4);
+    for(size_t i=0;i<z[5];i++)P.bias[i]=.6+.1*sin((double)i);for(size_t i=0;i<z[9];i++)P.dt_bias[i]=-.7;
+    int L=6,tok[6]={1,5,3,7,2,9},lab[6]={5,3,7,2,9,4},ns;Work*w=tss_work_new(&c,L);unsigned char*hit=calloc(node_rows(&c),1);
+    continuous_check=1;tss_work_seed(w,1);tss_train_seq(&c,&P,&P,&G,tok,lab,L,hit,&ns,w,NULL);
+    double worst=0;int tested=0,bad=0;real eps=sizeof(real)==8?1e-6:1e-3;
+    for(int f=0;f<N_FIELDS;f++)for(size_t i=0;i<z[f];i+=1+z[f]/40){
+        real old=pf[f][i];pf[f][i]=old+eps;tss_work_seed(w,1);double a=tss_train_seq(&c,&P,&P,&G2,tok,lab,L,hit,&ns,w,NULL);
+        pf[f][i]=old-eps;tss_work_seed(w,1);double b=tss_train_seq(&c,&P,&P,&G2,tok,lab,L,hit,&ns,w,NULL);pf[f][i]=old;
+        double num=(a-b)/(2*eps),err=fabs(num-gf[f][i])/(1+fabs(num)+fabs(gf[f][i]));worst=fmax(worst,err);tested++;bad+=err>(sizeof(real)==8?1e-5:2e-2);
+    }
+    continuous_check=0;n_loops=saved;printf("loops=%d whole-model gradient: %d coordinates; worst scaled %.3g; bad %d\n",loops,tested,worst,bad);return bad!=0;
+}
 static int check_gated_fff(void){
     int bad=check_block_gradient(1);
     Cfg gc={.vocab=256,.d=128,.n_layer=2,.T=2,.D=3,.n=4,.p=16,.K=3,.group=128,.walks=2,.temp=1,.fw_mask=0,.fff_gate=1};
@@ -3392,6 +3416,7 @@ int main(int argc,char**argv){
         if(!strcmp(argv[i],"--fw-scalar")){fw_fast=0;continue;}
         if(!strcmp(argv[i],"--help")){usage();return 0;}
         if(!strcmp(argv[i],"--check-neural"))return check_neural();
+        if(!strcmp(argv[i],"--check-loops")){if(qk_arg>=0)ssm_qknorm=qk_arg;if(rope_arg>=0)ssm_rope=rope_arg;int bad=0;for(int r=1;r<=4;r++)bad|=check_loops(r);return bad;}
         if(!strcmp(argv[i],"--check-ssm")){if(groups_arg>0)ssm_groups=groups_arg;if(qk_arg>=0)ssm_qknorm=qk_arg;if(rope_arg>=0)ssm_rope=rope_arg;return check_block_gradient(0);}
         if(!strcmp(argv[i],"--check-tree-fw"))return check_tree_fw();
         if(!strcmp(argv[i],"--runtime-reference")){runtime_fast=0;continue;}
@@ -3406,7 +3431,7 @@ int main(int argc,char**argv){
         OPT("--ssm-horizon",ssm_horizon,atof) OPT("--ttt-reset",ttt_reset,atol) OPT("--ttt-reset-mask",ttt_reset_mask,atoi) OPT("--session",session,atoi) OPT("--session-score",sess_score,atoi) OPT("--session-speed",sess_speed,(const char*)) OPT("--refine",refine,atoi) OPT("--refine-context",refine_ctx,(const char*)) OPT("--refine-rounds",rf.rounds,atoi) OPT("--refine-cands",rf.cands,atoi) OPT("--refine-keep",rf.keep,atoi)
         OPT("--refine-len",rf.len,atoi) OPT("--refine-steps",rf.steps,atoi) OPT("--refine-epochs",rf.epochs,atoi) OPT("--refine-edits",rf.edits,atoi) OPT("--refine-span",rf.span,atoi) OPT("--refine-tail",rf.tail,atoi)
         OPT("--refine-match",rf.match,atoi) OPT("--refine-retr",rf.retr,atoi) OPT("--refine-retr-m",rf.retr_m,atoi) OPT("--refine-temp",rf.temp,atof) OPT("--refine-rep",rf.rep,atof) OPT("--refine-final-temp",rf.final_temp,atof)
-        OPT("--ssm-groups",groups_arg,atoi) OPT("--pos-feat",pos_feat,atof) OPT("--ssm-qknorm",qk_arg,atoi) OPT("--ssm-rope",rope_arg,atoi) OPT("--ttt-adaptive",ttt_adaptive,atof) OPT("--ttt-win",ttt_win,atoi) OPT("--ttt-bwd-layers",bwd_layers,atoi) OPT("--ssm-ltc",ssm_ltc,atoi) OPT("--match",mm.on,atoi) OPT("--match-lr",mm.lr,atof) OPT("--fw-writes",fw_associative_writes,atoi) OPT("--depth",gc.D,atoi) OPT("--state-n",gc.n,atoi) OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--repeat-maxgap",repeat_maxgap,atol) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
+        OPT("--loops",n_loops,atoi) OPT("--layers",gc.n_layer,atoi) OPT("--ssm-groups",groups_arg,atoi) OPT("--pos-feat",pos_feat,atof) OPT("--ssm-qknorm",qk_arg,atoi) OPT("--ssm-rope",rope_arg,atoi) OPT("--ttt-adaptive",ttt_adaptive,atof) OPT("--ttt-win",ttt_win,atoi) OPT("--ttt-bwd-layers",bwd_layers,atoi) OPT("--ssm-ltc",ssm_ltc,atoi) OPT("--match",mm.on,atoi) OPT("--match-lr",mm.lr,atof) OPT("--fw-writes",fw_associative_writes,atoi) OPT("--depth",gc.D,atoi) OPT("--state-n",gc.n,atoi) OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--repeat-maxgap",repeat_maxgap,atol) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
         OPT("--ttt-lr",tt.lr,atof) OPT("--ttt-decay",tt.decay,atof) OPT("--ttt-clip",tt.clip,atof) OPT("--ttt-beta2",tt.beta2,atof) OPT("--ttt-steps",tt.steps,atoi) OPT("--ttt-batch",tt.batch,atoi)
         OPT("--ttt-chunk",tt.chunk,atoi) OPT("--ttt-ctx",tt.ctx,atoi) OPT("--ttt-stream",tt.stream,atoi) OPT("--ttt-freeze",tt.freeze,atoi)
         OPT("--context-file",context_file,(const char*)) OPT("--data",data,(const char*)) OPT("--save",out,(const char*)) OPT("--load",in,(const char*)) OPT("--mode",mode,(const char*)) OPT("--prompt",prompt,(const char*))
@@ -3426,6 +3451,7 @@ int main(int argc,char**argv){
      if(!byte&&ssm_groups!=1){fprintf(stderr,"BLT mode supports only --ssm-groups 1\n");return 2;}
      /* Byte defaults also: SSM QK-norm and rotary keys/queries; Muon for training (TTT keeps AdamW). */
      ssm_qknorm=qk_arg>=0?qk_arg:byte;ssm_rope=rope_arg>=0?rope_arg:byte;
+     if(n_loops<1||n_loops>16||(n_loops>1&&(!byte||gc.n_layer%2||carry_windows))){fprintf(stderr,"--loops needs byte mode, an even --layers and no --carry-windows\n");return 2;}
      if(!byte&&(ssm_qknorm||ssm_rope)){fprintf(stderr,"BLT mode does not support --ssm-qknorm/--ssm-rope\n");return 2;}}
     if(muon_steps<1||muon_steps>10||muon_block<1||muon_block>32||muon_scale<=0)return 2;
     if(cfg.mixer<0||cfg.mixer>2)return 2;
