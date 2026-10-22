@@ -548,7 +548,7 @@ typedef struct {
     double *head_exp;
     real *stream_hist;
     real *carry_h,*carry_hist; /* training state carry: per even layer h, per layer K-1 conv inputs */
-    real *qkn; long pos; int lv; /* lv: current virtual layer (buffer index when looping) */ /* SSM QK-norm inverse norms per (layer,t,group,B/C); stream position for rotary */
+    real *qkn; long pos; int lv; real *mtp_g; /* per-thread gradient of the MTP head matrix */ /* lv: current virtual layer (buffer index when looping) */ /* SSM QK-norm inverse norms per (layer,t,group,B/C); stream position for rotary */
     void (*prepare_state)(void*,real*,size_t,int,int);
     void *prepare_state_user;
     const Tape *reuse_fw_input;
@@ -1587,6 +1587,26 @@ void tss_work_bf16(Work *w,int on) {
 }
 // Tiled tied head, eight tokens at a time. No nested OpenMP and no BLAS dependency.
 // dX = dlogits E; dE += dlogits^T X. Reuse each embedding row across the tile.
+/* Multi-token prediction (training only): an auxiliary head predicts the byte two ahead from the
+ * same final state, logits2 = E (W rmsnorm(x_t)) with the tied embedding E and a d x d matrix W
+ * (identity init), weighted by mtp_lambda. The head is not saved; inference is unchanged. */
+static real mtp_lambda=0;static real*mtp_W=NULL,*mtp_m=NULL,*mtp_v=NULL;static int mtp_d=0;
+static void mtp_head(const Cfg*c,const Params*P,Params*G,const real*x,const int*labels,int L,real*g,Work*w){
+    const int d=c->d,V=c->vocab;if(!mtp_W||mtp_d!=d)return;if(!w->mtp_g)w->mtp_g=calloc((size_t)d*d,sizeof(real));
+    real u[512],z[512],dz[512],du[512],lg[256];double pe[256];
+    for(int t=0;t+1<L;t++){if(labels[t]<0||labels[t+1]<0)continue;int y=labels[t+1];real r;
+        rmsnorm_fwd(x+(size_t)t*d,P->norm_f,u,d,&r);
+        for(int i=0;i<d;i++)z[i]=dotr(mtp_W+(size_t)i*d,u,d);
+        real mx=-INFINITY;for(int v=0;v<V;v++){lg[v]=dotr(P->embed+(size_t)v*d,z,d);mx=lg[v]>mx?lg[v]:mx;}
+        double zs=0;for(int v=0;v<V;v++){pe[v]=exp(lg[v]-mx);zs+=pe[v];}
+        memset(dz,0,d*sizeof(real));
+        for(int v=0;v<V;v++){real dl=mtp_lambda*(real)(pe[v]/zs-(v==y));if(dl==0)continue;
+            axpy(G->embed+(size_t)v*d,dl,z,d);axpy(dz,dl,P->embed+(size_t)v*d,d);}
+        memset(du,0,d*sizeof(real));
+        for(int i=0;i<d;i++){axpy(w->mtp_g+(size_t)i*d,dz[i],u,d);axpy(du,dz[i],mtp_W+(size_t)i*d,d);}
+        rmsnorm_bwd(x+(size_t)t*d,P->norm_f,r,du,g+(size_t)t*d,G->norm_f,d);
+    }
+}
 static real head_train(const Cfg *c,const Params *P,Params *G,const real *x, const int *labels,int L,real *g,int *ns,Work *w) {
     const int d=c->d,V=c->vocab,BT=8;
     real *X=w->head,*dX=X+BT*d,*pr=dX+BT*d,*rn=pr+BT*V;
@@ -1690,6 +1710,7 @@ real tss_train_seq(const Cfg *c,const Params *P,const Params *Q,Params *G,const 
     int ns=0;
     memset(g,0,sizeof(real)*(size_t)L*d);
     real loss=head_train(c,P,G,x,labels,L,g,&ns,w);
+    if(mtp_lambda>0)mtp_head(c,P,G,x,labels,L,g,w);
     real *lam=w->lam;const int nv=nl*n_loops;int lstop=bwd_layers>0&&bwd_layers<nv?nv-bwd_layers:0;
     for(int l=nv-1;l>=lstop;l--) {
         if(!(l&1))memset(lam,0,sizeof(real)*(size_t)T*N*c->n*c->p);
@@ -1848,6 +1869,9 @@ real tss_train_step(const Cfg *c,Params *P,Params *Q,Params *G,unsigned char *hi
         }
     }
     if(byte_muon)byte_muon_update(h,scale,threads);
+    if(mtp_lambda>0&&mtp_W){const int dd=mtp_d;size_t n=(size_t)dd*dd;real*gsum=calloc(n,sizeof(real));
+        for(int th=0;th<threads;th++)if(ws[th]->mtp_g){for(size_t i=0;i<n;i++){gsum[i]+=ws[th]->mtp_g[i];ws[th]->mtp_g[i]=0;}}
+        Hyper hh=*h;hh.weight_decay=0;adam(mtp_W,gsum,mtp_m,mtp_v,n,&hh,scale,c1,c2);free(gsum);}
     return scored?loss/scored:0;
 }
 
@@ -3431,7 +3455,7 @@ int main(int argc,char**argv){
         OPT("--ssm-horizon",ssm_horizon,atof) OPT("--ttt-reset",ttt_reset,atol) OPT("--ttt-reset-mask",ttt_reset_mask,atoi) OPT("--session",session,atoi) OPT("--session-score",sess_score,atoi) OPT("--session-speed",sess_speed,(const char*)) OPT("--refine",refine,atoi) OPT("--refine-context",refine_ctx,(const char*)) OPT("--refine-rounds",rf.rounds,atoi) OPT("--refine-cands",rf.cands,atoi) OPT("--refine-keep",rf.keep,atoi)
         OPT("--refine-len",rf.len,atoi) OPT("--refine-steps",rf.steps,atoi) OPT("--refine-epochs",rf.epochs,atoi) OPT("--refine-edits",rf.edits,atoi) OPT("--refine-span",rf.span,atoi) OPT("--refine-tail",rf.tail,atoi)
         OPT("--refine-match",rf.match,atoi) OPT("--refine-retr",rf.retr,atoi) OPT("--refine-retr-m",rf.retr_m,atoi) OPT("--refine-temp",rf.temp,atof) OPT("--refine-rep",rf.rep,atof) OPT("--refine-final-temp",rf.final_temp,atof)
-        OPT("--loops",n_loops,atoi) OPT("--layers",gc.n_layer,atoi) OPT("--ssm-groups",groups_arg,atoi) OPT("--pos-feat",pos_feat,atof) OPT("--ssm-qknorm",qk_arg,atoi) OPT("--ssm-rope",rope_arg,atoi) OPT("--ttt-adaptive",ttt_adaptive,atof) OPT("--ttt-win",ttt_win,atoi) OPT("--ttt-bwd-layers",bwd_layers,atoi) OPT("--ssm-ltc",ssm_ltc,atoi) OPT("--match",mm.on,atoi) OPT("--match-lr",mm.lr,atof) OPT("--fw-writes",fw_associative_writes,atoi) OPT("--depth",gc.D,atoi) OPT("--state-n",gc.n,atoi) OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--repeat-maxgap",repeat_maxgap,atol) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
+        OPT("--mtp",mtp_lambda,atof) OPT("--loops",n_loops,atoi) OPT("--layers",gc.n_layer,atoi) OPT("--ssm-groups",groups_arg,atoi) OPT("--pos-feat",pos_feat,atof) OPT("--ssm-qknorm",qk_arg,atoi) OPT("--ssm-rope",rope_arg,atoi) OPT("--ttt-adaptive",ttt_adaptive,atof) OPT("--ttt-win",ttt_win,atoi) OPT("--ttt-bwd-layers",bwd_layers,atoi) OPT("--ssm-ltc",ssm_ltc,atoi) OPT("--match",mm.on,atoi) OPT("--match-lr",mm.lr,atof) OPT("--fw-writes",fw_associative_writes,atoi) OPT("--depth",gc.D,atoi) OPT("--state-n",gc.n,atoi) OPT("--carry-windows",carry_windows,atoi) OPT("--repeat-p",repeat_p,atof) OPT("--repeat-maxgap",repeat_maxgap,atol) OPT("--width",cfg.width,atoi) OPT("--ttt-ctxlen",ttt_ctxlen,atol) OPT("--ttt-lex-mult",ttt_lex_mult,atof) OPT("--ttt-only",ttt_only,atoi) OPT("--ttt-retrieve",ttt_use_retr,atoi) OPT("--ttt-retr-m",ttt_retr_m,atoi) OPT("--ttt-retr-mix",ttt_retr_mix,atof) OPT("--ttt-qlen",ttt_qlen,atol) OPT("--ttt-fit",ttt_fit,(const char*)) OPT("--ttt-frac",ttt_frac,atof) OPT("--ttt-epochs",ttt_epochs,atoi) OPT("--ttt-eval",ttt_file,(const char*)) OPT("--ttt-control",ttt_control,(const char*)) OPT("--ttt-offset",ttt_off,atol) OPT("--ttt-len",ttt_len,atol) OPT("--ttt-docs",ttt_docs,atoi) OPT("--ttt-docstride",ttt_stride,atol)
         OPT("--ttt-lr",tt.lr,atof) OPT("--ttt-decay",tt.decay,atof) OPT("--ttt-clip",tt.clip,atof) OPT("--ttt-beta2",tt.beta2,atof) OPT("--ttt-steps",tt.steps,atoi) OPT("--ttt-batch",tt.batch,atoi)
         OPT("--ttt-chunk",tt.chunk,atoi) OPT("--ttt-ctx",tt.ctx,atoi) OPT("--ttt-stream",tt.stream,atoi) OPT("--ttt-freeze",tt.freeze,atoi)
         OPT("--context-file",context_file,(const char*)) OPT("--data",data,(const char*)) OPT("--save",out,(const char*)) OPT("--load",in,(const char*)) OPT("--mode",mode,(const char*)) OPT("--prompt",prompt,(const char*))
@@ -3483,6 +3507,7 @@ int main(int argc,char**argv){
     else if(blt){cfg.target=target;f=faithful_new(gc,cfg,threads,L,1);}
     else {m=model_new(&gc,threads,L);params_init(&gc,&m->P);model_requantize(m);}
     byte_muon=m&&want_byte_muon;if(byte_muon)byte_muon_model=m;
+    if(m&&mtp_lambda>0){mtp_d=m->c.d;size_t n=(size_t)mtp_d*mtp_d;mtp_W=calloc(n,sizeof(real));mtp_m=calloc(n,sizeof(real));mtp_v=calloc(n,sizeof(real));for(int i=0;i<mtp_d;i++)mtp_W[(size_t)i*mtp_d+i]=1;}
     if(scoreonly){if(!in)return 2;long scored;double bpc=score_data(f,m,raw,split,n,L,burn,&scored);printf("{\"event\":\"score\",\"val_bpc\":%.6f,\"scored_bytes\":%ld,\"burn\":%d}\n",bpc,scored,burn);return 0;}
     if(blt&&!in){
         if(f->c.neural){
