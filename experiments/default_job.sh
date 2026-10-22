@@ -1,7 +1,7 @@
 #!/bin/bash
 # Pod job: 20-minute baseline of the new default architecture (byte mode, pure SSM, per-tree keys/queries).
 cd /w; TH=$(nproc); D=/w/repo/data; G=$D/faustus.txt,$D/tamburlaine2.txt,$D/spanish_tragedie.txt; B=out/default1200.bin
-./nanotss --data input.txt --threads $TH --seconds ${RUN_SECONDS:-1200} --save $B > out/default1200.log 2>&1
+./nanotss --data input.txt --threads $TH --seconds ${RUN_SECONDS:-1200} ${TRAIN_ARGS} --save $B > out/default1200.log 2>&1
 ./nanotss --load $B --ttt-eval input.txt --threads $TH > out/val_nottt.jsonl
 ./nanotss --load $B --ttt-eval input.txt --threads $TH --match 1 > out/val_match.jsonl
 ./nanotss --load $B --ttt-eval input.txt --threads $TH --ttt-lr 2e-4 --ttt-steps 2 > out/val_ttt2.jsonl
