@@ -14,10 +14,11 @@ import gpu_env as ge
 
 ap = argparse.ArgumentParser(); ap.add_argument("prefix"); ap.add_argument("--n", type=int, default=64)
 ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu"); ap.add_argument("--room", default=os.path.join(ge.BODY, "room.json"))
+ap.add_argument("--mref", default=os.path.join(ge.BODY, "data/motions_ref.bin"), help="the gait clip file (walk); data/clean/cmu_gait.bin for the clean prior")
 ap.add_argument("--seed", type=int, default=12345); ap.add_argument("--assist", type=float, default=0); ap.add_argument("--muscles", action="store_true", help="CPU: how often each joint is at its strength"); a = ap.parse_args()
 dev = torch.device(a.device)
 Pool = ge.GpuPool if dev.type == "cuda" else ge.CpuPool
-pool = Pool(a.n, task="goto", room=a.room, seed=a.seed, device=dev, assist=a.assist)
+pool = Pool(a.n, task="goto", mref=a.mref, room=a.room, seed=a.seed, device=dev, assist=a.assist)
 m = nt.TSS.load(a.prefix + ".tss", device=dev); d = m.c.d; OBS, ACT = pool.OBS, pool.ACT
 raw = open(a.prefix + ".head", "rb").read(); hd, hobs, hact = struct.unpack("<3i", raw[4:16]); assert hd == d and hact <= ACT and hobs <= OBS   # an older head: the new inputs unused, the new outputs (grip) zero
 o = 16
