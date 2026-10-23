@@ -65,6 +65,17 @@ Exit: unseen procedural rooms, goals anywhere, more than 80 % reached without fa
 
 ## Status
 
+- **Fixed: CMU retargeting crossed the legs.** tools/cmu_to_ref.py copied each CMU bone's global rotation onto her
+  body, but the two skeletons' rest poses point the bones differently (CMU's femurs slant 20 degrees outward, hers
+  hang straight; the feet differ by 35 degrees in pitch), so every converted pose crossed the legs (in walks the knees
+  0.27 m, the feet 0.47 m past each other). Each body now takes a fixed rest-direction alignment from the subject's
+  ASF; the whole library was corrected in place (cmu_library.py --realign), and the joint limits, muscle envelopes
+  (hip strength 188 -> 125 N m: the crossed legs had inflated it), gait cycles and get-up and crawl clips (also 0.9 m
+  too high) regenerated. The first clean walk prior learned the crossed gait and is superseded.
+- **Leg-on-leg contact.** The legs were not colliding with each other at all; each leg body is now a capsule and the
+  two legs push apart where they meet (thighs, shins, feet, shin against foot), in C, CUDA and JS
+  (tools/leg_test.c and .mjs: driven to cross, the knees stop 0.09 m apart; without contact they pass 0.24 m through).
+
 - M1: the CMU library is packed (2,431 trials, 348,504 poses at 10 Hz, about 9.7 h). **Joint limits now come from
   it** (joint_limits.h, web/joint_limits.js): per-trial ranges with robust statistics over trials, joined with the
   CMU range-of-motion trials, after anatomical sanity caps drop capture errors (feet flipped half a turn in about

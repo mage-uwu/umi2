@@ -16,6 +16,8 @@ in commercially-sold products, but you may not resell this data directly, even i
 
     python3 tools/cmu_library.py --index        (fetch the motion index)
     python3 tools/cmu_library.py [--jobs 6]     (fetch and convert every trial, then pack)
+    python3 tools/cmu_library.py --realign [--name cmu30]   (parts converted before cmu_to_ref.py aligned the rest
+        directions: apply each subject's alignment to them in place, then pack)
     python3 tools/cmu_library.py --fps 30 --name cmu30 --subset walk,run,jump,...   (trials whose description has a
         keyword, at most --per-keyword each, at 30 Hz: for inverse dynamics, which needs finer time steps)
 """
@@ -62,18 +64,41 @@ def one(tr, tmp):
         frames, fps, scale = c2r.convert(asf, amc, step=STEP)
         q = np.array([[qq for qq in f[1]] for f in frames], np.float32); r = np.array([f[0] for f in frames], np.float32)
         if not np.isfinite(q).all() or len(q) < 2: raise ValueError("bad frames")
-        np.savez(part, q=q.astype(np.float16), root=r.astype(np.float16)); return tr["id"], f"{len(q)} frames"
+        np.savez(part, q=q.astype(np.float16), root=r.astype(np.float16), aligned=1); return tr["id"], f"{len(q)} frames"
     except Exception as e:
         return tr["id"], f"failed: {e}"
     finally:
         os.path.exists(amc) and os.remove(amc)
 
 
+def qmul(a, b):
+    return np.stack([a[..., 0] * b[..., 0] - (a[..., 1:] * b[..., 1:]).sum(-1),
+                     *(a[..., :1] * b[..., 1:] + b[..., :1] * a[..., 1:] + np.cross(a[..., 1:], b[..., 1:])).transpose(-1, *range(a.ndim - 1))], -1)
+
+
+def realign(trials, tmp):
+    """parts converted without the rest-direction alignment: q -> q A per body (A from the subject's ASF), in place"""
+    asfs = {}; done = 0
+    for tr in trials:
+        part = os.path.join(PARTS, tr["id"] + ".npz")
+        if not os.path.exists(part): continue
+        z = np.load(part)
+        if "aligned" in z.files: continue
+        s = tr["id"].split("_")[0]
+        if s not in asfs:
+            f = os.path.join(tmp, s + ".asf")
+            if not get(f"{SITE}/subjects/{s}/{s}.asf", f): print("no asf", s); continue
+            bones, _, _ = c2r.parse_asf(f); asfs[s] = np.array([c2r.mat2quat(A) for A in c2r.alignment(bones)])
+        q = z["q"].astype(np.float64); q = qmul(q, asfs[s][None]); q /= np.linalg.norm(q, axis=-1, keepdims=True)
+        np.savez(part, q=q.astype(np.float16), root=z["root"], aligned=1); done += 1
+    print(f"realigned {done} parts ({len(asfs)} subjects)")
+
+
 def main():
     global PARTS, STEP
     ap = argparse.ArgumentParser(); ap.add_argument("--index", action="store_true"); ap.add_argument("--jobs", type=int, default=6)
     ap.add_argument("--fps", type=int, default=10); ap.add_argument("--name", default="cmu"); ap.add_argument("--subset", default="")
-    ap.add_argument("--per-keyword", type=int, default=60)
+    ap.add_argument("--per-keyword", type=int, default=60); ap.add_argument("--realign", action="store_true")
     a = ap.parse_args()
     if a.index: return index()
     STEP = 120 // a.fps; PARTS = os.path.join(OUT, a.name + "_parts")
@@ -84,9 +109,13 @@ def main():
             m = [t for t in trials if kw in t["desc"].lower() and t not in pick]; k = max(1, len(m) // a.per_keyword)
             pick += m[::k][:a.per_keyword]
         trials = pick
-    with tempfile.TemporaryDirectory() as tmp, ThreadPoolExecutor(a.jobs) as ex:
-        for k, (tid, msg) in enumerate(ex.map(lambda t: one(t, tmp), trials)):
-            print(f"{k + 1}/{len(trials)} {tid}: {msg}", flush=True)
+    if a.realign:
+        trials = [t for t in trials if os.path.exists(os.path.join(PARTS, t["id"] + ".npz"))]
+        with tempfile.TemporaryDirectory() as tmp: realign(trials, tmp)
+    else:
+        with tempfile.TemporaryDirectory() as tmp, ThreadPoolExecutor(a.jobs) as ex:
+            for k, (tid, msg) in enumerate(ex.map(lambda t: one(t, tmp), trials)):
+                print(f"{k + 1}/{len(trials)} {tid}: {msg}", flush=True)
     Q, R, T, man = [], [], [], []
     for k, tr in enumerate(trials):
         p = os.path.join(PARTS, tr["id"] + ".npz")

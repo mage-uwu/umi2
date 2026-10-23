@@ -3,8 +3,11 @@
 motions_to_ref.py) for the physics character.
 
 CMU's rest pose is a T-pose with Y up, the subject's left along +X and facing +Z, as the character's is, and
-every bone's global rotation is the identity in it; so a bone's global rotation from forward kinematics is the
-world rotation of the body it drives. The root is scaled by the ratio of the character's hip height to the
+every bone's global rotation is the identity in it. The bones do not point the same way in the two rest poses,
+though (CMU's thighs slant in an A from hips to knees, hers hang straight down), so each body's world rotation is
+the bone's global rotation times a fixed alignment: the rotation that takes the body's rest direction (her anchor
+to the next joint, or along the box for the end bodies) onto the bone's ASF rest direction. Without it every
+pose came through with the legs crossed (knees about 0.27 m, feet about 0.47 m past each other in a walk). The root is scaled by the ratio of the character's hip height to the
 subject's and placed at the pelvis body centre.
 
 Data: mocap.cs.cmu.edu. "This data is free for use in research projects. You may include this data in
@@ -20,6 +23,37 @@ UNIT = (1.0 / 0.45) * 2.54 / 100            # ASF length units to metres (CMU FA
 BODY_BONES = ["root", "lowerback", "thorax", "head", "lhumerus", "lradius", "rhumerus", "rradius",
               "lfemur", "ltibia", "lfoot", "rfemur", "rtibia", "rfoot"]
 PELVIS_CENTER = np.array([0, 0.915, 0.005]); HIP_HEIGHT = 0.888   # the character's pelvis centre, hip joints
+# her rest direction for each body (BODY_DEFS in body.c / body.js): from its joint to the next joint down the chain,
+# or along the box for the end bodies (head, forearms, feet); the pelvis keeps the root's rotation as it is
+_NEXT = {1: 2, 2: 3, 4: 5, 6: 7, 8: 9, 9: 10, 11: 12, 12: 13}
+
+
+def rest_dirs():
+    """her rest direction per body (index 1..13), from the anchors and centres in web/body.js"""
+    import os, re
+    src = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "web", "body.js")).read()
+    rows = re.findall(r"\['(\w+)', '(\w+)', (-?\d+), \[([^\]]+)\], \[([^\]]+)\]", src)
+    anc = [np.array([float(x) for x in r[3].split(",")]) for r in rows]; cen = [np.array([float(x) for x in r[4].split(",")]) for r in rows]
+    d = {}
+    for i in range(1, 14):
+        v = (anc[_NEXT[i]] if i in _NEXT else cen[i]) - anc[i]; d[i] = v / np.linalg.norm(v)
+    return d
+
+
+def swing(a, b):
+    """the smallest rotation (3x3) taking unit vector a onto unit vector b"""
+    v = np.cross(a, b); c = float(np.dot(a, b)); s = np.linalg.norm(v)
+    if s < 1e-9: return np.eye(3) if c > 0 else -np.eye(3)
+    k = v / s; K = np.array([[0, -k[2], k[1]], [k[2], 0, -k[0]], [-k[1], k[0], 0]]); th = np.arctan2(s, c)
+    return np.eye(3) + np.sin(th) * K + (1 - np.cos(th)) * K @ K
+
+
+def alignment(bones):
+    """per body: the fixed rotation A with A (her rest direction) = (the ASF bone's rest direction); identity for the pelvis"""
+    d = rest_dirs(); out = [np.eye(3)]
+    for k in range(1, 14):
+        c = bones[BODY_BONES[k]]["dir"]; out.append(swing(d[k], c / np.linalg.norm(c)))
+    return out
 
 
 def rot(axis, deg):
@@ -112,12 +146,12 @@ def convert(asf, amc, first=0, last=None, step=4):
     _, P0 = fk(bones, hier, root, {"root": [0] * 6})
     hip = -min(P0["ltibia"][1], P0["lfoot"][1], P0["rfoot"][1]) + 0   # rest: root at 0, feet below
     scale = HIP_HEIGHT / hip
-    out, qprev = [], [None] * 14
+    out, qprev = [], [None] * 14; A = alignment(bones)
     for fr in frames:
         G, P = fk(bones, hier, root, fr)
         qs = []
         for k, b in enumerate(BODY_BONES):
-            q = mat2quat(G[b])
+            q = mat2quat(G[b] @ A[k])
             if qprev[k] is not None and q.dot(qprev[k]) < 0: q = -q   # keep each track continuous
             qprev[k] = q; qs.append(q)
         out.append((P["root"] * scale, qs))
@@ -151,7 +185,7 @@ def main():
         for name, frames, fps in clips:
             f.write(name.encode()[:16].ljust(16, b"\0")); f.write(struct.pack("<if", len(frames), fps))
             for root, qs in frames:
-                f.write(struct.pack("<3f", *(root + PELVIS_CENTER - [0, 0, 0] - [0, 0, 0])))
+                f.write(struct.pack("<3f", *root))   # the pelvis centre, metres above the floor (fk gives it absolute)
                 for q in qs: f.write(struct.pack("<4f", *q))
 
 

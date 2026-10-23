@@ -121,6 +121,13 @@ static BHD double solve_ang(Body *b1, Body *b2, Vec n, double theta, double alph
 }
 
 static BCONST double CORNER[NCORNER][3] = {{-1, -1, -1}, {1, -1, -1}, {-1, 1, -1}, {1, 1, -1}, {-1, -1, 1}, {1, -1, 1}, {-1, 1, 1}, {1, 1, 1}};
+/* the legs as capsules (self-collision between the two legs): pairs, axis, half length of the core segment, radius */
+#define LEG_PAIRS 5
+static BCONST int LEG_PAIR[LEG_PAIRS][2] = {{L_THIGH, R_THIGH}, {L_SHIN, R_SHIN}, {L_FOOT, R_FOOT}, {L_SHIN, R_FOOT}, {L_FOOT, R_SHIN}};
+static BHD int leg_is_foot(int i) { return i == L_FOOT || i == R_FOOT; }
+static BHD Vec leg_axis(int i) { return leg_is_foot(i) ? v3(0, 0, 1) : v3(0, 1, 0); }
+static BHD double leg_rad(int i) { const Vec h = BODY_DEFS[i].half; return 0.9 * fmin(h.x, leg_is_foot(i) ? h.y : h.z); }
+static BHD double leg_half(int i) { const Vec h = BODY_DEFS[i].half; return fmax(0, (leg_is_foot(i) ? h.z : h.y) - leg_rad(i)); }
 static BHD Vec corner(int i, int k) { const Vec hf = BODY_DEFS[i].half; return v3(CORNER[k][0] * hf.x, CORNER[k][1] * hf.y, CORNER[k][2] * hf.z); }
 
 /* Velocity impulse at a body point along unit n changing the point's velocity there by dv. */
@@ -305,6 +312,23 @@ static BHD void substep(World *W) {
                 if (nr < ROOM_CONTACTS) { rb[nr] = i; rk[nr] = k; rl[nr] = ln; rn[nr] = n; rmu[nr] = o->mu; nr++; }
             }
         }
+    }
+    /* the legs against each other: each leg body is a capsule along its long axis (thighs and shins: y, feet: z), a
+     * little thinner than its box; where two from different legs overlap, both are pushed apart (no friction) */
+    for (int c = 0; c < LEG_PAIRS; c++) {
+        const int ia = LEG_PAIR[c][0], ib = LEG_PAIR[c][1]; Body *A = W->b + ia, *Bb = W->b + ib;
+        const Vec ua = qrot(A->q, leg_axis(ia)), ub = qrot(Bb->q, leg_axis(ib));
+        const double la = leg_half(ia), lb = leg_half(ib), R = leg_rad(ia) + leg_rad(ib);
+        const Vec d0 = vsub(A->x, Bb->x); if (vdot(d0, d0) > (la + lb + R) * (la + lb + R)) continue;
+        /* closest points of the segments A->x + s ua (|s| <= la) and Bb->x + t ub (|t| <= lb) */
+        const double b_ = vdot(ua, ub), dd = vdot(ua, d0), e = vdot(ub, d0), den = 1 - b_ * b_;
+        double sa = den > 1e-9 ? (b_ * e - dd) / den : 0; sa = fmax(-la, fmin(la, sa));
+        double tb = e + b_ * sa; tb = fmax(-lb, fmin(lb, tb));
+        sa = fmax(-la, fmin(la, b_ * tb - dd));
+        const Vec pa = vadd(A->x, vscale(ua, sa)), pb = vadd(Bb->x, vscale(ub, tb)), D = vsub(pb, pa); const double dist = vlen(D);
+        if (dist >= R || dist < 1e-9) continue;
+        const double ln = solve_pos(A, Bb, vsub(pa, A->x), vsub(pb, Bb->x), vscale(D, 1 / dist), R - dist, 0, h, -1);
+        W->touch[ia] += fabs(ln) / (h * h); W->touch[ib] += fabs(ln) / (h * h);
     }
     /* velocities */
     for (int i = 0; i < NB; i++) {

@@ -50,6 +50,11 @@ export const BODY_DEFS = [
 ].map(([name, bone, parent, anchor, center, half, mass_frac, kp, kd, hinge]) => ({ name, bone, parent, anchor, center, half, mass_frac, kp, kd, hinge }));
 const NB = BODY_DEFS.length, G_ACC = 9.81, ASSIST_K = 2700, ASSIST_KR = 2000;
 const CORNERS = [[-1, -1, -1], [1, -1, -1], [-1, 1, -1], [1, 1, -1], [-1, -1, 1], [1, -1, 1], [-1, 1, 1], [1, 1, 1]];
+// the legs as capsules for leg-on-leg contact (body.c LEG_PAIR, leg_axis, leg_rad, leg_half)
+const LEG_PAIR = [[B.L_THIGH, B.R_THIGH], [B.L_SHIN, B.R_SHIN], [B.L_FOOT, B.R_FOOT], [B.L_SHIN, B.R_FOOT], [B.L_FOOT, B.R_SHIN]];
+const legIsFoot = i => i === B.L_FOOT || i === B.R_FOOT, legAxis = i => legIsFoot(i) ? [0, 0, 1] : [0, 1, 0];
+const legRad = i => { const h = BODY_DEFS[i].half; return 0.9 * Math.min(h[0], legIsFoot(i) ? h[1] : h[2]); };
+const legHalf = i => { const h = BODY_DEFS[i].half; return Math.max(0, (legIsFoot(i) ? h[2] : h[1]) - legRad(i)); };
 const handLocal = k => { const i = k ? B.R_FARM : B.L_FARM; return [k ? -BODY_DEFS[i].half[0] : BODY_DEFS[i].half[0], 0, 0]; };   // body.c hand_local
 const corner = (i, k) => { const h = BODY_DEFS[i].half; return [CORNERS[k][0] * h[0], CORNERS[k][1] * h[1], CORNERS[k][2] * h[2]]; };
 const hingeAxis = h => h === 1 ? [1, 0, 0] : h === 2 ? [0, 1, 0] : [0, 0, 1];
@@ -236,6 +241,17 @@ export class World {
           roomContacts.push([i, k, ln, n, o.mu]);
         }
       }
+    }
+    for (const [ia, ib] of LEG_PAIR) {   // the legs against each other: capsules along each leg body's long axis (body.c)
+      const A = this.b[ia], Bb = this.b[ib], ua = qrot(A.q, legAxis(ia)), ub = qrot(Bb.q, legAxis(ib));
+      const la = legHalf(ia), lb = legHalf(ib), R = legRad(ia) + legRad(ib), d0 = vsub(A.x, Bb.x);
+      if (vdot(d0, d0) > (la + lb + R) * (la + lb + R)) continue;
+      const b_ = vdot(ua, ub), dd = vdot(ua, d0), e = vdot(ub, d0), den = 1 - b_ * b_, cl = (v, m) => Math.max(-m, Math.min(m, v));
+      let sa = cl(den > 1e-9 ? (b_ * e - dd) / den : 0, la); const tb = cl(e + b_ * sa, lb); sa = cl(b_ * tb - dd, la);
+      const pa = vadd(A.x, vscale(ua, sa)), pb = vadd(Bb.x, vscale(ub, tb)), D = vsub(pb, pa), dist = vlen(D);
+      if (dist >= R || dist < 1e-9) continue;
+      const ln = this.solvePos(A, Bb, vsub(pa, A.x), vsub(pb, Bb.x), vscale(D, 1 / dist), R - dist, 0);
+      this.touch[ia] += Math.abs(ln) / (h * h); this.touch[ib] += Math.abs(ln) / (h * h);
     }
     for (let i = 0; i < NB; i++) {
       const b = this.b[i];
