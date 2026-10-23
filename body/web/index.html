@@ -6,7 +6,7 @@
 /* Layout: one full-height stage where she stands under live physics; a control strip at the foot
    (skill, pushes, view, readouts). Palette and faces follow the ANIME NEURAL SHADER page. */
 :root {
-  --stage-top: #eef0fb; --stage-bottom: #d9dcf2; --floor: #c9cdea;
+  --stage-top: #eef0fb; --stage-bottom: #d9dcf2; --floor: #c9cdea; --tile-a: #8fa6e6; --tile-b: #9cb1ea; --tile-line: #c3d0f6;
   --ink: #1d2150; --muted: #5d6293; --gold: #a57a1f; --chip: rgba(255,255,255,.72); --line: rgba(29,33,80,.16);
   --alert: #b2384b;
   --display: 'Shippori Mincho', 'Hiragino Mincho ProN', Georgia, serif;
@@ -14,10 +14,10 @@
   --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --stage-top: #0e1030; --stage-bottom: #1d2052; --floor: #2a2e6a;
+  --stage-top: #0e1030; --stage-bottom: #1d2052; --floor: #2a2e6a; --tile-a: #23347e; --tile-b: #283b8a; --tile-line: #3b51aa;
   --ink: #eef0ff; --muted: #a3a8dc; --gold: #e2bd62; --chip: rgba(20,22,60,.72); --line: rgba(238,240,255,.16); --alert: #ff8095; color-scheme: dark } }
 :root[data-theme="dark"] {
-  --stage-top: #0e1030; --stage-bottom: #1d2052; --floor: #2a2e6a;
+  --stage-top: #0e1030; --stage-bottom: #1d2052; --floor: #2a2e6a; --tile-a: #23347e; --tile-b: #283b8a; --tile-line: #3b51aa;
   --ink: #eef0ff; --muted: #a3a8dc; --gold: #e2bd62; --chip: rgba(20,22,60,.72); --line: rgba(238,240,255,.16); --alert: #ff8095; color-scheme: dark }
 html, body { height: 100%; }
 body { background: var(--stage-bottom); color: var(--ink); font-family: var(--body); overflow: hidden; }
@@ -133,11 +133,25 @@ const css = n => new THREE.Color().setStyle(getComputedStyle(document.documentEl
 const fade = (() => { const c = document.createElement('canvas'); c.width = c.height = 256; const g = c.getContext('2d');
   const r = g.createRadialGradient(128, 128, 0, 128, 128, 128); r.addColorStop(0, 'rgba(255,255,255,1)'); r.addColorStop(.55, 'rgba(255,255,255,.75)'); r.addColorStop(1, 'rgba(255,255,255,0)');
   g.fillStyle = r; g.fillRect(0, 0, 256, 256); return new THREE.CanvasTexture(c); })();
-const floor = new THREE.Mesh(new THREE.CircleGeometry(3, 64), new THREE.MeshBasicMaterial({ color: css('--floor'), alphaMap: fade, transparent: true, depthWrite: false }));
-const shadowCatcher = new THREE.Mesh(new THREE.CircleGeometry(3, 64), new THREE.ShadowMaterial({ opacity: .22 }));
+// Blue floor tiles, 0.5 m, drawn into a canvas (two tones in a checker with lighter grout); the disc follows
+// her but the tiles stay put in the world, so her travel shows.
+const TILE = 0.5, FLOOR_R = 4;
+const tiles = (() => { const c = document.createElement('canvas'); c.width = c.height = 256; return new THREE.CanvasTexture(c); })();
+tiles.wrapS = tiles.wrapT = THREE.RepeatWrapping; tiles.repeat.set(2 * FLOOR_R / TILE / 2, 2 * FLOOR_R / TILE / 2); tiles.colorSpace = THREE.SRGBColorSpace;
+tiles.anisotropy = 4;
+function paintTiles() {   // one canvas holds 2 x 2 tiles
+  const g = tiles.image.getContext('2d'), h = 128, hex = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) { g.fillStyle = hex((i + j) % 2 ? '--tile-b' : '--tile-a'); g.fillRect(i * h, j * h, h, h); }
+  g.strokeStyle = hex('--tile-line'); g.lineWidth = 4;
+  for (const x of [0, h, 2 * h]) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, 2 * h); g.stroke(); g.beginPath(); g.moveTo(0, x); g.lineTo(2 * h, x); g.stroke(); }
+  tiles.needsUpdate = true;
+}
+paintTiles();
+const floor = new THREE.Mesh(new THREE.CircleGeometry(FLOOR_R, 64), new THREE.MeshBasicMaterial({ map: tiles, alphaMap: fade, transparent: true, depthWrite: false }));
+const shadowCatcher = new THREE.Mesh(new THREE.CircleGeometry(FLOOR_R, 64), new THREE.ShadowMaterial({ opacity: .22 }));
 for (const m of [floor, shadowCatcher]) { m.rotation.x = -Math.PI / 2; scene.add(m); }
 shadowCatcher.position.y = 0.001; shadowCatcher.receiveShadow = true;
-matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => floor.material.color.copy(css('--floor')));
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', paintTiles);
 
 // ---------- the model (bytes packed in a PNG, as on the shader page) ----------
 async function unpackPng(url) {
@@ -533,6 +547,7 @@ function follow(px, dt) {
   camera.position.set(focus.x + view.dist * Math.cos(p) * Math.sin(y), focus.y + view.dist * Math.sin(p), focus.z + view.dist * Math.cos(p) * Math.cos(y));
   camera.lookAt(focus);
   floor.position.set(focus.x, 0, focus.z); shadowCatcher.position.set(focus.x, 0.001, focus.z);
+  tiles.offset.set((focus.x / (2 * TILE)) % 1, (-focus.z / (2 * TILE)) % 1);   // the tiles stay put while the disc follows
   sun.position.set(focus.x + 1, 3, focus.z + 2); sun.target.position.copy(focus);
 }
 function resize() {
