@@ -14,17 +14,18 @@ import gpu_env as ge
 
 ap = argparse.ArgumentParser(); ap.add_argument("prefix"); ap.add_argument("--n", type=int, default=64)
 ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu"); ap.add_argument("--room", default=os.path.join(ge.BODY, "room.json"))
-ap.add_argument("--seed", type=int, default=12345); a = ap.parse_args()
+ap.add_argument("--seed", type=int, default=12345); ap.add_argument("--assist", type=float, default=0); a = ap.parse_args()
 dev = torch.device(a.device)
 Pool = ge.GpuPool if dev.type == "cuda" else ge.CpuPool
-pool = Pool(a.n, task="goto", room=a.room, seed=a.seed, device=dev)
+pool = Pool(a.n, task="goto", room=a.room, seed=a.seed, device=dev, assist=a.assist)
 m = nt.TSS.load(a.prefix + ".tss", device=dev); d = m.c.d; OBS, ACT = pool.OBS, pool.ACT
-raw = open(a.prefix + ".head", "rb").read(); hd, hobs, hact = struct.unpack("<3i", raw[4:16]); assert (hd, hobs, hact) == (d, OBS, ACT)
+raw = open(a.prefix + ".head", "rb").read(); hd, hobs, hact = struct.unpack("<3i", raw[4:16]); assert hd == d and hact == ACT and hobs <= OBS   # a 216-input head: the new inputs unused
 o = 16
 def take(n):
     global o; v = np.frombuffer(raw, np.float32, n, o).copy(); o += 4 * n; return torch.tensor(v, device=dev)
-Win, bin_, Wo, bo = take(d * OBS).view(d, OBS), take(d), take(ACT * d).view(ACT, d), take(ACT); take(ACT)
-mean, sd = take(OBS), take(OBS)
+Win = torch.zeros(d, OBS, device=dev); Win[:, :hobs] = take(d * hobs).view(d, hobs)
+bin_, Wo, bo = take(d), take(ACT * d).view(ACT, d), take(ACT); take(ACT)
+mean, sd = torch.zeros(OBS, device=dev), torch.ones(OBS, device=dev); mean[:hobs], sd[:hobs] = take(hobs), take(hobs)
 state = m.zero_state(a.n)
 goals = torch.zeros(a.n, dtype=torch.long, device=dev); fell_at = torch.full((a.n,), -1, dtype=torch.long, device=dev)
 alive = torch.ones(a.n, dtype=torch.bool, device=dev); prev_rew = None
@@ -48,7 +49,7 @@ with torch.no_grad():
             speed_sum += torch.where(far, dd.double(), torch.zeros_like(dd.double())); speed_n += far.double()
         prev_d = dist
 g = goals.cpu().numpy(); f = fell_at.cpu().numpy()
-res = {"policy": os.path.basename(a.prefix), "episodes": a.n, "goals_per_episode": round(float(g.mean()), 2),
+res = {"policy": os.path.basename(a.prefix), "assist": a.assist, "episodes": a.n, "goals_per_episode": round(float(g.mean()), 2),
        "episodes_reaching_a_goal": round(float((g > 0).mean()), 2), "fall_rate": round(float((f >= 0).mean()), 2),
        "mean_fall_time_s": round(float(f[f >= 0].mean() / pool.HZ), 1) if (f >= 0).any() else None,
        "speed_toward_goal_m_s": round(float(speed_sum.sum() / max(speed_n.sum(), 1)), 2)}

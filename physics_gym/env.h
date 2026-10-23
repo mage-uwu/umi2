@@ -25,7 +25,10 @@
  *   TASK_GOTO     (physics_gym) reach a goal point anywhere in the room, on the floor or on top of a surface, preferably
  *                 walking: pays for moving toward it near walking speed, facing it, an upright chest, low effort and
  *                 smooth commands, and (with style clips: the walk capture) for walking poses; reaching it (within
- *                 0.3 m, on its surface) pays a bonus and a new goal is drawn. Starts standing on a free spot of floor.
+ *                 0.3 m, on its surface) pays a bonus and a new goal is drawn. The main pay is the distance gained toward
+ *                 it each step. The walk clip's pose at the current phase is the reference the actions act around (a gait
+ *                 prior, with no root tracking). Starts on a free spot of floor, mid-stride in a random frame of the walk clip
+ *                 (70%) or standing.
  *
  * Terrain is felt, not seen: the observation has no map or height scan. Each body reports its contact force over the
  * last control step (touch, from the physics' contact solve), the pelvis height is measured from her lowest foot
@@ -81,6 +84,7 @@ typedef struct {
     Vec head_v;          /* head velocity at the previous control step (for the head-steadiness reward) */
     float style_prev[STYLE_FEAT]; int style_has_prev;   /* the previous step's pose features (style prior) */
     Vec goal; int goals;   /* TASK_GOTO: the goal point (on a surface) and how many she has reached this episode */
+    double goal_d;         /* TASK_GOTO: her horizontal distance to the goal at the last step */
 } Env;
 
 #ifndef __CUDACC__   /* the GPU build defines it ahead of every use, in one unit */

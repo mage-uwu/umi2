@@ -355,11 +355,11 @@ static BHD void goto_goal(Env *E) {
         }
         const double dx = g.x - p.x, dz = g.z - p.z, d2 = dx * dx + dz * dz;
         if (d2 < 1.0 || d2 > 36.0) continue;
-        E->goal = g; return;
+        E->goal = g; E->goal_d = sqrt(d2); return;
     }
-    E->goal = v3(p.x, 0, p.z + 1.5);
+    E->goal = v3(p.x, 0, p.z + 1.5); E->goal_d = 1.5;
 }
-BHD void env_set_goal(Env *E, Vec goal) { E->goal = goal; }
+BHD void env_set_goal(Env *E, Vec goal) { const Vec p = E->W.b[PELVIS].x; E->goal = goal; E->goal_d = sqrt((goal.x - p.x) * (goal.x - p.x) + (goal.z - p.z) * (goal.z - p.z)); }
 /* standing on a free spot of floor, any heading, the stand pose with a little noise */
 static BHD void goto_reset(Env *E) {
     const double R = arena(); double x = 0, z = 0;
@@ -367,15 +367,29 @@ static BHD void goto_reset(Env *E) {
         const double a = (2 * env_rand(&E->rng) - 1) * R; const double b = (2 * env_rand(&E->rng) - 1) * R;
         if (free_spot(a, b)) { x = a; z = b; break; }
     }
-    const double yaw = env_rand(&E->rng) * 2 * M_PI;
-    stand_pose(E->ref); Quat rel[NB];
-    for (int i = 0; i < NB; i++) {
-        const double nz = env_randn(&E->rng), ny = env_randn(&E->rng), nx = env_randn(&E->rng); Vec n = v3(nx, ny, nz);
-        if (BODY_DEFS[i].hinge) n = vscale(hinge_axis(BODY_DEFS[i].hinge), n.x);
-        rel[i] = i ? qmul(E->ref[i], qexp(vscale(n, E->cfg.init_noise))) : QID;
-        E->W.target[i] = E->ref[i];
+    const double yaw = env_rand(&E->rng) * 2 * M_PI; const Quat qy = qexp(v3(0, yaw, 0));
+    stand_pose(E->ref); E->t0 = 0;
+    if (E->cfg.clip && env_rand(&E->rng) < 0.7) {   /* mid-stride: a random frame of the walk clip, its velocities by finite difference */
+        const Clip *c = E->cfg.clip; const double dt = 1.0 / CTRL_HZ; E->t0 = env_rand(&E->rng) * (c->frames - 1) / c->fps;
+        Quat r1[NB], r2[NB], w1[NB], w2[NB]; Vec root1, root2; mref_sample(c, E->t0, &root1, w1, r1); mref_sample(c, E->t0 + dt, &root2, w2, r2);
+        const Vec at = v3(x, root1.y, z), at2 = vadd(at, qrot(qy, vsub(root2, root1)));
+        r1[0] = qmul(qy, r1[0]); r2[0] = qmul(qy, r2[0]);
+        World W2; world_init(&W2, 45, 20, dt); world_pose(&W2, at2, r2[0], r2, v3(0, 0, 0)); world_pose(&E->W, at, r1[0], r1, v3(0, 0, 0));
+        for (int i = 0; i < NB; i++) {
+            Body *b = E->W.b + i; b->v = vscale(vsub(W2.b[i].x, b->x), 1 / dt);
+            const Quat dq = qmul(W2.b[i].q, qconj(b->q)); b->w = vscale(qlog(dq), 1 / dt);
+        }
+        for (int i = 0; i < NB; i++) E->W.target[i] = i ? r1[i] : QID;
+    } else {   /* standing, the stand pose with a little noise */
+        Quat rel[NB];
+        for (int i = 0; i < NB; i++) {
+            const double nz = env_randn(&E->rng), ny = env_randn(&E->rng), nx = env_randn(&E->rng); Vec n = v3(nx, ny, nz);
+            if (BODY_DEFS[i].hinge) n = vscale(hinge_axis(BODY_DEFS[i].hinge), n.x);
+            rel[i] = i ? qmul(E->ref[i], qexp(vscale(n, E->cfg.init_noise))) : QID;
+            E->W.target[i] = E->ref[i];
+        }
+        world_pose(&E->W, v3(x, BODY_DEFS[PELVIS].center.y, z), qy, rel, v3(0, 0, 0));
     }
-    world_pose(&E->W, v3(x, BODY_DEFS[PELVIS].center.y, z), qexp(v3(0, yaw, 0)), rel, v3(0, 0, 0));
     double lo = 1e9; for (int i = 0; i < NB; i++) { const double y = world_lowest(&E->W, i); if (y < lo) lo = y; }
     for (int i = 0; i < NB; i++) { E->W.b[i].x.y -= lo; E->W.b[i].xprev = E->W.b[i].x; }
     E->goals = 0; goto_goal(E);
@@ -392,8 +406,9 @@ static BHD double goto_reward(Env *E, double act2) {
     Vec f = qrot(pb->q, v3(0, 0, 1)); f.y = 0; const double fl = vlen(f);
     const double face = d > 0.4 && fl > 1e-9 ? fmax(0, vdot(f, dir) / fl) : 1;
     const double up = fmax(0, qrot(W->b[CHEST].q, v3(0, 1, 0)).y);
-    const double task = 0.45 * move + 0.15 * face + 0.15 * up + 0.1 * b_exp(-2 * act2) + 0.15 * b_exp(-20 * effort(W) / NJ);
-    double r = E->cfg.nstyle ? 0.7 * task + 0.3 * style_reward(E) : task;
+    const double prog = fmax(-0.1, fmin(0.1, E->goal_d - d)); E->goal_d = d;   /* distance gained this step (m): 0.03 at 0.9 m/s */
+    const double task = 0.35 * move + 0.1 * face + 0.1 * up + 0.05 * b_exp(-2 * act2) + 0.1 * b_exp(-20 * effort(W) / NJ);
+    double r = (E->cfg.nstyle ? 0.75 * task + 0.25 * style_reward(E) : task) + 6 * prog;
     if (d < 0.3 && fabs(sp - E->goal.y) < 0.2) { r += 2; E->goals++; goto_goal(E); }
     return r;
 }
@@ -403,6 +418,7 @@ static BHD double env_begin(Env *E, const float *a) {
     World *W = &E->W; int k = 0; double act2 = 0; const float *f = E->filt;
     if (E->cfg.task == TASK_BALANCE && E->cfg.sway > 0) sway_pose(E->ref, W->t, E->cfg.sway);
     for (int j = 0; j < ACT_DIM; j++) E->filt[j] += (float)ACT_FILTER * (a[j] - E->filt[j]);
+    if (E->cfg.task == TASK_GOTO && E->cfg.clip) mref_sample(E->cfg.clip, env_phase(E), NULL, NULL, E->ref);   /* the walk cycle as the gait prior: actions act around its pose */
     for (int i = 1; i < NB; i++) {
         const BodyDef *d = BODY_DEFS + i; Vec r;
         if (d->hinge) { r = vscale(hinge_axis(d->hinge), f[k++]); }

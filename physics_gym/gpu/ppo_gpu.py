@@ -174,7 +174,7 @@ def main():
                 for v in state["hist"]: v.mul_(keep.view(-1, 1, 1))
             sync()
         t_roll += time.time() - tr0
-        steps_total += nenv * hor
+        steps_total += nenv * hor; goals_it = int((R > 1.9).sum())   # go-to: arrival bonuses (+2 on a step reward below 1) this iteration
         raw = O[:, 0:hor:4].double() * sd.double() + mean.double()
         osum += raw.sum((0, 1)); osq += (raw * raw).sum((0, 1)); on += raw.shape[0] * raw.shape[1]
         # GAE (a fall is terminal, the time limit bootstraps)
@@ -241,7 +241,7 @@ def main():
             el = time.time() - t0; cnt = int(ep_cnt)
             rw = float(ep_ret_sum) / cnt if cnt else 0; ln = float(ep_len_sum) / cnt / HZ if cnt else 0
             print(json.dumps({"event": "iter", "iter": it, "seconds": round(el), "steps": steps_total, "episode_return": round(rw, 1), "episode_s": round(ln, 2),
-                              "episodes": cnt, "clip_frac": round(int(clipped) / (a.epochs * nenv * hor), 3), "value_loss": round(float(vloss) / (a.epochs * nenv * hor), 3),
+                              "episodes": cnt, "goals_reached": goals_it, "clip_frac": round(int(clipped) / (a.epochs * nenv * hor), 3), "value_loss": round(float(vloss) / (a.epochs * nenv * hor), 3),
                               "std": round(float(torch.exp(EN["log_std"]).mean()), 3), "lp_gap": float(f"{float(lpdiff) / max(lpn, 1):.2e}"),
                               "rollout_share": round(t_roll / el, 2), "train_share": round(t_train / el, 2), "steps_per_s": round(steps_total / el)}), flush=True)
             if cnt >= 8 and rw > best:

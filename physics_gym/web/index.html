@@ -382,8 +382,9 @@ const SKILLS = {
   // floor: a floor skill, trained without a clip (env.c TASK_CRAWL), with joint ranges widened by actMul
   crawl: { label: 'Crawl', file: 'crawl_tss.json', floor: true, actMul: 2.5 },
   // goTo: physics_gym's go-to controller (env.c TASK_GOTO, trained on the GPU in the room): walks to the goal marker
-  // (Click: Goal), feeling the room through touch; its clock is the walk clip's cycle (phaseClip), with no reference
-  goto: { label: 'Go to', file: 'goto_tss.json', goTo: true, phaseClip: 'walk' },
+  // (Click: Goal), feeling the room through touch. The walk clip's cycle is its gait prior (its pose at the current
+  // phase is what the actions act around), with no pelvis support and no root to follow.
+  goto: { label: 'Go to', file: 'goto_tss.json', goTo: true, clip: 'walk' },
 };
 // Getting up (TASK_GETUP) is not a button: it takes over when she falls, or when Stand up is pressed while she
 // crawls, and hands back to Balance once she stands calmly.
@@ -519,8 +520,8 @@ function control() {
       && foot(B.L_FOOT) < 0.03 && foot(B.R_FOOT) < 0.03;   // on both feet, not mid-leap
     if (!still) calmSince = -1; else if (calmSince < 0) calmSince = world.t;
     if (calmSince >= 0 && world.t - calmSince > 1.5) {
-      if (SKILLS[skill].goTo) {   // up again: carry on to the goal
-        mode = 'skill'; policy = policies[skill]; policy?.reset(); ref = standPose(); upSince = world.t;
+      if (SKILLS[skill].goTo) {   // up again: carry on to the goal, on the walk cycle again
+        mode = 'skill'; policy = policies[skill]; policy?.reset(); clip = clips[SKILLS[skill].clip]; ref = clip.at(world.t).rel; upSince = world.t;
         setStatus(goal ? 'Going to the goal.' : ''); emit('stood', {});
       } else {
       mode = 'skill'; skill = 'balance'; policy = policies.balance; policy?.reset(); ref = standPose(); upSince = world.t;
