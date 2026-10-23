@@ -10,6 +10,7 @@ cd $G && gcc -O3 -march=native -fopenmp -ffp-contract=off -shared -fPIC -o libts
 python3 -c "import gpu_env; gpu_env.cuda_lib(); print('cuda environments built')" >> $O/build.log 2>&1
 python3 parity_env.py --n 64 --steps 600 > $O/parity_env.txt 2>&1
 python3 parity.py init:3 --device cuda --B 16 --L 64 --steps 3 > $O/parity.txt 2>&1
+[ -n "$PARITY_ONLY" ] && { echo done > $O/DONE; sleep infinity; }
 python3 bench_env.py > $O/bench_env.txt 2>&1
 STYLE=$B/data/cmu_ref.bin:getup_back1,getup_back2,getup_face1,getup_face2,getup_side1,getup_side2
 python3 ppo_gpu.py --task getup --style $STYLE --envs 4096 --horizon 64 --seconds 480 --out $O/getup_gpu > $O/ppo_gpu.log 2>&1
