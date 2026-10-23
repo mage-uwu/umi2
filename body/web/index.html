@@ -488,7 +488,7 @@ function step(now) {
     X.forEach((x, i) => { boxes[i].position.set(...x); boxes[i].quaternion.copy(toQ(Q[i])); });
     if (vrm) poseModel(Q, px);
     follow(px, dt);
-    document.getElementById('r-time').textContent = fallenAt < 0 ? `upright ${(world.t - upSince).toFixed(1)} s` : 'fallen';
+    document.getElementById('r-time').textContent = mode === 'getup' ? 'getting up' : fallenAt >= 0 ? 'fallen' : `${SKILLS[skill].floor ? 'crawling' : 'upright'} ${(world.t - upSince).toFixed(1)} s`;
     pelvisAt.set(px[0], px[1], px[2]);
   }
   resize();
@@ -537,6 +537,7 @@ const setPressed = (sel, el) => document.querySelectorAll(sel).forEach(b => b.se
 document.querySelectorAll('[data-push]').forEach(b => b.onclick = () => world && fallenAt < 0 && push(b.dataset.push));
 document.getElementById('reset').onclick = () => world && reset();
 document.getElementById('standup').onclick = () => world && mode !== 'getup' && getUp('Getting up.');
+fetch(GETUP.file, { method: 'HEAD' }).then(r => { const b = document.getElementById('standup'); b.disabled = !r.ok; if (!r.ok) b.title = 'Getting up is still training'; }).catch(() => {});
 // Look: the learned shader (art), the plain 3D render (model) or the physics boxes.
 const artCanvas = document.getElementById('art'), pelvisAt = new THREE.Vector3(0, 0.9, 0);
 let look = 'model', art = null, artLoad = null;
