@@ -6,18 +6,18 @@
 // 30 degrees, a fixed distance, the coverage lights), then the decoder runs on it: through gpu.js (WebGPU)
 // when the browser has it, else through the WebGL engine below. The camera orbits a target that follows her.
 //
-//   const art = await createShaderView({ THREE, vrm, canvas, detail: 'smooth' });
+//   const art = await createShaderView({ THREE, vrm, canvas, detail: 'crisp' });
 //   art.frame({ target, yaw, pitch });   // target: THREE.Vector3 (world), yaw/pitch in degrees
-//   art.engine                           // e.g. 'WebGPU f16 · smooth' or 'WebGL · fast'
+//   art.engine                           // e.g. 'WebGPU f16 · crisp' or 'WebGL · fast'
 //
 // Detail: 'smooth' (sharp, fine-tuned against flicker; WebGPU), 'sharp' (WebGPU), 'fast' (half resolution;
 // the WebGL engine runs this one whatever is asked).
 
 const NW = 360, NH = 640, FOV = 30, GREEN = 0x00b140;
 const CROP_PAD = 64;   // > the decoder's reach in pixels, so the crop edge never shows
-const DIRS = { fast: 'fast/', sharp: 'sharp/', smooth: 'equi/' };
+const DIRS = { fast: 'fast/', sharp: 'sharp/', smooth: 'equi/', crisp: 'crisp/' };
 
-export async function createShaderView({ THREE, vrm, canvas, detail = 'smooth', webgl = false }) {
+export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', webgl = false }) {
   let gpuAdapter = null;
   if (navigator.gpu && !webgl) {
     try { gpuAdapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' }); } catch { gpuAdapter = null; }
@@ -219,7 +219,11 @@ export async function createShaderView({ THREE, vrm, canvas, detail = 'smooth', 
     return {
       engine: `WebGPU ${gpu.f16 ? 'f16' : 'f32'} · ${DETAIL}`,
       scene,
+      // While the GPU still has frames in flight (gpu.js caps them at two), skip the draw: the physics keeps
+      // its own clock, and the next free frame shows her where she is by then.
+      get busy() { return gpu.busy; },
       frame({ target: t, yaw, pitch }) {
+        if (gpu.busy) return;
         placeCamera(t, yaw, pitch);
         renderGBufferTiles();
         const crop = cropBox(true);

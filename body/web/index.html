@@ -332,7 +332,7 @@ function setLook(next) {
 async function useArt() {
   setLook('art');
   if (!art) {
-    artLoad ||= createShaderView({ THREE, vrm, canvas: artCanvas, detail: 'smooth' });
+    artLoad ||= createShaderView({ THREE, vrm, canvas: artCanvas, detail: 'crisp' });
     try { art = await artLoad; } catch (e) { console.error(e); setStatus(`The learned shader could not start: ${e.message}`, true); artLoad = null; setLook('model'); return; }
     if (look === 'art') setLook('art');
   }
