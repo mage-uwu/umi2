@@ -74,10 +74,17 @@ button:disabled { opacity: .45; cursor: default; }
       <button id="v-boxes" aria-pressed="false">Physics</button>
       <button id="v-reset">Reset view</button>
     </div>
+    <div class="group" role="group" aria-label="Parts (for checking the render)">
+      <span class="label">Parts</span>
+      <button id="p-hair" aria-pressed="true" title="Show or hide her hair">Hair</button>
+      <button id="p-dress" aria-pressed="true" title="Show or hide the dress and top (the shorts stay)">Dress</button>
+      <button id="p-springs" aria-pressed="true" title="Simulate hair and dress (spring bones); off holds them at rest">Hair/cloth physics</button>
+    </div>
     <div class="readout" aria-live="polite">
       <span id="r-policy">controller –</span>
       <span id="r-look">3D render</span>
       <span id="r-time">upright –</span>
+      <span id="r-perf">frame –</span>
     </div>
   </footer>
 </div>
@@ -268,7 +275,9 @@ function step(now) {
   if (world) {
     while (acc >= 1 / CTRL_HZ) { control(); acc -= 1 / CTRL_HZ; }
     const renderT = world.t - 1 / CTRL_HZ + acc;   // drawn one control step behind, interpolated
-    if (vrm) springs(renderT);
+    const tS = performance.now();
+    if (vrm) { if (!parts.springs) springSettle = 1; springs(renderT); }   /* off: posed, then held at rest */
+    perf.springs += 0.05 * (performance.now() - tS - perf.springs);
     const { Q, X } = poseAt(renderT), px = X[0];
     X.forEach((x, i) => { boxes[i].position.set(...x); boxes[i].quaternion.copy(toQ(Q[i])); });
     if (vrm) poseModel(Q, px);
@@ -277,11 +286,14 @@ function step(now) {
     pelvisAt.set(px[0], px[1], px[2]);
   }
   resize();
+  const tD = performance.now();
   if (look === 'art' && art && vrm) {
     // The learned shader draws at its trained distance; zoom magnifies the finished drawing.
     artCanvas.style.transform = `scale(${(VIEW0.dist / view.dist).toFixed(3)})`;
     art.frame({ target: pelvisAt, yaw: view.yaw, pitch: view.pitch });
   } else renderer.render(scene, camera);
+  perf.draw += 0.05 * (performance.now() - tD - perf.draw);
+  if (++perf.n % 15 === 0) document.getElementById('r-perf').textContent = `hair/cloth ${perf.springs.toFixed(2)} ms · draw ${perf.draw.toFixed(2)} ms (CPU)`;
 }
 // The camera trails her pelvis at a rate independent of the frame rate, from a three-quarter side view
 // (she faces +Z, so walking carries her across the frame rather than into the lens).
@@ -337,6 +349,22 @@ async function useArt() {
     if (look === 'art') setLook('art');
   }
 }
+// Parts, for checking the render: hide the hair or the dress (by the model's material names), or hold hair and
+// cloth at rest instead of simulating them (spring bones). The shader sees only what is drawn.
+const parts = { hair: true, dress: true, springs: true }, perf = { springs: 0, draw: 0, n: 0 };
+const PART_RE = { hair: /_HAIR$/, dress: /Onepiece|Tops/ };
+function applyParts() {
+  if (!vrm) return;
+  vrm.scene.traverse(o => {
+    if (!o.isMesh) return;
+    const name = [].concat(o.material)[0].name.replace(' (Instance)', '');
+    for (const [k, re] of Object.entries(PART_RE)) if (re.test(name)) o.visible = parts[k];
+  });
+  if (!parts.springs) { vrm.springBoneManager?.reset(); }
+}
+for (const k of Object.keys(parts)) document.getElementById(`p-${k}`).onclick = e => {
+  parts[k] = !parts[k]; e.currentTarget.setAttribute('aria-pressed', String(parts[k])); applyParts(); emit('parts', { ...parts });
+};
 let lookChosen = false;   // once the viewer picks a view, start-up no longer switches it
 document.getElementById('v-art').onclick = () => { lookChosen = true; if (vrm) useArt(); };
 document.getElementById('v-model').onclick = () => { lookChosen = true; setLook('model'); };
@@ -380,21 +408,26 @@ for (const [k, s] of Object.entries(SKILLS)) {
 // window.umiBody.play(name)                   switch skill (returns a promise)
 // window.umiBody.push(dir, newtons?, body?)   dir: 'left' | 'right' | 'front' | 'back' or [x, z]
 // window.umiBody.reset()
-// window.umiBody.on(event, fn)                events: 'skill', 'reset', 'push', 'fall', 'step' (also dispatched as 'umibody:<event>')
+// window.umiBody.on(event, fn)                events: 'skill', 'reset', 'push', 'fall', 'step', 'parts' (also dispatched as 'umibody:<event>')
 // window.umiBody.state()                      { t, upright, fallen, bodies: [{ name, bone, x, q }] }
+// window.umiBody.parts({ hair, dress, springs }) show or hide hair and dress, simulate or hold hair and cloth; returns the settings
 window.umiBody = {
   get skills() { return Object.keys(SKILLS); },
   play: useSkill, push: (...a) => world && push(...a), reset: () => world && reset(),
   on(ev, fn) { (listeners[ev] ||= []).push(fn); return () => { listeners[ev] = listeners[ev].filter(f => f !== fn); }; },
   state: () => world && { t: world.t, upright: world.t - upSince, fallen: fallenAt >= 0,
     bodies: world.b.map((b, i) => ({ name: BODY_DEFS[i].name, bone: BODY_DEFS[i].bone, x: b.x.slice(), q: b.q.slice() })) },
+  parts(set = {}) {
+    for (const k of Object.keys(parts)) if (k in set) { parts[k] = !!set[k]; document.getElementById(`p-${k}`).setAttribute('aria-pressed', String(parts[k])); }
+    applyParts(); emit('parts', { ...parts }); return { ...parts };
+  },
 };
 
 requestAnimationFrame(frame);
 try {
   await useSkill('balance');
   setStatus('loading the model…');
-  await loadModel();
+  await loadModel(); applyParts();
   setStatus('loading the learned shader…');
   if (!lookChosen || look === 'art') await useArt(); else setLook(look);
   if (art) setStatus('');
