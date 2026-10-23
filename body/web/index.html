@@ -152,6 +152,13 @@ const shadowCatcher = new THREE.Mesh(new THREE.CircleGeometry(FLOOR_R, 64), new 
 for (const m of [floor, shadowCatcher]) { m.rotation.x = -Math.PI / 2; scene.add(m); }
 shadowCatcher.position.y = 0.001; shadowCatcher.receiveShadow = true;
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', paintTiles);
+// In the learned-shader view she is not in the 3D scene, so she casts no real shadow there: a soft contact
+// shadow under her instead.
+const blob = (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d');
+  const r = g.createRadialGradient(64, 64, 0, 64, 64, 64); r.addColorStop(0, 'rgba(0,0,0,.35)'); r.addColorStop(.6, 'rgba(0,0,0,.15)'); r.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = r; g.fillRect(0, 0, 128, 128);
+  const m = new THREE.Mesh(new THREE.CircleGeometry(0.45, 32), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthWrite: false }));
+  m.rotation.x = -Math.PI / 2; m.scale.set(1, 1.4, 1); m.visible = false; scene.add(m); return m; })();
 
 // ---------- the model (bytes packed in a PNG, as on the shader page) ----------
 async function unpackPng(url) {
@@ -521,8 +528,19 @@ function step(now) {
     // times the screen. The WebGL engine's canvas is scaled.)
     const zoom = VIEW0.dist / view.dist;
     artCanvas.style.transform = art.zoomInPass ? '' : `scale(${zoom.toFixed(3)})`;
-    art.frame({ target: pelvisAt, yaw: view.yaw, pitch: view.pitch, zoom });
-  } else renderer.render(scene, camera);
+    // On WebGPU the drawing is transparent around her and the 3D canvas beneath shows the floor, its camera
+    // matched to the shader's (redrawn only with a new drawing, so the two stay in step).
+    if (art.frame({ target: pelvisAt, yaw: view.yaw, pitch: view.pitch, zoom }) && art.syncCamera) {
+      const st = document.getElementById('stage');
+      art.syncCamera(camera, st.clientWidth, st.clientHeight, zoom);
+      blob.visible = true; blob.position.set(pelvisAt.x, 0.0015, pelvisAt.z);
+      renderer.render(scene, camera);
+    }
+  } else {
+    blob.visible = false;
+    if (camera.fov !== 30) { camera.fov = 30; const st = document.getElementById('stage'); camera.aspect = st.clientWidth / st.clientHeight; camera.updateProjectionMatrix(); }
+    renderer.render(scene, camera);
+  }
   perf.draw += 0.05 * (performance.now() - tD - perf.draw);
   if (++perf.n % 15 === 0) document.getElementById('r-perf').textContent = `hair/cloth ${perf.springs.toFixed(2)} ms · draw ${perf.draw.toFixed(2)} ms (CPU)`;
 }
@@ -572,13 +590,13 @@ function setLook(next) {
   setPressed('#v-art, #v-model, #v-boxes', document.getElementById({ art: 'v-art', model: 'v-model', boxes: 'v-boxes' }[next]));
   if (vrm) { vrm.scene.visible = next !== 'boxes'; (next === 'art' && art ? art.scene : scene).add(vrm.scene); }
   boxes.forEach(m => m.visible = next === 'boxes');
-  artCanvas.hidden = next !== 'art' || !art; canvas.hidden = !artCanvas.hidden;
+  artCanvas.hidden = next !== 'art' || !art; canvas.hidden = !artCanvas.hidden && !art?.syncCamera;   // WebGPU: the floor shows beneath the drawing
   document.getElementById('r-look').textContent = next === 'art' ? (art ? art.engine : 'loading the learned shader…') : next === 'boxes' ? 'physics bodies' : '3D render';
 }
 async function useArt() {
   setLook('art');
   if (!art) {
-    artLoad ||= createShaderView({ THREE, vrm, canvas: artCanvas, detail: 'crisp' });
+    artLoad ||= createShaderView({ THREE, vrm, canvas: artCanvas, detail: 'crisp', transparent: true });
     try { art = await artLoad; } catch (e) { console.error(e); setStatus(`The learned shader could not start: ${e.message}`, true); artLoad = null; setLook('model'); return; }
     if (look === 'art') setLook('art');
   }

@@ -9,6 +9,7 @@
 //   const art = await createShaderView({ THREE, vrm, canvas, detail: 'crisp' });
 //   art.frame({ target, yaw, pitch, zoom });   // target: THREE.Vector3 (world), yaw/pitch in degrees; zoom (WebGPU) magnifies
 //   art.engine                           // e.g. 'WebGPU f16 · crisp' or 'WebGL · fast'
+//   transparent: true (WebGPU) draws only her; art.syncCamera(camera, w, h, zoom) lines a scene up beneath it
 //
 // Detail: 'smooth' (sharp, fine-tuned against flicker; WebGPU), 'sharp' (WebGPU), 'fast' (half resolution;
 // the WebGL engine runs this one whatever is asked).
@@ -20,7 +21,7 @@ const TRAIN_W = 360, TRAIN_H = 640, FOV = 30, GREEN = 0x00b140;
 const CROP_PAD = 32;   // past her silhouette: the drawing inside matches computing the whole frame
 const DIRS = { fast: 'fast/', sharp: 'sharp/', smooth: 'equi/', crisp: 'crisp/' };
 
-export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', webgl = false }) {
+export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', webgl = false, transparent = false }) {
   let gpuAdapter = null;
   if (navigator.gpu && !webgl) {
     try { gpuAdapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' }); } catch { gpuAdapter = null; }
@@ -230,7 +231,7 @@ export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', w
     parts = net.parts;
     const feats = await Promise.all([0, 1, 2].map(async k => createImageBitmap(await (await fetch(`${dir()}feat${k}.png`)).blob(), { colorSpaceConversion: 'none', premultiplyAlpha: 'none' })));
     const { createGpuShader } = await import('./gpu.js');
-    gpu = await createGpuShader({ net, feats, canvas, NW, NH, skipEmpty: true, math: 'auto', px: 8, fuse: true });
+    gpu = await createGpuShader({ net, feats, canvas, NW, NH, skipEmpty: true, math: 'auto', px: 8, fuse: true, transparent });
     if (!gpu) throw new Error('WebGPU device unavailable');
     renderer.setPixelRatio(1);
     renderer.setSize(GBW * 5, GBH, false);
@@ -257,9 +258,18 @@ export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', w
       // While the GPU still has frames in flight (gpu.js caps them at two), skip the draw: the physics keeps
       // its own clock, and the next free frame shows her where she is by then.
       get busy() { return gpu.busy; },
+      // The shader's camera as seen on a canvas of css size w x h at this zoom: same position and direction, the
+      // field of view widened to the whole canvas (the drawing is fitted inside it), so a scene rendered with it
+      // lines up beneath the drawing.
+      syncCamera(cam, w, h, zoom = 1) {
+        const s = Math.min(w / NW, h / NH);
+        cam.position.copy(camera.position); cam.quaternion.copy(camera.quaternion);
+        cam.fov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(VIEW_FOV / 2)) * h / (NH * s) / zoom));
+        cam.aspect = w / h; cam.updateProjectionMatrix(); cam.updateMatrixWorld();
+      },
       frame({ target: t, yaw, pitch, zoom = 1 }) {
         const view = [zoom, (1 - zoom) / 2, (1 - zoom) / 2];   // magnified about the centre
-        if (gpu.busy) return;
+        if (gpu.busy) return false;
         placeCamera(t, yaw, pitch);
         const crop = cropBox(true);
         renderGBufferTiles(crop);
@@ -267,6 +277,7 @@ export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', w
         if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
         const top = css('--stage-top'), bottom = css('--stage-bottom');
         gpu.frame({ source: glCanvas, crop, rect: gbufRect(crop), view, pitch: THREE.MathUtils.degToRad(pitch), mode: 0, top: [top.r, top.g, top.b], bottom: [bottom.r, bottom.g, bottom.b] });
+        return true;
       },
     };
   }
