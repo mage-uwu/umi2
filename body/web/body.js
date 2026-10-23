@@ -299,6 +299,30 @@ export async function loadPolicy(url) {
   return new Policy({ ...j, theta: f32(j.theta), mean: f32(j.mean), std: f32(j.std) });
 }
 
+// A nanotss policy (ppo_tss.c): the language model's own stack, compiled to WebAssembly from nanotss_blt.c
+// (tss_wasm.c), so the browser runs exactly the network that was trained. Each policy gets its own instance,
+// since the module keeps one model and one recurrent state. The JSON holds the .tss and .head files in base64.
+export async function loadTssPolicy(url, wasmUrl = 'tss.wasm') {
+  const j = await (await fetch(url)).json();
+  const bytes = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+  const tss = bytes(j.tss), head = bytes(j.head);
+  const wasi = new Proxy({}, { get: () => () => 0 });   // no files, no console: the policy never needs them
+  const { instance } = await WebAssembly.instantiate(await (await fetch(wasmUrl)).arrayBuffer(), { wasi_snapshot_preview1: wasi });
+  const X = instance.exports; X._initialize();
+  const p = X.tss_buf(tss.length + head.length);
+  const mem = new Uint8Array(X.memory.buffer, p, tss.length + head.length); mem.set(tss); mem.set(head, tss.length);
+  const d = X.tss_load(p, tss.length, head.length);
+  if (d <= 0) throw new Error(`nanotss policy ${url} did not load (${d})`);
+  return {
+    type: 'nanotss', params: j.params, width: d,
+    reset() { X.tss_reset(); },
+    act(obs) {
+      new Float32Array(X.memory.buffer, X.tss_obs(), OBS_DIM).set(obs);
+      return Array.from(new Float32Array(X.memory.buffer, X.tss_step(), ACT_DIM));
+    },
+  };
+}
+
 // ---------- reference clips (motions_ref.bin from tools/motions_to_ref.py; mref.c) ----------
 const qslerp = (a, b, t) => { if (a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3] < 0) b = b.map(v => -v); return qnorm(a.map((v, i) => v + t * (b[i] - v))); };
 export class Clip {

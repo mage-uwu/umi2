@@ -156,21 +156,21 @@ static void gen_snapshot(const Cfg *c, const Gen *g, real *hs, real *hh) {
     memcpy(hh, g->hist, (size_t)c->n_layer * (c->K > 1 ? c->K - 1 : 1) * c->d * sizeof(real));
 }
 
-static int save_head(const char *path, const Ends *E, const float *mean, const float *sd, int d) {
+static int save_head(const char *path, const Ends *E, const float *mean, const float *sd, int d, const Critic *C) {
     FILE *f = fopen(path, "wb"); if (!f) return 1;
     fwrite("TSPH", 1, 4, f); int dims[3] = {d, OBS_DIM, ACT_DIM}; fwrite(dims, sizeof dims, 1, f);
-    fwrite(E->all, sizeof(real), E->size, f); fwrite(mean, 4, OBS_DIM, f); fwrite(sd, 4, OBS_DIM, f); return fclose(f);
+    fwrite(E->all, sizeof(real), E->size, f); fwrite(mean, 4, OBS_DIM, f); fwrite(sd, 4, OBS_DIM, f); fwrite(C->all, sizeof(real), C->size, f); return fclose(f);
 }
 
 int main(int argc, char **argv) {
-    const char *out = "tsspolicy", *task = "balance", *mref = "data/motions_ref.bin";
+    const char *load_from = NULL, *out = "tsspolicy", *task = "balance", *mref = "data/motions_ref.bin";
     double seconds = 600, lr = 3e-4, hlr = 3e-4, vlr = 1e-3, gamma = 0.95, lam = 0.95, clipr = 0.2, ent = 0, log_std0 = -1.6;
     int threads = 4, nenv = 64, hor = 64, epochs = 4, mb = 4, seed = 0, d = 64, depth = 4, trees = 4;
     TaskCfg tc = {.push_every = 2, .steps = 300, .init_noise = 0.05};
     for (int i = 1; i < argc; i++) {
         const char *a = argv[i], *v = i + 1 < argc ? argv[i + 1] : NULL;
 #define OPT(nm, dst, conv) if (!strcmp(a, nm) && v) { dst = conv(v); i++; continue; }
-        OPT("--out", out, (const char *)) OPT("--task", task, (const char *)) OPT("--mref", mref, (const char *))
+        OPT("--out", out, (const char *)) OPT("--load", load_from, (const char *)) OPT("--task", task, (const char *)) OPT("--mref", mref, (const char *))
         OPT("--seconds", seconds, atof) OPT("--lr", lr, atof) OPT("--head-lr", hlr, atof) OPT("--vlr", vlr, atof) OPT("--clip", clipr, atof)
         OPT("--log-std", log_std0, atof) OPT("--threads", threads, atoi) OPT("--envs", nenv, atoi) OPT("--horizon", hor, atoi)
         OPT("--epochs", epochs, atoi) OPT("--minibatches", mb, atoi) OPT("--seed", seed, atoi) OPT("--width", d, atoi) OPT("--depth", depth, atoi) OPT("--trees", trees, atoi)
@@ -184,7 +184,12 @@ int main(int argc, char **argv) {
      * (positions would differ between rollout and training chunks) */
     ssm_groups = trees; ssm_qknorm = 1; ssm_rope = 0; n_loops = 1;
     Cfg gc = {.vocab = 256, .d = d, .n_layer = 4, .T = trees, .D = depth, .n = 16, .p = 16, .K = 3, .group = d, .walks = 2, .temp = 1, .fw_mask = 0, .fff_gate = 1};
-    Model *m = model_new(&gc, threads, hor); g_rng = (uint64_t)seed * 7919 + 88172645463325252ULL; params_init(&gc, &m->P); model_requantize(m);
+    Model *m;
+    if (load_from) {   /* continue from a saved policy (curriculum stages): its stack, ends and observation statistics */
+        char p1[1024]; snprintf(p1, sizeof p1, "%s.tss", load_from);
+        if (!(m = load(p1, threads, hor))) { fprintf(stderr, "cannot load %s\n", p1); return 1; }
+        d = m->c.d;
+    } else { m = model_new(&gc, threads, hor); g_rng = (uint64_t)seed * 7919 + 88172645463325252ULL; params_init(&gc, &m->P); model_requantize(m); }
     byte_muon = 1; byte_muon_model = m;
     const Cfg *c = &m->c;
     Ends EN; ends_alloc(&EN, d); Ends *EG = calloc(threads, sizeof(Ends)); for (int t = 0; t < threads; t++) ends_alloc(&EG[t], d);
@@ -194,6 +199,16 @@ int main(int argc, char **argv) {
     Critic C, CG; critic_alloc(&C); critic_alloc(&CG); critic_init(&C, seed + 5); real *cm = calloc(C.size, sizeof(real)), *cv = calloc(C.size, sizeof(real));
     float mean[OBS_DIM], sd[OBS_DIM]; for (int i = 0; i < OBS_DIM; i++) { mean[i] = 0; sd[i] = 1; }
     double *osum = calloc(OBS_DIM, sizeof(double)), *osq = calloc(OBS_DIM, sizeof(double)), on = 0;
+    if (load_from) {
+        char p2[1024]; snprintf(p2, sizeof p2, "%s.head", load_from); FILE *f = fopen(p2, "rb"); char mg[4]; int dims[3];
+        if (!f || fread(mg, 1, 4, f) != 4 || memcmp(mg, "TSPH", 4) || fread(dims, sizeof dims, 1, f) != 1 || dims[0] != d || dims[1] != OBS_DIM || dims[2] != ACT_DIM
+            || fread(EN.all, sizeof(real), EN.size, f) != EN.size || fread(mean, 4, OBS_DIM, f) != OBS_DIM || fread(sd, 4, OBS_DIM, f) != OBS_DIM) { fprintf(stderr, "cannot load %s\n", p2); return 1; }
+        if (fread(C.all, sizeof(real), C.size, f) != C.size) critic_init(&C, seed + 5);   /* the critic, when saved with it */
+        fclose(f);
+        /* the loaded statistics count as a prior worth 1000 samples, so normalisation does not jump */
+        on = 1000; for (int i = 0; i < OBS_DIM; i++) { osum[i] = mean[i] * on; osq[i] = ((double)sd[i] * sd[i] + (double)mean[i] * mean[i]) * on; }
+        for (int k = 0; k < ACT_DIM; k++) EN.log_std[k] = (real)log_std0;
+    }
     /* rollout state */
     const size_t S_all = (size_t)(c->n_layer / 2) * c->T * NODES(c) * c->n * c->p, HH_all = (size_t)c->n_layer * (c->K - 1) * d;
     Env *ENV = calloc(nenv, sizeof(Env)); Gen **gen = calloc(nenv, sizeof(Gen *));
@@ -301,7 +316,7 @@ int main(int argc, char **argv) {
             fflush(stdout);
             if (ep_count >= 8 && rew > best) {
                 best = rew; char p1[1024], p2[1024]; snprintf(p1, sizeof p1, "%s.tss", out); snprintf(p2, sizeof p2, "%s.head", out);
-                save(m, p1); save_head(p2, &EN, mean, sd, d);
+                save(m, p1); save_head(p2, &EN, mean, sd, d, &C);
             }
             ep_ret_sum = ep_len_sum = 0; ep_count = 0;
         }

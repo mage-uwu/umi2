@@ -96,7 +96,7 @@ button:disabled { opacity: .45; cursor: default; }
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm';
-import { World, BODY_DEFS, B, standPose, swayPose, applyAction, observe, fallen, loadPolicy, loadClips, poseFromClip, setAssist, math, CTRL_HZ } from './body.js';
+import { World, BODY_DEFS, B, standPose, swayPose, applyAction, observe, fallen, loadPolicy, loadTssPolicy, loadClips, poseFromClip, setAssist, math, CTRL_HZ } from './body.js';
 import { createShaderView } from './shader-view.js';
 
 const status = document.getElementById('status');
@@ -186,7 +186,7 @@ const SKILLS = {
   // armTone: shoulder and elbow muscle tone (relaxed arms hang looser)
   balance: { label: 'Balance', file: 'balance.json', sway: 0.012, armTone: 0.4 },
   // assist: the pelvis support spring the controller was trained with (1 = full); 0 once it walks unaided
-  walk: { label: 'Walk (assisted)', file: 'walk.json', clip: 'walk', assist: 0.07 },
+  walk: { label: 'Walk (assisted)', file: 'walk_tss.json', clip: 'walk', assist: 0.07 },
 };
 let world, ref, policy = null, skill = 'balance', upSince = 0, fallenAt = -1, listeners = {}, clips = null, clip = null;
 const policies = {};
@@ -360,11 +360,11 @@ addEventListener('keydown', e => {
 
 async function useSkill(name) {
   const s = SKILLS[name]; if (!s) throw new Error(`no skill named ${name}`);
-  policies[name] ||= await loadPolicy(s.file);
+  policies[name] ||= s.file.includes('tss') ? await loadTssPolicy(s.file) : await loadPolicy(s.file);
   if (s.clip) { clips ||= await loadClips('motions_ref.json'); clip = clips[s.clip]; } else clip = null;
   skill = name; policy = policies[name];
   setPressed('[data-skill]', document.querySelector(`[data-skill="${name}"]`));
-  document.getElementById('r-policy').textContent = `${policy.type === 'ssm' ? 'SSM-tree' : policy.type.toUpperCase()} · ${policy.params.toLocaleString()} weights${s.assist ? ` · pelvis support ${Math.round(s.assist * 100)}%` : ''}`;
+  document.getElementById('r-policy').textContent = `${policy.type === 'nanotss' ? 'nanotss (ternary SSM-tree + FFF, WebAssembly)' : policy.type === 'ssm' ? 'SSM-tree' : policy.type.toUpperCase()} · ${policy.params.toLocaleString()} weights${s.assist ? ` · pelvis support ${Math.round(s.assist * 100)}%` : ''}`;
   reset(); emit('skill', { skill: name });
 }
 const skillBox = document.getElementById('skills');
