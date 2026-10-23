@@ -1,0 +1,874 @@
+<title>physics-gym</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700&family=Shippori+Mincho:wght@600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* Layout: one full-height stage where she stands under live physics; a control strip at the foot
+   (skill, pushes, view, readouts). Palette and faces follow the ANIME NEURAL SHADER page. */
+:root {
+  --stage-top: #eef0fb; --stage-bottom: #d9dcf2; --floor: #c9cdea; --tile-a: #8fa6e6; --tile-b: #9cb1ea; --tile-line: #c3d0f6;
+  --ink: #1d2150; --muted: #5d6293; --gold: #a57a1f; --chip: rgba(255,255,255,.72); --line: rgba(29,33,80,.16);
+  --alert: #b2384b;
+  --display: 'Shippori Mincho', 'Hiragino Mincho ProN', Georgia, serif;
+  --body: 'Zen Kaku Gothic New', 'Hiragino Sans', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --stage-top: #0e1030; --stage-bottom: #1d2052; --floor: #2a2e6a; --tile-a: #23347e; --tile-b: #283b8a; --tile-line: #3b51aa;
+  --ink: #eef0ff; --muted: #a3a8dc; --gold: #e2bd62; --chip: rgba(20,22,60,.72); --line: rgba(238,240,255,.16); --alert: #ff8095; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --stage-top: #0e1030; --stage-bottom: #1d2052; --floor: #2a2e6a; --tile-a: #23347e; --tile-b: #283b8a; --tile-line: #3b51aa;
+  --ink: #eef0ff; --muted: #a3a8dc; --gold: #e2bd62; --chip: rgba(20,22,60,.72); --line: rgba(238,240,255,.16); --alert: #ff8095; color-scheme: dark }
+html, body { height: 100%; }
+body { background: var(--stage-bottom); color: var(--ink); font-family: var(--body); overflow: hidden; }
+.app { height: 100%; display: grid; grid-template-rows: auto 1fr auto; background: linear-gradient(var(--stage-top), var(--stage-bottom)); }
+header { display: flex; align-items: baseline; justify-content: space-between; gap: 6px 12px; flex-wrap: wrap;
+  padding-block: 14px 0; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1 { margin: 0; font-family: var(--display); font-size: clamp(1.25rem, 3.5vw, 1.7rem); text-wrap: balance; }
+.hint { color: var(--muted); font-size: .85rem; max-width: 62ch; }
+#stage { position: relative; min-height: 0; touch-action: none; cursor: crosshair; overflow: hidden; }
+#view, #art { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#art { transform-origin: 50% 50%; }
+#view[hidden], #art[hidden] { display: none; }
+#status { position: absolute; inset: auto 0 12px; text-align: center; color: var(--muted); font-size: .8rem; font-family: var(--mono); }
+#status.alert { color: var(--alert); }
+footer { display: flex; align-items: center; gap: 12px 18px; flex-wrap: wrap; padding-block: 10px 14px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.label { font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-right: 2px; }
+button { font: inherit; font-size: .85rem; color: var(--ink); background: var(--chip); border: 1px solid var(--line);
+  border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+button[aria-pressed="true"] { border-color: var(--gold); color: var(--gold); }
+button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+button:disabled { opacity: .45; cursor: default; }
+.readout { font-family: var(--mono); font-size: .8rem; font-variant-numeric: tabular-nums; display: grid; gap: 2px; margin-left: auto; min-width: 14em; }
+@media (max-width: 560px) { .readout { margin-left: 0; } }
+@media (prefers-reduced-motion: reduce) { #status { transition: none; } }
+</style>
+
+<div class="app">
+  <header>
+    <h1>physics-gym</h1>
+    <span class="hint">She moves under real physics: 14 rigid bodies, 45 kg, a muscle at every joint, driven 30 times a second by a small learned SSM-tree controller. Click the stage to push her from that side; scroll to turn the view, Shift + scroll to raise it; zoom with + and &minus;, Ctrl + scroll or a pinch (close up, the view centres on her face).</span>
+  </header>
+  <div id="stage" tabindex="0" aria-label="Live physics view; click to push her">
+    <canvas id="view"></canvas>
+    <canvas id="art" hidden></canvas>
+    <div id="status">loading model and controller…</div>
+  </div>
+  <footer>
+    <div class="group" role="group" aria-label="Skill">
+      <span class="label">Skill</span>
+      <span id="skills" class="group"></span>
+      <button id="standup" hidden title="The get-up controller takes over from wherever she is">Stand up</button>
+    </div>
+    <div class="group" role="group" aria-label="Push">
+      <span class="label">Push</span>
+      <button data-push="left">Left</button><button data-push="right">Right</button>
+      <button data-push="front">Front</button><button data-push="back">Back</button>
+      <button id="reset">Reset</button>
+      <span class="label" style="margin-left:8px">Click</span>
+      <button id="c-push" aria-pressed="true" title="A click pushes her from that side">Push</button><button id="c-grab" aria-pressed="false" title="Press on a body part and drag it">Grab</button>
+    </div>
+    <div class="group" role="group" aria-label="View">
+      <span class="label">View</span>
+      <button id="v-art" aria-pressed="false" title="Drawn by the ANIME NEURAL SHADER's learned shader">Learned shader</button>
+      <button id="v-model" aria-pressed="true">3D</button>
+      <button id="v-boxes" aria-pressed="false">Physics</button>
+      <button id="v-in" title="Zoom in (+, Ctrl + scroll, pinch)">+</button><button id="v-out" title="Zoom out (-)">&minus;</button>
+      <button id="v-reset">Reset view</button>
+    </div>
+    <div class="group" role="group" aria-label="Face">
+      <span class="label">Face</span>
+      <button id="f-follow" aria-pressed="true" title="Her eyes follow the mouse (and her head turns a little); off, she looks at you">Eyes follow mouse</button>
+      <button id="f-blink" title="Blink (B)">Blink</button>
+      <button id="f-mouth" aria-pressed="false" title="Open or close her mouth (M)">Mouth</button>
+    </div>
+    <div class="group" role="group" aria-label="Parts (for checking the render)">
+      <span class="label">Parts</span>
+      <button id="p-hair" aria-pressed="true" title="Show or hide her hair">Hair</button>
+      <button id="p-dress" aria-pressed="true" title="Show or hide the dress and top (the shorts stay)">Dress</button>
+      <button id="p-springs" aria-pressed="true" title="Simulate hair and dress (spring bones); off holds them at rest">Hair/cloth physics</button>
+    </div>
+    <div class="readout" aria-live="polite">
+      <span id="r-policy">controller –</span>
+      <span id="r-look">3D render</span>
+      <span id="r-time">upright –</span>
+      <span id="r-perf">frame –</span>
+    </div>
+  </footer>
+</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/",
+  "@pixiv/three-vrm": "https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@3.5.5/lib/three-vrm.module.min.js"
+} }
+</script>
+<script type="module">
+// The character is a physics body (body.js, the twin of the C trainer's body.c). Every 1/30 s the active
+// skill's controller reads the body state and sets joint targets; the physics advances; the VRM bones copy
+// the bodies' rotations. Hooks for other pages: window.umiBody (see the bottom of this script).
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm';
+import { World, setRoom, BODY_DEFS, B, standPose, swayPose, crawlPose, applyAction, observe, fallen, loadPolicy, loadTssPolicy, loadClips, poseFromClip, setAssist, math, CTRL_HZ } from './body.js';
+import { createShaderView } from './shader-view.js';
+
+const status = document.getElementById('status');
+const setStatus = (t, alert = false) => { status.textContent = t; status.classList.toggle('alert', alert); };
+const canvas = document.getElementById('view');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setClearColor(0x000000, 0);
+renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.shadowMap.enabled = true;
+const scene = new THREE.Scene();
+scene.add(new THREE.AmbientLight(0xffffff, 1.2));
+const sun = new THREE.DirectionalLight(0xffffff, 2.2);
+sun.position.set(1, 3, 2); sun.castShadow = true;
+sun.shadow.mapSize.set(1024, 1024); Object.assign(sun.shadow.camera, { left: -1.5, right: 1.5, top: 1.5, bottom: -1.5, near: 0.1, far: 8 });
+scene.add(sun, sun.target);
+const camera = new THREE.PerspectiveCamera(30, 1, 0.05, 50);
+const css = n => new THREE.Color().setStyle(getComputedStyle(document.documentElement).getPropertyValue(n).trim());
+// Floor: a soft disc of the floor colour fading into the stage gradient, and a shadow catcher above it.
+const fade = (() => { const c = document.createElement('canvas'); c.width = c.height = 256; const g = c.getContext('2d');
+  const r = g.createRadialGradient(128, 128, 0, 128, 128, 128); r.addColorStop(0, 'rgba(255,255,255,1)'); r.addColorStop(.55, 'rgba(255,255,255,.75)'); r.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = r; g.fillRect(0, 0, 256, 256); return new THREE.CanvasTexture(c); })();
+// Blue floor tiles, 0.5 m, drawn into a canvas (two tones in a checker with lighter grout); the disc follows
+// her but the tiles stay put in the world, so her travel shows.
+const TILE = 0.5, FLOOR_R = 4;
+const tiles = (() => { const c = document.createElement('canvas'); c.width = c.height = 256; return new THREE.CanvasTexture(c); })();
+tiles.wrapS = tiles.wrapT = THREE.RepeatWrapping; tiles.repeat.set(2 * FLOOR_R / TILE / 2, 2 * FLOOR_R / TILE / 2); tiles.colorSpace = THREE.SRGBColorSpace;
+tiles.anisotropy = 4;
+function paintTiles() {   // one canvas holds 2 x 2 tiles
+  const g = tiles.image.getContext('2d'), h = 128, hex = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) { g.fillStyle = hex((i + j) % 2 ? '--tile-b' : '--tile-a'); g.fillRect(i * h, j * h, h, h); }
+  g.strokeStyle = hex('--tile-line'); g.lineWidth = 4;
+  for (const x of [0, h, 2 * h]) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, 2 * h); g.stroke(); g.beginPath(); g.moveTo(0, x); g.lineTo(2 * h, x); g.stroke(); }
+  tiles.needsUpdate = true;
+}
+paintTiles();
+const floor = new THREE.Mesh(new THREE.CircleGeometry(FLOOR_R, 64), new THREE.MeshBasicMaterial({ map: tiles, alphaMap: fade, transparent: true, depthWrite: false }));
+const shadowCatcher = new THREE.Mesh(new THREE.CircleGeometry(FLOOR_R, 64), new THREE.ShadowMaterial({ opacity: .22 }));
+for (const m of [floor, shadowCatcher]) { m.rotation.x = -Math.PI / 2; scene.add(m); }
+shadowCatcher.position.y = 0.001; shadowCatcher.receiveShadow = true;
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', paintTiles);
+// The room (physics_gym): room.json's boxes, given to the physics (body.js setRoom, the table body.c and the
+// CUDA build collide with) and drawn here box for box, so what she touches is exactly what is drawn. With a
+// room the floor is one fixed tiled square over the room instead of the disc that follows her.
+const roomGroup = new THREE.Group(); scene.add(roomGroup);
+let roomDoc = null;
+try { const r = await fetch('room.json'); if (r.ok) roomDoc = await r.json(); } catch (e) { roomDoc = null; }
+if (roomDoc) {
+  setRoom(roomDoc.boxes);
+  const edgeMat = new THREE.LineBasicMaterial({ color: 0x2a2e4a, transparent: true, opacity: .35 });
+  for (const b of roomDoc.boxes) {
+    const see = b.kind === 'outer' ? .28 : b.kind === 'tunnel' ? .8 : 1;   // see-through outer walls and tunnels keep her in view
+    const mat = new THREE.MeshStandardMaterial({ color: new THREE.Color(b.color), roughness: b.kind === 'foam' ? 1 : .75, transparent: see < 1, opacity: see, depthWrite: see === 1 });
+    const geo = new THREE.BoxGeometry(2 * b.h[0], 2 * b.h[1], 2 * b.h[2]);
+    const m = new THREE.Mesh(geo, mat); m.position.set(...b.c); m.quaternion.set(b.q[1], b.q[2], b.q[3], b.q[0]);
+    m.castShadow = see === 1; m.receiveShadow = true; m.userData = { feature: b.feature, kind: b.kind };
+    m.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo), edgeMat)); roomGroup.add(m);
+  }
+  const [x0, x1, z0, z1] = roomDoc.bounds;
+  for (const m of [floor, shadowCatcher]) { m.geometry.dispose(); m.geometry = new THREE.PlaneGeometry(x1 - x0, z1 - z0); m.position.set((x0 + x1) / 2, m.position.y, (z0 + z1) / 2); }
+  floor.material.alphaMap = null; floor.material.needsUpdate = true;
+  tiles.repeat.set((x1 - x0) / (2 * TILE), (z1 - z0) / (2 * TILE)); tiles.offset.set(0, 0);
+  Object.assign(sun.shadow.camera, { left: -3, right: 3, top: 3, bottom: -3, far: 12 }); sun.shadow.mapSize.set(2048, 2048);
+}
+// In the learned-shader view she is not in the 3D scene, so she casts no real shadow there: a soft contact
+// shadow under her instead.
+const blob = (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d');
+  const r = g.createRadialGradient(64, 64, 0, 64, 64, 64); r.addColorStop(0, 'rgba(0,0,0,.35)'); r.addColorStop(.6, 'rgba(0,0,0,.15)'); r.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = r; g.fillRect(0, 0, 128, 128);
+  const m = new THREE.Mesh(new THREE.CircleGeometry(0.45, 32), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthWrite: false }));
+  m.rotation.x = -Math.PI / 2; m.scale.set(1, 1.4, 1); m.visible = false; scene.add(m); return m; })();
+
+// ---------- the model (bytes packed in a PNG, as on the shader page) ----------
+async function unpackPng(url) {
+  const bmp = await createImageBitmap(await (await fetch(url)).blob(), { colorSpaceConversion: 'none', premultiplyAlpha: 'none' });
+  const c = new OffscreenCanvas(bmp.width, bmp.height), ctx = c.getContext('2d'); ctx.drawImage(bmp, 0, 0);
+  const px = ctx.getImageData(0, 0, bmp.width, bmp.height).data, rgb = new Uint8Array(bmp.width * bmp.height * 3);
+  for (let i = 0, j = 0; i < px.length; i += 4) { rgb[j++] = px[i]; rgb[j++] = px[i + 1]; rgb[j++] = px[i + 2]; }
+  const n = rgb[0] | (rgb[1] << 8) | (rgb[2] << 16) | (rgb[3] << 24);
+  return rgb.buffer.slice(4, 4 + n);
+}
+let vrm = null;
+async function loadModel() {
+  const loader = new GLTFLoader(); loader.register(p => new VRMLoaderPlugin(p));
+  const gltf = await loader.parseAsync(await unpackPng('model.vrm.png'), '');
+  vrm = gltf.userData.vrm; VRMUtils.rotateVRM0(vrm);
+  vrm.scene.traverse(o => { o.frustumCulled = false; if (o.isMesh) o.castShadow = true; });
+  scene.add(vrm.scene);
+  // Spring bones (hair, dress) simulate in a frame that travels with her hips without turning: by default
+  // they run in world space, where their per-step drag acts like a headwind as soon as she walks.
+  vrm.scene.add(springFrame);
+  for (const j of vrm.springBoneManager?.joints ?? []) j.center = springFrame;
+  springSettle = 2;
+}
+// The model's body mesh has no skin where the dress covers it (VRoid removes hidden faces): from under the bust
+// down to the waist there is a hole (through it the dark-maroon toon outline of the inside shows), and the body
+// has no underwear on top. With the dress hidden this fills the hole from its own two edge loops, skinned with
+// weights blended from the edges, and adds a strapless bandeau in that maroon over the chest. Shown only while
+// the dress is hidden.
+let filler = null;
+function buildFiller() {
+  let body = null;
+  vrm.scene.traverse(o => { if (!body && o.isSkinnedMesh && /Body_00_SKIN/.test([].concat(o.material)[0].name)) body = o; });
+  if (!body) return null;
+  const g = body.geometry, P = g.attributes.position, UV = g.attributes.uv, SI = g.attributes.skinIndex, SW = g.attributes.skinWeight, idx = g.index.array;
+  const weld = new Map(), id = new Int32Array(P.count);
+  for (let i = 0; i < P.count; i++) { const k = `${P.getX(i).toFixed(5)},${P.getY(i).toFixed(5)},${P.getZ(i).toFixed(5)}`; if (!weld.has(k)) weld.set(k, i); id[i] = weld.get(k); }
+  const count = new Map(), first = new Map();
+  for (let t = 0; t < idx.length; t += 3) for (let e = 0; e < 3; e++) {
+    const a = idx[t + e], c = idx[t + (e + 1) % 3], ka = id[a], kc = id[c], k = ka < kc ? `${ka}_${kc}` : `${kc}_${ka}`;
+    count.set(k, (count.get(k) || 0) + 1); if (!first.has(k)) first.set(k, [a, c]);
+  }
+  // Boundary edges around the torso, split into the bra's lower edge and the stomach's upper edge.
+  const torso = i => Math.abs(P.getX(i)) < 0.25 && P.getY(i) > 1.0 && P.getY(i) < 1.26;
+  const loops = { lo: [], hi: [] };
+  for (const [k, n] of count) if (n === 1) { const [a, c] = first.get(k); if (torso(a) && torso(c)) loops[(P.getY(a) + P.getY(c)) / 2 < 1.12 ? 'lo' : 'hi'].push([a, c]); }
+  if (loops.lo.length < 8 || loops.hi.length < 8) return null;
+  let cx = 0, cz = 0; for (const [a] of loops.lo) { cx += P.getX(a); cz += P.getZ(a); } cx /= loops.lo.length; cz /= loops.lo.length;
+  const ang = i => Math.atan2(P.getZ(i) - cz, P.getX(i) - cx);
+  // A loop resampled at N angles: position, uv and skin weights interpolated along the edge the ray crosses (the
+  // innermost crossing, so the fill hugs the ribs and the bust stays in front). The uv moves a little into the
+  // edge's triangle: right at the edge the texture is partly transparent, and the material cuts those pixels.
+  const N = 72;
+  const sample = edges => Array.from({ length: N }, (_, k) => {
+    const th = -Math.PI + 2 * Math.PI * (k + 0.5) / N; let best = null;
+    for (const [a, c] of edges) {
+      let A = ang(a), C = ang(c), T = th;
+      if (Math.abs(C - A) > Math.PI) { if (C < A) C += 2 * Math.PI; else A += 2 * Math.PI; if (T < Math.min(A, C)) T += 2 * Math.PI; }
+      if (T < Math.min(A, C) || T > Math.max(A, C) || A === C) continue;
+      const s = (T - A) / (C - A), x = P.getX(a) + s * (P.getX(c) - P.getX(a)), z = P.getZ(a) + s * (P.getZ(c) - P.getZ(a)), r = Math.hypot(x - cx, z - cz);
+      if (!best || r < best.r) best = { r, a, c, s };
+    }
+    if (!best) return null;
+    const { a, c, s } = best, mix = (f, n) => Array.from({ length: n }, (_, j) => f(a, j) + s * (f(c, j) - f(a, j)));
+    const w = new Map();
+    for (const [v, f] of [[a, 1 - s], [c, s]]) for (let j = 0; j < 4; j++) { const bi = SI.getComponent(v, j), bw = SW.getComponent(v, j) * f; if (bw > 0) w.set(bi, (w.get(bi) || 0) + bw); }
+    return { p: mix((v, j) => P.getComponent(v, j), 3), n: mix((v, j) => g.attributes.normal.getComponent(v, j), 3), w };
+  });
+  const lo = sample(loops.lo), hi = sample(loops.hi);
+  if (lo.some(q => !q) || hi.some(q => !q)) return null;
+  const skinMat0 = [].concat(body.material)[0];
+  let fz = -1e9; for (const q of hi) fz = Math.max(fz, q.p[2]);
+  // the bra's texture point: the top's fabric at the front of the chest (it also names the bra's part)
+  let tops = null; vrm.scene.traverse(o => { if (!tops && o.isSkinnedMesh && /Tops_01_CLOTH_01/.test([].concat(o.material)[0].name)) tops = o; });
+  const topsName = tops ? [].concat(tops.material)[0].name : skinMat0.name;
+  let braUV = [0, 0];
+  // skin colour: one texel (neighbouring columns can map far apart in the texture), 2 cm below the front of the
+  // stomach's edge, inside the skin and the tone the seam meets where it shows most
+  const front = lo.reduce((q, r) => r.p[2] > q.p[2] ? r : q);
+  let skinUV = [0, 0]; { let best = 1e9; for (let i = 0; i < P.count; i++) { const d = (P.getX(i) - front.p[0]) ** 2 + (P.getY(i) - front.p[1] + 0.02) ** 2 + (P.getZ(i) - front.p[2]) ** 2; if (d < best) { best = d; skinUV = [UV.getX(i), UV.getY(i)]; } } }
+  if (tops) { const TP = tops.geometry.attributes.position, TU = tops.geometry.attributes.uv; let best = 1e9;
+    for (let i = 0; i < TP.count; i++) { const d = (TP.getX(i) - cx) ** 2 + (TP.getY(i) - 1.23) ** 2 + (TP.getZ(i) - fz - 0.03) ** 2; if (d < best) { best = d; braUV = [TU.getX(i), TU.getY(i)]; } } }
+  // Rings from the bra edge (t = 1) down to the stomach edge (t = 0); the bra continues, in its own colour, to
+  // t = BRA, where the band turns to skin (a seam: the ring is doubled with the skin's texture). The end rings
+  // reach a little past each edge, tucked 3 mm inward, so no seam shows.
+  const tc0 = t => Math.min(1, Math.max(0, t));
+  const BRA = 0.55, RINGS = [[1.15, 'hi'], [1, 'hi'], [0.78, 'hi'], [BRA, 'hi'], [BRA, 'lo'], [0.3, 'lo'], [0, 'lo'], [-0.15, 'lo']];
+  const pos = [], uvs = [], si = [], sw = [], nrm = [];
+  for (const [t, tex] of RINGS) for (let k = 0; k < N; k++) {
+    const L = lo[k], H = hi[k];
+    const q = L.p.map((v, j) => v + t * (H.p[j] - v));
+    if (t > 1 || t < 0) { const dx = q[0] - cx, dz = q[2] - cz, r = Math.hypot(dx, dz); q[0] -= 0.003 * dx / r; q[2] -= 0.003 * dz / r; }
+    pos.push(...q);
+    const nn = L.n.map((v, j) => v + tc0(t) * (H.n[j] - v)), nl = Math.hypot(...nn); nrm.push(...nn.map(v => v / nl));   // shading continues the edges'
+    uvs.push(...(tex === 'hi' ? braUV : skinUV));
+    const w = new Map();
+    const tc = Math.min(1, Math.max(0, t));
+    for (const [m, f] of [[L.w, 1 - tc], [H.w, tc]]) for (const [bi, bw] of m) w.set(bi, (w.get(bi) || 0) + bw * f);
+    const top = [...w].sort((x, y) => y[1] - x[1]).slice(0, 4), tot = top.reduce((q, e) => q + e[1], 0);
+    for (let j = 0; j < 4; j++) { si.push(top[j]?.[0] ?? 0); sw.push(top[j] ? top[j][1] / tot : 0); }
+  }
+  const braIdx = [], skinIdx = [];
+  for (let r = 0; r + 1 < RINGS.length; r++) {
+    if (RINGS[r][0] === RINGS[r + 1][0]) continue;   // the seam
+    const out = RINGS[r][1] === 'hi' ? braIdx : skinIdx;
+    for (let k = 0; k < N; k++) { const a = r * N + k, b = r * N + (k + 1) % N, c = (r + 1) * N + k, d = (r + 1) * N + (k + 1) % N; out.push(a, c, b, b, c, d); }
+  }
+  // Face outward: flip the winding if a normal points at the torso's axis.
+  const probe = new THREE.BufferGeometry(); probe.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); probe.setIndex(skinIdx); probe.computeVertexNormals();
+  const k0 = (RINGS.length - 2) * N, n0 = probe.attributes.normal;
+  if (n0.getX(k0) * (pos[3 * k0] - cx) + n0.getZ(k0) * (pos[3 * k0 + 2] - cz) < 0) for (const arr of [braIdx, skinIdx]) for (let i = 0; i < arr.length; i += 3) [arr[i + 1], arr[i + 2]] = [arr[i + 2], arr[i + 1]];
+  // The bandeau over the chest: the body's own chest triangles from the bra line up, lifted 1.5 mm along their
+  // normals, in the same material as the band.
+  const N0 = g.attributes.normal, remap = new Map(), TOP = 1.29;
+  const chest = i => Math.abs(P.getX(i)) < 0.14 && P.getY(i) > 1.13 && P.getY(i) < TOP;
+  const addVert = i => {
+    if (remap.has(i)) return remap.get(i);
+    const v = pos.length / 3; remap.set(i, v);
+    pos.push(P.getX(i) + 0.0015 * N0.getX(i), P.getY(i) + 0.0015 * N0.getY(i), P.getZ(i) + 0.0015 * N0.getZ(i));
+    nrm.push(N0.getX(i), N0.getY(i), N0.getZ(i));
+    uvs.push(...braUV);
+    for (let j = 0; j < 4; j++) { si.push(SI.getComponent(i, j)); sw.push(SW.getComponent(i, j)); }
+    return v;
+  };
+  for (let t = 0; t < idx.length; t += 3) if (chest(idx[t]) && chest(idx[t + 1]) && chest(idx[t + 2])) braIdx.push(addVert(idx[t]), addVert(idx[t + 1]), addVert(idx[t + 2]));
+  const fg = new THREE.BufferGeometry();
+  fg.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  fg.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+  fg.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(si, 4));
+  fg.setAttribute('skinWeight', new THREE.Float32BufferAttribute(sw, 4));
+  fg.setAttribute('normal', new THREE.Float32BufferAttribute(nrm, 3));
+  fg.setIndex([...skinIdx, ...braIdx]);
+  // Materials: the body's for the skin; for the bra, the body's toon material without its texture, in the
+  // maroon of her outline (the colour the open torso showed), named as the top so the learned shader reads cloth.
+  const [skinMat, skinOutline] = body.material, braMat = skinMat.clone(), braOutline = skinOutline.clone();
+  for (const M of [braMat, braOutline]) {
+    M.map = null; M.shadeMultiplyTexture = null; M.color.setHex(0x461720); M.shadeColorFactor.setHex(0x2a0c12);
+    M.name = topsName; M.needsUpdate = true;
+  }
+  const mats = [skinMat, skinOutline, braMat, braOutline];
+  for (const gr of g.groups) { fg.addGroup(0, skinIdx.length, gr.materialIndex); fg.addGroup(skinIdx.length, braIdx.length, gr.materialIndex + 2); }
+  const m = new THREE.SkinnedMesh(fg, mats);
+  m.bind(body.skeleton, body.bindMatrix); m.frustumCulled = false; m.castShadow = true; m.name = 'torso filler'; m.userData.standIn = true;
+  body.parent.add(m);
+  return m;
+}
+const springFrame = new THREE.Object3D();
+const bone = n => vrm.humanoid.getNormalizedBoneNode(n);
+const FINGERS = ['Thumb', 'Index', 'Middle', 'Ring', 'Little'].flatMap(f => ['Proximal', 'Intermediate', 'Distal'].map(s => f + s));
+const HIPS_REST = [0, 0.928, 0.004];
+const toQ = q => new THREE.Quaternion(q[1], q[2], q[3], q[0]);
+// Body world rotations -> normalized bone local rotations (bones without a body keep their rest rotation).
+const wrist = { [B.L_FARM]: 0, [B.R_FARM]: 0 };
+function poseModel(Q, pelvisX) {
+  const local = (child, parent) => toQ(parent === null ? Q[child] : math.qmul(math.qconj(Q[parent]), Q[child]));
+  const set = (name, child, parent) => { const b = bone(name); if (b) b.quaternion.copy(local(child, parent)); };
+  set('hips', B.PELVIS, null); set('spine', B.SPINE, B.PELVIS); set('chest', B.CHEST, B.SPINE); set('head', B.HEAD, B.CHEST);
+  set('leftUpperArm', B.L_UARM, B.CHEST); set('leftLowerArm', B.L_FARM, B.L_UARM);
+  set('rightUpperArm', B.R_UARM, B.CHEST); set('rightLowerArm', B.R_FARM, B.R_UARM);
+  set('leftUpperLeg', B.L_THIGH, B.PELVIS); set('leftLowerLeg', B.L_SHIN, B.L_THIGH); set('leftFoot', B.L_FOOT, B.L_SHIN);
+  set('rightUpperLeg', B.R_THIGH, B.PELVIS); set('rightLowerLeg', B.R_SHIN, B.R_THIGH); set('rightFoot', B.R_FOOT, B.R_SHIN);
+  bone('neck')?.quaternion.copy(face.neck);   // the gaze turns the neck a little (drawn only, not simulated)
+  // wrists: a hand on the floor is drawn bent back so the palm lies flat, fingers forward (the physics has no
+  // wrist; the hand is part of the forearm box)
+  for (const [n, i, sg] of [['leftHand', B.L_FARM, 1], ['rightHand', B.R_FARM, -1]]) {
+    const near = world && (mode === 'getup' || SKILLS[skill].floor) ? Math.min(1, Math.max(0, (0.12 - world.lowest(i)) / 0.1)) : 0;
+    wrist[i] += (near - wrist[i]) * 0.3;
+    bone(n)?.rotation.set(0, 0, sg * 1.4 * wrist[i]);
+  }
+  for (const n of ['upperChest', 'leftShoulder', 'rightShoulder', 'leftToes', 'rightToes']) bone(n)?.quaternion.identity();
+  for (const side of ['left', 'right']) for (const f of FINGERS) {
+    const c = f.startsWith('Thumb') ? 0.1 : f.endsWith('Proximal') ? 0.35 : 0.3;
+    bone(side + f)?.rotation.set(0, 0, side === 'left' ? -c : c);
+  }
+  const off = math.qrot(Q[B.PELVIS], math.vsub(BODY_DEFS[0].center, HIPS_REST));
+  bone('hips').position.set(...math.vsub(pelvisX, off));
+  springFrame.position.set(pelvisX[0], 0, pelvisX[2]); springFrame.updateMatrixWorld();
+}
+
+// ---------- physics boxes (the Physics view) ----------
+const boxes = BODY_DEFS.map(d => {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(2 * d.half[0], 2 * d.half[1], 2 * d.half[2]),
+    new THREE.MeshStandardMaterial({ color: css('--gold'), roughness: .6, transparent: true, opacity: .85 }));
+  m.castShadow = true; m.visible = false; scene.add(m); return m;
+});
+
+// ---------- skills ----------
+// Each skill: a controller (policy JSON from the C trainer) and what its actions offset: the stand pose,
+// or a motion clip followed in time (the clip's phase is part of what the controller sees).
+const SKILLS = {
+  // sway: relaxed postural sway (rad at the ankles), counterbalanced at the hips and spine
+  // armTone: shoulder and elbow muscle tone (relaxed arms hang looser)
+  balance: { label: 'Balance', file: 'balance.json', sway: 0.012, armTone: 0.4 },
+  // assist: the pelvis support spring the controller was trained with (1 = full); 0 once it walks unaided
+  walk: { label: 'Walk', file: 'walk_tss.json', clip: 'walk' },
+  // floor: a floor skill, trained without a clip (env.c TASK_CRAWL), with joint ranges widened by actMul
+  crawl: { label: 'Crawl', file: 'crawl_tss.json', floor: true, actMul: 2.5 },
+};
+// Getting up (TASK_GETUP) is not a button: it takes over when she falls, or when Stand up is pressed while she
+// crawls, and hands back to Balance once she stands calmly.
+const GETUP = { file: 'getup_tss.json', actMul: 2.5 };
+let mode = 'skill', getupPolicy = null, getupSince = 0, calmSince = -1;
+let world, ref, policy = null, skill = 'balance', upSince = 0, fallenAt = -1, listeners = {}, clips = null, clip = null;
+const policies = {};
+const emit = (ev, detail) => { (listeners[ev] || []).forEach(f => { try { f(detail); } catch (e) { console.error(e); } }); dispatchEvent(new CustomEvent('umibody:' + ev, { detail })); };
+// Body states at recent control steps, so the drawing and the hair can sample any moment between them.
+let hist = [];
+function poseAt(t) {
+  let i = hist.length - 1; while (i > 0 && hist[i - 1].t >= t) i--;
+  const B1 = hist[i], A = hist[Math.max(0, i - 1)];
+  const w = B1.t > A.t ? Math.min(1, Math.max(0, (t - A.t) / (B1.t - A.t))) : 1, Q = [], X = [];
+  A.s.forEach((p, k) => {
+    const q = new THREE.Quaternion().slerpQuaternions(toQ(p.q), toQ(B1.s[k].q), w);
+    Q.push([q.w, q.x, q.y, q.z]); X.push(p.x.map((v, j) => v + (B1.s[k].x[j] - v) * w));
+  });
+  return { Q, X };
+}
+// Hair and dress are the model's spring bones. They step through simulated time in substeps of at most
+// 1/60 s, with the body posed where it was at each substep, so they feel her true motion at any frame
+// rate. After she is teleported (reset, skill change) they settle in place instead of whipping.
+let springT = 0, springSettle = 0;
+function springs(t) {
+  if (springSettle > 0) { const { Q, X } = poseAt(t); poseModel(Q, X[0]); vrm.springBoneManager?.reset(); vrm.update(0); springT = t; springSettle--; return; }
+  const span = t - springT; if (span <= 0) return;
+  const n = Math.min(24, Math.max(1, Math.ceil(span * 60 - 1e-6)));
+  for (let k = 1; k <= n; k++) { const { Q, X } = poseAt(springT + span * k / n); poseModel(Q, X[0]); vrm.update(span / n); }
+  springT = t;
+}
+function reset() {
+  springSettle = 2;
+  focus.set(0, 0.85, 0);
+  world = new World(45, 20, 1 / CTRL_HZ); letGo = null; steadyAt = null;
+  if (SKILLS[skill].armTone) for (const i of [B.L_UARM, B.L_FARM, B.R_UARM, B.R_FARM]) world.tone[i] = SKILLS[skill].armTone;
+  mode = 'skill'; clip = SKILLS[skill].clip && clips ? clips[SKILLS[skill].clip] : null;   // getting up drops the clip
+  if (clip) ref = poseFromClip(world, clip, 0).rel;
+  else if (SKILLS[skill].floor) {   // on all fours, settled
+    const c = crawlPose(); ref = c.rel; world.pose([0, 1, 0], c.rootQ, ref);
+    let lo = 1e9; for (let i = 0; i < BODY_DEFS.length; i++) lo = Math.min(lo, world.lowest(i));
+    for (const b of world.b) { b.x = [b.x[0], b.x[1] - lo, b.x[2]]; b.xprev = b.x; }
+    world.target = ref.slice(); for (let k = 0; k < 10; k++) world.step();
+  } else {
+    ref = standPose(); world.pose(BODY_DEFS[0].center, ref[0], ref);
+    let lo = 1e9; for (let i = 0; i < BODY_DEFS.length; i++) lo = Math.min(lo, world.lowest(i));
+    for (const b of world.b) { b.x = [b.x[0], b.x[1] - lo, b.x[2]]; b.xprev = b.x; }
+    world.target = ref.slice();
+  }
+  policy?.reset();
+  upSince = world.t; fallenAt = -1; prev = snapshot(); hist = [{ t: world.t, s: prev }]; springT = world.t; emit('reset', { skill });
+}
+const PUSH_N = 100;   // the strongest push the current balance controller has trained on
+function push(dir, newtons = PUSH_N, bodyName = 'chest') {
+  // dir: 'left' | 'right' | 'front' | 'back' (her own sides), or a world vector [x, z]
+  const f = math.qrot(world.b[0].q, [0, 0, 1]), yaw = Math.atan2(f[0], f[2]);
+  const local = { left: [-1, 0], right: [1, 0], front: [0, -1], back: [0, 1] }[dir];   // a push FROM that side
+  let [x, z] = local ? local : dir;
+  if (local) [x, z] = [x * Math.cos(yaw) + z * Math.sin(yaw), -x * Math.sin(yaw) + z * Math.cos(yaw)];
+  const n = Math.hypot(x, z) || 1;
+  world.push = { body: B[bodyName.toUpperCase()] ?? B.CHEST, force: [x / n * newtons, 0, z / n * newtons], left: 0.2 };
+  emit('push', { dir, newtons });
+}
+
+// ---------- loop: fixed 30 Hz control, rendering interpolated between steps ----------
+const snapshot = () => world.b.map(b => ({ x: b.x.slice(), q: b.q.slice() }));
+let prev, acc = 0, last = performance.now();
+// Getting up: the get-up controller from wherever she is, toward the stand pose.
+async function getUp(why) {
+  try { getupPolicy ||= await loadTssPolicy(GETUP.file); } catch { getupPolicy = null; }
+  if (!getupPolicy) return false;
+  getupPolicy.reset(); mode = 'getup'; clip = null; ref = standPose(); getupSince = world.t; calmSince = -1; fallenAt = -1;
+  setStatus(why); emit('getup', {}); return true;
+}
+// ---------- face: VTuber-style gaze, blinking and mouth ----------
+// The eyes look at a point under the mouse at her head's depth (or at the camera), eased so they glide; the neck
+// turns up to 15 degrees toward it. She blinks every 2 to 6 s (sometimes twice). B blinks, M opens the mouth.
+const face = { follow: true, mouse: null, gaze: null, mouth: 0, mouthTarget: 0, blinkAt: -1, nextBlink: 2, neck: new THREE.Quaternion() };
+const lookTarget = new THREE.Object3D();
+const stageEl = document.getElementById('stage');
+stageEl.addEventListener('pointermove', e => { const r = stageEl.getBoundingClientRect(); face.mouse = [(e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height * 2 - 1)]; });
+stageEl.addEventListener('pointerleave', () => { face.mouse = null; });
+function blink() { face.blinkAt = performance.now() / 1000; }
+const _v = new THREE.Vector3(), _h = new THREE.Vector3(), _q = new THREE.Quaternion(), _ray = new THREE.Raycaster(), _plane = new THREE.Plane();
+function updateFace(dt) {
+  if (!vrm) return;
+  const now = performance.now() / 1000;
+  bone('head').getWorldPosition(_h);
+  // where to look: the mouse, on the plane through her head facing the camera; else the camera
+  let goal = camera.position.clone();
+  if (face.follow && face.mouse) {
+    _ray.setFromCamera({ x: face.mouse[0], y: face.mouse[1] }, camera);
+    _plane.setFromNormalAndCoplanarPoint(camera.getWorldDirection(_v).negate(), _h);
+    _ray.ray.intersectPlane(_plane, goal) || goal.copy(camera.position);
+  }
+  face.gaze = face.gaze ? face.gaze.lerp(goal, 1 - Math.exp(-dt * 10)) : goal;
+  lookTarget.position.copy(face.gaze); lookTarget.updateMatrixWorld();
+  if (vrm.lookAt) vrm.lookAt.target = lookTarget;
+  // the neck: a share of the gaze direction, in the chest's frame, within 15 degrees
+  bone('chest').getWorldQuaternion(_q);
+  const d = _v.copy(face.gaze).sub(_h).applyQuaternion(_q.invert());
+  const yaw = Math.max(-0.26, Math.min(0.26, 0.4 * Math.atan2(d.x, d.z))), up = Math.max(-0.2, Math.min(0.2, 0.4 * Math.atan2(d.y, Math.hypot(d.x, d.z))));
+  face.neck.setFromEuler(new THREE.Euler(-up, yaw, 0, 'YXZ'));
+  // blinking: closes in 60 ms, opens in 100 ms
+  if (now > face.nextBlink) { blink(); face.nextBlink = now + 2 + 4 * Math.random(); if (Math.random() < 0.15) setTimeout(blink, 250); }
+  const b = face.blinkAt < 0 ? 1 : now - face.blinkAt, lid = b < 0.06 ? b / 0.06 : b < 0.16 ? 1 - (b - 0.06) / 0.1 : 0;
+  face.mouth += (face.mouthTarget - face.mouth) * (1 - Math.exp(-dt * 15));
+  const em = vrm.expressionManager;
+  if (em) { em.setValue('blink', Math.max(0, Math.min(1, lid))); em.setValue('aa', face.mouth); }
+}
+document.getElementById('f-follow').onclick = e => { face.follow = !face.follow; e.currentTarget.setAttribute('aria-pressed', String(face.follow)); };
+document.getElementById('f-blink').onclick = () => blink();
+const setMouth = open => { face.mouthTarget = open ? 1 : 0; document.getElementById('f-mouth').setAttribute('aria-pressed', String(open)); };
+document.getElementById('f-mouth').onclick = () => setMouth(!face.mouthTarget);
+addEventListener('keydown', e => { if (e.target.closest?.('input, textarea')) return; if (e.key === 'b') blink(); if (e.key === 'm') setMouth(!face.mouthTarget); });
+
+function control() {
+  const phase = clip ? 2 * Math.PI * world.t / clip.T : 0;
+  const floor = mode === 'getup' || SKILLS[skill].floor, pol = mode === 'getup' ? getupPolicy : policy;
+  world.assist = 0;   // set afresh each step (a clip's support, or the steadying hand while a limb is held)
+  if (clip) setAssist(world, clip, world.t, fallenAt < 0 ? SKILLS[skill].assist || 0 : 0);
+  if (fallenAt < 0 && pol) applyAction(world, ref, pol.act(observe(world, phase, floor)), floor ? GETUP.actMul : 1);
+  easeGrab(); aimLimb(); prev = snapshot(); world.step();
+  hist.push({ t: world.t, s: snapshot() }); if (hist.length > 12) hist.shift();
+  if (clip) ref = clip.at(world.t).rel;
+  else if (mode === 'skill' && SKILLS[skill].sway) ref = swayPose(world.t, SKILLS[skill].sway);
+  if (mode === 'getup') {   // standing calmly for 1.5 s: back to Balance
+    const cv = world.com().v, still = world.b[B.HEAD].x[1] > 1.3 && world.b[0].x[1] > 0.8 && world.b[0].x[1] < 1.0 && Math.hypot(cv[0], cv[2]) < 0.3 && Math.abs(cv[1]) < 0.2
+      && world.lowest(B.L_FOOT) < 0.03 && world.lowest(B.R_FOOT) < 0.03;   // on both feet, not mid-leap
+    if (!still) calmSince = -1; else if (calmSince < 0) calmSince = world.t;
+    if (calmSince >= 0 && world.t - calmSince > 1.5) {
+      mode = 'skill'; skill = 'balance'; policy = policies.balance; policy?.reset(); ref = standPose(); upSince = world.t;
+      for (const i of [B.L_UARM, B.L_FARM, B.R_UARM, B.R_FARM]) world.tone[i] = SKILLS.balance.armTone;
+      setPressed('[data-skill]', document.querySelector('[data-skill="balance"]')); setStatus(''); document.getElementById('standup').hidden = true; emit('stood', {});
+    } else if (world.t - getupSince > 12) { reset(); setStatus(''); }
+  } else if (SKILLS[skill].floor) {   // rolled onto her back or side
+    if (math.qrot(world.b[B.CHEST].q, [0, 0, 1])[1] > 0.3) getUp('She rolled over; getting up.');
+  } else if (fallenAt < 0 && fallen(world)) {
+    fallenAt = world.t; emit('fall', { upright: world.t - upSince });
+    getUp('She fell; getting up.').then(ok => { if (!ok) setStatus('She fell; resetting.', true); });
+  }
+  if (fallenAt >= 0 && mode !== 'getup' && world.t - fallenAt > 2.5) { reset(); setStatus(''); }
+  emit('step', { t: world.t });
+}
+let frameErrors = 0;
+function frame(now) {
+  // One bad frame must not stop the loop: log it (the first few) and carry on.
+  try { step(now); } catch (e) { if (frameErrors++ < 3) console.error(e); }
+  requestAnimationFrame(frame);
+}
+function step(now) {
+  const dt = Math.min((now - last) / 1000, 0.2);
+  acc = Math.min(acc + dt, 0.2); last = now;
+  if (world) {
+    while (acc >= 1 / CTRL_HZ) { control(); acc -= 1 / CTRL_HZ; }
+    const renderT = world.t - 1 / CTRL_HZ + acc;   // drawn one control step behind, interpolated
+    const tS = performance.now();
+    updateFace(dt);
+    if (vrm) { if (!parts.springs) springSettle = 1; springs(renderT); }   /* off: posed, then held at rest */
+    perf.springs += 0.05 * (performance.now() - tS - perf.springs);
+    const { Q, X } = poseAt(renderT), px = X[0];
+    X.forEach((x, i) => { boxes[i].position.set(...x); boxes[i].quaternion.copy(toQ(Q[i])); });
+    if (vrm) poseModel(Q, px);
+    follow(px, dt);
+    document.getElementById('r-time').textContent = mode === 'getup' ? 'getting up' : fallenAt >= 0 ? 'fallen' : `${SKILLS[skill].floor ? 'crawling' : 'upright'} ${(world.t - upSince).toFixed(1)} s`;
+    pelvisAt.set(px[0], px[1], px[2]);
+  }
+  resize();
+  drawGrab();
+  const tD = performance.now();
+  if (look === 'art' && art && vrm) {
+    // The learned shader draws at its trained distance; zoom magnifies the finished drawing.
+    // (WebGPU zooms inside its display pass; scaling the canvas made the compositor handle a layer several
+    // times the screen. The WebGL engine's canvas is scaled.)
+    const zoom = VIEW0.dist / view.dist;
+    artCanvas.style.transform = art.zoomInPass ? '' : `scale(${zoom.toFixed(3)})`;
+    // On WebGPU the drawing is transparent around her and the 3D canvas beneath shows the floor, its camera
+    // matched to the shader's (redrawn only with a new drawing, so the two stay in step).
+    if (art.frame({ target: pelvisAt, yaw: view.yaw, pitch: view.pitch, zoom, about: headAt }) && art.syncCamera) {
+      const st = document.getElementById('stage');
+      art.syncCamera(camera, st.clientWidth, st.clientHeight);
+      blob.visible = true; blob.position.set(pelvisAt.x, 0.0015, pelvisAt.z);
+      renderer.render(scene, camera);
+    }
+  } else {
+    blob.visible = false;
+    if (camera.fov !== 30 || camera.view?.enabled) { camera.fov = 30; camera.clearViewOffset(); const st = document.getElementById('stage'); camera.aspect = st.clientWidth / st.clientHeight; camera.updateProjectionMatrix(); }
+    renderer.render(scene, camera);
+  }
+  perf.draw += 0.05 * (performance.now() - tD - perf.draw);
+  if (++perf.n % 15 === 0) document.getElementById('r-perf').textContent = `hair/cloth ${perf.springs.toFixed(2)} ms · draw ${perf.draw.toFixed(2)} ms (CPU)`;
+}
+// The camera trails her pelvis at a rate independent of the frame rate, from a three-quarter side view
+// (she faces +Z, so walking carries her across the frame rather than into the lens).
+const focus = new THREE.Vector3(0, 0.85, 0);
+// Orbit around her: scroll turns the view, Shift + scroll raises or lowers it, pinch or Ctrl + scroll zooms;
+// the Reset view button restores it. (A click still pushes her.)
+const VIEW0 = { yaw: 60, pitch: 6, dist: 3.8 }, view = { ...VIEW0 };
+document.getElementById('stage').addEventListener('wheel', e => {
+  e.preventDefault();
+  const d = (e.deltaMode === 1 ? 16 : 1) * (Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX);
+  if (e.ctrlKey) zoomBy(Math.exp(-d * 0.002));
+  else if (e.shiftKey) view.pitch = Math.min(70, Math.max(-5, view.pitch - d * 0.08));
+  else view.yaw = (view.yaw + d * 0.15) % 360;
+}, { passive: false });
+document.getElementById('v-reset').onclick = () => Object.assign(view, VIEW0);
+// Zoom: the + and - buttons or keys, Ctrl + scroll, a trackpad pinch or two fingers. Closer in, the view centres
+// more and more on her head (follow). The learned shader zooms its drawing, up to 4x.
+const DIST_MIN = 0.7, DIST_MAX = 9;
+function zoomBy(f) { view.dist = Math.min(DIST_MAX, Math.max(look === 'art' ? VIEW0.dist / 4 : DIST_MIN, view.dist / f)); }
+document.getElementById('v-in').onclick = () => zoomBy(1.3);
+document.getElementById('v-out').onclick = () => zoomBy(1 / 1.3);
+addEventListener('keydown', e => { if (e.target.closest?.('input, textarea')) return; if (e.key === '+' || e.key === '=') zoomBy(1.3); if (e.key === '-' || e.key === '_') zoomBy(1 / 1.3); });
+const touches = new Map(); let pinch0 = 0;
+const stEl = document.getElementById('stage');
+stEl.addEventListener('pointerdown', e => { if (e.pointerType === 'touch') touches.set(e.pointerId, [e.clientX, e.clientY]); });
+stEl.addEventListener('pointermove', e => {
+  if (!touches.has(e.pointerId)) return; touches.set(e.pointerId, [e.clientX, e.clientY]);
+  if (touches.size === 2) { const [a, b] = [...touches.values()], d = Math.hypot(a[0] - b[0], a[1] - b[1]); if (pinch0) zoomBy(d / pinch0); pinch0 = d; }
+});
+for (const n of ['pointerup', 'pointercancel']) stEl.addEventListener(n, e => { touches.delete(e.pointerId); pinch0 = 0; });
+const headAt = new THREE.Vector3(0, 1.4, 0);
+function follow(px, dt) {
+  const k = 1 - Math.exp(-3 * dt);
+  // closer in, aim at her head instead of her middle
+  if (world) headAt.set(...world.b[B.HEAD].x);
+  const near = Math.min(1, Math.max(0, (VIEW0.dist - view.dist) / (VIEW0.dist - 1.0)));
+  focus.x += (px[0] + near * (headAt.x - px[0]) - focus.x) * k; focus.z += (px[2] + near * (headAt.z - px[2]) - focus.z) * k;
+  const base = Math.max(0.85, (world ? world.b[B.PELVIS].x[1] : 0.92) - 0.07);   // up the stairs and slopes with her
+  focus.y += (base + near * (headAt.y + 0.05 - base) - focus.y) * k;
+  const y = view.yaw * Math.PI / 180, p = view.pitch * Math.PI / 180;
+  camera.position.set(focus.x + view.dist * Math.cos(p) * Math.sin(y), focus.y + view.dist * Math.sin(p), focus.z + view.dist * Math.cos(p) * Math.cos(y));
+  camera.lookAt(focus);
+  if (!roomDoc) {
+    floor.position.set(focus.x, 0, focus.z); shadowCatcher.position.set(focus.x, 0.001, focus.z);
+    tiles.offset.set((focus.x / (2 * TILE)) % 1, (-focus.z / (2 * TILE)) % 1);   // the tiles stay put while the disc follows
+  }
+  sun.position.set(focus.x + 1, 3, focus.z + 2); sun.target.position.copy(focus);
+}
+function resize() {
+  const st = document.getElementById('stage'), w = st.clientWidth, h = st.clientHeight;   // the 3D canvas is hidden in art mode
+  if (!w || !h) return;
+  if (canvas.width !== Math.round(w * renderer.getPixelRatio()) || canvas.height !== Math.round(h * renderer.getPixelRatio())) {
+    renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+  }
+}
+
+// ---------- controls ----------
+const setPressed = (sel, el) => document.querySelectorAll(sel).forEach(b => b.setAttribute('aria-pressed', String(b === el)));
+document.querySelectorAll('[data-push]').forEach(b => b.onclick = () => world && fallenAt < 0 && push(b.dataset.push));
+document.getElementById('reset').onclick = () => world && reset();
+document.getElementById('standup').onclick = () => world && mode !== 'getup' && getUp('Getting up.');
+fetch(GETUP.file, { method: 'HEAD' }).then(r => { const b = document.getElementById('standup'); b.disabled = !r.ok; if (!r.ok) b.title = 'Getting up is still training'; }).catch(() => {});
+// Look: the learned shader (art), the plain 3D render (model) or the physics boxes.
+const artCanvas = document.getElementById('art'), pelvisAt = new THREE.Vector3(0, 0.9, 0);
+let look = 'model', art = null, artLoad = null;
+function setLook(next) {
+  look = next;
+  setPressed('#v-art, #v-model, #v-boxes', document.getElementById({ art: 'v-art', model: 'v-model', boxes: 'v-boxes' }[next]));
+  if (vrm) { vrm.scene.visible = next !== 'boxes'; (next === 'art' && art ? art.scene : scene).add(vrm.scene); }
+  boxes.forEach(m => m.visible = next === 'boxes');
+  artCanvas.hidden = next !== 'art' || !art; canvas.hidden = !artCanvas.hidden && !art?.syncCamera;   // WebGPU: the floor shows beneath the drawing
+  document.getElementById('r-look').textContent = next === 'art' ? (art ? art.engine : 'loading the learned shader…') : next === 'boxes' ? 'physics bodies' : '3D render';
+}
+async function useArt() {
+  setLook('art');
+  if (!art) {
+    artLoad ||= createShaderView({ THREE, vrm, canvas: artCanvas, detail: 'crisp', transparent: true });
+    try { art = await artLoad; } catch (e) { console.error(e); setStatus(`The learned shader could not start: ${e.message}`, true); artLoad = null; setLook('model'); return; }
+    if (look === 'art') setLook('art');
+  }
+}
+// Parts, for checking the render: hide the hair or the dress (by the model's material names), or hold hair and
+// cloth at rest instead of simulating them (spring bones). The shader sees only what is drawn.
+const parts = { hair: true, dress: true, springs: true }, perf = { springs: 0, draw: 0, n: 0 };
+const PART_RE = { hair: /_HAIR$/, dress: /Onepiece|Tops/ };
+function applyParts() {
+  if (!vrm) return;
+  vrm.scene.traverse(o => {
+    if (!o.isMesh || o.userData.standIn) return;
+    const name = [].concat(o.material)[0].name.replace(' (Instance)', '');
+    for (const [k, re] of Object.entries(PART_RE)) if (re.test(name)) o.visible = parts[k];
+  });
+  filler ||= buildFiller();
+  if (filler) filler.visible = !parts.dress;
+  if (!parts.springs) { vrm.springBoneManager?.reset(); }
+}
+for (const k of Object.keys(parts)) document.getElementById(`p-${k}`).onclick = e => {
+  parts[k] = !parts[k]; e.currentTarget.setAttribute('aria-pressed', String(parts[k])); applyParts(); emit('parts', { ...parts });
+};
+let lookChosen = false;   // once the viewer picks a view, start-up no longer switches it
+document.getElementById('v-art').onclick = () => { lookChosen = true; if (vrm) useArt(); };
+document.getElementById('v-model').onclick = () => { lookChosen = true; setLook('model'); };
+document.getElementById('v-boxes').onclick = () => { lookChosen = true; setLook('boxes'); };
+// Click the stage: push from the clicked side of her (screen left/right of her body, nearer/farther in depth).
+document.getElementById('stage').addEventListener('pointerdown', e => {
+  if (clickMode === 'grab') return;
+  if (!world || fallenAt >= 0) return;
+  const r = document.getElementById('stage').getBoundingClientRect(), p = new THREE.Vector3(...world.b[B.CHEST].x).project(camera);
+  const sx = (e.clientX - r.left) / r.width * 2 - 1, sy = -((e.clientY - r.top) / r.height * 2 - 1);
+  const right = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0).setY(0).normalize();
+  const fwd = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 2).setY(0).normalize();   // toward the camera
+  const dx = sx - p.x, dy = sy - p.y;
+  const from = right.multiplyScalar(dx).add(fwd.multiplyScalar(-dy * 0.6));   // the side the click came from
+  push([-from.x, -from.z]);
+});
+// Grab: press on a body part (the physics box under the cursor, or the nearest on screen) and drag, like guiding
+// a limb. A held arm or leg is steered by its joints: the shoulder (hip) aims the limb at the cursor and the
+// elbow (knee) bends to the distance, and her muscles carry it there (aimLimb); a held head turns toward it. A
+// light damped spring (at most 15 N on a limb, 40 N on the trunk) adds a nudge; the held point follows the cursor smoothly (about
+// 0.15 s), in the plane through it facing the camera. Her other joints keep balancing as before.
+let clickMode = 'push';
+for (const [id, m] of [['c-push', 'push'], ['c-grab', 'grab']]) document.getElementById(id).onclick = () => {
+  clickMode = m; setPressed('#c-push, #c-grab', document.getElementById(id)); document.getElementById('stage').style.cursor = m === 'grab' ? 'grab' : '';
+};
+const grabLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]), new THREE.LineBasicMaterial({ color: 0xd4a52a, depthTest: false, transparent: true }));
+const grabDot = new THREE.Mesh(new THREE.SphereGeometry(0.025, 12, 8), new THREE.MeshBasicMaterial({ color: 0xd4a52a, depthTest: false, transparent: true }));
+grabLine.renderOrder = grabDot.renderOrder = 10; grabLine.visible = grabDot.visible = false; scene.add(grabLine, grabDot);
+const grabRay = new THREE.Raycaster(), grabPlane = new THREE.Plane();
+function rayAt(e) { const r = document.getElementById('stage').getBoundingClientRect(); grabRay.setFromCamera({ x: (e.clientX - r.left) / r.width * 2 - 1, y: -((e.clientY - r.top) / r.height * 2 - 1) }, camera); }
+function grabStart(i, point) {
+  const b = world.b[i], local = math.qrot(math.qconj(b.q), math.vsub(point, b.x));
+  const limb = i === B.HEAD || i in LIMBS;   // a limb is steered by its joints; the spring only nudges it
+  world.grab = { body: i, r: local, target: point.slice(), goal: point.slice(), k: limb ? 60 : 150, c: limb ? 10 : 25, max: limb ? 15 : 40 };
+  grabPlane.setFromNormalAndCoplanarPoint(camera.getWorldDirection(new THREE.Vector3()).negate(), new THREE.Vector3(...point));
+  emit('grab', { body: BODY_DEFS[i].name });
+}
+// On release the held joints hand back to her controller gradually (over 1.2 s), not with a swing.
+let letGo = null;
+function grabEnd() {
+  if (world?.grab) { const g = world.grab, L = LIMBS[g.body], js = g.body === B.HEAD ? [B.HEAD] : L ? [L[0], L[1]] : [];
+    letGo = { t: world.t, q: js.map(j => [j, world.target[j].slice()]), leg: isLeg(g.body) }; world.grab = null; emit('release', {});
+  }
+  grabLine.visible = grabDot.visible = false;
+}
+const qslerp = (a, b, t) => { if (math.vdot([a[1], a[2], a[3]], [b[1], b[2], b[3]]) + a[0] * b[0] < 0) b = b.map(v => -v); return math.qnorm(a.map((v, i) => v + t * (b[i] - v))); };
+// The held limb's joint targets, aimed at the held point's target (after the controller's): each limb is a
+// root joint (shoulder, hip) and a hinge (elbow, knee) of lengths l1, l2.
+const LIMBS = {
+  [B.L_UARM]: [B.L_UARM, B.L_FARM, 0.22, 0.30], [B.L_FARM]: [B.L_UARM, B.L_FARM, 0.22, 0.30],
+  [B.R_UARM]: [B.R_UARM, B.R_FARM, 0.22, 0.30], [B.R_FARM]: [B.R_UARM, B.R_FARM, 0.22, 0.30],
+  [B.L_THIGH]: [B.L_THIGH, B.L_SHIN, 0.36, 0.42], [B.L_SHIN]: [B.L_THIGH, B.L_SHIN, 0.36, 0.42], [B.L_FOOT]: [B.L_THIGH, B.L_SHIN, 0.36, 0.42],
+  [B.R_THIGH]: [B.R_THIGH, B.R_SHIN, 0.36, 0.42], [B.R_SHIN]: [B.R_THIGH, B.R_SHIN, 0.36, 0.42], [B.R_FOOT]: [B.R_THIGH, B.R_SHIN, 0.36, 0.42],
+};
+const arcQ = (a, b) => { const c = math.vcross(a, b); return math.qnorm([1 + math.vdot(a, b), c[0], c[1], c[2]]); };
+const restAxis = i => { const d = BODY_DEFS[i], v = math.vsub(d.center, d.anchor), n = Math.hypot(...v); return v.map(x => x / n); };
+function anchorOf(i) { const d = BODY_DEFS[i], p = world.b[d.parent], pd = BODY_DEFS[d.parent]; return math.vadd(p.x, math.qrot(p.q, math.vsub(d.anchor, pd.center))); }
+// joint target turning body i (child of a body with world rotation qp) from where it points now to point along
+// unit world direction dir, by the smallest swing (no twist of its own is added)
+const aimTarget = (i, qp, dir) => { const q = world.b[i].q, now = math.qrot(q, restAxis(i)); return math.qmul(math.qconj(qp), math.qmul(arcQ(now, dir), q)); };
+// While a limb is held, and fading out over 1.5 s after (2.5 s for a leg), a light steadying hand keeps her trunk upright (her
+// controller never learned to have its arms moved for it): only the pelvis tilt is held, not where she is.
+// (Holding a leg means she stands on the other one, which she never learned: then her pelvis is held in place
+// too, as you would hold someone while lifting their leg.)
+let steadyAt = null;
+function steady(w, leg) {
+  if (w <= 0 || world.assist > 0) return;
+  const p = world.b[0], f = math.qrot(p.q, [0, 0, 1]);
+  if (leg) { steadyAt ||= p.x.slice(); world.assist = 0.35 * w; world.assistX = steadyAt; world.assistV = [0, 0, 0]; }
+  else { world.assist = 0.06 * w; world.assistX = p.x.slice(); world.assistV = p.v.slice(); }
+  world.assistQ = math.qexp([0, Math.atan2(f[0], f[2]), 0]);
+}
+const isLeg = i => [B.L_THIGH, B.L_SHIN, B.L_FOOT, B.R_THIGH, B.R_SHIN, B.R_FOOT].includes(i);
+function aimLimb() {
+  const g = world?.grab;
+  if (!g) {
+    if (letGo) {
+      const w = 1 - (world.t - letGo.t) / 1.2; if (w > 0) for (const [j, q] of letGo.q) world.target[j] = qslerp(world.target[j], q, w);
+      const ws = 1 - (world.t - letGo.t) / (letGo.leg ? 2.5 : 1.5); if (ws <= 0) { letGo = null; steadyAt = null; } else steady(ws, letGo.leg);
+    }
+    return;
+  }
+  letGo = null; steady(1, isLeg(g.body));
+  if (g.body === B.HEAD) {   // the head turns toward the point, within about 50 degrees of her chest's up
+    const a = anchorOf(B.HEAD), v = math.vsub(g.target, a), n = Math.hypot(...v); if (n < 1e-6) return;
+    let d = v.map(x => x / n); const up = math.qrot(world.b[B.CHEST].q, [0, 1, 0]), ang = Math.acos(Math.min(1, Math.max(-1, math.vdot(up, d))));
+    if (ang > 0.87) { const k = 0.87 / ang; d = up.map((u, j) => u + k * (d[j] - u)); const m = Math.hypot(...d); d = d.map(x => x / m); }
+    world.target[B.HEAD] = aimTarget(B.HEAD, world.b[B.CHEST].q, d); return;
+  }
+  const L = LIMBS[g.body]; if (!L) return;
+  const [root, hinge, l1, l2] = L, a = anchorOf(root), v = math.vsub(g.target, a), dist = Math.min(l1 + l2 - 1e-3, Math.max(0.05, Math.hypot(...v)));
+  const dir = v.map(x => x / Math.hypot(...v));
+  if (g.body === root) { world.target[root] = aimTarget(root, world.b[BODY_DEFS[root].parent].q, dir); return; }
+  // the limb straight at the target, the hinge bent so its length matches the distance
+  const flex = Math.PI - Math.acos(Math.min(1, Math.max(-1, (l1 * l1 + l2 * l2 - dist * dist) / (2 * l1 * l2))));
+  const ac = Math.acos(Math.min(1, Math.max(-1, (l1 * l1 + dist * dist - l2 * l2) / (2 * l1 * dist))));   // the upper bone leans off the line by this
+  const qRoot = aimTarget(root, world.b[BODY_DEFS[root].parent].q, dir);
+  // lean the upper bone off the line toward the side the hinge folds away from (the elbow / knee points that way)
+  const hAxis = BODY_DEFS[hinge].hinge === 1 ? [1, 0, 0] : [0, 1, 0], sign = hinge === B.L_FARM ? -1 : 1;
+  const qRootW = math.qmul(world.b[BODY_DEFS[root].parent].q, qRoot), axisW = math.qrot(qRootW, hAxis);
+  world.target[root] = math.qmul(qRoot, math.qexp(math.vscale(math.qrot(math.qconj(qRootW), axisW), -sign * ac)));
+  world.target[hinge] = math.qexp(math.vscale(hAxis, sign * flex));
+}
+// each control step the spring's target eases toward the cursor (no sudden yank)
+function easeGrab() { const g = world?.grab; if (!g) return; const k = 1 - Math.exp(-1 / CTRL_HZ / 0.15); g.target = g.target.map((v, j) => v + (g.goal[j] - v) * k); }
+const stageG = document.getElementById('stage');
+stageG.addEventListener('pointerdown', e => {
+  if (clickMode !== 'grab' || !world || e.button !== 0) return;
+  rayAt(e);
+  const hit = grabRay.intersectObjects(boxes, false)[0];
+  let i = hit ? boxes.indexOf(hit.object) : -1, point = hit ? hit.point.toArray() : null;
+  if (i < 0) {   // nothing under the cursor: the body part nearest on screen, within 60 px
+    const r = stageG.getBoundingClientRect(); let best = 60;
+    boxes.forEach((m, j) => { const p = m.position.clone().project(camera), d = Math.hypot((p.x * 0.5 + 0.5) * r.width - (e.clientX - r.left), (0.5 - p.y * 0.5) * r.height - (e.clientY - r.top)); if (d < best) { best = d; i = j; point = m.position.toArray(); } });
+  }
+  if (i < 0) return;
+  stageG.setPointerCapture(e.pointerId); stageG.style.cursor = 'grabbing'; grabStart(i, point);
+});
+stageG.addEventListener('pointermove', e => {
+  if (!world?.grab) return; rayAt(e); const p = new THREE.Vector3();
+  if (grabRay.ray.intersectPlane(grabPlane, p)) world.grab.goal = [p.x, Math.max(0.02, p.y), p.z];
+});
+for (const n of ['pointerup', 'pointercancel']) stageG.addEventListener(n, () => { if (world?.grab) { grabEnd(); stageG.style.cursor = clickMode === 'grab' ? 'grab' : ''; } });
+function drawGrab() {   // the pull, from the held point to the cursor
+  const g = world?.grab; if (!g) { grabLine.visible = grabDot.visible = false; return; }
+  const b = world.b[g.body], p = math.vadd(b.x, math.qrot(b.q, g.r));
+  grabLine.geometry.setFromPoints([new THREE.Vector3(...p), new THREE.Vector3(...g.goal)]); grabDot.position.set(...g.goal);
+  grabLine.visible = grabDot.visible = true;
+}
+addEventListener('keydown', e => {
+  const k = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'back', ArrowDown: 'front' }[e.key];
+  if (k && world && fallenAt < 0) { e.preventDefault(); push(k); }
+  if (e.key === 'r') reset();
+});
+
+async function useSkill(name) {
+  const s = SKILLS[name]; if (!s) throw new Error(`no skill named ${name}`);
+  policies[name] ||= s.file.includes('tss') ? await loadTssPolicy(s.file) : await loadPolicy(s.file);
+  if (s.clip) { clips ||= await loadClips('motions_ref.json'); clip = clips[s.clip]; } else clip = null;
+  skill = name; policy = policies[name];
+  document.getElementById('standup').hidden = !s.floor;
+  setPressed('[data-skill]', document.querySelector(`[data-skill="${name}"]`));
+  document.getElementById('r-policy').textContent = `${policy.type === 'nanotss' ? 'nanotss (ternary SSM-tree + FFF, WebAssembly)' : policy.type === 'ssm' ? 'SSM-tree' : policy.type.toUpperCase()} · ${policy.params.toLocaleString()} weights${s.assist ? ` · pelvis support ${Math.round(s.assist * 100)}%` : ''}`;
+  reset(); emit('skill', { skill: name });
+}
+const skillBox = document.getElementById('skills');
+for (const [k, s] of Object.entries(SKILLS)) {
+  const b = document.createElement('button'); b.textContent = s.label; b.dataset.skill = k; b.setAttribute('aria-pressed', String(k === skill));
+  b.onclick = () => useSkill(k).catch(e => setStatus(`Could not load ${s.label}: ${e.message}`, true)); skillBox.append(b);
+  // A skill whose controller is not trained yet stays disabled.
+  fetch(s.file, { method: 'HEAD' }).then(r => { b.disabled = !r.ok; if (!r.ok) b.title = 'Not trained yet'; }).catch(() => {});
+}
+
+// ---------- hooks for other pages ----------
+// window.umiBody.skills                       learned skills
+// window.umiBody.play(name)                   switch skill (returns a promise)
+// window.umiBody.push(dir, newtons?, body?)   dir: 'left' | 'right' | 'front' | 'back' or [x, z]
+// window.umiBody.reset()
+// window.umiBody.face({ follow, mouth })      eyes follow the mouse (true) or look at you; mouth 0..1; returns the settings
+// window.umiBody.blink()
+// window.umiBody.grab(body, [x, y, z])         pull a body part ('chest', 'l_farm', ... or 'head') toward a world point; release()
+// window.umiBody.standUp()                    hand over to the get-up controller (from crawling, or anywhere)
+// window.umiBody.on(event, fn)                events: 'skill', 'reset', 'push', 'grab', 'release', 'fall', 'getup', 'stood', 'step', 'parts' (also dispatched as 'umibody:<event>')
+// window.umiBody.state()                      { t, upright, fallen, bodies: [{ name, bone, x, q }] }
+// window.umiBody.parts({ hair, dress, springs }) show or hide hair and dress, simulate or hold hair and cloth; returns the settings
+// window.umiBody.room                        the room as loaded (room.json: boxes the physics collides with and the page draws), or null
+// window.umiBody.view({ yaw, pitch, dist })   the camera around her (degrees, metres); returns the settings
+// window.umiBody.place([x, y, z], yaw?)        start her again at a point of the room (feet at y), facing yaw (radians from +z)
+window.umiBody = {
+  get skills() { return Object.keys(SKILLS); },
+  get room() { return roomDoc; },
+  view(set = {}) { for (const k of ['yaw', 'pitch', 'dist']) if (k in set) view[k] = +set[k]; return { ...view }; },
+  place(at, yaw = 0) {   // the skill's start pose, moved and turned, settled onto what is under her
+    if (!world) return false; reset(); const q = math.qexp([0, yaw, 0]), p0 = world.b[B.PELVIS].x.slice();
+    for (const b of world.b) { const d = math.qrot(q, math.vsub(b.x, p0)); b.x = [at[0] + d[0], p0[1] + at[1] + d[1], at[2] + d[2]]; b.q = math.qmul(q, b.q); b.xprev = b.x; b.qprev = b.q; b.v = [0, 0, 0]; b.w = [0, 0, 0]; }
+    focus.set(at[0], 0.85 + at[1], at[2]); return true;
+  },
+  face(set = {}) { if ('follow' in set) { face.follow = !!set.follow; document.getElementById('f-follow').setAttribute('aria-pressed', String(face.follow)); } if ('mouth' in set) { face.mouthTarget = Math.max(0, Math.min(1, +set.mouth)); document.getElementById('f-mouth').setAttribute('aria-pressed', String(face.mouthTarget > 0)); } return { follow: face.follow, mouth: face.mouthTarget }; },
+  blink,
+  grab(name, target) { const i = BODY_DEFS.findIndex(d => d.name === name || d.bone === name); if (i < 0 || !world) return false; if (world.grab?.body !== i) grabStart(i, world.b[i].x.slice()); world.grab.goal = target.slice(); return true; },   // held at its centre
+  release: () => grabEnd(),
+  play: useSkill, push: (...a) => world && push(...a), reset: () => world && reset(), standUp: () => world && getUp('Getting up.'),
+  on(ev, fn) { (listeners[ev] ||= []).push(fn); return () => { listeners[ev] = listeners[ev].filter(f => f !== fn); }; },
+  state: () => world && { t: world.t, upright: world.t - upSince, fallen: fallenAt >= 0,
+    bodies: world.b.map((b, i) => ({ name: BODY_DEFS[i].name, bone: BODY_DEFS[i].bone, x: b.x.slice(), q: b.q.slice() })) },
+  parts(set = {}) {
+    for (const k of Object.keys(parts)) if (k in set) { parts[k] = !!set[k]; document.getElementById(`p-${k}`).setAttribute('aria-pressed', String(parts[k])); }
+    applyParts(); emit('parts', { ...parts }); return { ...parts };
+  },
+};
+
+requestAnimationFrame(frame);
+try {
+  await useSkill('balance');
+  setStatus('loading the model…');
+  await loadModel(); applyParts();
+  setStatus('loading the learned shader…');
+  if (!lookChosen || look === 'art') await useArt(); else setLook(look);
+  if (art) setStatus('');
+} catch (e) { console.error(e); setStatus(`Could not start: ${e.message}`, true); }
+</script>
