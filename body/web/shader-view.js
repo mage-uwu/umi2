@@ -2,19 +2,22 @@
 // packaged so this page can draw the physics-driven character with it.
 //
 // Every frame three.js renders the model's G-buffer (colour as MToon draws it; normal and depth; surface UV
-// with a part id) from a camera framed exactly as the shader was trained (portrait 360 x 640, field of view
-// 30 degrees, a fixed distance, the coverage lights), then the decoder runs on it: through gpu.js (WebGPU)
+// with a part id) from a camera framed as the shader was trained (360 x 640 at field of view 30 degrees and a fixed
+// distance, the coverage lights; on WebGPU a larger 720 x 800 frame at the same scale), then the decoder runs on it: through gpu.js (WebGPU)
 // when the browser has it, else through the WebGL engine below. The camera orbits a target that follows her.
 //
 //   const art = await createShaderView({ THREE, vrm, canvas, detail: 'crisp' });
-//   art.frame({ target, yaw, pitch });   // target: THREE.Vector3 (world), yaw/pitch in degrees
+//   art.frame({ target, yaw, pitch, zoom });   // target: THREE.Vector3 (world), yaw/pitch in degrees; zoom (WebGPU) magnifies
 //   art.engine                           // e.g. 'WebGPU f16 · crisp' or 'WebGL · fast'
 //
 // Detail: 'smooth' (sharp, fine-tuned against flicker; WebGPU), 'sharp' (WebGPU), 'fast' (half resolution;
 // the WebGL engine runs this one whatever is asked).
 
-const NW = 360, NH = 640, FOV = 30, GREEN = 0x00b140;
-const CROP_PAD = 64;   // > the decoder's reach in pixels, so the crop edge never shows
+// The shaders trained on 360 x 640 frames. On WebGPU the frame is larger at the same scale (pixels per metre; the
+// shader page's choice), so outstretched arms and a crawl stay in it: the field of view grows with the frame,
+// and the network only runs inside the crop box around her, so standing costs what it did.
+const TRAIN_W = 360, TRAIN_H = 640, FOV = 30, GREEN = 0x00b140;
+const CROP_PAD = 32;   // past her silhouette: the drawing inside matches computing the whole frame
 const DIRS = { fast: 'fast/', sharp: 'sharp/', smooth: 'equi/', crisp: 'crisp/' };
 
 export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', webgl = false }) {
@@ -23,10 +26,13 @@ export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', w
     try { gpuAdapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' }); } catch { gpuAdapter = null; }
   }
   let DETAIL = gpuAdapter ? detail : 'fast';
+  const [NW, NH] = gpuAdapter ? [720, 800] : [TRAIN_W, TRAIN_H];
+  const VIEW_FOV = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(FOV / 2)) * NH / TRAIN_H));
   const dir = () => DIRS[DETAIL];
   let GBW = NW, GBH = NH;
   const glCanvas = gpuAdapter ? document.createElement('canvas') : canvas;
-  const renderer = new THREE.WebGLRenderer({ canvas: glCanvas, antialias: !!gpuAdapter, alpha: false, preserveDrawingBuffer: !!gpuAdapter, powerPreference: 'high-performance' });
+  // (the WebGPU path's G-buffer canvas is copied right after it's drawn, so it keeps no preserved buffer)
+  const renderer = new THREE.WebGLRenderer({ canvas: glCanvas, antialias: !!gpuAdapter, alpha: false, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   const gl = renderer.getContext();
@@ -37,7 +43,7 @@ export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', w
   const sun = new THREE.DirectionalLight(0xffffff, 2.2);
   sun.position.set(1, 3, 2);
   scene.add(sun);
-  const camera = new THREE.PerspectiveCamera(FOV, NW / NH, 0.01, 100);
+  const camera = new THREE.PerspectiveCamera(VIEW_FOV, NW / NH, 0.01, 100);
   vrm.scene.updateMatrixWorld(true);
   const bones = [];
   vrm.scene.traverse(o => { if (o.isBone) bones.push(o); });
@@ -153,6 +159,7 @@ export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', w
     const y = THREE.MathUtils.degToRad(yaw), p = THREE.MathUtils.degToRad(pitch);
     camera.position.set(target.x + radius * Math.cos(p) * Math.sin(y), target.y + radius * Math.sin(p), target.z + radius * Math.cos(p) * Math.cos(y));
     camera.lookAt(target);
+    camera.updateMatrixWorld();   // the crop box projects bones with it before anything renders
   }
   function renderGBuffer() {
     scene.background = new THREE.Color(GREEN);
@@ -167,12 +174,21 @@ export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', w
     scene.overrideMaterial = null;
     renderer.setRenderTarget(null);
   }
-  function renderGBufferTiles() {
+  // The crop (network pixels, top-down) as a G-buffer rectangle [x, y, w, h], with the margin gpu.js reads.
+  function gbufRect(crop) {
+    const s = GBW / NW;
+    const x0 = Math.max(0, Math.floor(crop[0] * s)), y0 = Math.max(0, Math.floor(crop[1] * s));
+    const x1 = Math.min(GBW, Math.ceil(crop[2] * s) + 2), y1 = Math.min(GBH, Math.ceil(crop[3] * s) + 2);
+    return [x0, y0, x1 - x0, y1 - y0];
+  }
+  // The five G-buffer tiles, drawn only inside the crop (the network reads nothing else).
+  function renderGBufferTiles(crop = [0, 0, NW, NH]) {
     depthMat.uniforms.near.value = radius - 0.8; depthMat.uniforms.far.value = radius + 0.8;
+    const [rx, ry, rw, rh] = gbufRect(crop);
     renderer.setScissorTest(true);
     [[GREEN_C, null], [BLACK, normalMat], [BLACK, depthMat], [BLACK, uvMatA], [BLACK, uvMatB]].forEach(([bg, mat], k) => {
       showShorts(!mat);
-      renderer.setViewport(k * GBW, 0, GBW, GBH); renderer.setScissor(k * GBW, 0, GBW, GBH);
+      renderer.setViewport(k * GBW, 0, GBW, GBH); renderer.setScissor(k * GBW + rx, GBH - ry - rh, rw, rh);
       scene.background = bg; scene.overrideMaterial = mat;
       renderer.render(scene, camera);
     });
@@ -192,8 +208,11 @@ export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', w
     }
     const px = x => (x * 0.5 + 0.5) * NW, py = y => (topDown ? 0.5 - y * 0.5 : y * 0.5 + 0.5) * NH;
     if (topDown) [y0, y1] = [y1, y0];
-    const m = 0.12 * NH + CROP_PAD;
-    let b = [px(x0) - m, py(y0) - m, px(x1) + m, py(y1) + m];
+    // How far her silhouette reaches past the bones (the shader page measured top 52, sides 37, bottom 24
+    // pixels standing; on the floor hair and skirt spread, so a little more here), plus the decoder's reach.
+    let b = gpuAdapter ? [px(x0) - 60 - CROP_PAD, py(y0) - 80 - CROP_PAD, px(x1) + 60 + CROP_PAD, py(y1) + 48 + CROP_PAD]
+      : [px(x0) - 0.12 * NH - 64, py(y0) - 0.12 * NH - 64, px(x1) + 0.12 * NH + 64, py(y1) + 0.12 * NH + 64];
+    if (!b.every(Number.isFinite)) { lastCrop = null; return [0, 0, NW, NH]; }   // a degenerate projection: the whole frame
     const now = b;
     if (lastCrop) b = [Math.min(b[0], lastCrop[0]), Math.min(b[1], lastCrop[1]), Math.max(b[2], lastCrop[2]), Math.max(b[3], lastCrop[3])];
     lastCrop = now;
@@ -207,30 +226,47 @@ export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', w
   let gpu = null, parts = [];
   if (gpuAdapter) {
     const net = await (await fetch(`${dir()}shader.json`)).json();
-    if (net.sharp) [GBW, GBH] = net.full;
+    if (net.sharp) [GBW, GBH] = [net.full[0] * NW / TRAIN_W, net.full[1] * NH / TRAIN_H];
     parts = net.parts;
     const feats = await Promise.all([0, 1, 2].map(async k => createImageBitmap(await (await fetch(`${dir()}feat${k}.png`)).blob(), { colorSpaceConversion: 'none', premultiplyAlpha: 'none' })));
     const { createGpuShader } = await import('./gpu.js');
-    gpu = await createGpuShader({ net, feats, canvas, NW, NH });
+    gpu = await createGpuShader({ net, feats, canvas, NW, NH, skipEmpty: true, math: 'auto', px: 8, fuse: true });
     if (!gpu) throw new Error('WebGPU device unavailable');
     renderer.setPixelRatio(1);
     renderer.setSize(GBW * 5, GBH, false);
     assignParts(parts);
+    // Half-precision maths only if it draws her as full precision does (the shader page's self-check): one
+    // frame each, mean difference on her under 0.004.
+    if (gpu.mathModes?.length > 1) {
+      const fast = gpu.mathModes[0], out = {}, hips = new THREE.Vector3();
+      vrm.humanoid.getNormalizedBoneNode('hips').getWorldPosition(hips);
+      for (const m of [fast, 'f32']) {
+        gpu.math = m; lastCrop = null; placeCamera(hips, 0, 5);
+        const crop = cropBox(true); renderGBufferTiles(crop);
+        gpu.frame({ source: glCanvas, crop, rect: gbufRect(crop), pitch: THREE.MathUtils.degToRad(5), mode: 0, top: [1, 1, 1], bottom: [1, 1, 1], noShow: true });
+        out[m] = (await gpu.readTensor('rgba', 0)).data;
+      }
+      let sum = 0, n = 0;
+      for (let i = 0; i < out.f32.length; i += 4) { if (Math.max(out.f32[i + 3], out[fast][i + 3]) < 0.02) continue; for (let c = 0; c < 4; c++) { sum += Math.abs(out.f32[i + c] - out[fast][i + c]); n++; } }
+      gpu.math = sum / Math.max(n, 1) < 0.004 ? fast : 'f32'; lastCrop = null;
+    }
     return {
-      engine: `WebGPU ${gpu.f16 ? 'f16' : 'f32'} · ${DETAIL}`,
+      engine: `WebGPU ${gpu.f16 ? 'f16' : 'f32'}${gpu.math === 'f16' ? ' maths' : ''} · ${DETAIL}`,
+      zoomInPass: true,   // zoom goes to frame(); the canvas itself is not scaled
       scene,
       // While the GPU still has frames in flight (gpu.js caps them at two), skip the draw: the physics keeps
       // its own clock, and the next free frame shows her where she is by then.
       get busy() { return gpu.busy; },
-      frame({ target: t, yaw, pitch }) {
+      frame({ target: t, yaw, pitch, zoom = 1 }) {
+        const view = [zoom, (1 - zoom) / 2, (1 - zoom) / 2];   // magnified about the centre
         if (gpu.busy) return;
         placeCamera(t, yaw, pitch);
-        renderGBufferTiles();
         const crop = cropBox(true);
+        renderGBufferTiles(crop);
         const W = Math.round(canvas.clientWidth * Math.min(devicePixelRatio || 1, 2)), H = Math.round(canvas.clientHeight * Math.min(devicePixelRatio || 1, 2));
         if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
         const top = css('--stage-top'), bottom = css('--stage-bottom');
-        gpu.frame({ source: glCanvas, crop, pitch: THREE.MathUtils.degToRad(pitch), mode: 0, top: [top.r, top.g, top.b], bottom: [bottom.r, bottom.g, bottom.b] });
+        gpu.frame({ source: glCanvas, crop, rect: gbufRect(crop), view, pitch: THREE.MathUtils.degToRad(pitch), mode: 0, top: [top.r, top.g, top.b], bottom: [bottom.r, bottom.g, bottom.b] });
       },
     };
   }

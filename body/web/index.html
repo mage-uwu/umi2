@@ -503,8 +503,11 @@ function step(now) {
   const tD = performance.now();
   if (look === 'art' && art && vrm) {
     // The learned shader draws at its trained distance; zoom magnifies the finished drawing.
-    artCanvas.style.transform = `scale(${(VIEW0.dist / view.dist).toFixed(3)})`;
-    art.frame({ target: pelvisAt, yaw: view.yaw, pitch: view.pitch });
+    // (WebGPU zooms inside its display pass; scaling the canvas made the compositor handle a layer several
+    // times the screen. The WebGL engine's canvas is scaled.)
+    const zoom = VIEW0.dist / view.dist;
+    artCanvas.style.transform = art.zoomInPass ? '' : `scale(${zoom.toFixed(3)})`;
+    art.frame({ target: pelvisAt, yaw: view.yaw, pitch: view.pitch, zoom });
   } else renderer.render(scene, camera);
   perf.draw += 0.05 * (performance.now() - tD - perf.draw);
   if (++perf.n % 15 === 0) document.getElementById('r-perf').textContent = `hair/cloth ${perf.springs.toFixed(2)} ms · draw ${perf.draw.toFixed(2)} ms (CPU)`;
