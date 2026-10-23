@@ -68,7 +68,7 @@ def main():
     A("--steps", type=int, default=0); A("--assist", type=float, default=0); A("--sway", type=float, default=0); A("--arm-tone", type=float, default=0)
     A("--gamma", type=float, default=0.95); A("--lam", type=float, default=0.95); A("--ent", type=float, default=0)
     A("--device", default="cuda" if torch.cuda.is_available() else "cpu"); A("--cpu-physics", action="store_true")
-    A("--assist-auto", action="store_true", help="adapt the assist: down 0.02 while episodes last over 60%% of their length, up 0.02 (to --assist at most) under 30%%")
+    A("--assist-auto", action="store_true", help="adapt the assist: down by 15%% (at least 0.005) while episodes last over 60%% of their length, up 0.02 (to --assist at most) under 30%%")
     A("--goal-cone", type=float, default=0, help="go-to: goals within this angle (rad) of her heading; 0 = any")
     A("--room", default=os.path.join(HERE, "../room.json"), help="room.json (physics_gym); '' for the empty floor")
     a = ap.parse_args()
@@ -252,7 +252,7 @@ def main():
                 if cnt >= 8 and (cur_assist < best_assist - 1e-9 or (abs(cur_assist - best_assist) < 1e-9 and rw > best)):
                     best_assist, best = cur_assist, rw; m.save(a.out + ".tss"); save_head(a.out + ".head", EN, mean, sd, d, OBS, ACT, CR)
                 frac = ln * HZ / pool.steps if cnt else 0
-                new = max(0.0, cur_assist - 0.02) if frac > 0.6 else min(a.assist, cur_assist + 0.02) if frac < 0.3 else cur_assist
+                down = cur_assist - max(0.005, 0.15 * cur_assist); new = (down if down > 0.004 else 0.0) if frac > 0.6 else min(a.assist, cur_assist + 0.02) if frac < 0.3 else cur_assist
                 if new != cur_assist: cur_assist = new; pool.set_assist(cur_assist)
                 print(json.dumps({"event": "assist", "iter": it, "survival": round(frac, 2), "assist": round(cur_assist, 3), "checkpoint_assist": round(best_assist, 3)}), flush=True)
             elif cnt >= 8 and rw > best:

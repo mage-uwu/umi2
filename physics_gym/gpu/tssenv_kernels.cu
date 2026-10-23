@@ -114,7 +114,11 @@ const char *tss_set_room(const double *v, int n) {
     cudaMemcpyToSymbol(room_n, &n, sizeof n);
     cudaError_t r = cudaDeviceSynchronize(); return r == cudaSuccess ? NULL : cudaGetErrorString(r);
 }
-/* the hand-up assist in a TaskCfg on the device, for episodes reset from now on */
-void tss_cfg_set_assist(void *cfg, double a) { cudaMemcpy((char *)cfg + offsetof(TaskCfg, assist), &a, sizeof a, cudaMemcpyHostToDevice); }
+/* the hand-up assist, from the next step on: in the TaskCfg new episodes copy, and in every running environment */
+__global__ void k_set_assist(Env *envs, int n, double a) { const int e = blockIdx.x * blockDim.x + threadIdx.x; if (e < n) envs[e].cfg.assist = a; }
+void tss_cfg_set_assist(void *cfg, void *envs, int n, double a) {
+    cudaMemcpy((char *)cfg + offsetof(TaskCfg, assist), &a, sizeof a, cudaMemcpyHostToDevice);
+    k_set_assist<<<GRID(n), 0>>>((Env *)envs, n, a); cudaDeviceSynchronize();
+}
 const char *tss_error(void) { cudaError_t r = cudaGetLastError(); return r == cudaSuccess ? NULL : cudaGetErrorString(r); }
 }
