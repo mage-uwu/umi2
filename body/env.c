@@ -80,6 +80,7 @@ double env_step(Env *E, const float *a) {
     for (int i = 1; i < NB; i++) { Quat rel = qmul(qconj(W->b[BODY_DEFS[i].parent].q), W->b[i].q); Vec e = qlog(qmul(rel, qconj(E->ref[i]))); pose += vdot(e, e); }
     Vec feet = vscale(vadd(W->b[L_FOOT].x, W->b[R_FOOT].x), .5), hd = vsub(W->b[HEAD].x, feet); double lean = hd.x * hd.x + hd.z * hd.z;
     Vec up = qrot(W->b[PELVIS].q, v3(0, 1, 0));
-    double r = 1 + 0.5 * exp(-2 * pose / NJ) + 0.5 * exp(-20 * lean) + 0.3 * up.y - 0.02 * act2;
+    /* every term is bounded and the total stays positive, so surviving always pays */
+    double r = 1 + 0.5 * exp(-2 * pose / NJ) + 0.5 * exp(-20 * lean) + 0.3 * fmax(up.y, 0) + 0.2 * exp(-0.5 * act2);
     return r;
 }

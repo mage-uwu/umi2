@@ -27,7 +27,7 @@ static double rollout(const PolCfg *pc, const float *th, PolState *ps, const Tas
     while (!E.done) {
         env_obs(&E, o);
         if (osum && env_rand(&rs) < 0.05) { for (int i = 0; i < OBS_DIM; i++) { osum[i] += o[i]; osq[i] += (double)o[i] * o[i]; } (*on)++; }
-        for (int i = 0; i < OBS_DIM; i++) on_[i] = (o[i] - nm->mean[i]) / nm->std[i];
+        for (int i = 0; i < OBS_DIM; i++) { float z = (o[i] - nm->mean[i]) / nm->std[i]; on_[i] = z > 5 ? 5 : z < -5 ? -5 : z; }
         pol_act(pc, th, ps, on_, a);
         R += env_step(&E, a);
     }
@@ -103,7 +103,7 @@ int main(int argc, char **argv) {
         free(idx); free(rk);
         /* observation statistics */
         for (int i = 0; i < OBS_DIM; i++) { nm.sum[i] += osum[i]; nm.sq[i] += osq[i]; } nm.n += on;
-        if (nm.n > 10) for (int i = 0; i < OBS_DIM; i++) { double mu = nm.sum[i] / nm.n, var = nm.sq[i] / nm.n - mu * mu; nm.mean[i] = (float)mu; nm.std[i] = (float)sqrt(fmax(var, 1e-4)); }
+        if (nm.n > 10) for (int i = 0; i < OBS_DIM; i++) { double mu = nm.sum[i] / nm.n, var = nm.sq[i] / nm.n - mu * mu; nm.mean[i] = (float)mu; nm.std[i] = (float)sqrt(fmax(var, 1e-2)); }
         double fm = 0, am = 0; for (int k = 0; k < 2 * pairs; k++) { fm += F[k]; am += alive[k]; }
         if (gen % 5 == 1 || now() - t0 >= seconds) {
             double er = 0, ea = 0;
