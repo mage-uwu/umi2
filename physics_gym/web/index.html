@@ -868,7 +868,7 @@ try {
   setStatus('loading the model…');
   await loadModel(); applyParts();
   setStatus('loading the learned shader…');
-  if (!lookChosen || look === 'art') await useArt(); else setLook(look);
+  if (lookChosen && look === 'art') await useArt(); else setLook(look);   // physics-gym opens on the 3D view, where the room is drawn; the learned shader draws only her
   if (art) setStatus('');
 } catch (e) { console.error(e); setStatus(`Could not start: ${e.message}`, true); }
 </script>
