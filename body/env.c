@@ -276,9 +276,16 @@ static double floor_reward(Env *E, double act2) {
              + 0.05 * fmax(0, -front.y) + 0.05 * exp(-2 * side * side - 0.5 * yaw_rate * yaw_rate) + calm;
         return E->cfg.nstyle ? 0.65 * task + 0.35 * style_reward(E) : task;
     }
-    const double hd = fmin(1, fmax(0, W->b[HEAD].x.y / 1.42)), pv = fmin(1, fmax(0, W->b[PELVIS].x.y / 0.92));
+    /* rising pays only with weight on the feet (a leap or a kick reaches the heights too, and must not pay),
+     * up to standing height and no further; standing pays for being still, vertically too */
+    const int planted = world_lowest(W, L_FOOT) < 0.03 || world_lowest(W, R_FOOT) < 0.03 || world_lowest(W, L_SHIN) < 0.03 || world_lowest(W, R_SHIN) < 0.03
+                      || world_lowest(W, L_FARM) < 0.03 || world_lowest(W, R_FARM) < 0.03;
+    const int both_feet = world_lowest(W, L_FOOT) < 0.03 && world_lowest(W, R_FOOT) < 0.03;
+    const double ph = W->b[PELVIS].x.y, hh = W->b[HEAD].x.y;
+    const double hd = planted ? fmin(1, fmax(0, hh / 1.42)) * (hh > 1.5 ? exp(-40 * (hh - 1.5) * (hh - 1.5)) : 1) : 0;
+    const double pv = planted ? fmin(1, fmax(0, ph / 0.92)) * (ph > 0.95 ? exp(-40 * (ph - 0.95) * (ph - 0.95)) : 1) : 0;
     const double up = qrot(W->b[CHEST].q, v3(0, 1, 0)).y;
-    const double stand = hd > 0.9 && pv > 0.9 ? exp(-2 * pose_err(W, E->ref) / NJ) * exp(-4 * vdot(cv, cv)) : 0;
+    const double stand = both_feet && hh > 1.3 && ph > 0.85 ? exp(-2 * pose_err(W, E->ref) / NJ) * exp(-4 * vdot(cv, cv)) : 0;
     const double task = 0.35 * hd + 0.2 * pv + 0.15 * fmax(up, 0) + 0.15 * stand + calm;
     return E->cfg.nstyle ? 0.7 * task + 0.3 * style_reward(E) : task;
 }

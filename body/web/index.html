@@ -481,7 +481,8 @@ function control() {
   if (clip) ref = clip.at(world.t).rel;
   else if (mode === 'skill' && SKILLS[skill].sway) ref = swayPose(world.t, SKILLS[skill].sway);
   if (mode === 'getup') {   // standing calmly for a second: back to Balance
-    const cv = world.com().v, still = world.b[B.HEAD].x[1] > 1.3 && world.b[0].x[1] > 0.8 && Math.hypot(cv[0], cv[2]) < 0.3;
+    const cv = world.com().v, still = world.b[B.HEAD].x[1] > 1.3 && world.b[0].x[1] > 0.8 && world.b[0].x[1] < 1.0 && Math.hypot(cv[0], cv[2]) < 0.3 && Math.abs(cv[1]) < 0.2
+      && world.lowest(B.L_FOOT) < 0.03 && world.lowest(B.R_FOOT) < 0.03;   // on both feet, not mid-leap
     if (!still) calmSince = -1; else if (calmSince < 0) calmSince = world.t;
     if (calmSince >= 0 && world.t - calmSince > 1) {
       mode = 'skill'; skill = 'balance'; policy = policies.balance; policy?.reset(); ref = standPose(); upSince = world.t;

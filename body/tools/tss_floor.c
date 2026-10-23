@@ -1,5 +1,5 @@
 /* tss_floor.c: a nanotss floor controller (crawl or get-up) over many start states, mean actions.
- * Get-up: how often she reaches a calm stand (head > 1.3 m, pelvis > 0.8 m, slow, for 1 s: the viewer's test)
+ * Get-up: how often she reaches a calm stand (head > 1.3 m, pelvis 0.8-1.0 m, both feet down, slow, for 1 s: the viewer's test)
  * and how soon; crawl: distance covered and how often she rolls over.   tss_floor <prefix> crawl|getup <assist> <episodes> */
 #include "../env.h"
 #define main nanotss_main
@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
             gen_core(m, g, x0, NULL); rmsnorm_fwd(g->x, m->P.norm_f, u, d, &r);
             for (int k = 0; k < ACT_DIM; k++) a[k] = (float)tanh(bo[k] + dotr(Wo + (size_t)k * d, u, d));
             env_step(&e, a);
-            if (!crawl) { Vec cv; world_com(&e.W, &cv); const int still = e.W.b[HEAD].x.y > 1.3 && e.W.b[PELVIS].x.y > 0.8 && hypot(cv.x, cv.z) < 0.3;
+            if (!crawl) { Vec cv; world_com(&e.W, &cv); const int still = e.W.b[HEAD].x.y > 1.3 && e.W.b[PELVIS].x.y > 0.8 && e.W.b[PELVIS].x.y < 1.0 && hypot(cv.x, cv.z) < 0.3 && fabs(cv.y) < 0.2 && world_lowest(&e.W, L_FOOT) < 0.03 && world_lowest(&e.W, R_FOOT) < 0.03;
                 if (!still) calm = -1; else if (calm < 0) calm = e.W.t; if (calm >= 0 && e.W.t - calm > 1) stood = e.W.t; }
         }
         if (crawl) { dist += hypot(e.W.b[PELVIS].x.x - x0p.x, e.W.b[PELVIS].x.z - x0p.z); rolled += e.step < tc.steps; }

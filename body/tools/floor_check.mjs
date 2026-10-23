@@ -24,7 +24,7 @@ if (getupFile) for (const kind of ['fours', 'prone']) {
   const pol = await loadTssPolicy(getupFile, wasm), ref = standPose(), w = spawn(kind); pol.reset(); let calm = -1, stood = -1;
   while (w.t < 12 && stood < 0) {
     applyAction(w, ref, pol.act(observe(w, 0, true)), MUL); w.step();
-    const v = w.com().v, still = w.b[B.HEAD].x[1] > 1.3 && w.b[0].x[1] > 0.8 && Math.hypot(v[0], v[2]) < 0.3;
+    const v = w.com().v, still = w.b[B.HEAD].x[1] > 1.3 && w.b[0].x[1] > 0.8 && w.b[0].x[1] < 1.0 && Math.hypot(v[0], v[2]) < 0.3 && Math.abs(v[1]) < 0.2 && w.lowest(B.L_FOOT) < 0.03 && w.lowest(B.R_FOOT) < 0.03;
     if (!still) calm = -1; else if (calm < 0) calm = w.t; if (calm >= 0 && w.t - calm > 1) stood = w.t;
   }
   console.log(`get up from ${kind}: ${stood > 0 ? `standing calmly at ${stood.toFixed(1)} s` : `not up after 12 s (head ${w.b[B.HEAD].x[1].toFixed(2)} m, pelvis ${w.b[0].x[1].toFixed(2)} m)`}`);
