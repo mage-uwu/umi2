@@ -31,21 +31,21 @@ export const math = { v3, vadd, vsub, vscale, vdot, vcross, vlen, qmul, qconj, q
 export const B = { PELVIS: 0, SPINE: 1, CHEST: 2, HEAD: 3, L_UARM: 4, L_FARM: 5, R_UARM: 6, R_FARM: 7, L_THIGH: 8, L_SHIN: 9, L_FOOT: 10, R_THIGH: 11, R_SHIN: 12, R_FOOT: 13 };
 export const BODY_DEFS = [
   ['pelvis', 'hips', -1, [0, 0.928, 0.004], [0, 0.915, 0.005], [0.12, 0.07, 0.09], 0.120, 0, 0, 0],
-  ['spine', 'spine', 0, [0, 0.980, 0.016], [0, 1.036, 0.017], [0.11, 0.055, 0.08], 0.140, 300, 30, 0],
-  ['chest', 'chest', 1, [0, 1.093, 0.019], [0, 1.205, 0.000], [0.13, 0.11, 0.09], 0.170, 300, 30, 0],
-  ['head', 'head', 2, [0, 1.332, -0.034], [0, 1.450, -0.010], [0.08, 0.115, 0.09], 0.070, 60, 6, 0],
-  ['l_uarm', 'leftUpperArm', 2, [0.105, 1.293, -0.025], [0.215, 1.293, -0.025], [0.11, 0.035, 0.035], 0.026, 120, 12, 0],
-  ['l_farm', 'leftLowerArm', 4, [0.324, 1.293, -0.025], [0.472, 1.293, -0.025], [0.148, 0.03, 0.03], 0.022, 60, 6, 2],
-  ['r_uarm', 'rightUpperArm', 2, [-0.105, 1.293, -0.025], [-0.215, 1.293, -0.025], [0.11, 0.035, 0.035], 0.026, 120, 12, 0],
-  ['r_farm', 'rightLowerArm', 6, [-0.324, 1.293, -0.025], [-0.472, 1.293, -0.025], [0.148, 0.03, 0.03], 0.022, 60, 6, 2],
-  ['l_thigh', 'leftUpperLeg', 0, [0.076, 0.888, 0.000], [0.076, 0.709, -0.004], [0.06, 0.18, 0.06], 0.146, 400, 40, 0],
-  ['l_shin', 'leftLowerLeg', 8, [0.076, 0.529, -0.008], [0.076, 0.319, -0.020], [0.045, 0.21, 0.045], 0.048, 300, 30, 1],
-  ['l_foot', 'leftFoot', 9, [0.076, 0.109, -0.033], [0.076, 0.035, 0.035], [0.04, 0.035, 0.105], 0.013, 150, 15, 0],
-  ['r_thigh', 'rightUpperLeg', 0, [-0.076, 0.888, 0.000], [-0.076, 0.709, -0.004], [0.06, 0.18, 0.06], 0.146, 400, 40, 0],
-  ['r_shin', 'rightLowerLeg', 11, [-0.076, 0.529, -0.008], [-0.076, 0.319, -0.020], [0.045, 0.21, 0.045], 0.048, 300, 30, 1],
-  ['r_foot', 'rightFoot', 12, [-0.076, 0.109, -0.033], [-0.076, 0.035, 0.035], [0.04, 0.035, 0.105], 0.013, 150, 15, 0],
+  ['spine', 'spine', 0, [0, 0.980, 0.016], [0, 1.036, 0.017], [0.11, 0.055, 0.08], 0.140, 1000, 100, 0],
+  ['chest', 'chest', 1, [0, 1.093, 0.019], [0, 1.205, 0.000], [0.13, 0.11, 0.09], 0.170, 1000, 100, 0],
+  ['head', 'head', 2, [0, 1.332, -0.034], [0, 1.450, -0.010], [0.08, 0.115, 0.09], 0.070, 100, 10, 0],
+  ['l_uarm', 'leftUpperArm', 2, [0.105, 1.293, -0.025], [0.215, 1.293, -0.025], [0.11, 0.035, 0.035], 0.026, 400, 40, 0],
+  ['l_farm', 'leftLowerArm', 4, [0.324, 1.293, -0.025], [0.472, 1.293, -0.025], [0.148, 0.03, 0.03], 0.022, 300, 30, 2],
+  ['r_uarm', 'rightUpperArm', 2, [-0.105, 1.293, -0.025], [-0.215, 1.293, -0.025], [0.11, 0.035, 0.035], 0.026, 400, 40, 0],
+  ['r_farm', 'rightLowerArm', 6, [-0.324, 1.293, -0.025], [-0.472, 1.293, -0.025], [0.148, 0.03, 0.03], 0.022, 300, 30, 2],
+  ['l_thigh', 'leftUpperLeg', 0, [0.076, 0.888, 0.000], [0.076, 0.709, -0.004], [0.06, 0.18, 0.06], 0.146, 500, 50, 0],
+  ['l_shin', 'leftLowerLeg', 8, [0.076, 0.529, -0.008], [0.076, 0.319, -0.020], [0.045, 0.21, 0.045], 0.048, 500, 50, 1],
+  ['l_foot', 'leftFoot', 9, [0.076, 0.109, -0.033], [0.076, 0.035, 0.035], [0.04, 0.035, 0.105], 0.013, 400, 40, 0],
+  ['r_thigh', 'rightUpperLeg', 0, [-0.076, 0.888, 0.000], [-0.076, 0.709, -0.004], [0.06, 0.18, 0.06], 0.146, 500, 50, 0],
+  ['r_shin', 'rightLowerLeg', 11, [-0.076, 0.529, -0.008], [-0.076, 0.319, -0.020], [0.045, 0.21, 0.045], 0.048, 500, 50, 1],
+  ['r_foot', 'rightFoot', 12, [-0.076, 0.109, -0.033], [-0.076, 0.035, 0.035], [0.04, 0.035, 0.105], 0.013, 400, 40, 0],
 ].map(([name, bone, parent, anchor, center, half, mass_frac, kp, kd, hinge]) => ({ name, bone, parent, anchor, center, half, mass_frac, kp, kd, hinge }));
-const NB = BODY_DEFS.length, G_ACC = 9.81;
+const NB = BODY_DEFS.length, G_ACC = 9.81, ASSIST_K = 2700, ASSIST_KR = 2000;
 const CORNERS = [[-1, -1, -1], [1, -1, -1], [-1, 1, -1], [1, 1, -1], [-1, -1, 1], [1, -1, 1], [-1, 1, 1], [1, 1, 1]];
 const corner = (i, k) => { const h = BODY_DEFS[i].half; return [CORNERS[k][0] * h[0], CORNERS[k][1] * h[1], CORNERS[k][2] * h[2]]; };
 const hingeAxis = h => h === 1 ? [1, 0, 0] : h === 2 ? [0, 1, 0] : [0, 0, 1];
@@ -54,7 +54,8 @@ export class World {
   constructor(totalMass = 45, substeps = 20, dt = 1 / 30) {
     this.substeps = substeps; this.h = dt / substeps; this.mu = 0.9; this.iters = 4; this.kpScale = 1; this.kdScale = 1; this.t = 0;
     this.push = { body: -1, force: [0, 0, 0], left: 0 };
-    this.assistF = [0, 0, 0]; this.assistT = [0, 0, 0];   // training aid on the pelvis (env.c assist)
+    // training aid (body.c): pelvis held to assistX / assistQ by compliant constraints, strength assist 0..1
+    this.assist = 0; this.assistX = [0, 0, 0]; this.assistV = [0, 0, 0]; this.assistQ = QID;
     const fsum = BODY_DEFS.reduce((s, d) => s + d.mass_frac, 0);
     this.b = BODY_DEFS.map(d => {
       const m = totalMass * d.mass_frac / fsum, X = 2 * d.half[0], Y = 2 * d.half[1], Z = 2 * d.half[2];
@@ -101,7 +102,6 @@ export class World {
       const b = this.b[i];
       b.v = [b.v[0], b.v[1] - h * G_ACC, b.v[2]];
       if (i === this.push.body && this.push.left > 0) b.v = vadd(b.v, vscale(this.push.force, h * b.invMass));
-      if (i === 0) { b.v = vadd(b.v, vscale(this.assistF, h * b.invMass)); b.w = vadd(b.w, vscale(this.invI(b, this.assistT), h)); }
       b.xprev = b.x; b.x = vadd(b.x, vscale(b.v, h));
       const wl = qrot(qconj(b.q), b.w), Il = [wl[0] / b.invI[0], wl[1] / b.invI[1], wl[2] / b.invI[2]];
       let tq = vcross(wl, Il); tq = [-tq[0] * b.invI[0], -tq[1] * b.invI[1], -tq[2] * b.invI[2]];
@@ -124,6 +124,12 @@ export class World {
         if (Math.abs(ta) > 1e-12) this.solveAng(c, p, ta > 0 ? aw : vscale(aw, -1), Math.abs(ta), 1 / kp);
       } else { const th = vlen(e); if (th > 1e-12) this.solveAng(c, p, vscale(e, 1 / th), th, 1 / kp); }
     }
+    if (this.assist > 0) {
+      const p = this.b[0], D = vsub(p.x, this.assistX), C = vlen(D);
+      if (C > 1e-12) this.solvePos(p, null, [0, 0, 0], [0, 0, 0], vscale(D, 1 / C), C, 1 / (this.assist * ASSIST_K));
+      const e = qlog(qmul(p.q, qconj(this.assistQ))), th = vlen(e);
+      if (th > 1e-12) { const n = vscale(e, 1 / th), w = vdot(n, this.invI(p, n)), at = 1 / (this.assist * ASSIST_KR * h * h); this.rotateBy(p, this.invI(p, vscale(n, -th / (w + at)))); }
+    }
     for (let i = 0; i < NB; i++) for (let k = 0; k < 8; k++) {
       const b = this.b[i], r = qrot(b.q, corner(i, k)), pw = vadd(b.x, r);
       if (pw[1] >= 0) continue;
@@ -142,6 +148,7 @@ export class World {
       vp = vadd(b.v, vcross(b.w, r)); const vt = [vp[0], 0, vp[2]], s = vlen(vt);
       if (s > 1e-9) this.velImpulse(b, r, vscale(vt, 1 / s), -Math.min(s, this.mu * Math.abs(ln) / h));
     }
+    if (this.assist > 0) { const p = this.b[0], f = Math.min(1, h * this.assist * 20); p.v = vadd(p.v, vscale(vsub(this.assistV, p.v), f)); p.w = vscale(p.w, 1 - f); }
     for (let i = 1; i < NB; i++) {
       const d = BODY_DEFS[i], c = this.b[i], p = this.b[d.parent];
       const dw = vsub(c.w, p.w), m = vlen(dw); if (m < 1e-12) continue;
@@ -321,11 +328,10 @@ export function poseFromClip(world, clip, t) {
   return A;
 }
 
-// Pelvis support spring toward a clip's root path and rotation, strength s in 0..1 (env.c, TASK_IMITATE assist).
-export function setAssist(world, ref, s) {
-  if (!s) { world.assistF = [0, 0, 0]; world.assistT = [0, 0, 0]; return; }
-  let M = 0; for (const b of world.b) M += 1 / b.invMass;
-  const p = world.b[0], dx = vsub(ref.root, p.x), e = qlog(qmul(ref.world[0], qconj(p.q)));
-  world.assistF = vscale(vsub(vscale(dx, 60), vscale([p.v[0], 0, p.v[2]], 6)), s * M); world.assistF[1] = s * M * 60 * dx[1];
-  world.assistT = vscale(vsub(vscale(e, 150), vscale(p.w, 8)), s);
+// Pelvis support toward a clip's root path and rotation, strength s in 0..1 (env.c, TASK_IMITATE assist):
+// clip time t is the start of the coming control step; the target is the reference at its end.
+export function setAssist(world, clip, t, s) {
+  world.assist = s || 0; if (!s) return;
+  const A = clip.at(t), Bn = clip.at(t + 1 / CTRL_HZ);
+  world.assistX = Bn.root; world.assistQ = Bn.world[0]; world.assistV = vscale(vsub(Bn.root, A.root), CTRL_HZ);
 }

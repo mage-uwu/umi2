@@ -10,23 +10,26 @@
 #include <stdio.h>
 
 #define G_ACC 9.81
-/* Rest T-pose, from the VRM humanoid bones (model faces +Z, left = +X). Boxes enclose each segment. */
+#define ASSIST_K 2700.0    /* N/m at full assist (45 kg x 60 s^-2) */
+#define ASSIST_KR 2000.0   /* N m / rad at full assist */
+/* Rest T-pose, from the VRM humanoid bones (model faces +Z, left = +X). Boxes enclose each segment.
+ * Joint gains follow the DeepMimic humanoid (Peng et al. 2018, also about 45 kg); kd = 0.1 kp. */
 const BodyDef BODY_DEFS[NB] = {
     /* name      bone             parent  anchor                       centre                      half extents            mass   kp    kd  hinge */
     {"pelvis", "hips", -1, {0, 0.928, 0.004}, {0, 0.915, 0.005}, {0.12, 0.07, 0.09}, 0.120, 0, 0, 0},
-    {"spine", "spine", PELVIS, {0, 0.980, 0.016}, {0, 1.036, 0.017}, {0.11, 0.055, 0.08}, 0.140, 300, 30, 0},
-    {"chest", "chest", SPINE, {0, 1.093, 0.019}, {0, 1.205, 0.000}, {0.13, 0.11, 0.09}, 0.170, 300, 30, 0},
-    {"head", "head", CHEST, {0, 1.332, -0.034}, {0, 1.450, -0.010}, {0.08, 0.115, 0.09}, 0.070, 60, 6, 0},
-    {"l_uarm", "leftUpperArm", CHEST, {0.105, 1.293, -0.025}, {0.215, 1.293, -0.025}, {0.11, 0.035, 0.035}, 0.026, 120, 12, 0},
-    {"l_farm", "leftLowerArm", L_UARM, {0.324, 1.293, -0.025}, {0.472, 1.293, -0.025}, {0.148, 0.03, 0.03}, 0.022, 60, 6, 2},
-    {"r_uarm", "rightUpperArm", CHEST, {-0.105, 1.293, -0.025}, {-0.215, 1.293, -0.025}, {0.11, 0.035, 0.035}, 0.026, 120, 12, 0},
-    {"r_farm", "rightLowerArm", R_UARM, {-0.324, 1.293, -0.025}, {-0.472, 1.293, -0.025}, {0.148, 0.03, 0.03}, 0.022, 60, 6, 2},
-    {"l_thigh", "leftUpperLeg", PELVIS, {0.076, 0.888, 0.000}, {0.076, 0.709, -0.004}, {0.06, 0.18, 0.06}, 0.146, 400, 40, 0},
-    {"l_shin", "leftLowerLeg", L_THIGH, {0.076, 0.529, -0.008}, {0.076, 0.319, -0.020}, {0.045, 0.21, 0.045}, 0.048, 300, 30, 1},
-    {"l_foot", "leftFoot", L_SHIN, {0.076, 0.109, -0.033}, {0.076, 0.035, 0.035}, {0.04, 0.035, 0.105}, 0.013, 150, 15, 0},
-    {"r_thigh", "rightUpperLeg", PELVIS, {-0.076, 0.888, 0.000}, {-0.076, 0.709, -0.004}, {0.06, 0.18, 0.06}, 0.146, 400, 40, 0},
-    {"r_shin", "rightLowerLeg", R_THIGH, {-0.076, 0.529, -0.008}, {-0.076, 0.319, -0.020}, {0.045, 0.21, 0.045}, 0.048, 300, 30, 1},
-    {"r_foot", "rightFoot", R_SHIN, {-0.076, 0.109, -0.033}, {-0.076, 0.035, 0.035}, {0.04, 0.035, 0.105}, 0.013, 150, 15, 0},
+    {"spine", "spine", PELVIS, {0, 0.980, 0.016}, {0, 1.036, 0.017}, {0.11, 0.055, 0.08}, 0.140, 1000, 100, 0},
+    {"chest", "chest", SPINE, {0, 1.093, 0.019}, {0, 1.205, 0.000}, {0.13, 0.11, 0.09}, 0.170, 1000, 100, 0},
+    {"head", "head", CHEST, {0, 1.332, -0.034}, {0, 1.450, -0.010}, {0.08, 0.115, 0.09}, 0.070, 100, 10, 0},
+    {"l_uarm", "leftUpperArm", CHEST, {0.105, 1.293, -0.025}, {0.215, 1.293, -0.025}, {0.11, 0.035, 0.035}, 0.026, 400, 40, 0},
+    {"l_farm", "leftLowerArm", L_UARM, {0.324, 1.293, -0.025}, {0.472, 1.293, -0.025}, {0.148, 0.03, 0.03}, 0.022, 300, 30, 2},
+    {"r_uarm", "rightUpperArm", CHEST, {-0.105, 1.293, -0.025}, {-0.215, 1.293, -0.025}, {0.11, 0.035, 0.035}, 0.026, 400, 40, 0},
+    {"r_farm", "rightLowerArm", R_UARM, {-0.324, 1.293, -0.025}, {-0.472, 1.293, -0.025}, {0.148, 0.03, 0.03}, 0.022, 300, 30, 2},
+    {"l_thigh", "leftUpperLeg", PELVIS, {0.076, 0.888, 0.000}, {0.076, 0.709, -0.004}, {0.06, 0.18, 0.06}, 0.146, 500, 50, 0},
+    {"l_shin", "leftLowerLeg", L_THIGH, {0.076, 0.529, -0.008}, {0.076, 0.319, -0.020}, {0.045, 0.21, 0.045}, 0.048, 500, 50, 1},
+    {"l_foot", "leftFoot", L_SHIN, {0.076, 0.109, -0.033}, {0.076, 0.035, 0.035}, {0.04, 0.035, 0.105}, 0.013, 400, 40, 0},
+    {"r_thigh", "rightUpperLeg", PELVIS, {-0.076, 0.888, 0.000}, {-0.076, 0.709, -0.004}, {0.06, 0.18, 0.06}, 0.146, 500, 50, 0},
+    {"r_shin", "rightLowerLeg", R_THIGH, {-0.076, 0.529, -0.008}, {-0.076, 0.319, -0.020}, {0.045, 0.21, 0.045}, 0.048, 500, 50, 1},
+    {"r_foot", "rightFoot", R_SHIN, {-0.076, 0.109, -0.033}, {-0.076, 0.035, 0.035}, {0.04, 0.035, 0.105}, 0.013, 400, 40, 0},
 };
 
 void world_init(World *W, double total_mass, int substeps, double dt) {
@@ -102,7 +105,6 @@ static void substep(World *W) {
         Body *b = W->b + i;
         b->v.y -= h * G_ACC;
         if (i == W->push_body && W->push_left > 0) b->v = vadd(b->v, vscale(W->push_force, h * b->inv_mass));
-        if (i == PELVIS) { b->v = vadd(b->v, vscale(W->assist_f, h * b->inv_mass)); b->w = vadd(b->w, vscale(inv_I(b, W->assist_t), h)); }
         b->xprev = b->x; b->x = vadd(b->x, vscale(b->v, h));
         /* gyroscopic term, body frame */
         Vec wl = qrot(qconj(b->q), b->w), Il = v3(wl.x / b->inv_inertia.x, wl.y / b->inv_inertia.y, wl.z / b->inv_inertia.z);
@@ -129,6 +131,13 @@ static void substep(World *W) {
             if (fabs(ta) > 1e-12) solve_ang(c, p, ta > 0 ? aw : vscale(aw, -1), fabs(ta), 1 / (d->kp * W->kp_scale), h);
         } else if (th > 1e-12) solve_ang(c, p, vscale(e, 1 / th), th, 1 / (d->kp * W->kp_scale), h);
     }
+    if (W->assist > 0) {   /* pelvis support: compliant position and rotation constraints (stable at any stiffness) */
+        Body *p = W->b + PELVIS; Vec D = vsub(p->x, W->assist_x); double C = vlen(D);
+        if (C > 1e-12) solve_pos(p, NULL, v3(0, 0, 0), v3(0, 0, 0), vscale(D, 1 / C), C, 1 / (W->assist * ASSIST_K), h, -1);
+        Vec e = qlog(qmul(p->q, qconj(W->assist_q))); double th = vlen(e);
+        if (th > 1e-12) { Vec n = vscale(e, 1 / th); double w = vdot(n, inv_I(p, n)), at = 1 / (W->assist * ASSIST_KR * h * h);
+            rotate_by(p, inv_I(p, vscale(n, -th / (w + at)))); }
+    }
     if (body_debug) body_debug(W, 1);
     /* ground contacts (y = 0) at box corners; friction acts in the velocity pass */
     for (int i = 0; i < NB; i++) for (int k = 0; k < NCORNER; k++) {
@@ -151,6 +160,10 @@ static void substep(World *W) {
         if (vp.y < 0) vel_impulse(b, r, v3(0, 1, 0), -vp.y);
         vp = vadd(b->v, vcross(b->w, r)); Vec vt = v3(vp.x, 0, vp.z); double s = vlen(vt);
         if (s > 1e-9) { double dv = fmin(s, W->mu * fabs(cl[c]) / h); vel_impulse(b, r, vscale(vt, 1 / s), -dv); }
+    }
+    if (W->assist > 0) {   /* pelvis support damping, implicit */
+        Body *p = W->b + PELVIS; double f = fmin(1, h * W->assist * 20);
+        p->v = vadd(p->v, vscale(vsub(W->assist_v, p->v), f)); p->w = vscale(p->w, 1 - f);
     }
     /* joint damping, implicit: remove a fraction min(1, h kd w_eff) of the relative angular velocity */
     for (int i = 1; i < NB; i++) {

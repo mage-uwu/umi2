@@ -114,11 +114,11 @@ double env_step(Env *E, const float *a) {
         E->next_push = W->t + E->cfg.push_every * (0.5 + env_rand(&E->rng));
     }
     if (E->cfg.task == TASK_IMITATE && E->cfg.assist > 0) {   /* training wheels toward the reference root */
-        const double s = E->cfg.assist, M = W->total_mass; Body *p = W->b + PELVIS;
-        Vec dx = vsub(E->ref_root, p->x), e = qlog(qmul(E->ref_world[PELVIS], qconj(p->q)));
-        W->assist_f = vscale(vsub(vscale(dx, 60), vscale(v3(p->v.x, 0, p->v.z), 6)), s * M); W->assist_f.y = s * M * 60 * dx.y;
-        W->assist_t = vscale(vsub(vscale(e, 150), vscale(p->w, 8)), s);   /* gains kept within explicit stability for the pelvis inertia */
-    } else W->assist_f = W->assist_t = v3(0, 0, 0);
+        Quat rr[NB], rw[NB]; Vec r2;
+        ref_at(E, env_phase(E) + 1.0 / CTRL_HZ, rr, rw, &r2);
+        W->assist = E->cfg.assist; W->assist_x = r2; W->assist_q = rw[PELVIS];   /* where the reference is at the end of this step */
+        W->assist_v = vscale(vsub(r2, E->ref_root), CTRL_HZ);
+    } else W->assist = 0;
     world_step(W);
     E->step++;
     int fell = fallen(W);
