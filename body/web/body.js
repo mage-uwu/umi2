@@ -287,7 +287,10 @@ export class Clip {
   }
 }
 export async function loadClips(url) {
-  const buf = await (await fetch(url)).arrayBuffer(), dv = new DataView(buf); let o = 4;
+  // url: motions_ref.json ({ b64 }) as published with the page, or the raw motions_ref.bin
+  const res = await fetch(url);
+  const buf = url.endsWith('.json') ? Uint8Array.from(atob((await res.json()).b64), c => c.charCodeAt(0)).buffer : await res.arrayBuffer();
+  const dv = new DataView(buf); let o = 4;
   const n = dv.getInt32(o, true); o += 4; const clips = {};
   for (let k = 0; k < n; k++) {
     const name = new TextDecoder().decode(new Uint8Array(buf, o, 16)).replace(/\0+$/, ''); o += 16;

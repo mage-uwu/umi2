@@ -268,7 +268,7 @@ addEventListener('keydown', e => {
 async function useSkill(name) {
   const s = SKILLS[name]; if (!s) throw new Error(`no skill named ${name}`);
   policies[name] ||= await loadPolicy(s.file);
-  if (s.clip) { clips ||= await loadClips('motions_ref.bin'); clip = clips[s.clip]; } else clip = null;
+  if (s.clip) { clips ||= await loadClips('motions_ref.json'); clip = clips[s.clip]; } else clip = null;
   skill = name; policy = policies[name];
   setPressed('[data-skill]', document.querySelector(`[data-skill="${name}"]`));
   document.getElementById('r-policy').textContent = `${policy.type === 'ssm' ? 'SSM-tree' : policy.type.toUpperCase()} · ${policy.params.toLocaleString()} weights`;
