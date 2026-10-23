@@ -40,6 +40,14 @@ Every box carries a `grip` label for the hands: 0 nothing to hold, 1 a ledge (it
 handhold. The physics does not read it yet; it is for the grip constraint (ROADMAP.md, M3). Starts and goals are
 drawn from the whole room (the outer walls less 0.6 m).
 
+### Per-world rooms (the room bank)
+
+`python3 room.py --bank 32 --out rooms_bank.json` writes 32 seeded variants of the stage-1 room (features moved,
+turned and resized; 125 to 135 boxes each) in one file. Given a bank (`--room rooms_bank.json`), each training world
+is in its own room, drawn from its episode seed at every reset, so a policy cannot memorise one layout. The physics
+holds up to 32 rooms of up to 256 boxes (ROOM_BANK, ROOM_MAX); with a single room.json everything plays exactly as
+before. The viewer shows one room.
+
 ### What is drawn is what is simulated
 
 The physics in C (`body.c`), in CUDA (`gpu/tssenv_kernels.cu`, which compiles the same `body.c`) and in the browser

@@ -114,6 +114,7 @@ static BHD void floor_reset(Env *E) {
 BHD void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
     E->cfg = *cfg; E->rng = seed * 0x9E3779B97F4A7C15ULL + 1; E->step = 0; E->done = 0; E->t0 = 0;
     world_init(&E->W, 45, 20, 1.0 / CTRL_HZ);
+    if (room_banks() > 1) E->W.room = (int)(((seed * 0xD1B54A32D192ED03ULL) >> 33) % (uint64_t)room_banks());   /* her room of the bank, from the seed (no draw from rng: one room plays as before) */
     if (cfg->arm_tone > 0) for (int i = L_UARM; i <= R_FARM; i++) E->W.tone[i] = cfg->arm_tone;
     for (int k = 0; k < ACT_DIM; k++) E->prev_act[k] = E->filt[k] = 0;
     E->head_v = v3(0, 0, 0); E->style_has_prev = 0;
@@ -204,7 +205,7 @@ BHD void env_obs(const Env *E, float *o) {
     for (int i = 0; i < NB; i++) o[k++] = fmin(3, W->touch[i] / wt);   /* touch */
     for (int i = 1; i < NB; i++) o[k++] = W->act[i];   /* muscle sense */
     for (int h = 0; h < 2; h++) {   /* grip: what each hand holds, and the nearest thing it could */
-        const Vec p = hand_point(W, h); Vec at; const int j = grip_find(p, 1.0, &at);
+        const Vec p = hand_point(W, h); Vec at; const int j = grip_find(W->room, p, 1.0, &at);
         o[k++] = W->grip_box[h] >= 0;
         if (j >= 0) { const Vec d = qrot(hi, vsub(at, p)); o[k++] = d.x; o[k++] = d.y; o[k++] = d.z; o[k++] = 1; }
         else { o[k++] = 0; o[k++] = 0; o[k++] = 0; o[k++] = 0; }
@@ -328,42 +329,42 @@ static BHD double floor_reward(Env *E, double act2) {
     return E->cfg.nstyle ? 0.7 * task + 0.3 * style_reward(E) : task;
 }
 static BHD int fallen(const World *W) {   /* heights from the surface under her (y = 0 on open floor) */
-    const Vec p = W->b[PELVIS].x; const double sp = support_y(p.x, p.z, p.y);
+    const Vec p = W->b[PELVIS].x; const double sp = support_y(W->room, p.x, p.z, p.y);
     if (p.y - sp < 0.55 || W->b[HEAD].x.y - sp < 1.0) return 1;
     for (int i = 0; i < NB; i++) if (i != L_FOOT && i != R_FOOT && i != L_SHIN && i != R_SHIN) {
-        const Vec c = W->b[i].x; if (world_lowest(W, i) - support_y(c.x, c.z, c.y) < 0.05) return 1; }
+        const Vec c = W->b[i].x; if (world_lowest(W, i) - support_y(W->room, c.x, c.z, c.y) < 0.05) return 1; }
     return 0;
 }
 
 /* ---------- TASK_GOTO (physics_gym) ---------- */
 /* half size of the area starts and goals are drawn from: the room's outer walls (its farthest box centres) less 0.6 m */
-static BHD double arena(void) {
-    if (!room_size()) return 3.0;
+static BHD double arena(const Env *E) {
+    const int r = E->W.room; if (!room_size(r)) return 3.0;
     double e = 0;
-    for (int j = 0; j < room_size(); j++) { const RoomBox *o = room_at(j); e = fmax(e, fmax(fabs(o->c.x), fabs(o->c.z))); }
+    for (int j = 0; j < room_size(r); j++) { const RoomBox *o = room_at(r, j); e = fmax(e, fmax(fabs(o->c.x), fabs(o->c.z))); }
     return e - 0.6;
 }
 /* room to stand at (x, z): open floor there and around, nothing from the floor up to head height */
-static BHD int free_spot(double x, double z) {
-    for (int a = -1; a <= 1; a++) for (int b = -1; b <= 1; b++) if (column_hit(x + 0.45 * a, z + 0.45 * b, 0.005, 1.9)) return 0;
+static BHD int free_spot(int r, double x, double z) {
+    for (int a = -1; a <= 1; a++) for (int b = -1; b <= 1; b++) if (column_hit(r, x + 0.45 * a, z + 0.45 * b, 0.005, 1.9)) return 0;
     return 1;
 }
 /* a new goal 1 to 6 m away: on open floor, or (30%) on the top of a box that is flat enough and at most 0.8 m up */
 static BHD void goto_goal(Env *E) {
-    const double R = arena(); const Vec p = E->W.b[PELVIS].x;
+    const double R = arena(E); const Vec p = E->W.b[PELVIS].x; const int rm = E->W.room;
     for (int tries = 0; tries < 64; tries++) {
         Vec g;
-        if (room_size() && env_rand(&E->rng) < 0.3) {
-            const RoomBox *o = room_at((int)(env_rand(&E->rng) * room_size()) % room_size());
+        if (room_size(rm) && env_rand(&E->rng) < 0.3) {
+            const RoomBox *o = room_at(rm, (int)(env_rand(&E->rng) * room_size(rm)) % room_size(rm));
             const double u = 2 * env_rand(&E->rng) - 1; const double w = 2 * env_rand(&E->rng) - 1;
             if (qrot(o->q, v3(0, 1, 0)).y < 0.9) continue;
             const Vec top = vadd(o->c, qrot(o->q, v3(0.7 * u * o->h.x, o->h.y, 0.7 * w * o->h.z)));
-            const double y = support_y(top.x, top.z, top.y + 0.01);
-            if (y < 0.05 || y > 0.8 || column_hit(top.x, top.z, y + 0.01, y + 1.9)) continue;
+            const double y = support_y(rm, top.x, top.z, top.y + 0.01);
+            if (y < 0.05 || y > 0.8 || column_hit(rm, top.x, top.z, y + 0.01, y + 1.9)) continue;
             g = v3(top.x, y, top.z);
         } else {
             const double x = (2 * env_rand(&E->rng) - 1) * R; const double z = (2 * env_rand(&E->rng) - 1) * R;
-            if (column_hit(x, z, 0.005, 1.9)) continue;
+            if (column_hit(rm, x, z, 0.005, 1.9)) continue;
             g = v3(x, 0, z);
         }
         const double dx = g.x - p.x, dz = g.z - p.z, d2 = dx * dx + dz * dz;
@@ -379,10 +380,10 @@ static BHD void goto_goal(Env *E) {
 BHD void env_set_goal(Env *E, Vec goal) { const Vec p = E->W.b[PELVIS].x; E->goal = goal; E->goal_d = sqrt((goal.x - p.x) * (goal.x - p.x) + (goal.z - p.z) * (goal.z - p.z)); }
 /* standing on a free spot of floor, any heading, the stand pose with a little noise */
 static BHD void goto_reset(Env *E) {
-    const double R = arena(); double x = 0, z = 0;
+    const double R = arena(E); double x = 0, z = 0;
     for (int tries = 0; tries < 64; tries++) {
         const double a = (2 * env_rand(&E->rng) - 1) * R; const double b = (2 * env_rand(&E->rng) - 1) * R;
-        if (free_spot(a, b)) { x = a; z = b; break; }
+        if (free_spot(E->W.room, a, b)) { x = a; z = b; break; }
     }
     const double yaw = env_rand(&E->rng) * 2 * M_PI; const Quat qy = qexp(v3(0, yaw, 0));
     stand_pose(E->ref); E->t0 = 0;
@@ -416,7 +417,7 @@ static BHD double goto_reward(Env *E, double act2) {
     World *W = &E->W; const Body *pb = W->b + PELVIS;
     if (E->step >= E->cfg.steps) E->done = 1;
     if (fallen(W)) { E->done = 1; return 0; }
-    const double sp = support_y(pb->x.x, pb->x.z, pb->x.y);
+    const double sp = support_y(W->room, pb->x.x, pb->x.z, pb->x.y);
     Vec cv; world_com(W, &cv); const Vec vh = v3(cv.x, 0, cv.z);
     Vec to = vsub(E->goal, pb->x); to.y = 0; const double d = vlen(to); const Vec dir = d > 1e-9 ? vscale(to, 1 / d) : v3(0, 0, 0);
     const double move = d > 0.4 ? fmax(-1, fmin(1, vdot(vh, dir) / 0.9)) : b_exp(-2 * vdot(vh, vh));   /* toward it at up to walking speed; still once there */
@@ -458,7 +459,7 @@ static BHD double env_begin(Env *E, const float *a) {
         W->assist_v = vscale(vsub(r2, E->ref_root), CTRL_HZ);
     } else if ((E->cfg.task == TASK_GETUP || E->cfg.task == TASK_GOTO) && E->cfg.assist > 0) {   /* a hand up: toward standing height above the surface under her, upright */
         Vec px = W->b[PELVIS].x, f = qrot(W->b[PELVIS].q, v3(0, 0, 1)); f = vadd(f, qrot(W->b[PELVIS].q, v3(0, 1, 0)));
-        W->assist = E->cfg.assist; W->assist_x = v3(px.x, support_y(px.x, px.z, px.y) + BODY_DEFS[PELVIS].center.y, px.z); W->assist_v = v3(0, 0, 0);
+        W->assist = E->cfg.assist; W->assist_x = v3(px.x, support_y(W->room, px.x, px.z, px.y) + BODY_DEFS[PELVIS].center.y, px.z); W->assist_v = v3(0, 0, 0);
         W->assist_q = qexp(v3(0, b_atan2(f.x, f.z), 0));
     } else W->assist = 0;
     return act2;

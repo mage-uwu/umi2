@@ -12,6 +12,8 @@ where every task starts her, facing +z) is kept free.
 
     python3 room.py                  (the stage-0 room, room.json)
     python3 room.py --seed 3 --out room_s3.json      (a shuffled variant: features moved and resized)
+    python3 room.py --bank 32 --out rooms_bank.json  (a room bank: seeds 1..32, one room per training world, drawn
+                                                      by each world from its seed; the physics holds up to 32)
 """
 import argparse, json, math, random
 
@@ -167,9 +169,23 @@ def stage1(seed=None):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--seed", type=int); ap.add_argument("--out", default="room.json"); ap.add_argument("--stage", type=int, default=1)
+    ap.add_argument("--bank", type=int, default=0, help="write a room bank of this many seeded variants instead")
     ap.add_argument("--web", default="web/room.json", help="also written here, for the viewer ('' to skip)")
     a = ap.parse_args()
     build = stage1 if a.stage == 1 else stage0; half = 8.0 if a.stage == 1 else 6.0
+    if a.bank:
+        rooms = []
+        for sd in range(1, a.bank + 1):
+            R = build(sd); tries = 0
+            while problems(R.boxes, half=half - 0.1): tries += 1; R = build(sd * 1000 + tries)
+            b = half + 0.1; rooms.append({"name": f"stage{a.stage}-seed{sd}", "bounds": [-b, b, -b, b], "boxes": R.boxes})
+        assert max(len(r["boxes"]) for r in rooms) <= 256, "a room over ROOM_MAX boxes"
+        with open(a.out, "w") as f:
+            f.write('{\n  "version": 2,\n  "grip": {"0": "none", "1": "ledge: its top edges can be held", "2": "handhold"},\n  "rooms": [\n'
+                    + ",\n".join('    {"name": ' + json.dumps(r["name"]) + ', "bounds": ' + json.dumps(r["bounds"]) + ', "boxes": [\n'
+                                  + ",\n".join("      " + json.dumps(x) for x in r["boxes"]) + "\n    ]}" for r in rooms) + "\n  ]\n}\n")
+        print(f"{a.out}: {len(rooms)} rooms, {min(len(r['boxes']) for r in rooms)}..{max(len(r['boxes']) for r in rooms)} boxes")
+        return
     R = build(a.seed); tries = 0
     while problems(R.boxes, half=half - 0.1):   # a variant that does not fit: draw it again (deterministically, from the seed)
         if a.seed is None: raise SystemExit("room: " + "; ".join(problems(R.boxes, half=half - 0.1)))

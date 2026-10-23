@@ -32,12 +32,22 @@ def load_mref(path):
     return clips
 
 
-def load_room(path):
-    """room.json -> float64 [n, 13]: c, h, q (w x y z), mu, soft, grip per box, as body.c room_set takes them"""
-    import json
-    if not path: return np.zeros((0, 13))
-    bx = json.load(open(path))["boxes"]
+def _boxes(bx):
     return np.array([b["c"] + b["h"] + b["q"] + [b["mu"], b["soft"], b.get("grip", 0)] for b in bx], np.float64).reshape(-1, 13)
+
+
+def load_room(path):
+    """room.json -> float64 [n, 13]: c, h, q (w x y z), mu, soft, grip per box, as body.c room_set takes them (a room
+    bank: its first room)"""
+    return load_rooms(path)[0]
+
+
+def load_rooms(path):
+    """a room.json, or a room bank (room.py --bank: {"rooms": [room, ...]}) -> a list of [n, 13] arrays; [] for none"""
+    import json
+    if not path: return [np.zeros((0, 13))]
+    doc = json.load(open(path))
+    return [_boxes(r["boxes"]) for r in doc["rooms"]] if "rooms" in doc else [_boxes(doc["boxes"])]
 
 
 def task_setup(task, mref, style, assist, push, act_mul, steps, style_start, sway, arm_tone, goal_cone=0.0):
@@ -92,6 +102,7 @@ def cuda_lib():
         L.tss_set_style.argtypes = [vp, vp, vp, i]
         L.tss_reset.argtypes = [vp, vp, i, vp, vp, vp]; L.tss_obs.argtypes = [vp, i, vp, vp]
         L.tss_set_room.restype = ctypes.c_char_p; L.tss_set_room.argtypes = [vp, i]
+        L.tss_set_room_bank.restype = ctypes.c_char_p; L.tss_set_room_bank.argtypes = [i, vp, i, i]
         L.tss_step.argtypes = [vp, i, vp, vp, vp, vp, vp, vp, vp]; L.tss_urand.argtypes = [vp, i, i, vp, vp]
         err = L.tss_init()
         if err: raise RuntimeError(err.decode())
@@ -128,8 +139,10 @@ class GpuPool(_Pool):
     def __init__(self, n, task="balance", mref=os.path.join(BODY, "data/motions_ref.bin"), style="", assist=0, push=0, act_mul=0, steps=0,
                  style_start=0, sway=0, arm_tone=0, goal_cone=0, seed=0, device="cuda", room=None):
         self.L = L = cuda_lib(); self.dev = torch.device(device); self._init_common(n, seed)
-        self.room = load_room(room); rb = np.ascontiguousarray(self.room)   # one room per process, as in body.c
-        err = L.tss_set_room(rb.ctypes.data_as(ctypes.c_void_p), len(rb))
+        rooms = load_rooms(room); self.room = rooms[0]; self.nrooms = len(rooms) if len(rooms[0]) else 0   # one bank per process, as in body.c
+        for r, rb in enumerate(rooms):
+            rb = np.ascontiguousarray(rb); err = L.tss_set_room_bank(r, rb.ctypes.data_as(ctypes.c_void_p), len(rb), self.nrooms)
+            if err: break
         if err: raise RuntimeError(err.decode())
         self.OBS, self.ACT, self.HZ, self.FEAT = _dims(L)
         t = task_setup(task, mref, style, assist, push, act_mul, steps, style_start, sway, arm_tone, goal_cone); self.steps = t["steps"]
@@ -207,9 +220,12 @@ class CpuPool(_Pool):
         L.pool_new.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p] + [ctypes.c_double] * 3 + [ctypes.c_int] + [ctypes.c_double] * 3 + [ctypes.c_int, ctypes.c_double]
         L.pool_obs.argtypes = [ctypes.c_void_p] * 2; L.pool_step.argtypes = [ctypes.c_void_p] * 8; L.pool_steps.argtypes = [ctypes.c_void_p]
         o, a, h = ctypes.c_int(), ctypes.c_int(), ctypes.c_int(); L.tss_dims(ctypes.byref(o), ctypes.byref(a), ctypes.byref(h)); self.OBS, self.ACT, self.HZ = o.value, a.value, h.value
-        self.room = load_room(room); rb = np.ascontiguousarray(self.room)
-        L.room_set.argtypes = [ctypes.c_void_p, ctypes.c_int]
-        if L.room_set(rb.ctypes.data_as(ctypes.c_void_p), len(rb)) < 0: raise RuntimeError("room_set failed")
+        rooms = load_rooms(room); self.room = rooms[0]; self.nrooms = len(rooms) if len(rooms[0]) else 0
+        L.room_set.argtypes = [ctypes.c_void_p, ctypes.c_int]; L.room_set_bank.argtypes = [ctypes.c_int, ctypes.c_void_p, ctypes.c_int]
+        for r, rb in enumerate(rooms):
+            rb = np.ascontiguousarray(rb)
+            if (L.room_set(rb.ctypes.data_as(ctypes.c_void_p), len(rb)) if r == 0 else L.room_set_bank(r, rb.ctypes.data_as(ctypes.c_void_p), len(rb))) < 0:
+                raise RuntimeError("room_set failed")
         self.p = L.pool_new(n, task.encode(), mref.encode(), style.encode(), assist, push, act_mul, steps, style_start, sway, arm_tone, seed, goal_cone)
         if not self.p: raise RuntimeError("pool_new failed")
         self.steps = L.pool_steps(self.p)

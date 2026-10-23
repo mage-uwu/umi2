@@ -101,19 +101,22 @@ void tss_step(void *envs, int n, const float *act, float *rew, int *done, int *f
 void tss_urand(const void *seeds, int B, int n, float *out, cudaStream_t st) { k_urand<<<GRID(B), 0, st>>>((const uint64_t *)seeds, B, n, out); }
 void tss_consts(double *o) { k_consts<<<1, 1>>>(o); }
 void tss_world_step(void *envs, int e) { k_world_step<<<1, 1>>>((Env *)envs, e); }
-/* the room (room.json as ROOM_REC doubles per box: c, h, q, mu, soft, grip), filled as body.c room_set fills it */
-const char *tss_set_room(const double *v, int n) {
-    if (n < 0 || n > ROOM_MAX) return "too many room boxes";
+/* room r of the bank (room.json as ROOM_REC doubles per box: c, h, q, mu, soft, grip), filled as body.c room_set_bank
+ * fills it; nb: the bank's size (rooms 0..nb-1 in use) */
+const char *tss_set_room_bank(int r, const double *v, int n, int nb) {
+    if (r < 0 || r >= ROOM_BANK || nb > ROOM_BANK || n < 0 || n > ROOM_MAX) return "room bank: too many rooms or boxes";
     static RoomBox t[ROOM_MAX];
     for (int j = 0; j < n; j++, v += ROOM_REC) {
         RoomBox *o = t + j; o->c.x = v[0]; o->c.y = v[1]; o->c.z = v[2]; o->h.x = v[3]; o->h.y = v[4]; o->h.z = v[5];
         o->q.w = v[6]; o->q.x = v[7]; o->q.y = v[8]; o->q.z = v[9]; o->mu = v[10]; o->soft = v[11]; o->grip = (int)v[12];
         o->rad = sqrt(o->h.x * o->h.x + o->h.y * o->h.y + o->h.z * o->h.z);
     }
-    if (n) cudaMemcpyToSymbol(room_box, t, sizeof(RoomBox) * n);
-    cudaMemcpyToSymbol(room_n, &n, sizeof n);
-    cudaError_t r = cudaDeviceSynchronize(); return r == cudaSuccess ? NULL : cudaGetErrorString(r);
+    if (n) cudaMemcpyToSymbol(room_box, t, sizeof(RoomBox) * n, sizeof(RoomBox) * ROOM_MAX * r);
+    cudaMemcpyToSymbol(room_n, &n, sizeof n, sizeof(int) * r);
+    cudaMemcpyToSymbol(room_nb, &nb, sizeof nb);
+    cudaError_t e = cudaDeviceSynchronize(); return e == cudaSuccess ? NULL : cudaGetErrorString(e);
 }
+const char *tss_set_room(const double *v, int n) { return tss_set_room_bank(0, v, n, n ? 1 : 0); }
 /* the hand-up assist, from the next step on: in the TaskCfg new episodes copy, and in every running environment */
 __global__ void k_set_assist(Env *envs, int n, double a) { const int e = blockIdx.x * blockDim.x + threadIdx.x; if (e < n) envs[e].cfg.assist = a; }
 void tss_cfg_set_assist(void *cfg, void *envs, int n, double a) {

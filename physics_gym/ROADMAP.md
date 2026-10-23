@@ -72,7 +72,7 @@ Exit: unseen procedural rooms, goals anywhere, more than 80 % reached without fa
   overhead hang is inside the range, which the development clips did not allow. Still to do: muscle envelopes from
   CMU (inverse dynamics needs 30 Hz clips: a second, smaller conversion), and the CMU walk/run priors.
 - M2: room.json v2 with grip labels; the stage-1 room (climbing wall with 76 holds, mantle block, high ledge,
-  parkour lane, stepping stones). Still to do: per-world procedural rooms; a spatial grid for the broadphase (the
+  parkour lane, stepping stones). Per-world rooms: a bank of 32 seeded variants, each world in its own (C, CUDA; one room plays bit-identically to before). Still to do: a spatial grid for the broadphase (the
   stage-1 room's 125 boxes cost about 25 % of CPU step time).
 - M3: the grip constraint is in C, CUDA and JS (tools/grip_test.c and .mjs agree on every grip state and force; the
   JS twin drifts in the last bits once she tumbles). Still to do: GPU parity on the next pod.

@@ -18,15 +18,16 @@ CASES = {
     "walk": dict(task="walk", assist=0.3),
     "crawl": dict(task="crawl", style=f"{D}/cmu_ref.bin:crawl"),
     "goto": dict(task="goto"),
-    "grip": dict(task="goto", grip=True),   # go-to with both hands always trying to close (the grip constraint exercised)
+    "grip": dict(task="goto", grip=True),
+    "bank": dict(task="goto", room=os.path.join(ge.BODY, "rooms_bank.json")),   # per-world rooms (python3 room.py --bank 32 --out rooms_bank.json)   # go-to with both hands always trying to close (the grip constraint exercised)
     "getup": dict(task="getup", style=f"{D}/cmu_ref.bin:getup_back1,getup_back2,getup_face1,getup_face2,getup_side1,getup_side2", style_start=0.3),
 }
 
 ap = argparse.ArgumentParser(); ap.add_argument("--n", type=int, default=64); ap.add_argument("--steps", type=int, default=600)
 ap.add_argument("--cases", default=",".join(CASES)); ap.add_argument("--room", default=os.path.join(ge.BODY, "room.json")); a = ap.parse_args()
 for name in a.cases.split(","):
-    kw = dict(CASES[name]); grip = kw.pop("grip", False); held = 0
-    g = ge.GpuPool(a.n, seed=3, room=a.room, **kw); c = ge.CpuPool(a.n, seed=3, room=a.room, **kw)
+    kw = dict(CASES[name]); grip = kw.pop("grip", False); held = 0; room = kw.pop("room", a.room)
+    g = ge.GpuPool(a.n, seed=3, room=room, **kw); c = ge.CpuPool(a.n, seed=3, room=room, **kw)
     gen = torch.Generator().manual_seed(11)
     first = None; at = {}; exact_steps = 0; worst_obs = 0.0; done_mismatch = 0; rew_diff = 0.0; episodes = 0
     o0 = (g.obs().cpu() - c.obs()).abs().max().item()

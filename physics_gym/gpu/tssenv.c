@@ -115,6 +115,7 @@ void pool_drop(Pool *P, int e, int j) {
     world_pose(W, v3(b[0], top + 1.2, b[2]), qexp(v3(1.2, 0.3 + 0.1 * e, 0)), rel, v3(0, 0, 0));
     for (int i = 0; i < NB; i++) W->target[i] = rel[i];
 }
+int pool_room(const Pool *P, int e) { return P->E[e].W.room; }   /* the room of the bank environment e is in */
 void pool_set_assist(Pool *P, double a) { P->tc.assist = a; for (int e = 0; e < P->n; e++) P->E[e].cfg.assist = a; }   /* the hand-up assist, from the next step on, in every environment */
 void pool_mtau(const Pool *P, int e, double *out) { memcpy(out, P->E[e].W.mtau, sizeof(double) * NB); }   /* each joint's muscle torque, last substep (N m) */
 void pool_free(Pool *P) { free(P->E); free(P->ret); free(P); }

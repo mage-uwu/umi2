@@ -129,26 +129,29 @@ static BHD void vel_impulse(Body *b, Vec r, Vec n, double dv) {
     const double j = dv / w;
     b->v = vadd(b->v, vscale(n, j * b->inv_mass)); b->w = vadd(b->w, vscale(k, j));
 }
+/* the room bank: ROOM_BANK rooms of up to ROOM_MAX boxes; each world collides with its own (World.room) */
 #ifdef __CUDACC__
-__device__ RoomBox room_box[ROOM_MAX]; __device__ int room_n;   /* set by tssenv_kernels.cu */
+__device__ RoomBox room_box[ROOM_BANK][ROOM_MAX]; __device__ int room_n[ROOM_BANK], room_nb;   /* set by tssenv_kernels.cu */
 #else
-static RoomBox room_box[ROOM_MAX]; static int room_n;
-int room_set(const double *v, int n) {
-    if (n < 0 || n > ROOM_MAX) return -1;
+static RoomBox room_box[ROOM_BANK][ROOM_MAX]; static int room_n[ROOM_BANK], room_nb;
+int room_set_bank(int r, const double *v, int n) {
+    if (r < 0 || r >= ROOM_BANK || n < 0 || n > ROOM_MAX) return -1;
     for (int j = 0; j < n; j++, v += ROOM_REC) {
-        RoomBox *o = room_box + j; o->c = v3(v[0], v[1], v[2]); o->h = v3(v[3], v[4], v[5]);
+        RoomBox *o = room_box[r] + j; o->c = v3(v[0], v[1], v[2]); o->h = v3(v[3], v[4], v[5]);
         o->q.w = v[6]; o->q.x = v[7]; o->q.y = v[8]; o->q.z = v[9]; o->mu = v[10]; o->soft = v[11]; o->rad = vlen(o->h); o->grip = (int)v[12];
     }
-    room_n = n; return n;
+    room_n[r] = n; if (r >= room_nb) room_nb = r + 1; return n;
 }
-int room_count(void) { return room_n; }
-int room_get(double *v) {   /* the table back as room_set took it */
-    for (int j = 0; j < room_n; j++, v += ROOM_REC) { const RoomBox *o = room_box + j; const double t[ROOM_REC] = {o->c.x, o->c.y, o->c.z, o->h.x, o->h.y, o->h.z, o->q.w, o->q.x, o->q.y, o->q.z, o->mu, o->soft, (double)o->grip}; memcpy(v, t, sizeof t); }
-    return room_n;
+int room_set(const double *v, int n) { room_nb = 0; const int k = room_set_bank(0, v, n); if (!n) room_nb = 0; return k; }   /* one room for every world */
+int room_count(void) { return room_n[0]; }
+int room_get(double *v) {   /* room 0 back as room_set took it */
+    for (int j = 0; j < room_n[0]; j++, v += ROOM_REC) { const RoomBox *o = room_box[0] + j; const double t[ROOM_REC] = {o->c.x, o->c.y, o->c.z, o->h.x, o->h.y, o->h.z, o->q.w, o->q.x, o->q.y, o->q.z, o->mu, o->soft, (double)o->grip}; memcpy(v, t, sizeof t); }
+    return room_n[0];
 }
 #endif
-BHD int room_size(void) { return room_n; }
-BHD const RoomBox *room_at(int j) { return room_box + j; }
+BHD int room_banks(void) { return room_nb; }
+BHD int room_size(int r) { return room_n[r]; }
+BHD const RoomBox *room_at(int r, int j) { return room_box[r] + j; }
 /* grip: the point of box o a hand at p would hold, and its distance (1e30 if o has none): a handhold anywhere on it; a
  * ledge on the four edges of its top face, if that face looks up */
 static BHD double grip_point(const RoomBox *o, Vec p, Vec *at) {
@@ -162,10 +165,10 @@ static BHD double grip_point(const RoomBox *o, Vec p, Vec *at) {
     } else return 1e30;
     *at = vadd(o->c, qrot(o->q, c)); return vlen(vsub(p, *at));
 }
-BHD int grip_find(Vec p, double reach, Vec *at) {
+BHD int grip_find(int r, Vec p, double reach, Vec *at) {
     int best = -1; double bd = reach;
-    for (int j = 0; j < room_n; j++) {
-        const RoomBox *o = room_box + j; if (!o->grip) continue;
+    for (int j = 0; j < room_n[r]; j++) {
+        const RoomBox *o = room_box[r] + j; if (!o->grip) continue;
         const Vec dc = vsub(p, o->c); if (vdot(dc, dc) > (o->rad + reach) * (o->rad + reach)) continue;
         Vec a; const double d = grip_point(o, p, &a); if (d <= bd) { bd = d; best = j; *at = a; }
     }
@@ -188,14 +191,14 @@ static BHD int column_span(const RoomBox *o, double x, double z, double *t0, dou
     if (lo > hi) return 0;
     *t0 = lo; *t1 = hi; return 1;
 }
-BHD double support_y(double x, double z, double ytop) {
+BHD double support_y(int r, double x, double z, double ytop) {
     double best = 0, t0, t1;
-    for (int j = 0; j < room_n; j++) if (column_span(room_box + j, x, z, &t0, &t1) && t1 <= ytop + 1e-9 && t1 > best) best = t1;
+    for (int j = 0; j < room_n[r]; j++) if (column_span(room_box[r] + j, x, z, &t0, &t1) && t1 <= ytop + 1e-9 && t1 > best) best = t1;
     return best;
 }
-BHD int column_hit(double x, double z, double y0, double y1) {
+BHD int column_hit(int r, double x, double z, double y0, double y1) {
     double t0, t1;
-    for (int j = 0; j < room_n; j++) if (column_span(room_box + j, x, z, &t0, &t1) && t1 > y0 && t0 < y1) return 1;
+    for (int j = 0; j < room_n[r]; j++) if (column_span(room_box[r] + j, x, z, &t0, &t1) && t1 > y0 && t0 < y1) return 1;
     return 0;
 }
 #ifdef __CUDACC__
@@ -282,10 +285,11 @@ static BHD void substep(World *W) {
     /* room boxes: a corner inside one is pushed out through the face it is nearest, at the box's softness (XPBD
      * compliance; foam gives a little); friction along that face in the velocity pass */
     int rb[ROOM_CONTACTS], rk[ROOM_CONTACTS], nr = 0; double rl[ROOM_CONTACTS], rmu[ROOM_CONTACTS]; Vec rn[ROOM_CONTACTS];
-    for (int i = 0; i < NB && room_n; i++) {
+    const int R = W->room, RN = room_n[R];
+    for (int i = 0; i < NB && RN; i++) {
         Body *b = W->b + i; const double br = vlen(BODY_DEFS[i].half);
-        for (int j = 0; j < room_n; j++) {
-            const RoomBox *o = room_box + j; const Vec dc = vsub(b->x, o->c);
+        for (int j = 0; j < RN; j++) {
+            const RoomBox *o = room_box[R] + j; const Vec dc = vsub(b->x, o->c);
             if (vdot(dc, dc) > (br + o->rad) * (br + o->rad)) continue;   /* bounding spheres apart */
             for (int k = 0; k < NCORNER; k++) {
                 const Vec r = qrot(b->q, corner(i, k)), l = qrot(qconj(o->q), vsub(vadd(b->x, r), o->c));
@@ -345,7 +349,7 @@ BHD void world_step(World *W) {
     for (int k = 0; k < 2; k++) {   /* grip: close on what is within reach, or let go */
         W->grip_force[k] = 0;
         if (W->grip_cmd[k] <= 0 || W->grip_max <= 0) W->grip_box[k] = -1;
-        else if (W->grip_box[k] < 0 && W->grip_cmd[k] > GRIP_ON) W->grip_box[k] = grip_find(hand_point(W, k), GRIP_REACH, &W->grip_at[k]);
+        else if (W->grip_box[k] < 0 && W->grip_cmd[k] > GRIP_ON) W->grip_box[k] = grip_find(W->room, hand_point(W, k), GRIP_REACH, &W->grip_at[k]);
     }
     for (int s = 0; s < W->substeps; s++) substep(W);
     for (int k = 0; k < 2; k++) W->grip_force[k] /= W->substeps;

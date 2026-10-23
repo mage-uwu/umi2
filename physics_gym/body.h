@@ -75,6 +75,7 @@ typedef struct {
     int grip_box[2];    /* room box held, -1 none */
     Vec grip_at[2];     /* the point held (world; room boxes do not move) */
     double grip_force[2];   /* the grip's pull, mean over the last world_step (N) */
+    int room;           /* which room of the bank this world is in (0 with a single room) */
 } World;
 
 #ifndef __CUDACC__   /* the GPU build defines it ahead of every use, in one unit */
@@ -129,6 +130,7 @@ BHD double world_lowest(const World *W, int body);   /* lowest corner height of 
  * phase). One room for all worlds; empty by default, which leaves the solver exactly as body/ had it. */
 typedef struct { Vec c, h; Quat q; double mu, soft, rad; int grip; } RoomBox;
 #define ROOM_MAX 256
+#define ROOM_BANK 32        /* rooms held at once (procedural variants): each world collides with its own, World.room */
 #define ROOM_REC 13         /* doubles per box as room_set takes them: c (3), h (3), q (w x y z), mu, soft, grip */
 enum { GRIP_NONE, GRIP_LEDGE, GRIP_HOLD };   /* a box's grip label: nothing; its top edges (if its top faces up); all of it */
 #define GRIP_REACH 0.06     /* m: how close a hand must be to close on a hold */
@@ -139,14 +141,16 @@ enum { GRIP_NONE, GRIP_LEDGE, GRIP_HOLD };   /* a box's grip label: nothing; its
  * support_y: height of the highest surface under the line at or below ytop (the floor, y = 0, if none): what she
  *   stands on there; boxes reaching above ytop there (a tunnel roof overhead) are not support.
  * column_hit: whether any box occupies the line between heights y0 and y1. */
-BHD double support_y(double x, double z, double ytop);
-BHD int column_hit(double x, double z, double y0, double y1);
-BHD int room_size(void);
-BHD int grip_find(Vec p, double reach, Vec *at);   /* the nearest holdable point within reach of p: its box, or -1 */
+BHD double support_y(int room, double x, double z, double ytop);
+BHD int column_hit(int room, double x, double z, double y0, double y1);
+BHD int room_banks(void);                 /* rooms in the bank (0: none, the open floor) */
+BHD int room_size(int room);
+BHD int grip_find(int room, Vec p, double reach, Vec *at);   /* the nearest holdable point within reach of p: its box, or -1 */
 BHD Vec hand_point(const World *W, int hand);       /* the hand (0 left, 1 right): the far end of the forearm, world */
-BHD const RoomBox *room_at(int j);
+BHD const RoomBox *room_at(int room, int j);
 #ifndef __CUDACC__
-int room_set(const double *boxes, int n);    /* n boxes of ROOM_REC doubles; returns n or -1 */
+int room_set(const double *boxes, int n);    /* n boxes of ROOM_REC doubles, as the only room; returns n or -1 */
+int room_set_bank(int room, const double *boxes, int n);   /* room `room` of the bank (rooms 0..room-1 set first) */
 int room_count(void);
 int room_load(const char *path);             /* room.json (room.c); returns the box count or -1 */
 #endif
