@@ -202,6 +202,7 @@ BHD void env_obs(const Env *E, float *o) {
         o[k++] = g.x * s; o[k++] = g.y; o[k++] = g.z * s; o[k++] = fmin(r, 4);
     } else for (int j = 0; j < OBS_GOAL; j++) o[k++] = 0;
     for (int i = 0; i < NB; i++) o[k++] = fmin(3, W->touch[i] / wt);   /* touch */
+    for (int i = 1; i < NB; i++) o[k++] = W->act[i];   /* muscle sense */
 }
 
 /* Golden thread (0..1): head lifted at least lift_ref above the pelvis, head upright, shoulders level,
@@ -407,7 +408,8 @@ static BHD double goto_reward(Env *E, double act2) {
     const double face = d > 0.4 && fl > 1e-9 ? fmax(0, vdot(f, dir) / fl) : 1;
     const double up = fmax(0, qrot(W->b[CHEST].q, v3(0, 1, 0)).y);
     const double prog = fmax(-0.1, fmin(0.1, E->goal_d - d)); E->goal_d = d;   /* distance gained this step (m): 0.03 at 0.9 m/s */
-    const double task = 0.35 * move + 0.1 * face + 0.1 * up + 0.05 * b_exp(-2 * act2) + 0.1 * b_exp(-20 * effort(W) / NJ);
+    const double relax = W->strength > 0 ? b_exp(-0.5 * W->metab) : b_exp(-20 * effort(W) / NJ);   /* muscle cost: relaxed is cheap */
+    const double task = 0.35 * move + 0.1 * face + 0.1 * up + 0.05 * b_exp(-2 * act2) + 0.15 * relax;
     double r = (E->cfg.nstyle ? 0.75 * task + 0.25 * style_reward(E) : task) + 6 * prog;
     if (d < 0.3 && fabs(sp - E->goal.y) < 0.2) { r += 2; E->goals++; goto_goal(E); }
     return r;

@@ -25,7 +25,8 @@
  *   TASK_GOTO     (physics_gym) reach a goal point anywhere in the room, on the floor or on top of a surface, preferably
  *                 walking: pays for moving toward it near walking speed, facing it, an upright chest, low effort and
  *                 smooth commands, and (with style clips: the walk capture) for walking poses; reaching it (within
- *                 0.3 m, on its surface) pays a bonus and a new goal is drawn. The main pay is the distance gained toward
+ *                 0.3 m, on its surface) pays a bonus and a new goal is drawn. Relaxation pays: the muscle cost (body.c
+ *                 World.metab, activation squared summed over joints) is the effort term. The main pay is the distance gained toward
  *                 it each step. The walk clip's pose at the current phase is the reference the actions act around (a gait
  *                 prior, with no root tracking). Starts on a free spot of floor, mid-stride in a random frame of the walk clip
  *                 (70%) or standing.
@@ -35,7 +36,8 @@
  * corner (kinematics, the same as the height above the floor while she stands there), and the foot flags come from
  * touch. What the room is like underfoot is left to the controller's memory. The environment itself (fall test,
  * reward, starts and goals) measures heights from the surface under her (body.c support_y), which on open floor is
- * y = 0 as before. The observation ends with the goal relative to her (zeros for other tasks) and the 14 touches.
+ * y = 0 as before. The observation ends with the goal relative to her (zeros for other tasks), the 14 touches and
+ * the 13 joints' activations (muscle sense: how hard each joint's muscles are working, as tendon organs report it).
  */
 #ifndef ENV_H
 #define ENV_H
@@ -46,7 +48,8 @@
 #define ACT_DIM 31
 #define OBS_BASE (NB * 15 + 6)   /* the bodies, foot contacts, centre of mass, clip phase (body/ policies read these) */
 #define OBS_GOAL 4                /* goal x, y, z from her pelvis in the heading frame (horizontal at most 4 m), distance */
-#define OBS_DIM (OBS_BASE + OBS_GOAL + NB)   /* then touch: each body's mean contact force over the step / body weight */
+#define OBS_DIM (OBS_BASE + OBS_GOAL + NB + NB - 1)   /* then touch: each body's mean contact force over the step / body weight;
+                                                       then muscle sense: each joint's activation (drive torque / strength) */
 #define CTRL_HZ 30
 #define ACT_FILTER 0.35
 #define STYLE_FEAT (4 * (NB - 1) + 3)   /* pose features: joint rotations, gravity in the pelvis frame */   /* each control step the joint command moves this share of the way to the new action */

@@ -2,7 +2,8 @@
 // Units: metres, kilograms, seconds. The model faces +Z, her left is +X. Body frames are world-aligned in the
 // rest T-pose, so a body's world rotation is the bone's rotation relative to rest (as the shader page uses).
 
-import { JLIM_LO, JLIM_HI } from './joint_limits.js';   // joint ranges from the motion capture (tools/joint_limits.py; body.c's joint_limits.h)
+import { JLIM_LO, JLIM_HI } from './joint_limits.js';
+import { MUSCLE_MAX, MUSCLE_SLEW } from './muscle.js';   // each joint's strength (N m) and slew (N m/s) (tools/muscle_envelope.py; body.c's muscle.h)   // joint ranges from the motion capture (tools/joint_limits.py; body.c's joint_limits.h)
 
 // ---------- vectors and quaternions ([x,y,z], [w,x,y,z]) ----------
 const v3 = (x, y, z) => [x, y, z];
@@ -75,6 +76,7 @@ export function supportY(x, z, ytop) { let best = 0; for (const o of ROOM) { con
 export class World {
   constructor(totalMass = 45, substeps = 20, dt = 1 / 30) {
     this.totalMass = totalMass; this.substeps = substeps; this.h = dt / substeps; this.mu = 0.9; this.iters = 4; this.limitK = 5000;   // limitK: joint ligaments (body.c World.limit_k); 0 = no limits
+    this.strength = 1; this.mtau = BODY_DEFS.map(() => 0); this.act = BODY_DEFS.map(() => 0); this.metab = 0;   // muscles (body.c World.strength, mtau, act, metab)
     this.kpScale = 1; this.kdScale = 1; this.t = 0;
     this.tone = BODY_DEFS.map(() => 1);   // per-joint muscle tone (body.c tone)
     this.push = { body: -1, force: [0, 0, 0], left: 0 };
@@ -115,10 +117,12 @@ export class World {
     if (b2) { b2.x = vsub(b2.x, vscale(p, b2.invMass)); this.rotateBy(b2, vscale(this.invI(b2, vcross(r2, p)), -1)); }
     return dl;
   }
-  solveAng(b1, b2, n, theta, alpha) {
+  solveAng(b1, b2, n, theta, alpha, cap = -1) {   // cap >= 0: the correction is at most cap (body.c solve_ang); returns it
     const h = this.h, w = vdot(n, this.invI(b1, n)) + vdot(n, this.invI(b2, n)), at = alpha / (h * h);
-    const p = vscale(n, -theta / (w + at));
+    let dl = -theta / (w + at); if (cap >= 0 && Math.abs(dl) > cap) dl = dl < 0 ? -cap : cap;
+    const p = vscale(n, dl);
     this.rotateBy(b1, this.invI(b1, p)); this.rotateBy(b2, vscale(this.invI(b2, p), -1));
+    return dl;
   }
   velImpulse(b, r, n, dv) {
     const w = this.genW(b, r, n); if (w <= 0) return;
@@ -142,6 +146,9 @@ export class World {
       b.qprev = b.q; this.rotateBy(b, vscale(b.w, h));
     }
     if (this.push.left > 0) this.push.left -= h;
+    // muscles (body.c): each joint's drive may add up to budget (torque times h^2) this substep: its strength, or its last
+    // torque plus what its slew allows, whichever is less, over all solver iterations together; -1: unlimited
+    const budget = BODY_DEFS.map((_, i) => this.strength > 0 ? Math.min(MUSCLE_MAX[i] * this.strength, this.mtau[i] + MUSCLE_SLEW[i] * h) * h * h : -1), used = BODY_DEFS.map(() => 0);
     for (let it = 0; it < this.iters; it++) for (let i = 1; i < NB; i++) {
       const d = BODY_DEFS[i], c = this.b[i], p = this.b[d.parent], pd = BODY_DEFS[d.parent];
       const rc = qrot(c.q, vsub(d.anchor, d.center)), rp = qrot(p.q, vsub(d.anchor, pd.center));
@@ -154,8 +161,8 @@ export class World {
         if (to > 1e-12) this.solveAng(c, p, vscale(off, 1 / to), to, 0);
         tw = qmul(p.q, this.target[i]); e = qlog(qmul(c.q, qconj(tw)));
         const ta = vdot(e, aw);
-        if (Math.abs(ta) > 1e-12) this.solveAng(c, p, ta > 0 ? aw : vscale(aw, -1), Math.abs(ta), 1 / kp);
-      } else { const th = vlen(e); if (th > 1e-12) this.solveAng(c, p, vscale(e, 1 / th), th, 1 / kp); }
+        if (Math.abs(ta) > 1e-12) used[i] += Math.abs(this.solveAng(c, p, ta > 0 ? aw : vscale(aw, -1), Math.abs(ta), 1 / kp, budget[i] < 0 ? -1 : Math.max(0, budget[i] - used[i])));
+      } else { const th = vlen(e); if (th > 1e-12) used[i] += Math.abs(this.solveAng(c, p, vscale(e, 1 / th), th, 1 / kp, budget[i] < 0 ? -1 : Math.max(0, budget[i] - used[i]))); }
       if (this.limitK > 0) {   // ligament: back inside the joint's range from the capture, if it left it
         const r = qlog(qmul(qconj(p.q), c.q)), lo = JLIM_LO[i], hi = JLIM_HI[i], rc = r.map((v, k) => v < lo[k] ? lo[k] : v > hi[k] ? hi[k] : v);
         if (rc[0] !== r[0] || rc[1] !== r[1] || rc[2] !== r[2]) {
@@ -164,6 +171,7 @@ export class World {
         }
       }
     }
+    if (this.strength > 0) for (let i = 1; i < NB; i++) { this.mtau[i] = used[i] / (h * h); const a = this.mtau[i] / (MUSCLE_MAX[i] * this.strength); this.act[i] += a; this.metab += a * a; }
     if (this.assist > 0) {
       const p = this.b[0], D = vsub(p.x, this.assistX), C = vlen(D);
       if (C > 1e-12) this.solvePos(p, null, [0, 0, 0], [0, 0, 0], vscale(D, 1 / C), C, 1 / (this.assist * ASSIST_K));
@@ -224,9 +232,10 @@ export class World {
     }
   }
   step() {
-    this.touch.fill(0);
+    this.touch.fill(0); this.act.fill(0); this.metab = 0;
     for (let s = 0; s < this.substeps; s++) this.substep();
-    for (let i = 0; i < NB; i++) this.touch[i] /= this.substeps;
+    for (let i = 0; i < NB; i++) { this.touch[i] /= this.substeps; this.act[i] /= this.substeps; }
+    this.metab /= this.substeps;
     this.t += this.h * this.substeps;
   }
   com() {
@@ -319,7 +328,7 @@ export function fallen(world) {   // heights from the surface under her (env.c f
 // The go-to skill's observation (env.c env_obs for TASK_GOTO, OBS_DIM 234): the bodies as in observe(), but the pelvis
 // height from her lowest foot corner and the foot flags from touch; then the goal from her pelvis in the heading
 // frame (horizontal at most 4 m) and its distance; then each body's touch as a share of her weight.
-export const OBS_GOTO = OBS_DIM + 4 + NB;
+export const OBS_GOTO = OBS_DIM + 4 + NB + NB - 1;   // 247: then touch, then muscle sense
 export function observeGoto(world, phase, goal) {
   const o = observe(world, phase, false), root = world.b[0].x, wt = world.totalMass * G_ACC;
   o[1] = root[1] - Math.min(world.lowest(B.L_FOOT), world.lowest(B.R_FOOT));
@@ -328,6 +337,7 @@ export function observeGoto(world, phase, goal) {
   const g = qrot(hi, vsub(goal, root)), r = Math.sqrt(g[0] * g[0] + g[2] * g[2]), s = r > 4 ? 4 / r : 1;
   o.push(g[0] * s, g[1], g[2] * s, Math.min(r, 4));
   for (let i = 0; i < NB; i++) o.push(Math.min(3, world.touch[i] / wt));
+  for (let i = 1; i < NB; i++) o.push(world.act[i]);   // muscle sense
   return o;
 }
 

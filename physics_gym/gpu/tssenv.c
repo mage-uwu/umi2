@@ -115,4 +115,5 @@ void pool_drop(Pool *P, int e, int j) {
     world_pose(W, v3(b[0], top + 1.2, b[2]), qexp(v3(1.2, 0.3 + 0.1 * e, 0)), rel, v3(0, 0, 0));
     for (int i = 0; i < NB; i++) W->target[i] = rel[i];
 }
+void pool_mtau(const Pool *P, int e, double *out) { memcpy(out, P->E[e].W.mtau, sizeof(double) * NB); }   /* each joint's muscle torque, last substep (N m) */
 void pool_free(Pool *P) { free(P->E); free(P->ret); free(P); }

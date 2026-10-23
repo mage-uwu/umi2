@@ -62,6 +62,12 @@ typedef struct {
     double touch[NB];   /* contact force on each body, mean over the last world_step (N): floor and room contacts */
     double limit_k;     /* joint ligaments (physics_gym): stiffness (N m / rad) holding each joint inside its range from
                          * the motion capture (joint_limits.h); 0 = no limits, as in body/ */
+    double strength;    /* muscles (physics_gym): 1 = each joint's drive torque held within its strength and allowed to rise
+                         * only at its slew rate (muscle.h, from the capture and published maximum torques); 0 = unlimited,
+                         * as in body/ */
+    double mtau[NB];    /* each joint's drive torque in the last substep (N m): where its slew limit starts from */
+    double act[NB];     /* each joint's activation, mean over the last world_step: drive torque / strength (0..1) */
+    double metab;       /* muscle cost of the last world_step: the sum over joints of activation squared, mean over substeps */
 } World;
 
 #ifndef __CUDACC__   /* the GPU build defines it ahead of every use, in one unit */
