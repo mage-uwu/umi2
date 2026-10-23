@@ -19,12 +19,12 @@ dev = torch.device(a.device)
 Pool = ge.GpuPool if dev.type == "cuda" else ge.CpuPool
 pool = Pool(a.n, task="goto", room=a.room, seed=a.seed, device=dev, assist=a.assist)
 m = nt.TSS.load(a.prefix + ".tss", device=dev); d = m.c.d; OBS, ACT = pool.OBS, pool.ACT
-raw = open(a.prefix + ".head", "rb").read(); hd, hobs, hact = struct.unpack("<3i", raw[4:16]); assert hd == d and hact == ACT and hobs <= OBS   # a 216-input head: the new inputs unused
+raw = open(a.prefix + ".head", "rb").read(); hd, hobs, hact = struct.unpack("<3i", raw[4:16]); assert hd == d and hact <= ACT and hobs <= OBS   # an older head: the new inputs unused, the new outputs (grip) zero
 o = 16
 def take(n):
     global o; v = np.frombuffer(raw, np.float32, n, o).copy(); o += 4 * n; return torch.tensor(v, device=dev)
 Win = torch.zeros(d, OBS, device=dev); Win[:, :hobs] = take(d * hobs).view(d, hobs)
-bin_, Wo, bo = take(d), take(ACT * d).view(ACT, d), take(ACT); take(ACT)
+bin_ = take(d); Wo = torch.zeros(ACT, d, device=dev); Wo[:hact] = take(hact * d).view(hact, d); bo = torch.zeros(ACT, device=dev); bo[:hact] = take(hact); take(hact)
 mean, sd = torch.zeros(OBS, device=dev), torch.ones(OBS, device=dev); mean[:hobs], sd[:hobs] = take(hobs), take(hobs)
 state = m.zero_state(a.n)
 goals = torch.zeros(a.n, dtype=torch.long, device=dev); fell_at = torch.full((a.n,), -1, dtype=torch.long, device=dev)

@@ -203,6 +203,12 @@ BHD void env_obs(const Env *E, float *o) {
     } else for (int j = 0; j < OBS_GOAL; j++) o[k++] = 0;
     for (int i = 0; i < NB; i++) o[k++] = fmin(3, W->touch[i] / wt);   /* touch */
     for (int i = 1; i < NB; i++) o[k++] = W->act[i];   /* muscle sense */
+    for (int h = 0; h < 2; h++) {   /* grip: what each hand holds, and the nearest thing it could */
+        const Vec p = hand_point(W, h); Vec at; const int j = grip_find(p, 1.0, &at);
+        o[k++] = W->grip_box[h] >= 0;
+        if (j >= 0) { const Vec d = qrot(hi, vsub(at, p)); o[k++] = d.x; o[k++] = d.y; o[k++] = d.z; o[k++] = 1; }
+        else { o[k++] = 0; o[k++] = 0; o[k++] = 0; o[k++] = 0; }
+    }
 }
 
 /* Golden thread (0..1): head lifted at least lift_ref above the pelvis, head upright, shoulders level,
@@ -439,6 +445,7 @@ static BHD double env_begin(Env *E, const float *a) {
         if (d->hinge && floor_task(E)) W->target[i] = hinge_limit(i, W->target[i]);
     }
     for (int j = 0; j < ACT_DIM; j++) { double dd = a[j] - E->prev_act[j]; act2 += dd * dd; E->prev_act[j] = a[j]; }
+    W->grip_cmd[0] = a[ACT_JOINT]; W->grip_cmd[1] = a[ACT_JOINT + 1];   /* grip: the raw command (opening a hand is not low-passed) */
     if (E->cfg.push_max > 0 && W->t >= E->next_push) {
         double ang = env_rand(&E->rng) * 2 * M_PI, f = E->cfg.push_max * (0.3 + 0.7 * env_rand(&E->rng));
         W->push_body = env_rand(&E->rng) < .5 ? CHEST : PELVIS; W->push_force = v3(f * b_cos(ang), 0, f * b_sin(ang)); W->push_left = 0.2;

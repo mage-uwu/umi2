@@ -45,11 +45,15 @@
 #include "mref.h"
 #include <stdint.h>
 
-#define ACT_DIM 31
+#define ACT_JOINT 31        /* joint targets: 3 per ball joint, 1 per hinge (body/ policies have only these) */
+#define ACT_DIM (ACT_JOINT + 2)   /* then grip, left and right hand (physics_gym): close above GRIP_ON, let go at <= 0 */
 #define OBS_BASE (NB * 15 + 6)   /* the bodies, foot contacts, centre of mass, clip phase (body/ policies read these) */
 #define OBS_GOAL 4                /* goal x, y, z from her pelvis in the heading frame (horizontal at most 4 m), distance */
-#define OBS_DIM (OBS_BASE + OBS_GOAL + NB + NB - 1)   /* then touch: each body's mean contact force over the step / body weight;
-                                                       then muscle sense: each joint's activation (drive torque / strength) */
+#define OBS_GRIP 10               /* per hand: holding (0/1); the nearest holdable point within 1 m, from the hand in the heading
+                                   * frame (x, y, z), and whether there is one (0/1) */
+#define OBS_DIM (OBS_BASE + OBS_GOAL + NB + NB - 1 + OBS_GRIP)   /* then touch: each body's mean contact force over the step / body
+                                                       weight; then muscle sense: each joint's activation (drive torque / strength);
+                                                       then grip */
 #define CTRL_HZ 30
 #define ACT_FILTER 0.35
 #define STYLE_FEAT (4 * (NB - 1) + 3)   /* pose features: joint rotations, gravity in the pelvis frame */   /* each control step the joint command moves this share of the way to the new action */

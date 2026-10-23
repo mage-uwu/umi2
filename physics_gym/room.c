@@ -22,12 +22,13 @@ int room_load(const char *path) {
     fseek(f, 0, SEEK_END); long len = ftell(f); fseek(f, 0, SEEK_SET);
     char *s = malloc(len + 1); if (fread(s, 1, len, f) != (size_t)len) { fclose(f); free(s); return -1; } s[len] = 0; fclose(f);
     const char *p = strstr(s, "\"boxes\""); if (!p) { free(s); return -1; }
-    static double v[ROOM_MAX * 12]; int n = 0;
+    static double v[ROOM_MAX * ROOM_REC]; int n = 0;
     for (p = strchr(p, '['); p && (p = strchr(p + 1, '{')) && n < ROOM_MAX; ) {
         const char *end = strchr(p, '}'); if (!end) break;
-        double *b = v + 12 * n;
+        double *b = v + ROOM_REC * n;
         if (!nums(field(p, end, "c"), b, 3) || !nums(field(p, end, "h"), b + 3, 3) || !nums(field(p, end, "q"), b + 6, 4)
             || !nums(field(p, end, "mu"), b + 10, 1) || !nums(field(p, end, "soft"), b + 11, 1)) { free(s); return -1; }
+        if (!nums(field(p, end, "grip"), b + 12, 1)) b[12] = 0;   /* room.json v1 has no grip labels */
         n++; p = end;
     }
     free(s);

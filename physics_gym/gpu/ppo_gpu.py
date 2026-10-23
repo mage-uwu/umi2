@@ -98,19 +98,20 @@ def main():
     if a.load:
         raw = open(a.load + ".head", "rb").read()
         hd, hobs, hact = struct.unpack("<3i", raw[4:16])
-        # a head with fewer inputs (a body/ policy: 216) continues here with the new inputs (goal, touch) appended,
-        # their weights zero, so it starts out acting exactly as before
-        assert raw[:4] == b"TSPH" and hd == d and hact == ACT and hobs <= OBS, "head does not match"
+        # a head with fewer inputs (a body/ policy: 216) continues here with the new inputs (goal, touch, grip) appended,
+        # their weights zero, and fewer outputs (31: no grip) with the new ones zero, so it starts out acting as before
+        assert raw[:4] == b"TSPH" and hd == d and hact <= ACT and hobs <= OBS, "head does not match"
         o = 16
         def take(n):
             nonlocal o; v = np.frombuffer(raw, F32, n, o).copy(); o += 4 * n; return v
         ends["Win"][:, :hobs] = take(d * hobs).reshape(d, hobs); ends["Win"][:, hobs:] = 0
-        for k, n in (("bin", d), ("Wo", ACT * d), ("bo", ACT), ("log_std", ACT)): ends[k] = take(n).reshape(ends[k].shape)
+        ends["bin"] = take(d); ends["Wo"][:] = 0; ends["Wo"][:hact] = take(hact * d).reshape(hact, d)
+        ends["bo"][:] = 0; ends["bo"][:hact] = take(hact); take(hact)   # (log_std: reset below)
         mean[:hobs], sd[:hobs] = take(hobs), take(hobs)
         if len(raw) - o >= 4 * (sum(v.size for v in crit.values()) - CH * (OBS - hobs)):
             crit["W1"][:, :hobs] = take(CH * hobs).reshape(CH, hobs); crit["W1"][:, hobs:] = 0
             for k in ("b1", "W2", "b2", "W3", "b3"): crit[k] = take(crit[k].size).reshape(crit[k].shape)
-        if hobs < OBS: print(json.dumps({"event": "load", "inputs": hobs, "widened_to": OBS}), flush=True)
+        if hobs < OBS or hact < ACT: print(json.dumps({"event": "load", "inputs": hobs, "outputs": hact, "widened_to": [OBS, ACT]}), flush=True)
         on = 1000.0; osum = mean.astype(np.float64) * on; osq = (sd.astype(np.float64) ** 2 + mean.astype(np.float64) ** 2) * on
         ends["log_std"][:] = a.log_std
     T_ = lambda v: torch.tensor(v, device=dev, requires_grad=True)

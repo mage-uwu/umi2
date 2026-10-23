@@ -109,8 +109,8 @@ void tss_consts_cpu(double *o) {
 }
 /* environment e placed limp 1.2 m above the top of room box j, tumbling a little (room parity, room_drop) */
 void pool_drop(Pool *P, int e, int j) {
-    double v[ROOM_MAX * 12]; extern int room_get(double *); const int n = room_get(v); if (j < 0 || j >= n) return;
-    const double *b = v + 12 * j; Quat q = {b[6], b[7], b[8], b[9]}; const double top = b[1] + qrot(q, v3(0, b[4], 0)).y;
+    double v[ROOM_MAX * ROOM_REC]; extern int room_get(double *); const int n = room_get(v); if (j < 0 || j >= n) return;
+    const double *b = v + ROOM_REC * j; Quat q = {b[6], b[7], b[8], b[9]}; const double top = b[1] + qrot(q, v3(0, b[4], 0)).y;
     World *W = &P->E[e].W; Quat rel[NB]; stand_pose(rel); W->kp_scale = 0.05;
     world_pose(W, v3(b[0], top + 1.2, b[2]), qexp(v3(1.2, 0.3 + 0.1 * e, 0)), rel, v3(0, 0, 0));
     for (int i = 0; i < NB; i++) W->target[i] = rel[i];

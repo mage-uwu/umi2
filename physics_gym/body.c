@@ -37,7 +37,7 @@ BCONST BodyDef BODY_DEFS[NB] = {
 
 BHD void world_init(World *W, double total_mass, int substeps, double dt) {
     memset(W, 0, sizeof(*W));
-    W->total_mass = total_mass; W->substeps = substeps; W->h = dt / substeps; W->mu = 0.9; W->push_body = -1; W->kp_scale = W->kd_scale = 1; W->iters = 4; W->limit_k = 5000; W->strength = 1; for (int i = 0; i < NB; i++) W->tone[i] = 1;
+    W->total_mass = total_mass; W->substeps = substeps; W->h = dt / substeps; W->mu = 0.9; W->push_body = -1; W->kp_scale = W->kd_scale = 1; W->iters = 4; W->limit_k = 5000; W->strength = 1; W->grip_max = GRIP_MAX; W->grip_box[0] = W->grip_box[1] = -1; for (int i = 0; i < NB; i++) W->tone[i] = 1;
     double fsum = 0; for (int i = 0; i < NB; i++) fsum += BODY_DEFS[i].mass_frac;
     for (int i = 0; i < NB; i++) {
         const BodyDef *d = BODY_DEFS + i; Body *b = W->b + i;
@@ -135,20 +135,44 @@ __device__ RoomBox room_box[ROOM_MAX]; __device__ int room_n;   /* set by tssenv
 static RoomBox room_box[ROOM_MAX]; static int room_n;
 int room_set(const double *v, int n) {
     if (n < 0 || n > ROOM_MAX) return -1;
-    for (int j = 0; j < n; j++, v += 12) {
+    for (int j = 0; j < n; j++, v += ROOM_REC) {
         RoomBox *o = room_box + j; o->c = v3(v[0], v[1], v[2]); o->h = v3(v[3], v[4], v[5]);
-        o->q.w = v[6]; o->q.x = v[7]; o->q.y = v[8]; o->q.z = v[9]; o->mu = v[10]; o->soft = v[11]; o->rad = vlen(o->h);
+        o->q.w = v[6]; o->q.x = v[7]; o->q.y = v[8]; o->q.z = v[9]; o->mu = v[10]; o->soft = v[11]; o->rad = vlen(o->h); o->grip = (int)v[12];
     }
     room_n = n; return n;
 }
 int room_count(void) { return room_n; }
 int room_get(double *v) {   /* the table back as room_set took it */
-    for (int j = 0; j < room_n; j++, v += 12) { const RoomBox *o = room_box + j; const double t[12] = {o->c.x, o->c.y, o->c.z, o->h.x, o->h.y, o->h.z, o->q.w, o->q.x, o->q.y, o->q.z, o->mu, o->soft}; memcpy(v, t, sizeof t); }
+    for (int j = 0; j < room_n; j++, v += ROOM_REC) { const RoomBox *o = room_box + j; const double t[ROOM_REC] = {o->c.x, o->c.y, o->c.z, o->h.x, o->h.y, o->h.z, o->q.w, o->q.x, o->q.y, o->q.z, o->mu, o->soft, (double)o->grip}; memcpy(v, t, sizeof t); }
     return room_n;
 }
 #endif
 BHD int room_size(void) { return room_n; }
 BHD const RoomBox *room_at(int j) { return room_box + j; }
+/* grip: the point of box o a hand at p would hold, and its distance (1e30 if o has none): a handhold anywhere on it; a
+ * ledge on the four edges of its top face, if that face looks up */
+static BHD double grip_point(const RoomBox *o, Vec p, Vec *at) {
+    const Vec l = qrot(qconj(o->q), vsub(p, o->c)); Vec c;
+    if (o->grip == GRIP_HOLD) c = v3(fmax(-o->h.x, fmin(o->h.x, l.x)), fmax(-o->h.y, fmin(o->h.y, l.y)), fmax(-o->h.z, fmin(o->h.z, l.z)));
+    else if (o->grip == GRIP_LEDGE && qrot(o->q, v3(0, 1, 0)).y > 0.9) {
+        const double ux = fmax(-o->h.x, fmin(o->h.x, l.x)), uz = fmax(-o->h.z, fmin(o->h.z, l.z));
+        const Vec e[4] = {v3(ux, o->h.y, o->h.z), v3(ux, o->h.y, -o->h.z), v3(o->h.x, o->h.y, uz), v3(-o->h.x, o->h.y, uz)};
+        double best = 1e30; c = e[0];
+        for (int k = 0; k < 4; k++) { const Vec d = vsub(l, e[k]); const double d2 = vdot(d, d); if (d2 < best) { best = d2; c = e[k]; } }
+    } else return 1e30;
+    *at = vadd(o->c, qrot(o->q, c)); return vlen(vsub(p, *at));
+}
+BHD int grip_find(Vec p, double reach, Vec *at) {
+    int best = -1; double bd = reach;
+    for (int j = 0; j < room_n; j++) {
+        const RoomBox *o = room_box + j; if (!o->grip) continue;
+        const Vec dc = vsub(p, o->c); if (vdot(dc, dc) > (o->rad + reach) * (o->rad + reach)) continue;
+        Vec a; const double d = grip_point(o, p, &a); if (d <= bd) { bd = d; best = j; *at = a; }
+    }
+    return best;
+}
+static BHD Vec hand_local(int hand) { const int i = hand ? R_FARM : L_FARM; return v3(hand ? -BODY_DEFS[i].half.x : BODY_DEFS[i].half.x, 0, 0); }
+BHD Vec hand_point(const World *W, int hand) { const Body *b = W->b + (hand ? R_FARM : L_FARM); return vadd(b->x, qrot(b->q, hand_local(hand))); }
 /* the heights where the vertical line through (x, z) is inside box o: [*t0, *t1]; 0 if it misses */
 static BHD int column_span(const RoomBox *o, double x, double z, double *t0, double *t1) {
     const double dx = x - o->c.x, dz = z - o->c.z; if (dx * dx + dz * dz > o->rad * o->rad) return 0;
@@ -235,6 +259,15 @@ static BHD void substep(World *W) {
         if (th > 1e-12) { Vec n = vscale(e, 1 / th); double w = vdot(n, inv_I(p, n)), at = 1 / (W->assist * ASSIST_KR * h * h);
             rotate_by(p, inv_I(p, vscale(n, -th / (w + at)))); }
     }
+    for (int k = 0; k < 2; k++) if (W->grip_box[k] >= 0) {   /* grip: the hand held to its point, at most grip_max; lost past 2 GRIP_REACH */
+        Body *b = W->b + (k ? R_FARM : L_FARM); const Vec r = qrot(b->q, hand_local(k)), D = vsub(vadd(b->x, r), W->grip_at[k]); const double C = vlen(D);
+        if (C > 2 * GRIP_REACH) { W->grip_box[k] = -1; continue; }
+        if (C > 1e-12) {
+            const double f = fabs(solve_pos(b, NULL, r, v3(0, 0, 0), vscale(D, 1 / C), C, 1e-6, h, W->grip_max * h * h)) / (h * h);
+            W->grip_force[k] += f; W->touch[k ? R_FARM : L_FARM] += f;
+            if (W->strength > 0) { const double a = f / W->grip_max; W->metab += a * a; }   /* holding on costs like a muscle */
+        }
+    }
     BODY_DEBUG(W, 1);
     /* ground contacts (y = 0) at box corners; friction acts in the velocity pass */
     for (int i = 0; i < NB; i++) {
@@ -309,7 +342,13 @@ static BHD void substep(World *W) {
 BHD void world_step(World *W) {
     for (int i = 0; i < NB; i++) W->touch[i] = W->act[i] = 0;
     W->metab = 0;
+    for (int k = 0; k < 2; k++) {   /* grip: close on what is within reach, or let go */
+        W->grip_force[k] = 0;
+        if (W->grip_cmd[k] <= 0 || W->grip_max <= 0) W->grip_box[k] = -1;
+        else if (W->grip_box[k] < 0 && W->grip_cmd[k] > GRIP_ON) W->grip_box[k] = grip_find(hand_point(W, k), GRIP_REACH, &W->grip_at[k]);
+    }
     for (int s = 0; s < W->substeps; s++) substep(W);
+    for (int k = 0; k < 2; k++) W->grip_force[k] /= W->substeps;
     for (int i = 0; i < NB; i++) { W->touch[i] /= W->substeps; W->act[i] /= W->substeps; }   /* means over the step */
     W->metab /= W->substeps;
     W->t += W->h * W->substeps;

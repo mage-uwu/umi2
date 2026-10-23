@@ -33,11 +33,11 @@ def load_mref(path):
 
 
 def load_room(path):
-    """room.json -> float64 [n, 12]: c, h, q (w x y z), mu, soft per box, as body.c room_set takes them"""
+    """room.json -> float64 [n, 13]: c, h, q (w x y z), mu, soft, grip per box, as body.c room_set takes them"""
     import json
-    if not path: return np.zeros((0, 12))
+    if not path: return np.zeros((0, 13))
     bx = json.load(open(path))["boxes"]
-    return np.array([b["c"] + b["h"] + b["q"] + [b["mu"], b["soft"]] for b in bx], np.float64).reshape(-1, 12)
+    return np.array([b["c"] + b["h"] + b["q"] + [b["mu"], b["soft"], b.get("grip", 0)] for b in bx], np.float64).reshape(-1, 13)
 
 
 def task_setup(task, mref, style, assist, push, act_mul, steps, style_start, sway, arm_tone, goal_cone=0.0):

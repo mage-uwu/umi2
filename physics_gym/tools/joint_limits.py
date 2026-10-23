@@ -1,14 +1,16 @@
 """joint_limits.py: natural joint ranges from the motion capture, as a table the physics enforces.
 
-Every frame of every clip (data/motions_ref.bin: Bandai Namco; data/cmu_ref.bin: CMU crawling and getting up), and
-its left-right mirror image, gives each joint's rotation (child in parent, as a rotation vector in the parent's rest
+Every frame of the clean library (data/clean/cmu_library.npz: the whole CMU database, 2,435 trials of walking,
+running, jumping, dancing, climbing, acrobatics, ..., at 10 Hz; tools/cmu_library.py), or with --dev the development
+clips (data/motions_ref.bin: Bandai Namco, CC BY-NC; data/cmu_ref.bin: CMU crawling and getting up), and its
+left-right mirror image, gives each joint's rotation (child in parent, as a rotation vector in the parent's rest
 frame). Each joint's range per axis is the 0.25 to 99.75 percentile of those, widened by a margin. Elbows and knees
 are hinges here, so only their flexion axis is limited (the capture's forearm twist is not a motion this body has).
 
 Writes joint_limits.h (body.c includes it; every build: CPU, CUDA) and web/joint_limits.js (body.js imports it), from
 the same numbers. Python's shortest round-trip decimals, so all builds hold identical doubles.
 
-    python3 tools/joint_limits.py [--margin-deg 10]
+    python3 tools/joint_limits.py [--margin-deg 10] [--dev]
 """
 import argparse, math, os, sys
 import numpy as np
@@ -37,8 +39,13 @@ def qlog(q):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--margin-deg", type=float, default=10.0); ap.add_argument("--pct", type=float, default=0.25)
+    ap.add_argument("--dev", action="store_true", help="the development clips instead of the clean CMU library")
     a = ap.parse_args(); margin = math.radians(a.margin_deg)
-    Q = np.concatenate([c["q"] for f in ("data/motions_ref.bin", "data/cmu_ref.bin") for c in ge.load_mref(os.path.join(ROOT, f)).values()])
+    if a.dev: Q = np.concatenate([c["q"] for f in ("data/motions_ref.bin", "data/cmu_ref.bin") for c in ge.load_mref(os.path.join(ROOT, f)).values()])
+    else:
+        Q = np.load(os.path.join(ROOT, "data", "clean", "cmu_library.npz"))["q"].astype(np.float64)
+        Q /= np.linalg.norm(Q, axis=-1, keepdims=True)
+    src = "the development clips" if a.dev else "the CMU library"
     E = np.stack([qlog(qmul(Q[:, PARENT[i]] * np.array([1, -1, -1, -1]), Q[:, i])) if i else np.zeros((len(Q), 3)) for i in range(14)], 1)
     Em = E[:, MIRROR] * np.array([1, -1, -1])   # the mirror image: rotation vectors (x, y, z) -> (x, -y, -z), left and right swapped
     E2 = np.concatenate([E, Em])
@@ -50,7 +57,7 @@ def main():
     lo = np.maximum(lo, -np.pi); hi = np.minimum(hi, np.pi)
     rows = [(NAMES[i], [float(x) for x in lo[i]], [float(x) for x in hi[i]]) for i in range(14)]
     with open(os.path.join(ROOT, "joint_limits.h"), "w") as f:
-        f.write(f"/* joint_limits.h: written by tools/joint_limits.py from {len(Q)} capture frames and their mirror images (margin {a.margin_deg} deg).\n"
+        f.write(f"/* joint_limits.h: written by tools/joint_limits.py from {len(Q)} capture frames of {src} and their mirror images (margin {a.margin_deg} deg).\n"
                 " * Per body, the range of its joint's rotation vector (child in parent, rest frame), lo and hi per axis (rad). */\n")
         f.write("static BCONST double JLIM_LO[NB][3] = {\n" + ",\n".join(f"    {{{lo_[0]!r}, {lo_[1]!r}, {lo_[2]!r}}}   /* {n} */" for n, lo_, _ in rows) + "\n};\n")
         f.write("static BCONST double JLIM_HI[NB][3] = {\n" + ",\n".join(f"    {{{hi_[0]!r}, {hi_[1]!r}, {hi_[2]!r}}}   /* {n} */" for n, _, hi_ in rows) + "\n};\n")

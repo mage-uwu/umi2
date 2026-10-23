@@ -68,6 +68,13 @@ typedef struct {
     double mtau[NB];    /* each joint's drive torque in the last substep (N m): where its slew limit starts from */
     double act[NB];     /* each joint's activation, mean over the last world_step: drive torque / strength (0..1) */
     double metab;       /* muscle cost of the last world_step: the sum over joints of activation squared, mean over substeps */
+    /* grip (physics_gym): each hand (the far end of each forearm: 0 left, 1 right) closes on a handhold or a ledge's top edge
+     * within GRIP_REACH while its command is on (> GRIP_ON; it lets go at <= 0), and is then held to that point by a constraint
+     * of at most grip_max (N): past that the hand slides, and beyond 2 GRIP_REACH the grip is lost. 0 = no grip. */
+    double grip_max, grip_cmd[2];
+    int grip_box[2];    /* room box held, -1 none */
+    Vec grip_at[2];     /* the point held (world; room boxes do not move) */
+    double grip_force[2];   /* the grip's pull, mean over the last world_step (N) */
 } World;
 
 #ifndef __CUDACC__   /* the GPU build defines it ahead of every use, in one unit */
@@ -120,8 +127,13 @@ BHD double world_lowest(const World *W, int body);   /* lowest corner height of 
 /* The room (physics_gym, room.json): static oriented boxes the bodies' corners collide with, besides the floor.
  * c centre, h half extents, q rotation, mu friction, soft contact compliance (m/N, 0 rigid), rad = |h| (broad
  * phase). One room for all worlds; empty by default, which leaves the solver exactly as body/ had it. */
-typedef struct { Vec c, h; Quat q; double mu, soft, rad; } RoomBox;
+typedef struct { Vec c, h; Quat q; double mu, soft, rad; int grip; } RoomBox;
 #define ROOM_MAX 256
+#define ROOM_REC 13         /* doubles per box as room_set takes them: c (3), h (3), q (w x y z), mu, soft, grip */
+enum { GRIP_NONE, GRIP_LEDGE, GRIP_HOLD };   /* a box's grip label: nothing; its top edges (if its top faces up); all of it */
+#define GRIP_REACH 0.06     /* m: how close a hand must be to close on a hold */
+#define GRIP_ON 0.2         /* grip command that closes a hand */
+#define GRIP_MAX 450.0      /* N per hand: about her weight (45 kg); one hand just holds her hanging */
 #define ROOM_CONTACTS (NB * NCORNER * 2)
 /* Terrain queries (every build): the vertical line through (x, z) against the room.
  * support_y: height of the highest surface under the line at or below ytop (the floor, y = 0, if none): what she
@@ -130,9 +142,11 @@ typedef struct { Vec c, h; Quat q; double mu, soft, rad; } RoomBox;
 BHD double support_y(double x, double z, double ytop);
 BHD int column_hit(double x, double z, double y0, double y1);
 BHD int room_size(void);
+BHD int grip_find(Vec p, double reach, Vec *at);   /* the nearest holdable point within reach of p: its box, or -1 */
+BHD Vec hand_point(const World *W, int hand);       /* the hand (0 left, 1 right): the far end of the forearm, world */
 BHD const RoomBox *room_at(int j);
 #ifndef __CUDACC__
-int room_set(const double *boxes, int n);    /* n boxes of 12 doubles: c (3), h (3), q (w x y z), mu, soft; returns n or -1 */
+int room_set(const double *boxes, int n);    /* n boxes of ROOM_REC doubles; returns n or -1 */
 int room_count(void);
 int room_load(const char *path);             /* room.json (room.c); returns the box count or -1 */
 #endif

@@ -50,14 +50,38 @@ export const BODY_DEFS = [
 ].map(([name, bone, parent, anchor, center, half, mass_frac, kp, kd, hinge]) => ({ name, bone, parent, anchor, center, half, mass_frac, kp, kd, hinge }));
 const NB = BODY_DEFS.length, G_ACC = 9.81, ASSIST_K = 2700, ASSIST_KR = 2000;
 const CORNERS = [[-1, -1, -1], [1, -1, -1], [-1, 1, -1], [1, 1, -1], [-1, -1, 1], [1, -1, 1], [-1, 1, 1], [1, 1, 1]];
+const handLocal = k => { const i = k ? B.R_FARM : B.L_FARM; return [k ? -BODY_DEFS[i].half[0] : BODY_DEFS[i].half[0], 0, 0]; };   // body.c hand_local
 const corner = (i, k) => { const h = BODY_DEFS[i].half; return [CORNERS[k][0] * h[0], CORNERS[k][1] * h[1], CORNERS[k][2] * h[2]]; };
 const hingeAxis = h => h === 1 ? [1, 0, 0] : h === 2 ? [0, 1, 0] : [0, 0, 1];
 
 // ---------- the room (physics_gym): static oriented boxes from room.json, the same table body.c collides with ----------
 // [{c, h, q, mu, soft}] -> each box also gets rad = |h| (broad phase). One room for every World, as in body.c.
 let ROOM = [];
-export function setRoom(boxes) { ROOM = (boxes || []).map(b => ({ c: b.c, h: b.h, q: b.q, mu: b.mu, soft: b.soft, rad: Math.sqrt(b.h[0] * b.h[0] + b.h[1] * b.h[1] + b.h[2] * b.h[2]) })); }
+export function setRoom(boxes) { ROOM = (boxes || []).map(b => ({ c: b.c, h: b.h, q: b.q, mu: b.mu, soft: b.soft, grip: b.grip | 0, rad: Math.sqrt(b.h[0] * b.h[0] + b.h[1] * b.h[1] + b.h[2] * b.h[2]) })); }
 export const room = () => ROOM;
+// grip (body.c GRIP_*): a box's label 0 nothing, 1 ledge (its top edges, if its top faces up), 2 handhold (all of it)
+export const GRIP_LEDGE = 1, GRIP_HOLD = 2, GRIP_REACH = 0.06, GRIP_ON = 0.2, GRIP_MAX = 450;
+const clampv = (v, h) => Math.max(-h, Math.min(h, v));
+function gripPoint(o, p) {   // [point, distance] of box o a hand at p would hold, or null (body.c grip_point)
+  const l = qrot(qconj(o.q), vsub(p, o.c)); let c;
+  if (o.grip === GRIP_HOLD) c = [clampv(l[0], o.h[0]), clampv(l[1], o.h[1]), clampv(l[2], o.h[2])];
+  else if (o.grip === GRIP_LEDGE && qrot(o.q, [0, 1, 0])[1] > 0.9) {
+    const ux = clampv(l[0], o.h[0]), uz = clampv(l[2], o.h[2]);
+    const e = [[ux, o.h[1], o.h[2]], [ux, o.h[1], -o.h[2]], [o.h[0], o.h[1], uz], [-o.h[0], o.h[1], uz]];
+    let best = 1e30; c = e[0];
+    for (let k = 0; k < 4; k++) { const d = vsub(l, e[k]), d2 = vdot(d, d); if (d2 < best) { best = d2; c = e[k]; } }
+  } else return null;
+  const at = vadd(o.c, qrot(o.q, c)); return [at, vlen(vsub(p, at))];
+}
+export function gripFind(p, reach) {   // [box index, point] of the nearest holdable point within reach of p, or [-1, null] (body.c grip_find)
+  let best = -1, bd = reach, at = null;
+  for (let j = 0; j < ROOM.length; j++) {
+    const o = ROOM[j]; if (!o.grip) continue;
+    const dc = vsub(p, o.c); if (vdot(dc, dc) > (o.rad + reach) * (o.rad + reach)) continue;
+    const g = gripPoint(o, p); if (g && g[1] <= bd) { bd = g[1]; best = j; at = g[0]; }
+  }
+  return [best, at];
+}
 // the heights where the vertical line through (x, z) is inside box o, or null (body.c column_span)
 function columnSpan(o, x, z) {
   const dx = x - o.c[0], dz = z - o.c[2]; if (dx * dx + dz * dz > o.rad * o.rad) return null;
@@ -77,6 +101,7 @@ export class World {
   constructor(totalMass = 45, substeps = 20, dt = 1 / 30) {
     this.totalMass = totalMass; this.substeps = substeps; this.h = dt / substeps; this.mu = 0.9; this.iters = 4; this.limitK = 5000;   // limitK: joint ligaments (body.c World.limit_k); 0 = no limits
     this.strength = 1; this.mtau = BODY_DEFS.map(() => 0); this.act = BODY_DEFS.map(() => 0); this.metab = 0;   // muscles (body.c World.strength, mtau, act, metab)
+    this.gripMax = GRIP_MAX; this.gripCmd = [0, 0]; this.gripBox = [-1, -1]; this.gripAt = [null, null]; this.gripForce = [0, 0];   // grip (body.c World.grip_*)
     this.kpScale = 1; this.kdScale = 1; this.t = 0;
     this.tone = BODY_DEFS.map(() => 1);   // per-joint muscle tone (body.c tone)
     this.push = { body: -1, force: [0, 0, 0], left: 0 };
@@ -109,10 +134,11 @@ export class World {
   invI(b, v) { let l = qrot(qconj(b.q), v); l = [l[0] * b.invI[0], l[1] * b.invI[1], l[2] * b.invI[2]]; return qrot(b.q, l); }
   rotateBy(b, dw) { b.q = qnorm(qmul(qexp(dw), b.q)); }
   genW(b, r, n) { const rn = vcross(r, n); return b.invMass + vdot(rn, this.invI(b, rn)); }
-  solvePos(b1, b2, r1, r2, n, C, alpha) {
+  solvePos(b1, b2, r1, r2, n, C, alpha, cap = -1) {   // cap >= 0: the correction is at most cap (body.c solve_pos)
     const h = this.h, w1 = this.genW(b1, r1, n), w2 = b2 ? this.genW(b2, r2, n) : 0, at = alpha / (h * h);
     if (w1 + w2 + at <= 0) return 0;
-    const dl = -C / (w1 + w2 + at), p = vscale(n, dl);
+    let dl = -C / (w1 + w2 + at); if (cap >= 0 && Math.abs(dl) > cap) dl = dl < 0 ? -cap : cap;
+    const p = vscale(n, dl);
     b1.x = vadd(b1.x, vscale(p, b1.invMass)); this.rotateBy(b1, this.invI(b1, vcross(r1, p)));
     if (b2) { b2.x = vsub(b2.x, vscale(p, b2.invMass)); this.rotateBy(b2, vscale(this.invI(b2, vcross(r2, p)), -1)); }
     return dl;
@@ -178,6 +204,15 @@ export class World {
       const e = qlog(qmul(p.q, qconj(this.assistQ))), th = vlen(e);
       if (th > 1e-12) { const n = vscale(e, 1 / th), w = vdot(n, this.invI(p, n)), at = 1 / (this.assist * ASSIST_KR * h * h); this.rotateBy(p, this.invI(p, vscale(n, -th / (w + at)))); }
     }
+    for (let k = 0; k < 2; k++) if (this.gripBox[k] >= 0) {   // grip: the hand held to its point, at most gripMax; lost past 2 GRIP_REACH
+      const bi = k ? B.R_FARM : B.L_FARM, b = this.b[bi], r = qrot(b.q, handLocal(k)), D = vsub(vadd(b.x, r), this.gripAt[k]), C = vlen(D);
+      if (C > 2 * GRIP_REACH) { this.gripBox[k] = -1; continue; }
+      if (C > 1e-12) {
+        const f = Math.abs(this.solvePos(b, null, r, [0, 0, 0], vscale(D, 1 / C), C, 1e-6, this.gripMax * h * h)) / (h * h);
+        this.gripForce[k] += f; this.touch[bi] += f;
+        if (this.strength > 0) { const a = f / this.gripMax; this.metab += a * a; }
+      }
+    }
     for (let i = 0; i < NB; i++) for (let k = 0; k < 8; k++) {
       const b = this.b[i], r = qrot(b.q, corner(i, k)), pw = vadd(b.x, r);
       if (pw[1] >= 0) continue;
@@ -231,9 +266,16 @@ export class World {
       c.w = vadd(c.w, this.invI(c, imp)); p.w = vsub(p.w, this.invI(p, imp));
     }
   }
+  handPoint(k) { const b = this.b[k ? B.R_FARM : B.L_FARM]; return vadd(b.x, qrot(b.q, handLocal(k))); }   // body.c hand_point
   step() {
     this.touch.fill(0); this.act.fill(0); this.metab = 0;
+    for (let k = 0; k < 2; k++) {   // grip: close on what is within reach, or let go
+      this.gripForce[k] = 0;
+      if (this.gripCmd[k] <= 0 || this.gripMax <= 0) this.gripBox[k] = -1;
+      else if (this.gripBox[k] < 0 && this.gripCmd[k] > GRIP_ON) { const [j, at] = gripFind(this.handPoint(k), GRIP_REACH); this.gripBox[k] = j; if (j >= 0) this.gripAt[k] = at; }
+    }
     for (let s = 0; s < this.substeps; s++) this.substep();
+    for (let k = 0; k < 2; k++) this.gripForce[k] /= this.substeps;
     for (let i = 0; i < NB; i++) { this.touch[i] /= this.substeps; this.act[i] /= this.substeps; }
     this.metab /= this.substeps;
     this.t += this.h * this.substeps;
@@ -248,7 +290,7 @@ export class World {
 }
 
 // ---------- the control interface (env.c) ----------
-export const ACT_DIM = 31, OBS_DIM = NB * 15 + 6, CTRL_HZ = 30, ACT_FILTER = 0.35;
+export const ACT_JOINT = 31, ACT_DIM = ACT_JOINT + 2, OBS_DIM = NB * 15 + 6, CTRL_HZ = 30, ACT_FILTER = 0.35;   // actions: joint targets, then grip (left, right)
 // action range per joint (rad per unit action), indexed by the child body (env.c ACT_SCALES)
 export const ACT_SCALES = [0, 0.5, 0.5, 0.4, 0.8, 0.8, 0.8, 0.8, 1.0, 1.2, 0.6, 1.0, 1.2, 0.6];
 export function standPose() {
@@ -296,7 +338,8 @@ function hingeLimit(i, q) {
 // mul: the floor skills (crawl, get up) widen every joint's range (env.c TaskCfg.act_mul)
 export function applyAction(world, ref, a, mul = 1) {
   world.filt ||= new Array(ACT_DIM).fill(0);
-  for (let j = 0; j < ACT_DIM; j++) world.filt[j] += ACT_FILTER * (a[j] - world.filt[j]);
+  for (let j = 0; j < ACT_DIM; j++) world.filt[j] += ACT_FILTER * ((a[j] ?? 0) - world.filt[j]);   // a policy without grip outputs: 0
+  world.gripCmd[0] = a[ACT_JOINT] ?? 0; world.gripCmd[1] = a[ACT_JOINT + 1] ?? 0;   // grip: the raw command (env.c env_begin)
   const f = world.filt; let k = 0;
   for (let i = 1; i < NB; i++) {
     const d = BODY_DEFS[i];
@@ -328,7 +371,7 @@ export function fallen(world) {   // heights from the surface under her (env.c f
 // The go-to skill's observation (env.c env_obs for TASK_GOTO, OBS_DIM 234): the bodies as in observe(), but the pelvis
 // height from her lowest foot corner and the foot flags from touch; then the goal from her pelvis in the heading
 // frame (horizontal at most 4 m) and its distance; then each body's touch as a share of her weight.
-export const OBS_GOTO = OBS_DIM + 4 + NB + NB - 1;   // 247: then touch, then muscle sense
+export const OBS_GOTO = OBS_DIM + 4 + NB + NB - 1 + 10;   // 257: then touch, muscle sense, grip
 export function observeGoto(world, phase, goal) {
   const o = observe(world, phase, false), root = world.b[0].x, wt = world.totalMass * G_ACC;
   o[1] = root[1] - Math.min(world.lowest(B.L_FOOT), world.lowest(B.R_FOOT));
@@ -338,6 +381,11 @@ export function observeGoto(world, phase, goal) {
   o.push(g[0] * s, g[1], g[2] * s, Math.min(r, 4));
   for (let i = 0; i < NB; i++) o.push(Math.min(3, world.touch[i] / wt));
   for (let i = 1; i < NB; i++) o.push(world.act[i]);   // muscle sense
+  for (let k = 0; k < 2; k++) {   // grip: holding; the nearest holdable point within 1 m from the hand (heading frame), and whether there is one
+    const p = world.handPoint(k), [j, at] = gripFind(p, 1.0);
+    o.push(world.gripBox[k] >= 0 ? 1 : 0);
+    if (j >= 0) { const d = qrot(hi, vsub(at, p)); o.push(d[0], d[1], d[2], 1); } else o.push(0, 0, 0, 0);
+  }
   return o;
 }
 
@@ -426,14 +474,14 @@ export async function loadTssPolicy(url, wasmUrl = 'tss.wasm') {
   const X = instance.exports; X._initialize();
   const p = X.tss_buf(tss.length + head.length);
   const mem = new Uint8Array(X.memory.buffer, p, tss.length + head.length); mem.set(tss); mem.set(head, tss.length);
-  const d = X.tss_load(p, tss.length, head.length);
+  const d = X.tss_load(p, tss.length, head.length), nact = new DataView(head.buffer, head.byteOffset).getInt32(12, true);   // the head's outputs: 31, or 33 with grip
   if (d <= 0) throw new Error(`nanotss policy ${url} did not load (${d})`);
   return {
     type: 'nanotss', params: j.params, width: d,
     reset() { X.tss_reset(); },
     act(obs) {
       new Float32Array(X.memory.buffer, X.tss_obs(), obs.length).set(obs);   // 216 inputs for the body/ skills, 234 for go-to
-      return Array.from(new Float32Array(X.memory.buffer, X.tss_step(), ACT_DIM));
+      return Array.from(new Float32Array(X.memory.buffer, X.tss_step(), nact));
     },
   };
 }
