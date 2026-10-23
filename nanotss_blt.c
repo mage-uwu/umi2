@@ -1838,6 +1838,11 @@ static double reduce_span(real *dst, real *tf[64][N_FIELDS], int f,
  * byte_muon_model skip AdamW here and are updated by blockwise Muon (NorMuon when normuon is set). */
 static int byte_muon=0,normuon=0;static void*byte_muon_model=NULL;
 static void byte_muon_update(const Hyper*h,real scale,int threads);
+/* Sequence hook: when set, tss_train_step trains sequence b through this function instead of tss_train_seq
+ * (the byte LM), with the same parallel reduction, clipping, Adam/Muon and requantisation. Used by
+ * body/ppo_tss.c, which feeds observation vectors and backpropagates a policy loss. */
+typedef real (*SeqHook)(void *user,int b,const Cfg *c,const Params *P,const Params *Q,Params *G,unsigned char *hit,int *n_scored,Work *w,const Codes *k);
+static SeqHook seq_hook=NULL;static void *seq_hook_user=NULL;
 real tss_train_step(const Cfg *c,Params *P,Params *Q,Params *G,unsigned char *hit,
                     Params *M,Params *Vm,Params *Gt,unsigned char *hits,Work **ws,
                     int threads,const int *tokens,const int *labels,int B,int L,
@@ -1867,7 +1872,8 @@ real tss_train_step(const Cfg *c,Params *P,Params *Q,Params *G,unsigned char *hi
         for(int b=0;b<B;b++) {
             int ns=0;tss_work_seed(ws[th],(uint64_t)h->step*1000003ULL+(uint64_t)b);
             ws[th]->carry_h=carry_bank_h?carry_bank_h+(size_t)b*carry_sz_h:NULL;ws[th]->carry_hist=carry_bank_hist?carry_bank_hist+(size_t)b*carry_sz_hist:NULL;
-            loss+=tss_train_seq(c,P,Q,Gt+th,tokens+(size_t)b*L,labels+(size_t)b*L,L,
+            loss+=seq_hook?seq_hook(seq_hook_user,b,c,P,Q,Gt+th,hits+rows*th,&ns,ws[th],k)
+                          :tss_train_seq(c,P,Q,Gt+th,tokens+(size_t)b*L,labels+(size_t)b*L,L,
                                hits+rows*th,&ns,ws[th],k);
             ws[th]->carry_h=ws[th]->carry_hist=NULL;
             scored+=ns;
