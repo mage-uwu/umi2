@@ -16,11 +16,24 @@ void stand_pose(Quat *rel) {   /* the shader page's training pose: arms relaxed 
 void sway_pose(Quat *rel, double t, double amp) {
     stand_pose(rel);
     if (amp <= 0) return;
-    const double fb = amp * sin(2 * M_PI * 0.23 * t), lr = 0.6 * amp * sin(2 * M_PI * 0.17 * t + 1.0);
+    const double k = amp / 0.012;   /* idle motion scales with the sway */
+    const double shift = 0.035 * k * sin(2 * M_PI * 0.07 * t + 0.5);   /* weight from leg to leg */
+    const double fb = amp * sin(2 * M_PI * 0.23 * t), lr = 0.6 * amp * sin(2 * M_PI * 0.17 * t + 1.0) + shift;
+    const double br = 0.03 * k * (0.5 + 0.5 * sin(2 * M_PI * 0.25 * t));   /* breathing: 0 (out) .. 0.03 (in) */
+    const double yaw = k * (0.15 * sin(2 * M_PI * 0.045 * t) + 0.06 * sin(2 * M_PI * 0.11 * t + 2.0));
+    const double nod = k * (0.04 * sin(2 * M_PI * 0.08 * t + 1.0) - 0.02);
     const Quat ankle = qexp(v3(fb, 0, lr)), hip = qexp(v3(-0.4 * fb, 0, -0.4 * lr)), spine = qexp(v3(0.25 * fb, 0, 0.25 * lr));
     rel[L_FOOT] = qmul(rel[L_FOOT], ankle); rel[R_FOOT] = qmul(rel[R_FOOT], ankle);
     rel[L_THIGH] = qmul(rel[L_THIGH], hip); rel[R_THIGH] = qmul(rel[R_THIGH], hip);
+    /* the unloaded leg softens at the knee as the weight shifts off it */
+    rel[L_SHIN] = qmul(rel[L_SHIN], qexp(v3(0.12 * k * fmax(0, -shift / 0.035), 0, 0)));
+    rel[R_SHIN] = qmul(rel[R_SHIN], qexp(v3(0.12 * k * fmax(0, shift / 0.035), 0, 0)));
     rel[SPINE] = qmul(rel[SPINE], spine);
+    rel[CHEST] = qmul(rel[CHEST], qexp(v3(-br, 0, 0)));                 /* breathing: the chest lifts */
+    rel[HEAD] = qmul(rel[HEAD], qexp(v3(nod + 0.5 * br, yaw, 0)));      /* the gaze drifts */
+    /* relaxed arms: shoulders rise a little on the in-breath, elbows softly bent */
+    rel[L_UARM] = qmul(rel[L_UARM], qexp(v3(0, 0, 0.5 * br))); rel[R_UARM] = qmul(rel[R_UARM], qexp(v3(0, 0, -0.5 * br)));
+    rel[L_FARM] = qmul(rel[L_FARM], qexp(v3(0, -0.25 * k, 0))); rel[R_FARM] = qmul(rel[R_FARM], qexp(v3(0, 0.25 * k, 0)));
 }
 
 static Vec hinge_axis(int h) { return h == 1 ? v3(1, 0, 0) : h == 2 ? v3(0, 1, 0) : v3(0, 0, 1); }
@@ -38,6 +51,7 @@ static void ref_at(const Env *E, double t, Quat *rel, Quat *world, Vec *root) {
 void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
     E->cfg = *cfg; E->rng = seed * 0x9E3779B97F4A7C15ULL + 1; E->step = 0; E->done = 0; E->t0 = 0;
     world_init(&E->W, 45, 20, 1.0 / CTRL_HZ);
+    if (cfg->arm_tone > 0) for (int i = L_UARM; i <= R_FARM; i++) E->W.tone[i] = cfg->arm_tone;
     for (int k = 0; k < ACT_DIM; k++) E->prev_act[k] = E->filt[k] = 0;
     E->head_v = v3(0, 0, 0);
     E->next_push = 0.5 + env_rand(&E->rng) * 2 * cfg->push_every;

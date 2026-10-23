@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
         if (fread(th, 4, P, f) != (size_t)P || fread(mean, 4, OBS_DIM, f) != OBS_DIM || fread(sd, 4, OBS_DIM, f) != OBS_DIM) return 1; fclose(f); }
     double hs = 0, ps = 0, cs = 0, ef = 0, da = 0, amp = 0; int n = 0, falls = 0;
     for (int seed = 1; seed <= 8; seed++) {
-        TaskCfg tc = {.task = TASK_BALANCE, .steps = 300, .init_noise = 0.05, .push_max = getenv("PUSH") ? atof(getenv("PUSH")) : 0, .push_every = 2, .sway = getenv("SWAY") ? atof(getenv("SWAY")) : 0}; Env E; env_reset(&E, &tc, seed);
+        TaskCfg tc = {.task = TASK_BALANCE, .steps = 300, .init_noise = 0.05, .push_max = getenv("PUSH") ? atof(getenv("PUSH")) : 0, .push_every = 2, .sway = getenv("SWAY") ? atof(getenv("SWAY")) : 0, .arm_tone = getenv("ARMS") ? atof(getenv("ARMS")) : 0}; Env E; env_reset(&E, &tc, seed);
         PolState *ps_ = use ? pol_state_new(&pc) : NULL; if (use) pol_reset(&pc, ps_);
         float o[OBS_DIM], a[ACT_DIM] = {0}, pa[ACT_DIM] = {0}; Vec cmin = v3(1e9, 0, 1e9), cmax = v3(-1e9, 0, -1e9);
         while (!E.done) {

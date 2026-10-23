@@ -43,6 +43,7 @@ typedef struct {
     double total_mass, h, mu;  /* substep, friction coefficient */
     int substeps, iters;   /* joint solver iterations per substep */
     double t, kp_scale, kd_scale;   /* muscle strength multipliers (1 = BODY_DEFS) */
+    double tone[NB];                /* per-joint muscle tone (multiplies kp and kd of the joint above each body) */
     Vec push_force; int push_body; double push_left;   /* an external push (N) on one body for push_left s */
     /* training aid: a compliant constraint holding the pelvis to (assist_x, assist_q) with strength assist in
      * 0..1 (stiffness assist*ASSIST_K, assist*ASSIST_KR), damped toward the velocity assist_v */

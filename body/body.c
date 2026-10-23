@@ -34,7 +34,7 @@ const BodyDef BODY_DEFS[NB] = {
 
 void world_init(World *W, double total_mass, int substeps, double dt) {
     memset(W, 0, sizeof(*W));
-    W->total_mass = total_mass; W->substeps = substeps; W->h = dt / substeps; W->mu = 0.9; W->push_body = -1; W->kp_scale = W->kd_scale = 1; W->iters = 4;
+    W->total_mass = total_mass; W->substeps = substeps; W->h = dt / substeps; W->mu = 0.9; W->push_body = -1; W->kp_scale = W->kd_scale = 1; W->iters = 4; for (int i = 0; i < NB; i++) W->tone[i] = 1;
     double fsum = 0; for (int i = 0; i < NB; i++) fsum += BODY_DEFS[i].mass_frac;
     for (int i = 0; i < NB; i++) {
         const BodyDef *d = BODY_DEFS + i; Body *b = W->b + i;
@@ -128,8 +128,8 @@ static void substep(World *W) {
             Vec aw = qrot(p->q, ax); Vec off = vsub(e, vscale(aw, vdot(e, aw))); double to = vlen(off);
             if (to > 1e-12) solve_ang(c, p, vscale(off, 1 / to), to, 0, h);
             tw = qmul(p->q, W->target[i]); e = qlog(qmul(c->q, qconj(tw))); double ta = vdot(e, aw);
-            if (fabs(ta) > 1e-12) solve_ang(c, p, ta > 0 ? aw : vscale(aw, -1), fabs(ta), 1 / (d->kp * W->kp_scale), h);
-        } else if (th > 1e-12) solve_ang(c, p, vscale(e, 1 / th), th, 1 / (d->kp * W->kp_scale), h);
+            if (fabs(ta) > 1e-12) solve_ang(c, p, ta > 0 ? aw : vscale(aw, -1), fabs(ta), 1 / (d->kp * W->kp_scale * W->tone[i]), h);
+        } else if (th > 1e-12) solve_ang(c, p, vscale(e, 1 / th), th, 1 / (d->kp * W->kp_scale * W->tone[i]), h);
     }
     if (W->assist > 0) {   /* pelvis support: compliant position and rotation constraints (stable at any stiffness) */
         Body *p = W->b + PELVIS; Vec D = vsub(p->x, W->assist_x); double C = vlen(D);
@@ -170,7 +170,7 @@ static void substep(World *W) {
         const BodyDef *d = BODY_DEFS + i; Body *c = W->b + i, *p = W->b + d->parent;
         Vec dw = vsub(c->w, p->w); double m = vlen(dw); if (m < 1e-12) continue;
         Vec n = vscale(dw, 1 / m); double weff = vdot(n, inv_I(c, n)) + vdot(n, inv_I(p, n));
-        double f = h * d->kd * W->kd_scale * weff; if (f > 1) f = 1;
+        double f = h * d->kd * W->kd_scale * W->tone[i] * weff; if (f > 1) f = 1;
         Vec imp = vscale(n, -f * m / weff);   /* angular impulse on the child; the parent gets the opposite */
         c->w = vadd(c->w, inv_I(c, imp)); p->w = vsub(p->w, inv_I(p, imp));
     }

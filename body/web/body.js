@@ -53,6 +53,7 @@ const hingeAxis = h => h === 1 ? [1, 0, 0] : h === 2 ? [0, 1, 0] : [0, 0, 1];
 export class World {
   constructor(totalMass = 45, substeps = 20, dt = 1 / 30) {
     this.substeps = substeps; this.h = dt / substeps; this.mu = 0.9; this.iters = 4; this.kpScale = 1; this.kdScale = 1; this.t = 0;
+    this.tone = BODY_DEFS.map(() => 1);   // per-joint muscle tone (body.c tone)
     this.push = { body: -1, force: [0, 0, 0], left: 0 };
     // training aid (body.c): pelvis held to assistX / assistQ by compliant constraints, strength assist 0..1
     this.assist = 0; this.assistX = [0, 0, 0]; this.assistV = [0, 0, 0]; this.assistQ = QID;
@@ -115,7 +116,7 @@ export class World {
       const D = vsub(vadd(c.x, rc), vadd(p.x, rp)), C = vlen(D);
       if (C > 1e-12) this.solvePos(c, p, rc, rp, vscale(D, 1 / C), C, 0);
       let tw = qmul(p.q, this.target[i]), e = qlog(qmul(c.q, qconj(tw)));
-      const kp = d.kp * this.kpScale;
+      const kp = d.kp * this.kpScale * this.tone[i];
       if (d.hinge) {
         const aw = qrot(p.q, hingeAxis(d.hinge)), off = vsub(e, vscale(aw, vdot(e, aw))), to = vlen(off);
         if (to > 1e-12) this.solveAng(c, p, vscale(off, 1 / to), to, 0);
@@ -153,7 +154,7 @@ export class World {
       const d = BODY_DEFS[i], c = this.b[i], p = this.b[d.parent];
       const dw = vsub(c.w, p.w), m = vlen(dw); if (m < 1e-12) continue;
       const n = vscale(dw, 1 / m), weff = vdot(n, this.invI(c, n)) + vdot(n, this.invI(p, n));
-      const f = Math.min(1, h * d.kd * this.kdScale * weff), imp = vscale(n, -f * m / weff);
+      const f = Math.min(1, h * d.kd * this.kdScale * this.tone[i] * weff), imp = vscale(n, -f * m / weff);
       c.w = vadd(c.w, this.invI(c, imp)); p.w = vsub(p.w, this.invI(p, imp));
     }
   }
@@ -176,15 +177,23 @@ export function standPose() {
   rel[B.L_UARM] = qexp([0, 0, -a]); rel[B.R_UARM] = qexp([0, 0, a]);
   return rel;
 }
-// The stand pose with relaxed postural sway at time t (env.c sway_pose): ankles lean slowly forward/back
-// (0.23 Hz) and side to side (0.17 Hz) by up to amp rad; hips and spine counterbalance by a fraction.
+// The stand pose with relaxed idle motion at time t, scaled by amp (rad of ankle sway; env.c sway_pose): ankle
+// sway counterbalanced at the hips and spine, a slow weight shift with the unloaded knee softening, breathing in
+// the chest and shoulders, slow drifts of the gaze, softly bent elbows.
 export function swayPose(t, amp) {
   const rel = standPose(); if (!(amp > 0)) return rel;
-  const fb = amp * Math.sin(2 * Math.PI * 0.23 * t), lr = 0.6 * amp * Math.sin(2 * Math.PI * 0.17 * t + 1.0);
+  const k = amp / 0.012, s = Math.sin, P = 2 * Math.PI;
+  const shift = 0.035 * k * s(P * 0.07 * t + 0.5);
+  const fb = amp * s(P * 0.23 * t), lr = 0.6 * amp * s(P * 0.17 * t + 1.0) + shift;
+  const br = 0.03 * k * (0.5 + 0.5 * s(P * 0.25 * t));
+  const yaw = k * (0.15 * s(P * 0.045 * t) + 0.06 * s(P * 0.11 * t + 2.0)), nod = k * (0.04 * s(P * 0.08 * t + 1.0) - 0.02);
   const ankle = qexp([fb, 0, lr]), hip = qexp([-0.4 * fb, 0, -0.4 * lr]), spine = qexp([0.25 * fb, 0, 0.25 * lr]);
-  rel[B.L_FOOT] = qmul(rel[B.L_FOOT], ankle); rel[B.R_FOOT] = qmul(rel[B.R_FOOT], ankle);
-  rel[B.L_THIGH] = qmul(rel[B.L_THIGH], hip); rel[B.R_THIGH] = qmul(rel[B.R_THIGH], hip);
-  rel[B.SPINE] = qmul(rel[B.SPINE], spine);
+  const mul = (i, q) => { rel[i] = qmul(rel[i], q); };
+  mul(B.L_FOOT, ankle); mul(B.R_FOOT, ankle); mul(B.L_THIGH, hip); mul(B.R_THIGH, hip);
+  mul(B.L_SHIN, qexp([0.12 * k * Math.max(0, -shift / 0.035), 0, 0])); mul(B.R_SHIN, qexp([0.12 * k * Math.max(0, shift / 0.035), 0, 0]));
+  mul(B.SPINE, spine); mul(B.CHEST, qexp([-br, 0, 0])); mul(B.HEAD, qexp([nod + 0.5 * br, yaw, 0]));
+  mul(B.L_UARM, qexp([0, 0, 0.5 * br])); mul(B.R_UARM, qexp([0, 0, -0.5 * br]));
+  mul(B.L_FARM, qexp([0, -0.25 * k, 0])); mul(B.R_FARM, qexp([0, 0.25 * k, 0]));
   return rel;
 }
 // Joint targets: reference rotation followed by exp(scale * f), f the action low-passed by ACT_FILTER (kept on the world).
