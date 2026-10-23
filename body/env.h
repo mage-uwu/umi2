@@ -9,7 +9,8 @@
  *                 recover is rewarded like standing still.
  *   TASK_IMITATE  follow a motion clip (DeepMimic style): start at a random phase in the reference pose and
  *                 velocity, reward pose, joint velocity, hand/foot and root tracking; the root's motion
- *                 accumulates across loops of the clip.
+ *                 accumulates across loops of the clip. A posture term ("golden thread") also pays for a
+ *                 lifted, upright, steady head and level shoulders.
  */
 #ifndef ENV_H
 #define ENV_H
@@ -46,6 +47,7 @@ typedef struct {
     double t0, next_push;
     Vec clip_shift;      /* world offset of the clip's root (xz), so the reference starts under her */
     float prev_act[ACT_DIM], filt[ACT_DIM];   /* last raw action; low-passed action that sets the targets */
+    Vec head_v;          /* head velocity at the previous control step (for the head-steadiness reward) */
 } Env;
 
 extern const double ACT_SCALES[NB];

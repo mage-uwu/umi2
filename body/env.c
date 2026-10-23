@@ -29,6 +29,7 @@ void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
     E->cfg = *cfg; E->rng = seed * 0x9E3779B97F4A7C15ULL + 1; E->step = 0; E->done = 0; E->t0 = 0;
     world_init(&E->W, 45, 20, 1.0 / CTRL_HZ);
     for (int k = 0; k < ACT_DIM; k++) E->prev_act[k] = E->filt[k] = 0;
+    E->head_v = v3(0, 0, 0);
     E->next_push = 0.5 + env_rand(&E->rng) * 2 * cfg->push_every;
     if (cfg->task == TASK_IMITATE) {
         const Clip *c = cfg->clip; const double T = (c->frames - 1) / c->fps;
@@ -147,7 +148,16 @@ double env_step(Env *E, const float *a) {
         const int EE[4] = {L_FARM, R_FARM, L_FOOT, R_FOOT};
         for (int j = 0; j < 4; j++) { Vec d = vsub(qrot(qconj(rq), vsub(W->b[EE[j]].x, rp)), fx[EE[j]]); ee += vdot(d, d); }
         Vec ce = vsub(W->b[PELVIS].x, E->ref_root);
-        return 0.5 * exp(-2 * pose / NJ) + 0.1 * exp(-0.1 * vel / NJ) + 0.2 * exp(-10 * ee) + 0.2 * exp(-10 * vdot(ce, ce));
+        double track = 0.5 * exp(-2 * pose / NJ) + 0.1 * exp(-0.1 * vel / NJ) + 0.2 * exp(-10 * ee) + 0.2 * exp(-10 * vdot(ce, ce));
+        /* golden thread: head lifted at least as high above the pelvis as in the clip, head upright,
+         * shoulders level, little head spin and acceleration */
+        const Body *hb = W->b + HEAD; double lift = (hb->x.y - rp.y) - qrot(E->ref_world[PELVIS], fx[HEAD]).y;
+        Vec hu = qrot(hb->q, v3(0, 1, 0)), sx = qrot(W->b[CHEST].q, v3(1, 0, 0));
+        Vec acc = vscale(vsub(hb->v, E->head_v), CTRL_HZ); E->head_v = hb->v;
+        double sag = lift < 0 ? lift : 0;
+        double thread = 0.3 * exp(-200 * sag * sag) + 0.25 * exp(-10 * (1 - hu.y)) + 0.2 * exp(-30 * sx.y * sx.y)
+                      + 0.15 * exp(-0.3 * vdot(hb->w, hb->w)) + 0.1 * exp(-0.01 * vdot(acc, acc));
+        return 0.75 * track + 0.25 * thread;
     }
     if (fell || E->step >= E->cfg.steps) E->done = 1;
     if (fell) return 0;
