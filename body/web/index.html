@@ -170,7 +170,7 @@ const boxes = BODY_DEFS.map(d => {
 const SKILLS = {
   balance: { label: 'Balance', file: 'balance.json' },
   // assist: the pelvis support spring the controller was trained with (1 = full); 0 once it walks unaided
-  walk: { label: 'Walk (assisted)', file: 'walk.json', clip: 'walk', assist: 1 },
+  walk: { label: 'Walk (assisted)', file: 'walk.json', clip: 'walk', assist: 0.3 },
 };
 let world, ref, policy = null, skill = 'balance', upSince = 0, fallenAt = -1, listeners = {}, clips = null, clip = null;
 const policies = {};
@@ -278,7 +278,7 @@ async function useSkill(name) {
   if (s.clip) { clips ||= await loadClips('motions_ref.json'); clip = clips[s.clip]; } else clip = null;
   skill = name; policy = policies[name];
   setPressed('[data-skill]', document.querySelector(`[data-skill="${name}"]`));
-  document.getElementById('r-policy').textContent = `${policy.type === 'ssm' ? 'SSM-tree' : policy.type.toUpperCase()} · ${policy.params.toLocaleString()} weights`;
+  document.getElementById('r-policy').textContent = `${policy.type === 'ssm' ? 'SSM-tree' : policy.type.toUpperCase()} · ${policy.params.toLocaleString()} weights${s.assist ? ` · pelvis support ${Math.round(s.assist * 100)}%` : ''}`;
   reset(); emit('skill', { skill: name });
 }
 const skillBox = document.getElementById('skills');
