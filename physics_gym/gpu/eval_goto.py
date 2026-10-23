@@ -1,8 +1,8 @@
 """eval_goto.py: how well a go-to policy (prefix.tss + prefix.head) does in the room, with its mean actions.
 
 Runs N environments for one episode each (600 steps, 20 s); every goal reached draws the next, as in training.
-Reports goals reached per episode, the share of episodes that end in a fall and when, the speed toward the goal
-while walking, and how often a goal on a raised surface (steps, a landing, foam) was reached.
+Reports goals reached per episode (and how many of them were up on a raised surface: a stair landing, platform, foam,
+stone), the share of episodes that end in a fall and when, and the speed toward the goal while walking.
 
     python3 eval_goto.py prefix [--n 64] [--device cuda|cpu] [--room ../room.json]
 """
@@ -15,10 +15,10 @@ import gpu_env as ge
 ap = argparse.ArgumentParser(); ap.add_argument("prefix"); ap.add_argument("--n", type=int, default=64)
 ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu"); ap.add_argument("--room", default=os.path.join(ge.BODY, "room.json"))
 ap.add_argument("--mref", default=os.path.join(ge.BODY, "data/motions_ref.bin"), help="the gait clip file (walk); data/clean/cmu_gait.bin for the clean prior")
-ap.add_argument("--seed", type=int, default=12345); ap.add_argument("--assist", type=float, default=0); ap.add_argument("--muscles", action="store_true", help="CPU: how often each joint is at its strength"); a = ap.parse_args()
+ap.add_argument("--seed", type=int, default=12345); ap.add_argument("--assist", type=float, default=0); ap.add_argument("--goal-tops", type=float, default=0, help="share of goals on raised surfaces (0 = 0.3, as in training)"); ap.add_argument("--muscles", action="store_true", help="CPU: how often each joint is at its strength"); a = ap.parse_args()
 dev = torch.device(a.device)
 Pool = ge.GpuPool if dev.type == "cuda" else ge.CpuPool
-pool = Pool(a.n, task="goto", mref=a.mref, room=a.room, seed=a.seed, device=dev, assist=a.assist)
+pool = Pool(a.n, task="goto", mref=a.mref, room=a.room, seed=a.seed, device=dev, assist=a.assist, goal_tops=a.goal_tops)
 m = nt.TSS.load(a.prefix + ".tss", device=dev); d = m.c.d; OBS, ACT = pool.OBS, pool.ACT
 raw = open(a.prefix + ".head", "rb").read(); hd, hobs, hact = struct.unpack("<3i", raw[4:16]); assert hd == d and hact <= ACT and hobs <= OBS   # an older head: the new inputs unused, the new outputs (grip) zero
 o = 16
@@ -28,7 +28,7 @@ Win = torch.zeros(d, OBS, device=dev); Win[:, :hobs] = take(d * hobs).view(d, ho
 bin_ = take(d); Wo = torch.zeros(ACT, d, device=dev); Wo[:hact] = take(hact * d).view(hact, d); bo = torch.zeros(ACT, device=dev); bo[:hact] = take(hact); take(hact)
 mean, sd = torch.zeros(OBS, device=dev), torch.ones(OBS, device=dev); mean[:hobs], sd[:hobs] = take(hobs), take(hobs)
 state = m.zero_state(a.n)
-goals = torch.zeros(a.n, dtype=torch.long, device=dev); fell_at = torch.full((a.n,), -1, dtype=torch.long, device=dev)
+goals = torch.zeros(a.n, dtype=torch.long, device=dev); goals_up = torch.zeros_like(goals); fell_at = torch.full((a.n,), -1, dtype=torch.long, device=dev)
 alive = torch.ones(a.n, dtype=torch.bool, device=dev); prev_rew = None
 speed_sum = torch.zeros(a.n, device=dev, dtype=torch.float64); speed_n = torch.zeros(a.n, device=dev, dtype=torch.float64)
 steps = pool.steps
@@ -40,6 +40,7 @@ with torch.no_grad():
         x = m.forward((on @ Win.T + bin_)[:, None], state=state, stream=True)[:, 0]
         u, _ = nt.rmsnorm(x, m.P["norm_f"]); act = torch.tanh(bo + u @ Wo.T)
         dist = ob[:, 219]   # the goal distance input (at most 4 m)
+        up = (ob[:, 217] + ob[:, 1]) > 0.1   # the goal at least 10 cm above the surface under her feet (its height input + her pelvis height above them)
         r = pool.step(act.clamp(-1, 1))
         if a.muscles:
             import ctypes
@@ -49,7 +50,7 @@ with torch.no_grad():
                 if not bool(alive[e]): continue
                 pool.L.pool_mtau(pool.p, e, buf.ctypes.data_as(ctypes.c_void_p)); sat += buf >= 0.98 * MAXT; frac += buf / np.maximum(MAXT, 1e-9); cnt += 1
         got = (r["rew"] > 1.9) & alive   # the arrival bonus (+2) on top of a step reward below 1
-        goals += got.long()
+        goals += got.long(); goals_up += (got & up).long()
         done = r["done"].bool() & alive
         fell_now = done & r["fell"].bool(); fell_at = torch.where(fell_now, torch.full_like(fell_at, t), fell_at)
         alive &= ~done
@@ -63,7 +64,7 @@ if a.muscles:
     names = ["pelvis", "spine", "chest", "head", "l_uarm", "l_farm", "r_uarm", "r_farm", "l_thigh", "l_shin", "l_foot", "r_thigh", "r_shin", "r_foot"]
     print("at strength (share of steps), mean torque / strength:", {names[i]: (round(float(sat[i] / cnt), 2), round(float(frac[i] / cnt), 2)) for i in range(1, 14)})
 res = {"policy": os.path.basename(a.prefix), "assist": a.assist, "episodes": a.n, "goals_per_episode": round(float(g.mean()), 2),
-       "episodes_reaching_a_goal": round(float((g > 0).mean()), 2), "fall_rate": round(float((f >= 0).mean()), 2),
+       "episodes_reaching_a_goal": round(float((g > 0).mean()), 2), "goals_up_per_episode": round(float(goals_up.float().mean()), 2), "fall_rate": round(float((f >= 0).mean()), 2),
        "mean_fall_time_s": round(float(f[f >= 0].mean() / pool.HZ), 1) if (f >= 0).any() else None,
        "speed_toward_goal_m_s": round(float(speed_sum.sum() / max(speed_n.sum(), 1)), 2)}
 print(json.dumps(res))

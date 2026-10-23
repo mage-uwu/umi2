@@ -354,7 +354,7 @@ static BHD void goto_goal(Env *E) {
     const double R = arena(E); const Vec p = E->W.b[PELVIS].x; const int rm = E->W.room;
     for (int tries = 0; tries < 64; tries++) {
         Vec g;
-        if (room_size(rm) && env_rand(&E->rng) < 0.3) {
+        if (room_size(rm) && env_rand(&E->rng) < (E->cfg.goal_tops > 0 ? E->cfg.goal_tops : 0.3)) {
             const RoomBox *o = room_at(rm, (int)(env_rand(&E->rng) * room_size(rm)) % room_size(rm));
             const double u = 2 * env_rand(&E->rng) - 1; const double w = 2 * env_rand(&E->rng) - 1;
             if (qrot(o->q, v3(0, 1, 0)).y < 0.9) continue;

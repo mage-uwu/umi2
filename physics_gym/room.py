@@ -122,14 +122,14 @@ def problems(boxes, clear=1.8, half=5.9):
     return out
 
 
-def stage0(seed=None):
+def stage0(seed=None, d=1.0):   # d: terrain difficulty, scaling stair rise and slope angles (1 = as designed)
     rng = random.Random(seed); j = (lambda a: rng.uniform(-a, a)) if seed is not None else (lambda a: 0.0)
     R = Room(); half = 6.0
     for k, (o, yaw) in enumerate((([0, 0, half], 0.0), ([0, 0, -half], 0.0), ([half, 0, 0], math.pi / 2), ([-half, 0, 0], math.pi / 2))):
         R.wall(o, 2 * half + 0.2, 2.4, yaw, kind="outer")
-    R.stairs([-3.6 + j(.2), 0, 2.4 + j(.2)], steps=6, rise=0.12 + j(.02), run=0.30, width=1.4, landing=1.2, yaw=j(.1), name="stairway")
-    R.slope([3.6 + j(.2), 0, 2.4 + j(.2)], angle_deg=18 + j(4), length=2.2, width=1.4, landing=1.0, yaw=j(.1), name="steep slope")
-    R.slope([-5.7, 0, -5.15 + j(.05)], angle_deg=8 + j(2), length=2.6, width=1.4, landing=0.8, yaw=math.pi / 2, name="gentle slope")
+    R.stairs([-3.6 + j(.2), 0, 2.4 + j(.2)], steps=6, rise=(0.12 + j(.02)) * d, run=0.30, width=1.4, landing=1.2, yaw=j(.1), name="stairway")
+    R.slope([3.6 + j(.2), 0, 2.4 + j(.2)], angle_deg=(18 + j(4)) * d, length=2.2, width=1.4, landing=1.0, yaw=j(.1), name="steep slope")
+    R.slope([-5.7, 0, -5.15 + j(.05)], angle_deg=(8 + j(2)) * d, length=2.6, width=1.4, landing=0.8, yaw=math.pi / 2, name="gentle slope")
     R.tunnel([-2.3 + j(.15), 0, -3.3 + j(.15)], length=2.0, inner_w=1.0, clear_h=0.75 + j(.05), yaw=j(.1), name="crawl tunnel")
     R.tunnel([2.5 + j(.15), 0, -3.3 + j(.2)], length=2.2, inner_w=1.0, clear_h=2.05, yaw=j(.1), name="walk tunnel")
     R.wall([0.2 + j(.2), 0, -4.9], 2.4, 1.1, j(.1))
@@ -141,12 +141,13 @@ def stage0(seed=None):
     return R
 
 
-def stage1(seed=None):
+def stage1(seed=None, d=1.0):
     """stage 1 (16 x 16 m): stage 0's features in the middle, and around them the climbing and parkour band:
     a climbing wall with handholds and a mantle block (north), a parkour lane of platforms, gaps, a vault block and a
-    drop (east), stepping stones (south). Ledges and holds carry grip labels for the hands."""
+    drop (east), stepping stones (south). Ledges and holds carry grip labels for the hands. d scales the terrain
+    (stair rise, slope angles, platform and stone heights, gaps; 1 = as designed), for a bank graded in difficulty."""
     rng = random.Random(seed if seed is not None else 1); j = (lambda a: rng.uniform(-a, a)) if seed is not None else (lambda a: 0.0)
-    R = stage0(seed); R.boxes = [b for b in R.boxes if b["kind"] != "outer"]; half = 8.0
+    R = stage0(seed, d); R.boxes = [b for b in R.boxes if b["kind"] != "outer"]; half = 8.0
     for o, yaw in (([0, 0, half], 0.0), ([0, 0, -half], 0.0), ([half, 0, 0], math.pi / 2), ([-half, 0, 0], math.pi / 2)):
         R.wall(o, 2 * half + 0.2, 4.0, yaw, kind="outer")
     # north: a climbing wall 3.6 m high against the outer wall, facing the room; a mantle block with ledges at hang height
@@ -155,34 +156,36 @@ def stage1(seed=None):
     R.block([4.4 + j(.2), 0, half - 0.75], [1.8, 2.1 + j(.1), 1.0], name="high ledge")
     # east: the parkour lane, south to north along x ~ 7: platforms 0.6 m up with widening gaps, a vault block, a drop
     x = half - 0.9 + j(.05); z = -half + 1.0; lane = "parkour lane"
-    R.block([x, 0, z + 0.6], [1.2, 0.3, 1.2], name=lane)                     # a step up
+    R.block([x, 0, z + 0.6], [1.2, 0.3 * d, 1.2], name=lane)                 # a step up
     z += 1.2
     for gap, h in ((0.5, 0.6), (0.8, 0.6), (1.1, 0.6), (0.7, 0.9)):         # jumps between platforms
-        z += gap + j(.05); R.block([x, 0, z + 0.6], [1.2, h + j(.03), 1.2], name=lane); z += 1.2
+        z += gap * d + j(.05); R.block([x, 0, z + 0.6], [1.2, (h + j(.03)) * d, 1.2], name=lane); z += 1.2
     z += 1.4; R.block([x, 0, z + 0.2], [1.4, 1.0 + j(.05), 0.4], name="vault block")   # vault it, or climb over
     z += 1.6; R.block([x, 0, z + 0.7], [1.2, 1.25 + j(.05), 1.4], name="drop platform")   # climb up, drop off the far side
     # south: stepping stones, low blocks with gaps to step or hop across
     for k in range(6):
-        R.block([-5.0 + 1.0 * k + j(.1), 0, -half + 1.1 + (0.35 if k % 2 else -0.15) + j(.1)], [0.5, 0.18 + 0.06 * (k % 3), 0.5], name="stepping stones", grip=NONE)
+        R.block([-5.0 + 1.0 * k + j(.1), 0, -half + 1.1 + (0.35 if k % 2 else -0.15) + j(.1)], [0.5, (0.18 + 0.06 * (k % 3)) * d, 0.5], name="stepping stones", grip=NONE)
     return R
 
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--seed", type=int); ap.add_argument("--out", default="room.json"); ap.add_argument("--stage", type=int, default=1)
     ap.add_argument("--bank", type=int, default=0, help="write a room bank of this many seeded variants instead")
+    ap.add_argument("--difficulty", default="1:1", help="bank: terrain difficulty from the first room to the last, lo:hi (1 = as designed)")
     ap.add_argument("--web", default="web/room.json", help="also written here, for the viewer ('' to skip)")
     a = ap.parse_args()
     build = stage1 if a.stage == 1 else stage0; half = 8.0 if a.stage == 1 else 6.0
     if a.bank:
-        rooms = []
+        rooms = []; lo, hi = (float(v) for v in a.difficulty.split(":"))
         for sd in range(1, a.bank + 1):
-            R = build(sd); tries = 0
-            while problems(R.boxes, half=half - 0.1): tries += 1; R = build(sd * 1000 + tries)
-            b = half + 0.1; rooms.append({"name": f"stage{a.stage}-seed{sd}", "bounds": [-b, b, -b, b], "boxes": R.boxes})
+            dd = lo + (hi - lo) * (sd - 1) / max(a.bank - 1, 1)
+            R = build(sd, dd); tries = 0
+            while problems(R.boxes, half=half - 0.1): tries += 1; R = build(sd * 1000 + tries, dd)
+            b = half + 0.1; rooms.append({"name": f"stage{a.stage}-seed{sd}-d{dd:.2f}", "difficulty": round(dd, 3), "bounds": [-b, b, -b, b], "boxes": R.boxes})
         assert max(len(r["boxes"]) for r in rooms) <= 256, "a room over ROOM_MAX boxes"
         with open(a.out, "w") as f:
             f.write('{\n  "version": 2,\n  "grip": {"0": "none", "1": "ledge: its top edges can be held", "2": "handhold"},\n  "rooms": [\n'
-                    + ",\n".join('    {"name": ' + json.dumps(r["name"]) + ', "bounds": ' + json.dumps(r["bounds"]) + ', "boxes": [\n'
+                    + ",\n".join('    {"name": ' + json.dumps(r["name"]) + ', "difficulty": ' + json.dumps(r["difficulty"]) + ', "bounds": ' + json.dumps(r["bounds"]) + ', "boxes": [\n'
                                   + ",\n".join("      " + json.dumps(x) for x in r["boxes"]) + "\n    ]}" for r in rooms) + "\n  ]\n}\n")
         print(f"{a.out}: {len(rooms)} rooms, {min(len(r['boxes']) for r in rooms)}..{max(len(r['boxes']) for r in rooms)} boxes")
         return
