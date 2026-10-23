@@ -16,7 +16,10 @@ where every task starts her, facing +z) is kept free.
 import argparse, json, math, random
 
 FOAM = ["#7fa8f0", "#f2c75c", "#f08a7f", "#8fd6a8", "#c39ff0"]
-COL = {"wall": "#d9dce8", "outer": "#c9cde0", "tunnel": "#6fb7b0", "stair": "#d8b48a", "slope": "#c9a27a", "platform": "#d2ae86"}
+COL = {"wall": "#d9dce8", "outer": "#c9cde0", "tunnel": "#6fb7b0", "stair": "#d8b48a", "slope": "#c9a27a", "platform": "#d2ae86",
+       "climb": "#b9a7d6", "hold": "#f2884b", "ledge": "#9fb8c9", "parkour": "#a9c99f"}
+# grip labels (room.json v2), for the hands: 0 nothing to hold, 1 a ledge (its top edges can be held), 2 a handhold (all of it)
+NONE, LEDGE, HOLD = 0, 1, 2
 
 
 def qaxis(ax, ang):
@@ -37,9 +40,9 @@ def rot(q, v):   # q v q*
 class Room:
     def __init__(self): self.boxes = []
 
-    def box(self, kind, c, h, q=(1, 0, 0, 0), mu=0.9, soft=0.0, color=None, feature=None):
+    def box(self, kind, c, h, q=(1, 0, 0, 0), mu=0.9, soft=0.0, color=None, feature=None, grip=NONE):
         self.boxes.append(dict(kind=kind, feature=feature or kind, c=[float(x) for x in c], h=[float(x) for x in h], q=[float(x) for x in q],
-                               mu=float(mu), soft=float(soft), color=color or COL.get(kind, "#cccccc")))
+                               mu=float(mu), soft=float(soft), grip=int(grip), color=color or COL.get(kind, "#cccccc")))
 
     # local frame of a feature: origin o on the floor, yaw about +y; (u, v, w) = (right, up, forward)
     def place(self, o, yaw, p):
@@ -81,6 +84,25 @@ class Room:
         self.box("platform", c, [width / 2, rise / 2, landing / 2], q, mu=0.9, feature=name)
 
 
+    def block(self, o, size, yaw=0.0, kind="parkour", name=None, grip=LEDGE, mu=0.9):
+        """a solid block standing on the floor (size: width, height, depth); by default its top edges can be held"""
+        c, q = self.place(o, yaw, [0, size[1] / 2, 0]); self.box(kind, c, [s / 2 for s in size], q, mu=mu, feature=name or kind, grip=grip)
+
+    def climbing_wall(self, o, width, height, yaw=0.0, thick=0.3, rng=None, name="climbing wall", spacing=0.42):
+        """a wall facing -w (toward the room) with a grid of handholds on that face, jittered, and a holdable top edge"""
+        rng = rng or random.Random(0)
+        c, q = self.place(o, yaw, [0, height / 2, 0])
+        self.box("climb", c, [width / 2, height / 2, thick / 2], q, mu=0.9, feature=name, grip=LEDGE)
+        nu = int((width - 0.3) / spacing); nv = int((height - 0.35) / spacing)
+        for i in range(nu + 1):
+            for k in range(nv + 1):
+                u = -width / 2 + 0.15 + i * (width - 0.3) / max(nu, 1) + rng.uniform(-0.08, 0.08)
+                v = 0.3 + k * (height - 0.45) / max(nv, 1) + rng.uniform(-0.08, 0.08)
+                hh = [rng.uniform(0.06, 0.10), rng.uniform(0.03, 0.05), 0.04]   # a small jug: wide, shallow, standing 8 cm proud
+                hc, hq = self.place(o, yaw, [u, v, -thick / 2 - hh[2]])
+                self.box("hold", hc, hh, hq, mu=1.2, feature=name, grip=HOLD)
+
+
 def problems(boxes, clear=1.8, half=5.9):
     """features overlapping one another (in plan), reaching past the walls, or into the spawn area"""
     def aabb(b):
@@ -117,16 +139,44 @@ def stage0(seed=None):
     return R
 
 
+def stage1(seed=None):
+    """stage 1 (16 x 16 m): stage 0's features in the middle, and around them the climbing and parkour band:
+    a climbing wall with handholds and a mantle block (north), a parkour lane of platforms, gaps, a vault block and a
+    drop (east), stepping stones (south). Ledges and holds carry grip labels for the hands."""
+    rng = random.Random(seed if seed is not None else 1); j = (lambda a: rng.uniform(-a, a)) if seed is not None else (lambda a: 0.0)
+    R = stage0(seed); R.boxes = [b for b in R.boxes if b["kind"] != "outer"]; half = 8.0
+    for o, yaw in (([0, 0, half], 0.0), ([0, 0, -half], 0.0), ([half, 0, 0], math.pi / 2), ([-half, 0, 0], math.pi / 2)):
+        R.wall(o, 2 * half + 0.2, 4.0, yaw, kind="outer")
+    # north: a climbing wall 3.6 m high against the outer wall, facing the room; a mantle block with ledges at hang height
+    R.climbing_wall([-3.4 + j(.2), 0, half - 0.35], width=4.4, height=3.6 + j(.2), yaw=math.pi, rng=rng)
+    R.block([1.6 + j(.2), 0, half - 0.75], [2.0, 1.55 + j(.15), 1.0], name="mantle block")
+    R.block([4.4 + j(.2), 0, half - 0.75], [1.8, 2.1 + j(.1), 1.0], name="high ledge")
+    # east: the parkour lane, south to north along x ~ 7: platforms 0.6 m up with widening gaps, a vault block, a drop
+    x = half - 0.9 + j(.05); z = -half + 1.0; lane = "parkour lane"
+    R.block([x, 0, z + 0.6], [1.2, 0.3, 1.2], name=lane)                     # a step up
+    z += 1.2
+    for gap, h in ((0.5, 0.6), (0.8, 0.6), (1.1, 0.6), (0.7, 0.9)):         # jumps between platforms
+        z += gap + j(.05); R.block([x, 0, z + 0.6], [1.2, h + j(.03), 1.2], name=lane); z += 1.2
+    z += 1.4; R.block([x, 0, z + 0.2], [1.4, 1.0 + j(.05), 0.4], name="vault block")   # vault it, or climb over
+    z += 1.6; R.block([x, 0, z + 0.7], [1.2, 1.25 + j(.05), 1.4], name="drop platform")   # climb up, drop off the far side
+    # south: stepping stones, low blocks with gaps to step or hop across
+    for k in range(6):
+        R.block([-5.0 + 1.0 * k + j(.1), 0, -half + 1.1 + (0.35 if k % 2 else -0.15) + j(.1)], [0.5, 0.18 + 0.06 * (k % 3), 0.5], name="stepping stones", grip=NONE)
+    return R
+
+
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("--seed", type=int); ap.add_argument("--out", default="room.json")
+    ap = argparse.ArgumentParser(); ap.add_argument("--seed", type=int); ap.add_argument("--out", default="room.json"); ap.add_argument("--stage", type=int, default=1)
     ap.add_argument("--web", default="web/room.json", help="also written here, for the viewer ('' to skip)")
     a = ap.parse_args()
-    R = stage0(a.seed); tries = 0
-    while problems(R.boxes):   # a variant that does not fit: draw it again (deterministically, from the seed)
-        if a.seed is None: raise SystemExit("room: " + "; ".join(problems(R.boxes)))
-        tries += 1; R = stage0(a.seed * 1000 + tries)
-    doc = {"version": 1, "name": "stage0" if a.seed is None else f"stage0-seed{a.seed}", "floor_y": 0.0, "spawn_clear": 1.8,
-           "bounds": [-6.1, 6.1, -6.1, 6.1], "boxes": R.boxes}
+    build = stage1 if a.stage == 1 else stage0; half = 8.0 if a.stage == 1 else 6.0
+    R = build(a.seed); tries = 0
+    while problems(R.boxes, half=half - 0.1):   # a variant that does not fit: draw it again (deterministically, from the seed)
+        if a.seed is None: raise SystemExit("room: " + "; ".join(problems(R.boxes, half=half - 0.1)))
+        tries += 1; R = build(a.seed * 1000 + tries)
+    nm = f"stage{a.stage}"; b = half + 0.1
+    doc = {"version": 2, "name": nm if a.seed is None else f"{nm}-seed{a.seed}", "floor_y": 0.0, "spawn_clear": 1.8,
+           "bounds": [-b, b, -b, b], "grip": {"0": "none", "1": "ledge: its top edges can be held", "2": "handhold"}, "boxes": R.boxes}
     text = ("{\n" + ",\n".join(f'  "{k}": {json.dumps(v)}' for k, v in doc.items() if k != "boxes") + ',\n  "boxes": [\n'
             + ",\n".join("    " + json.dumps(b) for b in R.boxes) + "\n  ]\n}\n")
     for path in [a.out] + ([a.web] if a.web and a.seed is None else []):

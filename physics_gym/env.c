@@ -330,7 +330,13 @@ static BHD int fallen(const World *W) {   /* heights from the surface under her 
 }
 
 /* ---------- TASK_GOTO (physics_gym) ---------- */
-static BHD double arena(void) { return room_size() ? 5.4 : 3.0; }   /* half size of the area starts and goals are drawn from */
+/* half size of the area starts and goals are drawn from: the room's outer walls (its farthest box centres) less 0.6 m */
+static BHD double arena(void) {
+    if (!room_size()) return 3.0;
+    double e = 0;
+    for (int j = 0; j < room_size(); j++) { const RoomBox *o = room_at(j); e = fmax(e, fmax(fabs(o->c.x), fabs(o->c.z))); }
+    return e - 0.6;
+}
 /* room to stand at (x, z): open floor there and around, nothing from the floor up to head height */
 static BHD int free_spot(double x, double z) {
     for (int a = -1; a <= 1; a++) for (int b = -1; b <= 1; b++) if (column_hit(x + 0.45 * a, z + 0.45 * b, 0.005, 1.9)) return 0;

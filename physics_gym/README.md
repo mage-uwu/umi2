@@ -24,6 +24,22 @@ The spawn area (|x|, |z| < 1.8 m around the origin, where every task starts her,
 `python3 room.py --seed N --out f.json` writes variants with the features moved, turned and resized. Variants
 that overlap, leave the room or reach into the spawn area are drawn again.
 
+## Stage 1: climbing and parkour (room.json v2, the default)
+
+`python3 room.py` now writes stage 1: a 16 x 16 m room (outer walls 4 m high) with all of stage 0 in the middle
+and a band around it. `python3 room.py --stage 0 --out room_stage0.json` writes the stage-0 room.
+
+| feature | boxes | what |
+|---|---|---|
+| climbing wall | 81 | 4.4 m wide, 3.6 m high, against the north wall; 76 handholds (small jugs 8 cm proud of the face, about 0.42 m apart, jittered) |
+| mantle block, high ledge | 2 | solid blocks 1.55 m and 2.1 m high: hang from the edge and pull up |
+| parkour lane | 7 | east side: a step, four platforms (0.6 to 0.9 m) across gaps of 0.5, 0.8, 1.1 and 0.7 m, a 1 m vault block, a 1.25 m drop platform |
+| stepping stones | 6 | south side: low blocks 0.18 to 0.30 m high |
+
+Every box carries a `grip` label for the hands: 0 nothing to hold, 1 a ledge (its top edges can be held), 2 a
+handhold. The physics does not read it yet; it is for the grip constraint (ROADMAP.md, M3). Starts and goals are
+drawn from the whole room (the outer walls less 0.6 m).
+
 ### What is drawn is what is simulated
 
 The physics in C (`body.c`), in CUDA (`gpu/tssenv_kernels.cu`, which compiles the same `body.c`) and in the browser
