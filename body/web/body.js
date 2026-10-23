@@ -159,7 +159,7 @@ export class World {
 }
 
 // ---------- the control interface (env.c) ----------
-export const ACT_DIM = 31, OBS_DIM = NB * 15 + 6, CTRL_HZ = 30;
+export const ACT_DIM = 31, OBS_DIM = NB * 15 + 6, CTRL_HZ = 30, ACT_FILTER = 0.35;
 // action range per joint (rad per unit action), indexed by the child body (env.c ACT_SCALES)
 export const ACT_SCALES = [0, 0.5, 0.5, 0.4, 0.8, 0.8, 0.8, 0.8, 1.0, 1.2, 0.6, 1.0, 1.2, 0.6];
 export function standPose() {
@@ -167,12 +167,14 @@ export function standPose() {
   rel[B.L_UARM] = qexp([0, 0, -a]); rel[B.R_UARM] = qexp([0, 0, a]);
   return rel;
 }
-// Joint targets: reference rotation followed by exp(ACT_SCALE * a).
+// Joint targets: reference rotation followed by exp(scale * f), f the action low-passed by ACT_FILTER (kept on the world).
 export function applyAction(world, ref, a) {
-  let k = 0;
+  world.filt ||= new Array(ACT_DIM).fill(0);
+  for (let j = 0; j < ACT_DIM; j++) world.filt[j] += ACT_FILTER * (a[j] - world.filt[j]);
+  const f = world.filt; let k = 0;
   for (let i = 1; i < NB; i++) {
     const d = BODY_DEFS[i];
-    const r = d.hinge ? vscale(hingeAxis(d.hinge), a[k++]) : [a[k++], a[k++], a[k++]];
+    const r = d.hinge ? vscale(hingeAxis(d.hinge), f[k++]) : [f[k++], f[k++], f[k++]];
     world.target[i] = qmul(ref[i], qexp(vscale(r, ACT_SCALES[i])));
   }
 }

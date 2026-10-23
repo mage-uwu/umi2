@@ -2,7 +2,7 @@
  *
  * Control at 30 Hz. The action holds one value per joint degree of freedom (3 for a ball joint, 1 for a
  * hinge: 31 in all), each in [-1, 1]; a joint's target is the reference rotation followed by
- * exp(scale_j * a), with a per-joint range (wide at the hips and knees so she can step). Observations are
+ * exp(scale_j * f), where f is the action low-passed (ACT_FILTER), with a per-joint range (wide at the hips and knees so she can step). Observations are
  * in the heading frame (the pelvis yaw removed), plus the reference clip's phase as sin/cos.
  *
  *   TASK_BALANCE  hold the stand pose's upper body while being pushed; the legs are free, so stepping to
@@ -20,6 +20,7 @@
 #define ACT_DIM 31
 #define OBS_DIM (NB * 15 + 6)
 #define CTRL_HZ 30
+#define ACT_FILTER 0.35   /* each control step the joint command moves this share of the way to the new action */
 enum { TASK_BALANCE, TASK_IMITATE };
 
 typedef struct {
@@ -42,7 +43,7 @@ typedef struct {
     int step, done;
     double t0, next_push;
     Vec clip_shift;      /* world offset of the clip's root (xz), so the reference starts under her */
-    float prev_act[ACT_DIM];
+    float prev_act[ACT_DIM], filt[ACT_DIM];   /* last raw action; low-passed action that sets the targets */
 } Env;
 
 extern const double ACT_SCALES[NB];

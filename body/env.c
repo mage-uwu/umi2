@@ -28,7 +28,7 @@ static void ref_at(const Env *E, double t, Quat *rel, Quat *world, Vec *root) {
 void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
     E->cfg = *cfg; E->rng = seed * 0x9E3779B97F4A7C15ULL + 1; E->step = 0; E->done = 0; E->t0 = 0;
     world_init(&E->W, 45, 20, 1.0 / CTRL_HZ);
-    for (int k = 0; k < ACT_DIM; k++) E->prev_act[k] = 0;
+    for (int k = 0; k < ACT_DIM; k++) E->prev_act[k] = E->filt[k] = 0;
     E->next_push = 0.5 + env_rand(&E->rng) * 2 * cfg->push_every;
     if (cfg->task == TASK_IMITATE) {
         const Clip *c = cfg->clip; const double T = (c->frames - 1) / c->fps;
@@ -99,11 +99,12 @@ static int fallen(const World *W) {
 }
 
 double env_step(Env *E, const float *a) {
-    World *W = &E->W; int k = 0; double act2 = 0;
+    World *W = &E->W; int k = 0; double act2 = 0; const float *f = E->filt;
+    for (int j = 0; j < ACT_DIM; j++) E->filt[j] += (float)ACT_FILTER * (a[j] - E->filt[j]);
     for (int i = 1; i < NB; i++) {
         const BodyDef *d = BODY_DEFS + i; Vec r;
-        if (d->hinge) { r = vscale(hinge_axis(d->hinge), a[k++]); }
-        else { r = v3(a[k], a[k + 1], a[k + 2]); k += 3; }
+        if (d->hinge) { r = vscale(hinge_axis(d->hinge), f[k++]); }
+        else { r = v3(f[k], f[k + 1], f[k + 2]); k += 3; }
         W->target[i] = qmul(E->ref[i], qexp(vscale(r, ACT_SCALES[i])));
     }
     for (int j = 0; j < ACT_DIM; j++) { double dd = a[j] - E->prev_act[j]; act2 += dd * dd; E->prev_act[j] = a[j]; }
@@ -144,10 +145,12 @@ double env_step(Env *E, const float *a) {
     }
     if (fell || E->step >= E->cfg.steps) E->done = 1;
     if (fell) return 0;
-    /* balance: upper body near the stand pose, torso upright, head over the feet, coming to rest; legs free */
+    /* balance: upper body near the stand pose, torso upright, head over the feet, coming to rest, a calm trunk,
+     * smooth commands; the legs are free */
     double pose = 0;
     for (int i = SPINE; i <= R_FARM; i++) { Quat rel = qmul(qconj(W->b[BODY_DEFS[i].parent].q), W->b[i].q); Vec e = qlog(qmul(rel, qconj(E->ref[i]))); pose += vdot(e, e); }
     Vec feet = vscale(vadd(W->b[L_FOOT].x, W->b[R_FOOT].x), .5), hd = vsub(W->b[HEAD].x, feet); double lean = hd.x * hd.x + hd.z * hd.z;
     Vec up = qrot(W->b[CHEST].q, v3(0, 1, 0)), cv; world_com(W, &cv); double sp = cv.x * cv.x + cv.z * cv.z;
-    return 1 + 0.4 * exp(-2 * pose / 7) + 0.4 * exp(-20 * lean) + 0.3 * fmax(up.y, 0) + 0.3 * exp(-4 * sp) + 0.2 * exp(-0.5 * act2);
+    double spin = vdot(W->b[PELVIS].w, W->b[PELVIS].w) + vdot(W->b[CHEST].w, W->b[CHEST].w);
+    return 1 + 0.4 * exp(-2 * pose / 7) + 0.4 * exp(-20 * lean) + 0.3 * fmax(up.y, 0) + 0.3 * exp(-4 * sp) + 0.3 * exp(-0.5 * spin) + 0.3 * exp(-2 * act2);
 }
