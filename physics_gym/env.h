@@ -71,6 +71,8 @@ typedef struct {
     double act_mul;      /* joint ranges times this (0 = 1) */
     const Clip *style[8]; int nstyle;   /* floor tasks: motion style prior (env_style_prepare each first) */
     double style_start;  /* TASK_GETUP: share of episodes starting in a random frame of a style clip */
+    double goal_cone;    /* TASK_GOTO: goals are drawn within this angle (rad) of her heading; 0 = any direction (a curriculum:
+                          * walking to a goal ahead comes before turning toward one) */
 } TaskCfg;
 
 typedef struct {

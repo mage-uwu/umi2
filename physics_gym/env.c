@@ -356,6 +356,10 @@ static BHD void goto_goal(Env *E) {
         }
         const double dx = g.x - p.x, dz = g.z - p.z, d2 = dx * dx + dz * dz;
         if (d2 < 1.0 || d2 > 36.0) continue;
+        if (E->cfg.goal_cone > 0) {   /* within the cone ahead of her */
+            const Vec f = qrot(E->W.b[PELVIS].q, v3(0, 0, 1)); const double fl = sqrt(f.x * f.x + f.z * f.z);
+            if (fl < 1e-9 || (f.x * dx + f.z * dz) / (fl * sqrt(d2)) < b_cos(E->cfg.goal_cone)) continue;
+        }
         E->goal = g; E->goal_d = sqrt(d2); return;
     }
     E->goal = v3(p.x, 0, p.z + 1.5); E->goal_d = 1.5;
@@ -403,7 +407,7 @@ static BHD double goto_reward(Env *E, double act2) {
     const double sp = support_y(pb->x.x, pb->x.z, pb->x.y);
     Vec cv; world_com(W, &cv); const Vec vh = v3(cv.x, 0, cv.z);
     Vec to = vsub(E->goal, pb->x); to.y = 0; const double d = vlen(to); const Vec dir = d > 1e-9 ? vscale(to, 1 / d) : v3(0, 0, 0);
-    const double move = d > 0.4 ? b_exp(-b_sq(vdot(vh, dir) - 0.9) / 0.18) : b_exp(-2 * vdot(vh, vh));
+    const double move = d > 0.4 ? fmax(-1, fmin(1, vdot(vh, dir) / 0.9)) : b_exp(-2 * vdot(vh, vh));   /* toward it at up to walking speed; still once there */
     Vec f = qrot(pb->q, v3(0, 0, 1)); f.y = 0; const double fl = vlen(f);
     const double face = d > 0.4 && fl > 1e-9 ? fmax(0, vdot(f, dir) / fl) : 1;
     const double up = fmax(0, qrot(W->b[CHEST].q, v3(0, 1, 0)).y);

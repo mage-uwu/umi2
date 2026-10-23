@@ -32,10 +32,10 @@ void tss_urand(const uint64_t *seeds, int B, int n, float *out) {
 /* task: balance | crawl | getup | a clip name in mref (imitation). style: "file.bin:clip1,clip2" or NULL.
  * Zero (or negative for steps) means ppo_tss.c's default. */
 Pool *pool_new(int n, const char *task, const char *mref, const char *style, double assist, double push, double act_mul,
-               int steps, double style_start, double sway, double arm_tone, int seed) {
+               int steps, double style_start, double sway, double arm_tone, int seed, double goal_cone) {
     Pool *P = calloc(1, sizeof(Pool)); TaskCfg *tc = &P->tc;
     tc->push_every = 2; tc->steps = 300; tc->init_noise = 0.05;
-    tc->assist = assist; tc->push_max = push; tc->act_mul = act_mul; tc->style_start = style_start; tc->sway = sway; tc->arm_tone = arm_tone;
+    tc->goal_cone = goal_cone; tc->assist = assist; tc->push_max = push; tc->act_mul = act_mul; tc->style_start = style_start; tc->sway = sway; tc->arm_tone = arm_tone;
     if (!strcmp(task, "crawl") || !strcmp(task, "getup")) {
         tc->task = !strcmp(task, "crawl") ? TASK_CRAWL : TASK_GETUP; if (!tc->act_mul) tc->act_mul = 2.5; tc->steps = tc->task == TASK_CRAWL ? 300 : 240;
         if (style && *style) {

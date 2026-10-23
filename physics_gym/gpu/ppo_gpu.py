@@ -68,13 +68,14 @@ def main():
     A("--steps", type=int, default=0); A("--assist", type=float, default=0); A("--sway", type=float, default=0); A("--arm-tone", type=float, default=0)
     A("--gamma", type=float, default=0.95); A("--lam", type=float, default=0.95); A("--ent", type=float, default=0)
     A("--device", default="cuda" if torch.cuda.is_available() else "cpu"); A("--cpu-physics", action="store_true")
+    A("--goal-cone", type=float, default=0, help="go-to: goals within this angle (rad) of her heading; 0 = any")
     A("--room", default=os.path.join(HERE, "../room.json"), help="room.json (physics_gym); '' for the empty floor")
     a = ap.parse_args()
     if a.threads: os.environ["OMP_NUM_THREADS"] = str(a.threads)
     dev = torch.device(a.device)
     Pool = ge.GpuPool if dev.type == "cuda" and not a.cpu_physics else ge.CpuPool
     pool = Pool(a.envs, task=a.task, mref=a.mref, style=a.style, assist=a.assist, push=a.push, act_mul=a.act_mul, steps=a.steps,
-                style_start=a.style_start, sway=a.sway, arm_tone=a.arm_tone, seed=a.seed, device=dev, room=a.room)
+                style_start=a.style_start, sway=a.sway, arm_tone=a.arm_tone, goal_cone=a.goal_cone, seed=a.seed, device=dev, room=a.room)
     OBS, ACT, HZ = pool.OBS, pool.ACT, pool.HZ
 
     # the stack
