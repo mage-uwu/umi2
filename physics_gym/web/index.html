@@ -140,7 +140,7 @@ button:disabled { opacity: .45; cursor: default; }
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm';
-import { World, setRoom, supportY, observeGoto, BODY_DEFS, B, standPose, swayPose, crawlPose, applyAction, observe, fallen, loadPolicy, loadTssPolicy, loadClips, poseFromClip, setAssist, math, CTRL_HZ } from './body.js';
+import { World, setRoom, supportY, setHandUp, observeGoto, BODY_DEFS, B, standPose, swayPose, crawlPose, applyAction, observe, fallen, loadPolicy, loadTssPolicy, loadClips, poseFromClip, setAssist, math, CTRL_HZ } from './body.js';
 import { createShaderView } from './shader-view.js';
 
 const status = document.getElementById('status');
@@ -412,10 +412,11 @@ const SKILLS = {
   walk_cmu: { label: 'Walk (CMU)', file: 'walk_cmu_tss.json', clip: 'cmu_walk', gym: true },
   // floor: a floor skill, trained without a clip (env.c TASK_CRAWL), with joint ranges widened by actMul
   crawl: { label: 'Crawl', file: 'crawl_tss.json', floor: true, actMul: 2.5, legacy: true },
-  // goTo: physics_gym's go-to controller (env.c TASK_GOTO, trained on the GPU in the room): walks to the goal marker
-  // (Click: Goal), feeling the room through touch. The walk clip's cycle is its gait prior (its pose at the current
-  // phase is what the actions act around), with no pelvis support and no root to follow.
-  goto: { label: 'Go to', file: 'goto_tss.json', goTo: true, clip: 'walk' },
+  // goTo: physics_gym's go-to controller (env.c TASK_GOTO, trained on the GPU across the graded room bank): walks to the
+  // goal marker (Click: Goal), feeling the room through touch. The CMU walk cycle is its gait prior (its pose at the
+  // current phase is what the actions act around). assist: the hand-up it still trains with (the pelvis held toward
+  // standing height, upright; shown as "pelvis support"); an interim checkpoint of the terrain run for now.
+  goto: { label: 'Go to', file: 'goto_tss.json', goTo: true, clip: 'cmu_walk', assist: 0.12 },
 };
 // Getting up (TASK_GETUP) is not a button: it takes over when she falls, or when Stand up is pressed while she
 // crawls, and hands back to Balance once she stands calmly.
@@ -539,8 +540,9 @@ function control() {
   const phase = clip ? 2 * Math.PI * world.t / clip.T : pc ? 2 * Math.PI * world.t / pc.T : 0;
   const floor = mode === 'getup' || SKILLS[skill].floor, pol = mode === 'getup' ? getupPolicy : policy;
   world.assist = 0;   // set afresh each step (a clip's support, or the steadying hand while a limb is held)
-  if (clip) setAssist(world, clip, world.t, fallenAt < 0 ? SKILLS[skill].assist || 0 : 0);
   const goTo = mode === 'skill' && SKILLS[skill].goTo;
+  if (goTo) setHandUp(world, fallenAt < 0 ? SKILLS[skill].assist || 0 : 0);   // go-to's hand-up (env.c), while a policy still trains with one
+  else if (clip) setAssist(world, clip, world.t, fallenAt < 0 ? SKILLS[skill].assist || 0 : 0);
   const gym = mode === 'skill' && SKILLS[skill].gym;
   if (fallenAt < 0 && pol) applyAction(world, ref, pol.act(goTo ? observeGoto(world, phase, goalOr()) : gym ? observeGoto(world, phase, null) : observe(world, phase, floor)), floor ? GETUP.actMul : 1);
   if (goTo) goalReached();

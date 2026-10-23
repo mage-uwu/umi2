@@ -553,6 +553,14 @@ export function poseFromClip(world, clip, t) {
 
 // Pelvis support toward a clip's root path and rotation, strength s in 0..1 (env.c, TASK_IMITATE assist):
 // clip time t is the start of the coming control step; the target is the reference at its end.
+// The go-to (and get-up) hand-up, strength s in 0..1 (env.c TASK_GOTO assist): the pelvis held toward standing height
+// above the surface under her, upright, facing where she faces.
+export function setHandUp(world, s) {
+  world.assist = s || 0; if (!s) return;
+  const px = world.b[0].x, q = world.b[0].q, f = vadd(qrot(q, [0, 0, 1]), qrot(q, [0, 1, 0]));
+  world.assistX = [px[0], supportY(px[0], px[2], px[1]) + BODY_DEFS[0].center[1], px[2]]; world.assistV = [0, 0, 0];
+  world.assistQ = qexp([0, Math.atan2(f[0], f[2]), 0]);
+}
 export function setAssist(world, clip, t, s) {
   world.assist = s || 0; if (!s) return;
   const A = clip.at(t), Bn = clip.at(t + 1 / CTRL_HZ);
