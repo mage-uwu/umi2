@@ -377,8 +377,8 @@ export function observeGoto(world, phase, goal) {
   o[1] = root[1] - Math.min(world.lowest(B.L_FOOT), world.lowest(B.R_FOOT));
   o[NB * 15] = world.touch[B.L_FOOT] > 0.02 * wt ? 1 : 0; o[NB * 15 + 1] = world.touch[B.R_FOOT] > 0.02 * wt ? 1 : 0;
   const pz = qrot(world.b[0].q, [0, 0, 1]), hi = qexp([0, -Math.atan2(pz[0], pz[2]), 0]);
-  const g = qrot(hi, vsub(goal, root)), r = Math.sqrt(g[0] * g[0] + g[2] * g[2]), s = r > 4 ? 4 / r : 1;
-  o.push(g[0] * s, g[1], g[2] * s, Math.min(r, 4));
+  if (goal) { const g = qrot(hi, vsub(goal, root)), r = Math.sqrt(g[0] * g[0] + g[2] * g[2]), s = r > 4 ? 4 / r : 1; o.push(g[0] * s, g[1], g[2] * s, Math.min(r, 4)); }
+  else o.push(0, 0, 0, 0);   // no goal (the gym's other tasks: imitation): the goal inputs are zero, as in env.c
   for (let i = 0; i < NB; i++) o.push(Math.min(3, world.touch[i] / wt));
   for (let i = 1; i < NB; i++) o.push(world.act[i]);   // muscle sense
   for (let k = 0; k < 2; k++) {   // grip: holding; the nearest holdable point within 1 m from the hand (heading frame), and whether there is one
