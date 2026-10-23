@@ -29,6 +29,7 @@ h1 { margin: 0; font-family: var(--display); font-size: clamp(1.25rem, 3.5vw, 1.
 #stage { position: relative; min-height: 0; touch-action: none; cursor: crosshair; overflow: hidden; }
 #view, #art { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 #art { transform-origin: 50% 50%; }
+#view[hidden], #art[hidden] { display: none; }
 #status { position: absolute; inset: auto 0 12px; text-align: center; color: var(--muted); font-size: .8rem; font-family: var(--mono); }
 #status.alert { color: var(--alert); }
 footer { display: flex; align-items: center; gap: 12px 18px; flex-wrap: wrap; padding-block: 10px 14px;
@@ -140,7 +141,13 @@ async function loadModel() {
   vrm = gltf.userData.vrm; VRMUtils.rotateVRM0(vrm);
   vrm.scene.traverse(o => { o.frustumCulled = false; if (o.isMesh) o.castShadow = true; });
   scene.add(vrm.scene);
+  // Spring bones (hair, dress) simulate in a frame that travels with her hips without turning: by default
+  // they run in world space, where their per-step drag acts like a headwind as soon as she walks.
+  vrm.scene.add(springFrame);
+  for (const j of vrm.springBoneManager?.joints ?? []) j.center = springFrame;
+  springSettle = 2;
 }
+const springFrame = new THREE.Object3D();
 const bone = n => vrm.humanoid.getNormalizedBoneNode(n);
 const FINGERS = ['Thumb', 'Index', 'Middle', 'Ring', 'Little'].flatMap(f => ['Proximal', 'Intermediate', 'Distal'].map(s => f + s));
 const HIPS_REST = [0, 0.928, 0.004];
@@ -161,6 +168,7 @@ function poseModel(Q, pelvisX) {
   }
   const off = math.qrot(Q[B.PELVIS], math.vsub(BODY_DEFS[0].center, HIPS_REST));
   bone('hips').position.set(...math.vsub(pelvisX, off));
+  springFrame.position.set(pelvisX[0], 0, pelvisX[2]); springFrame.updateMatrixWorld();
 }
 
 // ---------- physics boxes (the Physics view) ----------
@@ -181,7 +189,31 @@ const SKILLS = {
 let world, ref, policy = null, skill = 'balance', upSince = 0, fallenAt = -1, listeners = {}, clips = null, clip = null;
 const policies = {};
 const emit = (ev, detail) => { (listeners[ev] || []).forEach(f => { try { f(detail); } catch (e) { console.error(e); } }); dispatchEvent(new CustomEvent('umibody:' + ev, { detail })); };
+// Body states at recent control steps, so the drawing and the hair can sample any moment between them.
+let hist = [];
+function poseAt(t) {
+  let i = hist.length - 1; while (i > 0 && hist[i - 1].t >= t) i--;
+  const B1 = hist[i], A = hist[Math.max(0, i - 1)];
+  const w = B1.t > A.t ? Math.min(1, Math.max(0, (t - A.t) / (B1.t - A.t))) : 1, Q = [], X = [];
+  A.s.forEach((p, k) => {
+    const q = new THREE.Quaternion().slerpQuaternions(toQ(p.q), toQ(B1.s[k].q), w);
+    Q.push([q.w, q.x, q.y, q.z]); X.push(p.x.map((v, j) => v + (B1.s[k].x[j] - v) * w));
+  });
+  return { Q, X };
+}
+// Hair and dress are the model's spring bones. They step through simulated time in substeps of at most
+// 1/60 s, with the body posed where it was at each substep, so they feel her true motion at any frame
+// rate. After she is teleported (reset, skill change) they settle in place instead of whipping.
+let springT = 0, springSettle = 0;
+function springs(t) {
+  if (springSettle > 0) { const { Q, X } = poseAt(t); poseModel(Q, X[0]); vrm.springBoneManager?.reset(); vrm.update(0); springT = t; springSettle--; return; }
+  const span = t - springT; if (span <= 0) return;
+  const n = Math.min(24, Math.max(1, Math.ceil(span * 60 - 1e-6)));
+  for (let k = 1; k <= n; k++) { const { Q, X } = poseAt(springT + span * k / n); poseModel(Q, X[0]); vrm.update(span / n); }
+  springT = t;
+}
 function reset() {
+  springSettle = 2;
   focus.set(0, 0.85, 0);
   world = new World(45, 20, 1 / CTRL_HZ);
   if (clip) ref = poseFromClip(world, clip, 0).rel;
@@ -192,7 +224,7 @@ function reset() {
     world.target = ref.slice();
   }
   policy?.reset();
-  upSince = world.t; fallenAt = -1; prev = snapshot(); emit('reset', { skill });
+  upSince = world.t; fallenAt = -1; prev = snapshot(); hist = [{ t: world.t, s: prev }]; springT = world.t; emit('reset', { skill });
 }
 const PUSH_N = 100;   // the strongest push the current balance controller has trained on
 function push(dir, newtons = PUSH_N, bodyName = 'chest') {
@@ -214,24 +246,28 @@ function control() {
   if (clip) setAssist(world, clip, world.t, fallenAt < 0 ? SKILLS[skill].assist || 0 : 0);
   if (fallenAt < 0 && policy) applyAction(world, ref, policy.act(observe(world, phase)));
   prev = snapshot(); world.step();
+  hist.push({ t: world.t, s: snapshot() }); if (hist.length > 12) hist.shift();
   if (clip) ref = clip.at(world.t).rel;
   if (fallenAt < 0 && fallen(world)) { fallenAt = world.t; emit('fall', { upright: world.t - upSince }); setStatus('She fell. Getting up is not learned yet; resetting.', true); }
   if (fallenAt >= 0 && world.t - fallenAt > 2.5) { reset(); setStatus(''); }
   emit('step', { t: world.t });
 }
+let frameErrors = 0;
 function frame(now) {
+  // One bad frame must not stop the loop: log it (the first few) and carry on.
+  try { step(now); } catch (e) { if (frameErrors++ < 3) console.error(e); }
+  requestAnimationFrame(frame);
+}
+function step(now) {
   const dt = Math.min((now - last) / 1000, 0.2);
   acc = Math.min(acc + dt, 0.2); last = now;
   if (world) {
     while (acc >= 1 / CTRL_HZ) { control(); acc -= 1 / CTRL_HZ; }
-    const a = acc * CTRL_HZ, Q = [];
-    world.b.forEach((b, i) => {
-      const p = prev[i], q = new THREE.Quaternion().slerpQuaternions(toQ(p.q), toQ(b.q), a);
-      Q.push([q.w, q.x, q.y, q.z]);
-      boxes[i].position.set(...p.x.map((v, k) => v + (b.x[k] - v) * a)); boxes[i].quaternion.copy(q);
-    });
-    const px = prev[0].x.map((v, k) => v + (world.b[0].x[k] - v) * a);
-    if (vrm) { poseModel(Q, px); vrm.update(1 / 60); }
+    const renderT = world.t - 1 / CTRL_HZ + acc;   // drawn one control step behind, interpolated
+    if (vrm) springs(renderT);
+    const { Q, X } = poseAt(renderT), px = X[0];
+    X.forEach((x, i) => { boxes[i].position.set(...x); boxes[i].quaternion.copy(toQ(Q[i])); });
+    if (vrm) poseModel(Q, px);
     follow(px, dt);
     document.getElementById('r-time').textContent = fallenAt < 0 ? `upright ${(world.t - upSince).toFixed(1)} s` : 'fallen';
     pelvisAt.set(px[0], px[1], px[2]);
@@ -242,7 +278,6 @@ function frame(now) {
     artCanvas.style.transform = `scale(${(VIEW0.dist / view.dist).toFixed(3)})`;
     art.frame({ target: pelvisAt, yaw: view.yaw, pitch: view.pitch });
   } else renderer.render(scene, camera);
-  requestAnimationFrame(frame);
 }
 // The camera trails her pelvis at a rate independent of the frame rate, from a three-quarter side view
 // (she faces +Z, so walking carries her across the frame rather than into the lens).
@@ -298,9 +333,10 @@ async function useArt() {
     if (look === 'art') setLook('art');
   }
 }
-document.getElementById('v-art').onclick = () => vrm && useArt();
-document.getElementById('v-model').onclick = () => setLook('model');
-document.getElementById('v-boxes').onclick = () => setLook('boxes');
+let lookChosen = false;   // once the viewer picks a view, start-up no longer switches it
+document.getElementById('v-art').onclick = () => { lookChosen = true; if (vrm) useArt(); };
+document.getElementById('v-model').onclick = () => { lookChosen = true; setLook('model'); };
+document.getElementById('v-boxes').onclick = () => { lookChosen = true; setLook('boxes'); };
 // Click the stage: push from the clicked side of her (screen left/right of her body, nearer/farther in depth).
 document.getElementById('stage').addEventListener('pointerdown', e => {
   if (!world || fallenAt >= 0) return;
@@ -356,7 +392,7 @@ try {
   setStatus('loading the model…');
   await loadModel();
   setStatus('loading the learned shader…');
-  await useArt();
+  if (!lookChosen || look === 'art') await useArt(); else setLook(look);
   if (art) setStatus('');
 } catch (e) { console.error(e); setStatus(`Could not start: ${e.message}`, true); }
 </script>
