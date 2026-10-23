@@ -176,7 +176,7 @@ const boxes = BODY_DEFS.map(d => {
 const SKILLS = {
   balance: { label: 'Balance', file: 'balance.json' },
   // assist: the pelvis support spring the controller was trained with (1 = full); 0 once it walks unaided
-  walk: { label: 'Walk (assisted)', file: 'walk.json', clip: 'walk', assist: 0.3 },
+  walk: { label: 'Walk (assisted)', file: 'walk.json', clip: 'walk', assist: 0.07 },
 };
 let world, ref, policy = null, skill = 'balance', upSince = 0, fallenAt = -1, listeners = {}, clips = null, clip = null;
 const policies = {};
