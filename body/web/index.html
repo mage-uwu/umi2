@@ -1,0 +1,291 @@
+<title>Magical Girl Body</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700&family=Shippori+Mincho:wght@600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* Layout: one full-height stage where she stands under live physics; a control strip at the foot
+   (skill, pushes, view, readouts). Palette and faces follow the ANIME NEURAL SHADER page. */
+:root {
+  --stage-top: #eef0fb; --stage-bottom: #d9dcf2; --floor: #c9cdea;
+  --ink: #1d2150; --muted: #5d6293; --gold: #a57a1f; --chip: rgba(255,255,255,.72); --line: rgba(29,33,80,.16);
+  --alert: #b2384b;
+  --display: 'Shippori Mincho', 'Hiragino Mincho ProN', Georgia, serif;
+  --body: 'Zen Kaku Gothic New', 'Hiragino Sans', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --stage-top: #0e1030; --stage-bottom: #1d2052; --floor: #2a2e6a;
+  --ink: #eef0ff; --muted: #a3a8dc; --gold: #e2bd62; --chip: rgba(20,22,60,.72); --line: rgba(238,240,255,.16); --alert: #ff8095; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --stage-top: #0e1030; --stage-bottom: #1d2052; --floor: #2a2e6a;
+  --ink: #eef0ff; --muted: #a3a8dc; --gold: #e2bd62; --chip: rgba(20,22,60,.72); --line: rgba(238,240,255,.16); --alert: #ff8095; color-scheme: dark }
+html, body { height: 100%; }
+body { background: var(--stage-bottom); color: var(--ink); font-family: var(--body); overflow: hidden; }
+.app { height: 100%; display: grid; grid-template-rows: auto 1fr auto; background: linear-gradient(var(--stage-top), var(--stage-bottom)); }
+header { display: flex; align-items: baseline; justify-content: space-between; gap: 6px 12px; flex-wrap: wrap;
+  padding-block: 14px 0; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1 { margin: 0; font-family: var(--display); font-size: clamp(1.25rem, 3.5vw, 1.7rem); text-wrap: balance; }
+.hint { color: var(--muted); font-size: .85rem; max-width: 62ch; }
+#stage { position: relative; min-height: 0; touch-action: none; cursor: crosshair; overflow: hidden; }
+#view { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#status { position: absolute; inset: auto 0 12px; text-align: center; color: var(--muted); font-size: .8rem; font-family: var(--mono); }
+#status.alert { color: var(--alert); }
+footer { display: flex; align-items: center; gap: 12px 18px; flex-wrap: wrap; padding-block: 10px 14px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.label { font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-right: 2px; }
+button { font: inherit; font-size: .85rem; color: var(--ink); background: var(--chip); border: 1px solid var(--line);
+  border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+button[aria-pressed="true"] { border-color: var(--gold); color: var(--gold); }
+button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+button:disabled { opacity: .45; cursor: default; }
+.readout { font-family: var(--mono); font-size: .8rem; font-variant-numeric: tabular-nums; display: grid; gap: 2px; margin-left: auto; min-width: 14em; }
+@media (max-width: 560px) { .readout { margin-left: 0; } }
+@media (prefers-reduced-motion: reduce) { #status { transition: none; } }
+</style>
+
+<div class="app">
+  <header>
+    <h1>Magical Girl Body</h1>
+    <span class="hint">She stands under real physics: 14 rigid bodies, 45 kg, a muscle at every joint, driven 30 times a second by a small learned controller. Click the stage to push her from that side.</span>
+  </header>
+  <div id="stage" tabindex="0" aria-label="Live physics view; click to push her">
+    <canvas id="view"></canvas>
+    <div id="status">loading model and controller…</div>
+  </div>
+  <footer>
+    <div class="group" role="group" aria-label="Skill">
+      <span class="label">Skill</span>
+      <span id="skills" class="group"></span>
+    </div>
+    <div class="group" role="group" aria-label="Push">
+      <span class="label">Push</span>
+      <button data-push="left">Left</button><button data-push="right">Right</button>
+      <button data-push="front">Front</button><button data-push="back">Back</button>
+      <button id="reset">Reset</button>
+    </div>
+    <div class="group" role="group" aria-label="View">
+      <span class="label">View</span>
+      <button id="v-model" aria-pressed="true">Character</button>
+      <button id="v-boxes" aria-pressed="false">Physics</button>
+    </div>
+    <div class="readout" aria-live="polite">
+      <span id="r-policy">controller –</span>
+      <span id="r-time">upright –</span>
+    </div>
+  </footer>
+</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/",
+  "@pixiv/three-vrm": "https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@3.5.5/lib/three-vrm.module.min.js"
+} }
+</script>
+<script type="module">
+// The character is a physics body (body.js, the twin of the C trainer's body.c). Every 1/30 s the active
+// skill's controller reads the body state and sets joint targets; the physics advances; the VRM bones copy
+// the bodies' rotations. Hooks for other pages: window.umiBody (see the bottom of this script).
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm';
+import { World, BODY_DEFS, B, standPose, applyAction, observe, fallen, loadPolicy, math, CTRL_HZ } from './body.js';
+
+const status = document.getElementById('status');
+const setStatus = (t, alert = false) => { status.textContent = t; status.classList.toggle('alert', alert); };
+const canvas = document.getElementById('view');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setClearColor(0x000000, 0);
+renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.shadowMap.enabled = true;
+const scene = new THREE.Scene();
+scene.add(new THREE.AmbientLight(0xffffff, 1.2));
+const sun = new THREE.DirectionalLight(0xffffff, 2.2);
+sun.position.set(1, 3, 2); sun.castShadow = true;
+sun.shadow.mapSize.set(1024, 1024); Object.assign(sun.shadow.camera, { left: -1.5, right: 1.5, top: 1.5, bottom: -1.5, near: 0.1, far: 8 });
+scene.add(sun, sun.target);
+const camera = new THREE.PerspectiveCamera(30, 1, 0.05, 50);
+const css = n => new THREE.Color().setStyle(getComputedStyle(document.documentElement).getPropertyValue(n).trim());
+// Floor: a soft disc of the floor colour fading into the stage gradient, and a shadow catcher above it.
+const fade = (() => { const c = document.createElement('canvas'); c.width = c.height = 256; const g = c.getContext('2d');
+  const r = g.createRadialGradient(128, 128, 0, 128, 128, 128); r.addColorStop(0, 'rgba(255,255,255,1)'); r.addColorStop(.55, 'rgba(255,255,255,.75)'); r.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = r; g.fillRect(0, 0, 256, 256); return new THREE.CanvasTexture(c); })();
+const floor = new THREE.Mesh(new THREE.CircleGeometry(3, 64), new THREE.MeshBasicMaterial({ color: css('--floor'), alphaMap: fade, transparent: true, depthWrite: false }));
+const shadowCatcher = new THREE.Mesh(new THREE.CircleGeometry(3, 64), new THREE.ShadowMaterial({ opacity: .22 }));
+for (const m of [floor, shadowCatcher]) { m.rotation.x = -Math.PI / 2; scene.add(m); }
+shadowCatcher.position.y = 0.001; shadowCatcher.receiveShadow = true;
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => floor.material.color.copy(css('--floor')));
+
+// ---------- the model (bytes packed in a PNG, as on the shader page) ----------
+async function unpackPng(url) {
+  const bmp = await createImageBitmap(await (await fetch(url)).blob(), { colorSpaceConversion: 'none', premultiplyAlpha: 'none' });
+  const c = new OffscreenCanvas(bmp.width, bmp.height), ctx = c.getContext('2d'); ctx.drawImage(bmp, 0, 0);
+  const px = ctx.getImageData(0, 0, bmp.width, bmp.height).data, rgb = new Uint8Array(bmp.width * bmp.height * 3);
+  for (let i = 0, j = 0; i < px.length; i += 4) { rgb[j++] = px[i]; rgb[j++] = px[i + 1]; rgb[j++] = px[i + 2]; }
+  const n = rgb[0] | (rgb[1] << 8) | (rgb[2] << 16) | (rgb[3] << 24);
+  return rgb.buffer.slice(4, 4 + n);
+}
+let vrm = null;
+async function loadModel() {
+  const loader = new GLTFLoader(); loader.register(p => new VRMLoaderPlugin(p));
+  const gltf = await loader.parseAsync(await unpackPng('model.vrm.png'), '');
+  vrm = gltf.userData.vrm; VRMUtils.rotateVRM0(vrm);
+  vrm.scene.traverse(o => { o.frustumCulled = false; if (o.isMesh) o.castShadow = true; });
+  scene.add(vrm.scene);
+}
+const bone = n => vrm.humanoid.getNormalizedBoneNode(n);
+const FINGERS = ['Thumb', 'Index', 'Middle', 'Ring', 'Little'].flatMap(f => ['Proximal', 'Intermediate', 'Distal'].map(s => f + s));
+const HIPS_REST = [0, 0.928, 0.004];
+const toQ = q => new THREE.Quaternion(q[1], q[2], q[3], q[0]);
+// Body world rotations -> normalized bone local rotations (bones without a body keep their rest rotation).
+function poseModel(Q, pelvisX) {
+  const local = (child, parent) => toQ(parent === null ? Q[child] : math.qmul(math.qconj(Q[parent]), Q[child]));
+  const set = (name, child, parent) => { const b = bone(name); if (b) b.quaternion.copy(local(child, parent)); };
+  set('hips', B.PELVIS, null); set('spine', B.SPINE, B.PELVIS); set('chest', B.CHEST, B.SPINE); set('head', B.HEAD, B.CHEST);
+  set('leftUpperArm', B.L_UARM, B.CHEST); set('leftLowerArm', B.L_FARM, B.L_UARM);
+  set('rightUpperArm', B.R_UARM, B.CHEST); set('rightLowerArm', B.R_FARM, B.R_UARM);
+  set('leftUpperLeg', B.L_THIGH, B.PELVIS); set('leftLowerLeg', B.L_SHIN, B.L_THIGH); set('leftFoot', B.L_FOOT, B.L_SHIN);
+  set('rightUpperLeg', B.R_THIGH, B.PELVIS); set('rightLowerLeg', B.R_SHIN, B.R_THIGH); set('rightFoot', B.R_FOOT, B.R_SHIN);
+  for (const n of ['upperChest', 'neck', 'leftShoulder', 'rightShoulder', 'leftHand', 'rightHand', 'leftToes', 'rightToes']) bone(n)?.quaternion.identity();
+  for (const side of ['left', 'right']) for (const f of FINGERS) {
+    const c = f.startsWith('Thumb') ? 0.1 : f.endsWith('Proximal') ? 0.35 : 0.3;
+    bone(side + f)?.rotation.set(0, 0, side === 'left' ? -c : c);
+  }
+  const off = math.qrot(Q[B.PELVIS], math.vsub(BODY_DEFS[0].center, HIPS_REST));
+  bone('hips').position.set(...math.vsub(pelvisX, off));
+}
+
+// ---------- physics boxes (the Physics view) ----------
+const boxes = BODY_DEFS.map(d => {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(2 * d.half[0], 2 * d.half[1], 2 * d.half[2]),
+    new THREE.MeshStandardMaterial({ color: css('--gold'), roughness: .6, transparent: true, opacity: .85 }));
+  m.castShadow = true; m.visible = false; scene.add(m); return m;
+});
+
+// ---------- skills ----------
+// Each skill: a controller (policy JSON from the C trainer) and the reference pose its actions offset.
+const SKILLS = { balance: { label: 'Balance', file: 'balance.json', ref: () => standPose() } };
+let world, ref, policy = null, skill = 'balance', upSince = 0, fallenAt = -1, listeners = {};
+const emit = (ev, detail) => { (listeners[ev] || []).forEach(f => { try { f(detail); } catch (e) { console.error(e); } }); dispatchEvent(new CustomEvent('umibody:' + ev, { detail })); };
+function reset() {
+  world = new World(45, 20, 1 / CTRL_HZ); ref = SKILLS[skill].ref();
+  world.pose(BODY_DEFS[0].center, ref[0], ref);
+  let lo = 1e9; for (let i = 0; i < BODY_DEFS.length; i++) lo = Math.min(lo, world.lowest(i));
+  for (const b of world.b) { b.x = [b.x[0], b.x[1] - lo, b.x[2]]; b.xprev = b.x; }
+  world.target = ref.slice(); policy?.reset();
+  upSince = world.t; fallenAt = -1; prev = snapshot(); emit('reset', { skill });
+}
+const PUSH_N = 160;
+function push(dir, newtons = PUSH_N, bodyName = 'chest') {
+  // dir: 'left' | 'right' | 'front' | 'back' (her own sides), or a world vector [x, z]
+  const f = math.qrot(world.b[0].q, [0, 0, 1]), yaw = Math.atan2(f[0], f[2]);
+  const local = { left: [-1, 0], right: [1, 0], front: [0, -1], back: [0, 1] }[dir];   // a push FROM that side
+  let [x, z] = local ? local : dir;
+  if (local) [x, z] = [x * Math.cos(yaw) + z * Math.sin(yaw), -x * Math.sin(yaw) + z * Math.cos(yaw)];
+  const n = Math.hypot(x, z) || 1;
+  world.push = { body: B[bodyName.toUpperCase()] ?? B.CHEST, force: [x / n * newtons, 0, z / n * newtons], left: 0.2 };
+  emit('push', { dir, newtons });
+}
+
+// ---------- loop: fixed 30 Hz control, rendering interpolated between steps ----------
+const snapshot = () => world.b.map(b => ({ x: b.x.slice(), q: b.q.slice() }));
+let prev, acc = 0, last = performance.now();
+function control() {
+  if (fallenAt < 0 && policy) applyAction(world, ref, policy.act(observe(world)));
+  prev = snapshot(); world.step();
+  if (fallenAt < 0 && fallen(world)) { fallenAt = world.t; emit('fall', { upright: world.t - upSince }); setStatus('She fell. Getting up is not learned yet; resetting.', true); }
+  if (fallenAt >= 0 && world.t - fallenAt > 2.5) { reset(); setStatus(''); }
+  emit('step', { t: world.t });
+}
+function frame(now) {
+  acc = Math.min(acc + (now - last) / 1000, 0.2); last = now;
+  if (world) {
+    while (acc >= 1 / CTRL_HZ) { control(); acc -= 1 / CTRL_HZ; }
+    const a = acc * CTRL_HZ, Q = [];
+    world.b.forEach((b, i) => {
+      const p = prev[i], q = new THREE.Quaternion().slerpQuaternions(toQ(p.q), toQ(b.q), a);
+      Q.push([q.w, q.x, q.y, q.z]);
+      boxes[i].position.set(...p.x.map((v, k) => v + (b.x[k] - v) * a)); boxes[i].quaternion.copy(q);
+    });
+    const px = prev[0].x.map((v, k) => v + (world.b[0].x[k] - v) * a);
+    if (vrm) { poseModel(Q, px); vrm.update(1 / 60); }
+    follow(px);
+    document.getElementById('r-time').textContent = fallenAt < 0 ? `upright ${(world.t - upSince).toFixed(1)} s` : 'fallen';
+  }
+  resize(); renderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+const focus = new THREE.Vector3(0, 0.85, 0);
+function follow(px) {
+  focus.x += (px[0] - focus.x) * 0.05; focus.z += (px[2] - focus.z) * 0.05;
+  camera.position.set(focus.x + 1.6, 1.25, focus.z + 3.6); camera.lookAt(focus);
+  floor.position.set(focus.x, 0, focus.z); shadowCatcher.position.set(focus.x, 0.001, focus.z);
+  sun.position.set(focus.x + 1, 3, focus.z + 2); sun.target.position.copy(focus);
+}
+function resize() {
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  if (canvas.width !== Math.round(w * renderer.getPixelRatio()) || canvas.height !== Math.round(h * renderer.getPixelRatio())) {
+    renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+  }
+}
+
+// ---------- controls ----------
+const setPressed = (sel, el) => document.querySelectorAll(sel).forEach(b => b.setAttribute('aria-pressed', String(b === el)));
+document.querySelectorAll('[data-push]').forEach(b => b.onclick = () => world && fallenAt < 0 && push(b.dataset.push));
+document.getElementById('reset').onclick = () => world && reset();
+document.getElementById('v-model').onclick = e => { setPressed('#v-model, #v-boxes', e.currentTarget); if (vrm) vrm.scene.visible = true; boxes.forEach(m => m.visible = false); };
+document.getElementById('v-boxes').onclick = e => { setPressed('#v-model, #v-boxes', e.currentTarget); if (vrm) vrm.scene.visible = false; boxes.forEach(m => m.visible = true); };
+// Click the stage: push from the clicked side of her (screen left/right of her body, nearer/farther in depth).
+document.getElementById('stage').addEventListener('pointerdown', e => {
+  if (!world || fallenAt >= 0) return;
+  const r = canvas.getBoundingClientRect(), p = new THREE.Vector3(...world.b[B.CHEST].x).project(camera);
+  const sx = (e.clientX - r.left) / r.width * 2 - 1, sy = -((e.clientY - r.top) / r.height * 2 - 1);
+  const right = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0).setY(0).normalize();
+  const fwd = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 2).setY(0).normalize();   // toward the camera
+  const dx = sx - p.x, dy = sy - p.y;
+  const from = right.multiplyScalar(dx).add(fwd.multiplyScalar(-dy * 0.6));   // the side the click came from
+  push([-from.x, -from.z]);
+});
+addEventListener('keydown', e => {
+  const k = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'back', ArrowDown: 'front' }[e.key];
+  if (k && world && fallenAt < 0) { e.preventDefault(); push(k); }
+  if (e.key === 'r') reset();
+});
+
+async function useSkill(name) {
+  const s = SKILLS[name]; skill = name;
+  policy = await loadPolicy(s.file);
+  document.getElementById('r-policy').textContent = `${policy.type === 'ssm' ? 'SSM-tree' : policy.type.toUpperCase()} · ${policy.params.toLocaleString()} weights`;
+  reset(); emit('skill', { skill: name });
+}
+const skillBox = document.getElementById('skills');
+for (const [k, s] of Object.entries(SKILLS)) {
+  const b = document.createElement('button'); b.textContent = s.label; b.dataset.skill = k; b.setAttribute('aria-pressed', String(k === skill));
+  b.onclick = () => { setPressed('[data-skill]', b); useSkill(k); }; skillBox.append(b);
+}
+
+// ---------- hooks for other pages ----------
+// window.umiBody.skills                       learned skills
+// window.umiBody.play(name)                   switch skill (returns a promise)
+// window.umiBody.push(dir, newtons?, body?)   dir: 'left' | 'right' | 'front' | 'back' or [x, z]
+// window.umiBody.reset()
+// window.umiBody.on(event, fn)                events: 'skill', 'reset', 'push', 'fall', 'step' (also dispatched as 'umibody:<event>')
+// window.umiBody.state()                      { t, upright, fallen, bodies: [{ name, bone, x, q }] }
+window.umiBody = {
+  get skills() { return Object.keys(SKILLS); },
+  play: useSkill, push: (...a) => world && push(...a), reset: () => world && reset(),
+  on(ev, fn) { (listeners[ev] ||= []).push(fn); return () => { listeners[ev] = listeners[ev].filter(f => f !== fn); }; },
+  state: () => world && { t: world.t, upright: world.t - upSince, fallen: fallenAt >= 0,
+    bodies: world.b.map((b, i) => ({ name: BODY_DEFS[i].name, bone: BODY_DEFS[i].bone, x: b.x.slice(), q: b.q.slice() })) },
+};
+
+requestAnimationFrame(frame);
+try {
+  await useSkill('balance');
+  setStatus('loading the model…');
+  await loadModel();
+  setStatus('');
+} catch (e) { console.error(e); setStatus(`Could not start: ${e.message}`, true); }
+</script>
