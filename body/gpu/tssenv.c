@@ -86,4 +86,15 @@ void pool_step(Pool *P, const float *act, float *rew, int *done, int *fell, floa
     }
 }
 
+/* debugging the GPU build: an environment's bytes, the constants as tss_consts lays them out, the physics alone */
+int pool_env_size(void) { return (int)sizeof(Env); }
+void pool_env_copy(const Pool *P, int e, void *out) { memcpy(out, &P->E[e], sizeof(Env)); }
+void pool_env_set(Pool *P, int e, const void *in) { memcpy(&P->E[e], in, sizeof(Env)); }
+void pool_world_step(Pool *P, int e) { world_step(&P->E[e].W); }
+void tss_consts_cpu(double *o) {
+    int k = 0;
+    for (int i = 0; i < NB; i++) { const BodyDef *d = BODY_DEFS + i; o[k++] = d->mass_frac; o[k++] = d->kp; o[k++] = d->kd; o[k++] = d->hinge; o[k++] = d->parent;
+        o[k++] = d->anchor.x; o[k++] = d->anchor.y; o[k++] = d->anchor.z; o[k++] = d->center.x; o[k++] = d->center.y; o[k++] = d->center.z; o[k++] = d->half.x; o[k++] = d->half.y; o[k++] = d->half.z; }
+    for (int i = 0; i < NB; i++) o[k++] = ACT_SCALES[i];
+}
 void pool_free(Pool *P) { free(P->E); free(P->ret); free(P); }

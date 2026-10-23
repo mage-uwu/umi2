@@ -47,6 +47,16 @@ __global__ void k_urand(const uint64_t *seeds, int B, int n, float *out) {
     }
 }
 
+/* constants as the device sees them (debugging the GPU build): per body mass share, kp, kd, hinge, parent, anchor,
+ * centre, half extents; then ACT_SCALES */
+__global__ void k_consts(double *o) {
+    if (threadIdx.x || blockIdx.x) return; int k = 0;
+    for (int i = 0; i < NB; i++) { const BodyDef *d = BODY_DEFS + i; o[k++] = d->mass_frac; o[k++] = d->kp; o[k++] = d->kd; o[k++] = d->hinge; o[k++] = d->parent;
+        o[k++] = d->anchor.x; o[k++] = d->anchor.y; o[k++] = d->anchor.z; o[k++] = d->center.x; o[k++] = d->center.y; o[k++] = d->center.z; o[k++] = d->half.x; o[k++] = d->half.y; o[k++] = d->half.z; }
+    for (int i = 0; i < NB; i++) o[k++] = ACT_SCALES[i];
+}
+/* one world_step of env e's world only (no actions, rewards or resets), for comparing the physics alone */
+__global__ void k_world_step(Env *envs, int e) { if (threadIdx.x || blockIdx.x) return; Env E = envs[e]; world_step(&E.W); envs[e] = E; }
 #define GRID(n) (((n) + 63) / 64), 64
 extern "C" {
 int tss_env_size(void) { return (int)sizeof(Env); }
@@ -88,5 +98,7 @@ void tss_step(void *envs, int n, const float *act, float *rew, int *done, int *f
     k_step<<<GRID(n), 0, st>>>((Env *)envs, n, act, rew, done, fell, steps, term_obs);
 }
 void tss_urand(const void *seeds, int B, int n, float *out, cudaStream_t st) { k_urand<<<GRID(B), 0, st>>>((const uint64_t *)seeds, B, n, out); }
+void tss_consts(double *o) { k_consts<<<1, 1>>>(o); }
+void tss_world_step(void *envs, int e) { k_world_step<<<1, 1>>>((Env *)envs, e); }
 const char *tss_error(void) { cudaError_t r = cudaGetLastError(); return r == cudaSuccess ? NULL : cudaGetErrorString(r); }
 }
