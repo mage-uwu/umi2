@@ -1,5 +1,6 @@
 #include "env.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 double env_rand(uint64_t *s) { *s ^= *s << 13; *s ^= *s >> 7; *s ^= *s << 17; return (*s >> 11) * (1.0 / 9007199254740992.0); }
 static double env_randn(uint64_t *s) { double a = env_rand(s) + 1e-12, b = env_rand(s); return sqrt(-2 * log(a)) * cos(6.283185307179586 * b); }
@@ -100,7 +101,7 @@ void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
     world_init(&E->W, 45, 20, 1.0 / CTRL_HZ);
     if (cfg->arm_tone > 0) for (int i = L_UARM; i <= R_FARM; i++) E->W.tone[i] = cfg->arm_tone;
     for (int k = 0; k < ACT_DIM; k++) E->prev_act[k] = E->filt[k] = 0;
-    E->head_v = v3(0, 0, 0);
+    E->head_v = v3(0, 0, 0); E->style_has_prev = 0;
     E->next_push = 0.5 + env_rand(&E->rng) * 2 * cfg->push_every;
     if (cfg->task == TASK_IMITATE) {
         const Clip *c = cfg->clip; const double T = (c->frames - 1) / c->fps;
@@ -194,6 +195,43 @@ static double effort(const World *W) {
     for (int i = 1; i < NB; i++) { Quat rel = qmul(qconj(W->b[BODY_DEFS[i].parent].q), W->b[i].q); Vec e = qlog(qmul(W->target[i], qconj(rel))); e2 += vdot(e, e); }
     return e2;
 }
+/* ---------- motion style prior ---------- */
+typedef struct { const Clip *c; float *f; int n; } StyleClip;
+static StyleClip style_clips[16]; static int style_n;
+static void pose_features(const Quat *wq, float *f) {   /* joint rotations (child in parent), gravity in the pelvis frame */
+    int k = 0;
+    for (int i = 1; i < NB; i++) { Quat r = qmul(qconj(wq[BODY_DEFS[i].parent]), wq[i]); f[k++] = r.w; f[k++] = r.x; f[k++] = r.y; f[k++] = r.z; }
+    Vec gl = qrot(qconj(wq[PELVIS]), v3(0, -1, 0)); f[k++] = gl.x; f[k++] = gl.y; f[k++] = gl.z;
+}
+void env_style_prepare(const Clip *c) {
+    for (int i = 0; i < style_n; i++) if (style_clips[i].c == c) return;
+    StyleClip *s = style_clips + style_n++; s->c = c; s->n = c->frames; s->f = malloc(sizeof(float) * STYLE_FEAT * c->frames);
+    for (int t = 0; t < c->frames; t++) pose_features(c->q + (size_t)t * NB, s->f + (size_t)t * STYLE_FEAT);
+}
+static double feat_dist(const float *a, const float *b) {   /* about the summed squared joint angles, plus the tilt */
+    double d = 0;
+    for (int j = 0; j < NB - 1; j++) { const float *p = a + 4 * j, *q = b + 4 * j; const double c = p[0] * q[0] + p[1] * q[1] + p[2] * q[2] + p[3] * q[3]; d += 4 * (1 - c * c); }
+    for (int k = 4 * (NB - 1); k < STYLE_FEAT; k++) d += (a[k] - b[k]) * (a[k] - b[k]);
+    return d;
+}
+/* 0..1: how closely her last two poses match two consecutive frames of a style clip */
+static double style_reward(Env *E) {
+    if (!E->cfg.nstyle) return 0;
+    Quat wq[NB]; for (int i = 0; i < NB; i++) wq[i] = E->W.b[i].q;
+    float cur[STYLE_FEAT]; pose_features(wq, cur);
+    double best = 1e9;
+    for (int s = 0; s < E->cfg.nstyle; s++) for (int i = 0; i < style_n; i++) if (style_clips[i].c == E->cfg.style[s]) {
+        const StyleClip *sc = style_clips + i;
+        for (int t = 1; t < sc->n; t++) {
+            double d = feat_dist(cur, sc->f + (size_t)t * STYLE_FEAT); if (d >= best) continue;
+            if (E->style_has_prev) d += feat_dist(E->style_prev, sc->f + (size_t)(t - 1) * STYLE_FEAT);
+            if (d < best) best = d;
+        }
+    }
+    if (!E->style_has_prev) best *= 2;
+    memcpy(E->style_prev, cur, sizeof cur); E->style_has_prev = 1;
+    return exp(-best / NJ);
+}
 static double pose_err(const World *W, const Quat *ref) {
     double e2 = 0; for (int i = 1; i < NB; i++) { Quat rel = qmul(qconj(W->b[BODY_DEFS[i].parent].q), W->b[i].q); Vec e = qlog(qmul(rel, qconj(ref[i]))); e2 += vdot(e, e); }
     return e2;
@@ -234,13 +272,15 @@ static double floor_reward(Env *E, double act2) {
         for (int j = 0; j < 6; j++) if (world_lowest(Wc, up_parts[j]) < 0.06) clear = 0;
         if (end_height(Wc, L_FARM, 0) < 0.06 || end_height(Wc, R_FARM, 0) < 0.06) clear = 0;   /* elbows up */
         const double yaw_rate = W->b[PELVIS].w.y;
-        return 0.3 * exp(-pow((v - 0.4) / 0.25, 2)) + 0.2 * contact + 0.1 * palms + 0.1 * clear + 0.1 * exp(-pow((py - 0.45) / 0.12, 2))
+        const double task = 0.3 * exp(-pow((v - 0.4) / 0.25, 2)) + 0.2 * contact + 0.1 * palms + 0.1 * clear + 0.1 * exp(-pow((py - 0.45) / 0.12, 2))
              + 0.05 * fmax(0, -front.y) + 0.05 * exp(-2 * side * side - 0.5 * yaw_rate * yaw_rate) + calm;
+        return E->cfg.nstyle ? 0.65 * task + 0.35 * style_reward(E) : task;
     }
     const double hd = fmin(1, fmax(0, W->b[HEAD].x.y / 1.42)), pv = fmin(1, fmax(0, W->b[PELVIS].x.y / 0.92));
     const double up = qrot(W->b[CHEST].q, v3(0, 1, 0)).y;
     const double stand = hd > 0.9 && pv > 0.9 ? exp(-2 * pose_err(W, E->ref) / NJ) * exp(-4 * vdot(cv, cv)) : 0;
-    return 0.35 * hd + 0.2 * pv + 0.15 * fmax(up, 0) + 0.15 * stand + calm;
+    const double task = 0.35 * hd + 0.2 * pv + 0.15 * fmax(up, 0) + 0.15 * stand + calm;
+    return E->cfg.nstyle ? 0.7 * task + 0.3 * style_reward(E) : task;
 }
 static int fallen(const World *W) {
     if (W->b[PELVIS].x.y < 0.55 || W->b[HEAD].x.y < 1.0) return 1;

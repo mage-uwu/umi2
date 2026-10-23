@@ -18,6 +18,8 @@
  *                 finds. Elbows and knees only bend one way (floor skills; env.c hinge_limit).
  *   TASK_GETUP    no clip: from where a limp fall left her (or from all fours), rise to a calm stand: head and
  *                 pelvis up, chest upright, then the stand pose held still, with low effort and smooth commands.
+ * With style clips (TaskCfg.style; motion capture of a person crawling or getting up), the floor tasks also pay
+ * for moving as that person does: a pose-pair match against the clips, independent of timing and path.
  * The two floor tasks measure her heading from the pelvis's forward and up axes together (forward alone is
  * vertical when she lies face down), and take act_mul times the joint ranges.
  */
@@ -30,7 +32,8 @@
 #define ACT_DIM 31
 #define OBS_DIM (NB * 15 + 6)
 #define CTRL_HZ 30
-#define ACT_FILTER 0.35   /* each control step the joint command moves this share of the way to the new action */
+#define ACT_FILTER 0.35
+#define STYLE_FEAT (4 * (NB - 1) + 3)   /* pose features: joint rotations, gravity in the pelvis frame */   /* each control step the joint command moves this share of the way to the new action */
 enum { TASK_BALANCE, TASK_IMITATE, TASK_CRAWL, TASK_GETUP };
 
 typedef struct {
@@ -47,6 +50,7 @@ typedef struct {
                           * toward the reference root position and rotation; 0 for the final skill.
                           * TASK_GETUP: a spring toward standing height above where her pelvis is, upright */
     double act_mul;      /* joint ranges times this (0 = 1) */
+    const Clip *style[8]; int nstyle;   /* floor tasks: motion style prior (env_style_prepare each first) */
 } TaskCfg;
 
 typedef struct {
@@ -61,6 +65,7 @@ typedef struct {
     Vec clip_shift;      /* world offset of the clip's root (xz), so the reference starts under her */
     float prev_act[ACT_DIM], filt[ACT_DIM];   /* last raw action; low-passed action that sets the targets */
     Vec head_v;          /* head velocity at the previous control step (for the head-steadiness reward) */
+    float style_prev[STYLE_FEAT]; int style_has_prev;   /* the previous step's pose features (style prior) */
 } Env;
 
 extern const double ACT_SCALES[NB];
@@ -78,4 +83,7 @@ double env_step(Env *E, const float *act);   /* returns the reward; sets E->done
 void env_step_many(Env *const *E, const float *const *act, double *reward, int n);
 double env_rand(uint64_t *s);
 double env_phase(const Env *E);              /* reference time in the clip (s), or 0 */
+/* Motion style prior (floor tasks): each step her last two poses are compared with every pair of consecutive
+ * frames of the style clips; the closest match pays. Call once per clip before stepping (not thread-safe). */
+void env_style_prepare(const Clip *c);
 #endif
