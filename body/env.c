@@ -139,7 +139,8 @@ static int fallen(const World *W) {
     return 0;
 }
 
-double env_step(Env *E, const float *a) {
+/* env_step in two halves around the physics, so a batch can step its worlds together (env_step_many) */
+static double env_begin(Env *E, const float *a) {
     World *W = &E->W; int k = 0; double act2 = 0; const float *f = E->filt;
     if (E->cfg.task == TASK_BALANCE && E->cfg.sway > 0) sway_pose(E->ref, W->t, E->cfg.sway);
     for (int j = 0; j < ACT_DIM; j++) E->filt[j] += (float)ACT_FILTER * (a[j] - E->filt[j]);
@@ -161,7 +162,10 @@ double env_step(Env *E, const float *a) {
         W->assist = E->cfg.assist; W->assist_x = r2; W->assist_q = rw[PELVIS];   /* where the reference is at the end of this step */
         W->assist_v = vscale(vsub(r2, E->ref_root), CTRL_HZ);
     } else W->assist = 0;
-    world_step(W);
+    return act2;
+}
+static double env_end(Env *E, double act2) {
+    World *W = &E->W;
     E->step++;
     int fell = fallen(W);
     if (E->cfg.task == TASK_IMITATE) {
@@ -204,4 +208,15 @@ double env_step(Env *E, const float *a) {
     const double stand_lift = BODY_DEFS[HEAD].center.y - BODY_DEFS[PELVIS].center.y;
     return 1 + 0.3 * exp(-2 * pose / 7) + 0.3 * exp(-20 * lean) + 0.2 * fmax(up.y, 0) + 0.2 * exp(-4 * sp) + 0.2 * exp(-0.5 * spin)
              + 0.2 * exp(-2 * act2) + 0.4 * golden_thread(E, stand_lift) + 0.3 * exp(-20 * effort(W) / NJ);
+}
+
+double env_step(Env *E, const float *a) { const double act2 = env_begin(E, a); world_step(&E->W); return env_end(E, act2); }
+void env_step_many(Env *const *E, const float *const *a, double *reward, int n) {
+    double act2[8]; World *W[8];
+    for (int s = 0; s < n; s += 8) {
+        const int m = n - s < 8 ? n - s : 8;
+        for (int j = 0; j < m; j++) { act2[j] = env_begin(E[s + j], a[s + j]); W[j] = &E[s + j]->W; }
+        world_step_x8(W, m);
+        for (int j = 0; j < m; j++) reward[s + j] = env_end(E[s + j], act2[j]);
+    }
 }

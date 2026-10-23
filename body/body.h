@@ -88,6 +88,8 @@ void world_init(World *W, double total_mass, int substeps, double dt);
 void world_pose(World *W, Vec root_x, Quat root_q, const Quat *rel, Vec root_v);
 /* Advance dt = substeps * h, holding the current joint targets. */
 void world_step(World *W);
+/* world_step for n <= 8 worlds at once, one per vector lane (body_x8.c); they must share substeps, iters, h */
+void world_step_x8(World **W, int n);
 /* World position of a body's local point (relative to its centre, rest frame). */
 static inline Vec body_point(const Body *b, Vec r) { return vadd(b->x, qrot(b->q, r)); }
 Vec world_com(const World *W, Vec *vel);

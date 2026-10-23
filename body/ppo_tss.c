@@ -41,7 +41,7 @@ static void critic_init(Critic *C, uint64_t s) {
     for (int i = 0; i < CH; i++) C->W3[i] = (real)((2 * ur(&s) - 1) * 0.1 / sqrt(CH));
 }
 static real critic_fwd(const Critic *C, const float *o, real *h1, real *h2) {
-    for (int i = 0; i < CH; i++) { real a = C->b1[i]; const real *w = C->W1 + (size_t)i * OBS_DIM; for (int j = 0; j < OBS_DIM; j++) a += w[j] * o[j]; h1[i] = tanh(a); }
+    for (int i = 0; i < CH; i++) h1[i] = tanh(C->b1[i] + dotr(C->W1 + (size_t)i * OBS_DIM, o, OBS_DIM));
     for (int i = 0; i < CH; i++) h2[i] = tanh(C->b2[i] + dotr(C->W2 + (size_t)i * CH, h1, CH));
     return C->b3[0] + dotr(C->W3, h2, CH);
 }
@@ -50,7 +50,7 @@ static void critic_bwd(const Critic *C, Critic *G, const float *o, const real *h
     G->b3[0] += dv; axpy(G->W3, dv, h2, CH);
     for (int i = 0; i < CH; i++) d2[i] = dv * C->W3[i] * (1 - h2[i] * h2[i]);
     for (int i = 0; i < CH; i++) { G->b2[i] += d2[i]; axpy(G->W2 + (size_t)i * CH, d2[i], h1, CH); axpy(d1, d2[i], C->W2 + (size_t)i * CH, CH); }
-    for (int i = 0; i < CH; i++) { const real gg = d1[i] * (1 - h1[i] * h1[i]); G->b1[i] += gg; real *w = G->W1 + (size_t)i * OBS_DIM; for (int j = 0; j < OBS_DIM; j++) w[j] += gg * o[j]; }
+    for (int i = 0; i < CH; i++) { const real gg = d1[i] * (1 - h1[i] * h1[i]); G->b1[i] += gg; axpy(G->W1 + (size_t)i * OBS_DIM, gg, o, OBS_DIM); }
 }
 
 /* ------------------------------------------------------------------ the batch the sequence hook trains on */
@@ -86,7 +86,7 @@ static real ppo_seq(void *user, int b, const Cfg *c, const Params *P, const Para
     const float *obs = B->O + ((size_t)sg.e * (B->hor + 1) + sg.t0) * OBS_DIM;
     for (int t = 0; t < L; t++) {
         const float *o = obs + (size_t)t * OBS_DIM;
-        for (int i = 0; i < d; i++) { real a = E->bin[i]; const real *wr = E->Win + (size_t)i * OBS_DIM; for (int j = 0; j < OBS_DIM; j++) a += wr[j] * o[j]; x[(size_t)t * d + i] = a; }
+        for (int i = 0; i < d; i++) x[(size_t)t * d + i] = E->bin[i] + dotr(E->Win + (size_t)i * OBS_DIM, o, OBS_DIM);
     }
     for (int l = 0; l < nl; l++) {
         if (!(l & 1)) carry_pre(c, w, l, h);
@@ -134,7 +134,7 @@ static real ppo_seq(void *user, int b, const Cfg *c, const Params *P, const Para
     }
     for (int t = 0; t < L; t++) {
         const real *gt = g + (size_t)t * d; const float *o = obs + (size_t)t * OBS_DIM;
-        for (int i = 0; i < d; i++) { eg->bin[i] += gt[i]; real *gw = eg->Win + (size_t)i * OBS_DIM; for (int j = 0; j < OBS_DIM; j++) gw[j] += gt[i] * o[j]; }
+        for (int i = 0; i < d; i++) { eg->bin[i] += gt[i]; axpy(eg->Win + (size_t)i * OBS_DIM, gt[i], o, OBS_DIM); }
     }
     w->carry_h = w->carry_hist = NULL;
     *ns = L;
@@ -144,7 +144,7 @@ static real ppo_seq(void *user, int b, const Cfg *c, const Params *P, const Para
 /* One policy step on the inference path: obs -> mean action, advancing the streaming state g. */
 static void policy_step(Model *m, const Ends *E, Gen *g, const float *obs, real *mu) {
     const int d = m->c.d; real x0[512], u[512], r;
-    for (int i = 0; i < d; i++) { real a = E->bin[i]; const real *wr = E->Win + (size_t)i * OBS_DIM; for (int j = 0; j < OBS_DIM; j++) a += wr[j] * obs[j]; x0[i] = a; }
+    for (int i = 0; i < d; i++) x0[i] = E->bin[i] + dotr(E->Win + (size_t)i * OBS_DIM, obs, OBS_DIM);
     gen_core(m, g, x0, NULL);
     rmsnorm_fwd(g->x, m->P.norm_f, u, d, &r);
     for (int k = 0; k < ACT_DIM; k++) mu[k] = tanh(E->bo[k] + dotr(E->Wo + (size_t)k * d, u, d));
@@ -196,7 +196,7 @@ int main(int argc, char **argv) {
     { uint64_t s = (uint64_t)seed * 31 + 7; for (size_t i = 0; i < (size_t)d * OBS_DIM; i++) EN.Win[i] = (real)((2 * ur(&s) - 1) / sqrt(OBS_DIM)); }
     for (int k = 0; k < ACT_DIM; k++) EN.log_std[k] = (real)log_std0;   /* Wo, bo zero: training starts from holding the reference */
     real *em = calloc(EN.size, sizeof(real)), *ev = calloc(EN.size, sizeof(real)), *gsum = calloc(EN.size, sizeof(real));
-    Critic C, CG; critic_alloc(&C); critic_alloc(&CG); critic_init(&C, seed + 5); real *cm = calloc(C.size, sizeof(real)), *cv = calloc(C.size, sizeof(real));
+    Critic C, CG; critic_alloc(&C); critic_alloc(&CG); Critic *CGT = calloc(threads, sizeof(Critic)); for (int t = 1; t < threads; t++) critic_alloc(&CGT[t]); critic_init(&C, seed + 5); real *cm = calloc(C.size, sizeof(real)), *cv = calloc(C.size, sizeof(real));
     float mean[OBS_DIM], sd[OBS_DIM]; for (int i = 0; i < OBS_DIM; i++) { mean[i] = 0; sd[i] = 1; }
     double *osum = calloc(OBS_DIM, sizeof(double)), *osq = calloc(OBS_DIM, sizeof(double)), on = 0;
     if (load_from) {
@@ -228,37 +228,51 @@ int main(int argc, char **argv) {
     printf("{\"event\":\"config\",\"task\":\"%s\",\"model\":\"nanotss byte stack (ssm-tree + fff, ternary STE, avx-512)\",\"optimizer\":\"tss_train_step: blockwise muon + adam\",\"core_params\":%zu,\"io_params\":%zu,\"width\":%d,\"trees\":%d,\"depth\":%d,\"envs\":%d,\"horizon\":%d}\n",
            task, core, EN.size, d, c->T, c->D, nenv, hor);
     Hyper hp = {.lr = (real)lr, .beta1 = .9, .beta2 = .999, .eps = 1e-8, .weight_decay = 0, .clip = 1}; long hstep = 0, cstep = 0;
-    double t0 = wall(), best = -1; long it = 0, steps_total = 0;
+    double t0 = wall(), best = -1, t_roll = 0, t_crit = 0; long it = 0, steps_total = 0;
     while (wall() - t0 < seconds) {
         it++;
         for (int e = 0; e < nenv; e++) gen_snapshot(c, gen[e], H0 + (size_t)e * S_all, HH0 + (size_t)e * HH_all);
+        /* rollout: each thread steps groups of 8 environments, their physics together in vector lanes */
+        const double tr0 = wall();
 #pragma omp parallel for num_threads(threads) schedule(dynamic)
-        for (int e = 0; e < nenv; e++) {
-            real mu[ACT_DIM], h1[CH], h2[CH]; float o[OBS_DIM], a[ACT_DIM]; uint64_t rs = erng ^ ((uint64_t)it << 20) ^ (uint64_t)e * 0x9E3779B97F4A7C15ULL;
+        for (int g0 = 0; g0 < nenv; g0 += 8) {
+            const int gn = nenv - g0 < 8 ? nenv - g0 : 8;
+            real mu[ACT_DIM], h1[CH], h2[CH]; float o[OBS_DIM], a[8][ACT_DIM]; const float *ap[8]; Env *ep[8]; double rw[8]; uint64_t rs[8];
+            for (int j = 0; j < gn; j++) { const int e = g0 + j; rs[j] = erng ^ ((uint64_t)it << 20) ^ (uint64_t)e * 0x9E3779B97F4A7C15ULL; ap[j] = a[j]; ep[j] = &ENV[e]; }
             for (int t = 0; t <= hor; t++) {
-                float *on_ = O + ((size_t)e * (hor + 1) + t) * OBS_DIM; env_obs(&ENV[e], o);
-                for (int i = 0; i < OBS_DIM; i++) { float zz = (o[i] - mean[i]) / sd[i]; on_[i] = zz > 5 ? 5 : zz < -5 ? -5 : zz; }
-                VAL[e * (hor + 1) + t] = (float)critic_fwd(&C, on_, h1, h2);
-                if (t == hor) break;
-                policy_step(m, &EN, gen[e], on_, mu);
-                double lp = 0; float *at = A + ((size_t)e * hor + t) * ACT_DIM;
-                for (int k = 0; k < ACT_DIM; k++) { const double sg = exp(EN.log_std[k]), zz = gauss(&rs); at[k] = (float)(mu[k] + sg * zz); lp += -0.5 * zz * zz - EN.log_std[k] - 0.9189385332046727; a[k] = at[k] > 1 ? 1 : at[k] < -1 ? -1 : at[k]; }
-                LP[e * hor + t] = (float)lp;
-                const double rw = env_step(&ENV[e], a); R[e * hor + t] = (float)rw; ep_ret[e] += rw;
-                const int fell = ENV[e].done && ENV[e].step < ENV[e].cfg.steps;
-                DONE[e * hor + t] = ENV[e].done; FELL[e * hor + t] = fell;
-                if (ENV[e].done && !fell) {
-                    float ot[OBS_DIM]; env_obs(&ENV[e], o);
-                    for (int i = 0; i < OBS_DIM; i++) { float zz = (o[i] - mean[i]) / sd[i]; ot[i] = zz > 5 ? 5 : zz < -5 ? -5 : zz; }
-                    VTERM[e * hor + t] = (float)critic_fwd(&C, ot, h1, h2);
+                for (int j = 0; j < gn; j++) {
+                    const int e = g0 + j;
+                    float *on_ = O + ((size_t)e * (hor + 1) + t) * OBS_DIM; env_obs(&ENV[e], o);
+                    for (int i = 0; i < OBS_DIM; i++) { float zz = (o[i] - mean[i]) / sd[i]; on_[i] = zz > 5 ? 5 : zz < -5 ? -5 : zz; }
+                    VAL[e * (hor + 1) + t] = (float)critic_fwd(&C, on_, h1, h2);
+                    if (t == hor) continue;
+                    policy_step(m, &EN, gen[e], on_, mu);
+                    double lp = 0; float *at = A + ((size_t)e * hor + t) * ACT_DIM;
+                    for (int k = 0; k < ACT_DIM; k++) { const double sg = exp(EN.log_std[k]), zz = gauss(&rs[j]); at[k] = (float)(mu[k] + sg * zz); lp += -0.5 * zz * zz - EN.log_std[k] - 0.9189385332046727; a[j][k] = at[k] > 1 ? 1 : at[k] < -1 ? -1 : at[k]; }
+                    LP[e * hor + t] = (float)lp;
                 }
-                if (ENV[e].done) {
+                if (t == hor) break;
+                env_step_many(ep, ap, rw, gn);
+                for (int j = 0; j < gn; j++) {
+                    const int e = g0 + j;
+                    R[e * hor + t] = (float)rw[j]; ep_ret[e] += rw[j];
+                    const int fell = ENV[e].done && ENV[e].step < ENV[e].cfg.steps;
+                    DONE[e * hor + t] = ENV[e].done; FELL[e * hor + t] = fell;
+                    if (ENV[e].done && !fell) {
+                        float ot[OBS_DIM]; env_obs(&ENV[e], o);
+                        for (int i = 0; i < OBS_DIM; i++) { float zz = (o[i] - mean[i]) / sd[i]; ot[i] = zz > 5 ? 5 : zz < -5 ? -5 : zz; }
+                        VTERM[e * hor + t] = (float)critic_fwd(&C, ot, h1, h2);
+                    }
+                    if (ENV[e].done) {
+                        long ep_id;
 #pragma omp critical
-                    { ep_ret_sum += ep_ret[e]; ep_len_sum += ENV[e].step; ep_count++; episodes++; }
-                    ep_ret[e] = 0; env_reset(&ENV[e], &tc, erng + (uint64_t)episodes * 7777 + e); gen_reset(c, gen[e]);
+                        { ep_ret_sum += ep_ret[e]; ep_len_sum += ENV[e].step; ep_count++; ep_id = ++episodes; }
+                        ep_ret[e] = 0; env_reset(&ENV[e], &tc, erng + (uint64_t)ep_id * 7777 + e); gen_reset(c, gen[e]);
+                    }
                 }
             }
         }
+        t_roll += wall() - tr0;
         steps_total += (long)nenv * hor;
         for (int e = 0; e < nenv; e++) for (int t = 0; t < hor; t += 4) {
             const float *on_ = O + ((size_t)e * (hor + 1) + t) * OBS_DIM;
@@ -299,11 +313,25 @@ int main(int argc, char **argv) {
                 adam(EN.all, gsum, em, ev, EN.size, &hh, (real)(1.0 / nsamp), c1, c2);
                 for (int k = 0; k < ACT_DIM; k++) { if (EN.log_std[k] < -3) EN.log_std[k] = -3; if (EN.log_std[k] > 0) EN.log_std[k] = 0; }
                 /* critic */
-                memset(CG.all, 0, CG.size * sizeof(real)); real h1[CH], h2[CH];
-                for (int ii = e0; ii < e1; ii++) { const int e = order[ii];
-                    for (int t = 0; t < hor; t++) { const float *on_ = O + ((size_t)e * (hor + 1) + t) * OBS_DIM; const real vv = critic_fwd(&C, on_, h1, h2), dv = vv - RET[e * hor + t];
-                        vloss += dv * dv; critic_bwd(&C, &CG, on_, h1, h2, dv); } }
+                const double tc0 = wall();
+                /* over threads, each into its own gradient, then summed */
+#pragma omp parallel num_threads(threads) reduction(+:vloss)
+                {
+#ifdef _OPENMP
+                    const int th = omp_get_thread_num();
+#else
+                    const int th = 0;
+#endif
+                    Critic *gt = th ? &CGT[th] : &CG; real h1[CH], h2[CH];
+                    memset(gt->all, 0, gt->size * sizeof(real));
+#pragma omp for schedule(static)
+                    for (int q = 0; q < (e1 - e0) * hor; q++) { const int e = order[e0 + q / hor], t = q % hor;
+                        const float *on_ = O + ((size_t)e * (hor + 1) + t) * OBS_DIM; const real vv = critic_fwd(&C, on_, h1, h2), dv = vv - RET[e * hor + t];
+                        vloss += dv * dv; critic_bwd(&C, gt, on_, h1, h2, dv); }
+                }
+                for (int t = 1; t < threads; t++) for (size_t i = 0; i < CG.size; i++) CG.all[i] += CGT[t].all[i];
                 Hyper hv = hp; hv.lr = (real)vlr; cstep++; adam(C.all, CG.all, cm, cv, C.size, &hv, (real)(1.0 / ((e1 - e0) * hor)), 1 - pow(.9, cstep), 1 - pow(.999, cstep));
+                t_crit += wall() - tc0;
             }
         }
         free(order);
@@ -311,8 +339,8 @@ int main(int argc, char **argv) {
         const double rew = ep_count ? ep_ret_sum / ep_count : 0, len = ep_count ? ep_len_sum / ep_count / CTRL_HZ : 0;
         double sgm = 0; for (int k = 0; k < ACT_DIM; k++) sgm += exp(EN.log_std[k]) / ACT_DIM;
         if (it % 5 == 1 || wall() - t0 >= seconds) {
-            printf("{\"event\":\"iter\",\"iter\":%ld,\"seconds\":%.0f,\"steps\":%ld,\"episode_return\":%.1f,\"episode_s\":%.2f,\"episodes\":%d,\"clip_frac\":%.3f,\"value_loss\":%.3f,\"std\":%.3f,\"lp_gap\":%.2e}\n",
-                   it, wall() - t0, steps_total, rew, len, ep_count, (double)B.clipped / ((double)epochs * nenv * hor), vloss / ((double)epochs * nenv * hor), sgm, B.lpn ? B.lpdiff / B.lpn : 0);
+            printf("{\"event\":\"iter\",\"iter\":%ld,\"seconds\":%.0f,\"steps\":%ld,\"episode_return\":%.1f,\"episode_s\":%.2f,\"episodes\":%d,\"clip_frac\":%.3f,\"value_loss\":%.3f,\"std\":%.3f,\"lp_gap\":%.2e,\"rollout_share\":%.2f,\"critic_share\":%.2f}\n",
+                   it, wall() - t0, steps_total, rew, len, ep_count, (double)B.clipped / ((double)epochs * nenv * hor), vloss / ((double)epochs * nenv * hor), sgm, B.lpn ? B.lpdiff / B.lpn : 0, t_roll / (wall() - t0), t_crit / (wall() - t0));
             fflush(stdout);
             if (ep_count >= 8 && rew > best) {
                 best = rew; char p1[1024], p2[1024]; snprintf(p1, sizeof p1, "%s.tss", out); snprintf(p2, sizeof p2, "%s.head", out);

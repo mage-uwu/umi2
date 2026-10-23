@@ -61,6 +61,8 @@ void sway_pose(Quat *rel, double t, double amp);
 void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed);
 void env_obs(const Env *E, float *obs);
 double env_step(Env *E, const float *act);   /* returns the reward; sets E->done on a fall or at the end */
+/* env_step for n environments (sharing substeps and iters), their physics 8 at a time (body_x8.c) */
+void env_step_many(Env *const *E, const float *const *act, double *reward, int n);
 double env_rand(uint64_t *s);
 double env_phase(const Env *E);              /* reference time in the clip (s), or 0 */
 #endif

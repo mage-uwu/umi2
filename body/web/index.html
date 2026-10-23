@@ -186,7 +186,7 @@ const SKILLS = {
   // armTone: shoulder and elbow muscle tone (relaxed arms hang looser)
   balance: { label: 'Balance', file: 'balance.json', sway: 0.012, armTone: 0.4 },
   // assist: the pelvis support spring the controller was trained with (1 = full); 0 once it walks unaided
-  walk: { label: 'Walk (assisted)', file: 'walk_tss.json', clip: 'walk', assist: 0.03 },
+  walk: { label: 'Walk (assisted)', file: 'walk_tss.json', clip: 'walk', assist: 0.01 },
 };
 let world, ref, policy = null, skill = 'balance', upSince = 0, fallenAt = -1, listeners = {}, clips = null, clip = null;
 const policies = {};
