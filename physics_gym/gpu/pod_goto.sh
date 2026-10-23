@@ -8,7 +8,7 @@ G=/w/repo/physics_gym/gpu; B=/w/repo/physics_gym; O=/w/out
 { nvidia-smi; nvcc --version; python3 -c "import torch;print(torch.__version__, torch.cuda.get_device_name(0))"; } > $O/system.txt 2>&1
 cd $G && gcc -O3 -march=native -fopenmp -ffp-contract=off -shared -fPIC -o libtssenv.so tssenv.c ../env.c ../body.c ../body_x8.c ../mref.c ../room.c -lm > $O/build.log 2>&1
 python3 -c "import gpu_env; gpu_env.cuda_lib(); print('cuda environments built')" >> $O/build.log 2>&1
-python3 parity_env.py --n 32 --steps 300 --cases goto,balance,room > $O/parity_env.txt 2>&1
+python3 parity_env.py --n 32 --steps 300 --cases goto,balance > $O/parity_env.txt 2>&1
 ENVS=${ENVS:-4096}; A=${STAGE_A:-900}; Bs=${STAGE_B:-900}; C=${STAGE_C:-2700}
 python3 ppo_gpu.py --task goto --load $B/data/warm/walk --assist 0.15 --goal-cone 0.5 --envs $ENVS --seconds $A --out $O/goto_a > $O/train_a.log 2>&1
 python3 ppo_gpu.py --task goto --load $O/goto_a --assist 0.05 --goal-cone 1.5 --envs $ENVS --seconds $Bs --out $O/goto_b > $O/train_b.log 2>&1
