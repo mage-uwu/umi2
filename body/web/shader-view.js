@@ -7,9 +7,9 @@
 // when the browser has it, else through the WebGL engine below. The camera orbits a target that follows her.
 //
 //   const art = await createShaderView({ THREE, vrm, canvas, detail: 'crisp' });
-//   art.frame({ target, yaw, pitch, zoom });   // target: THREE.Vector3 (world), yaw/pitch in degrees; zoom (WebGPU) magnifies
+//   art.frame({ target, yaw, pitch, zoom, about });   // target: THREE.Vector3 (world), yaw/pitch in degrees; zoom (WebGPU) magnifies about `about`
 //   art.engine                           // e.g. 'WebGPU f16 · crisp' or 'WebGL · fast'
-//   transparent: true (WebGPU) draws only her; art.syncCamera(camera, w, h, zoom) lines a scene up beneath it
+//   transparent: true (WebGPU) draws only her; art.syncCamera(camera, w, h) lines a scene up beneath it
 //
 // Detail: 'smooth' (sharp, fine-tuned against flicker; WebGPU), 'sharp' (WebGPU), 'fast' (half resolution;
 // the WebGL engine runs this one whatever is asked).
@@ -236,6 +236,7 @@ export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', w
     renderer.setPixelRatio(1);
     renderer.setSize(GBW * 5, GBH, false);
     assignParts(parts);
+    let lastView = [1, 0, 0];
     // Half-precision maths only if it draws her as full precision does (the shader page's self-check): one
     // frame each, mean difference on her under 0.004.
     if (gpu.mathModes?.length > 1) {
@@ -258,19 +259,27 @@ export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', w
       // While the GPU still has frames in flight (gpu.js caps them at two), skip the draw: the physics keeps
       // its own clock, and the next free frame shows her where she is by then.
       get busy() { return gpu.busy; },
-      // The shader's camera as seen on a canvas of css size w x h at this zoom: same position and direction, the
-      // field of view widened to the whole canvas (the drawing is fitted inside it), so a scene rendered with it
-      // lines up beneath the drawing.
-      syncCamera(cam, w, h, zoom = 1) {
-        const s = Math.min(w / NW, h / NH);
+      // The shader's camera as seen on a canvas of css size w x h under the last frame's view (zoom and shift):
+      // same position and direction, the field of view of the whole canvas (the drawing is fitted inside it),
+      // and the zoomed part picked out with a view offset, so a scene rendered with it lines up beneath.
+      syncCamera(cam, w, h) {
+        const s = Math.min(w / NW, h / NH), [z, vx, vy] = lastView;
         cam.position.copy(camera.position); cam.quaternion.copy(camera.quaternion);
-        cam.fov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(VIEW_FOV / 2)) * h / (NH * s) / zoom));
-        cam.aspect = w / h; cam.updateProjectionMatrix(); cam.updateMatrixWorld();
+        cam.fov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(VIEW_FOV / 2)) * h / (NH * s)));
+        cam.aspect = w / h; cam.setViewOffset(w, h, -vx / z * w, -vy / z * h, w / z, h / z); cam.updateMatrixWorld();
       },
-      frame({ target: t, yaw, pitch, zoom = 1 }) {
-        const view = [zoom, (1 - zoom) / 2, (1 - zoom) / 2];   // magnified about the centre
+      // zoom magnifies about `about` (a world point; the centre when absent), as far as the zoom goes past 1.5x
+      // (so close-ups centre on, say, her head)
+      frame({ target: t, yaw, pitch, zoom = 1, about = null }) {
         if (gpu.busy) return false;
         placeCamera(t, yaw, pitch);
+        let fx = 0.5, fy = 0.5;
+        if (about) {
+          const W = canvas.clientWidth || 1, H = canvas.clientHeight || 1, sc = Math.min(W / NW, H / NH), bw = NW * sc / W, bh = NH * sc / H;
+          const p = about.clone().project(camera), k = Math.min(1, Math.max(0, (zoom - 1) / 1.5));
+          fx = 0.5 + k * ((1 - bw) / 2 + (p.x * 0.5 + 0.5) * bw - 0.5); fy = 0.5 + k * ((1 - bh) / 2 + (0.5 - p.y * 0.5) * bh - 0.5);
+        }
+        const view = lastView = [zoom, fx * (1 - zoom), fy * (1 - zoom)];   // the point (fx, fy) stays put
         const crop = cropBox(true);
         renderGBufferTiles(crop);
         const W = Math.round(canvas.clientWidth * Math.min(devicePixelRatio || 1, 2)), H = Math.round(canvas.clientHeight * Math.min(devicePixelRatio || 1, 2));

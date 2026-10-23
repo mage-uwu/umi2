@@ -49,7 +49,7 @@ button:disabled { opacity: .45; cursor: default; }
 <div class="app">
   <header>
     <h1>neural-anime-movement</h1>
-    <span class="hint">She moves under real physics: 14 rigid bodies, 45 kg, a muscle at every joint, driven 30 times a second by a small learned SSM-tree controller. Click the stage to push her from that side; scroll to turn the view, Shift + scroll to raise it, pinch to zoom.</span>
+    <span class="hint">She moves under real physics: 14 rigid bodies, 45 kg, a muscle at every joint, driven 30 times a second by a small learned SSM-tree controller. Click the stage to push her from that side; scroll to turn the view, Shift + scroll to raise it; zoom with + and &minus;, Ctrl + scroll or a pinch (close up, the view centres on her face).</span>
   </header>
   <div id="stage" tabindex="0" aria-label="Live physics view; click to push her">
     <canvas id="view"></canvas>
@@ -73,6 +73,7 @@ button:disabled { opacity: .45; cursor: default; }
       <button id="v-art" aria-pressed="false" title="Drawn by the ANIME NEURAL SHADER's learned shader">Learned shader</button>
       <button id="v-model" aria-pressed="true">3D</button>
       <button id="v-boxes" aria-pressed="false">Physics</button>
+      <button id="v-in" title="Zoom in (+, Ctrl + scroll, pinch)">+</button><button id="v-out" title="Zoom out (-)">&minus;</button>
       <button id="v-reset">Reset view</button>
     </div>
     <div class="group" role="group" aria-label="Face">
@@ -531,15 +532,15 @@ function step(now) {
     artCanvas.style.transform = art.zoomInPass ? '' : `scale(${zoom.toFixed(3)})`;
     // On WebGPU the drawing is transparent around her and the 3D canvas beneath shows the floor, its camera
     // matched to the shader's (redrawn only with a new drawing, so the two stay in step).
-    if (art.frame({ target: pelvisAt, yaw: view.yaw, pitch: view.pitch, zoom }) && art.syncCamera) {
+    if (art.frame({ target: pelvisAt, yaw: view.yaw, pitch: view.pitch, zoom, about: headAt }) && art.syncCamera) {
       const st = document.getElementById('stage');
-      art.syncCamera(camera, st.clientWidth, st.clientHeight, zoom);
+      art.syncCamera(camera, st.clientWidth, st.clientHeight);
       blob.visible = true; blob.position.set(pelvisAt.x, 0.0015, pelvisAt.z);
       renderer.render(scene, camera);
     }
   } else {
     blob.visible = false;
-    if (camera.fov !== 30) { camera.fov = 30; const st = document.getElementById('stage'); camera.aspect = st.clientWidth / st.clientHeight; camera.updateProjectionMatrix(); }
+    if (camera.fov !== 30 || camera.view?.enabled) { camera.fov = 30; camera.clearViewOffset(); const st = document.getElementById('stage'); camera.aspect = st.clientWidth / st.clientHeight; camera.updateProjectionMatrix(); }
     renderer.render(scene, camera);
   }
   perf.draw += 0.05 * (performance.now() - tD - perf.draw);
@@ -554,14 +555,34 @@ const VIEW0 = { yaw: 60, pitch: 6, dist: 3.8 }, view = { ...VIEW0 };
 document.getElementById('stage').addEventListener('wheel', e => {
   e.preventDefault();
   const d = (e.deltaMode === 1 ? 16 : 1) * (Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX);
-  if (e.ctrlKey) view.dist = Math.min(9, Math.max(1.4, view.dist * Math.exp(d * 0.002)));
+  if (e.ctrlKey) zoomBy(Math.exp(-d * 0.002));
   else if (e.shiftKey) view.pitch = Math.min(70, Math.max(-5, view.pitch - d * 0.08));
   else view.yaw = (view.yaw + d * 0.15) % 360;
 }, { passive: false });
 document.getElementById('v-reset').onclick = () => Object.assign(view, VIEW0);
+// Zoom: the + and - buttons or keys, Ctrl + scroll, a trackpad pinch or two fingers. Closer in, the view centres
+// more and more on her head (follow). The learned shader zooms its drawing, up to 4x.
+const DIST_MIN = 0.7, DIST_MAX = 9;
+function zoomBy(f) { view.dist = Math.min(DIST_MAX, Math.max(look === 'art' ? VIEW0.dist / 4 : DIST_MIN, view.dist / f)); }
+document.getElementById('v-in').onclick = () => zoomBy(1.3);
+document.getElementById('v-out').onclick = () => zoomBy(1 / 1.3);
+addEventListener('keydown', e => { if (e.target.closest?.('input, textarea')) return; if (e.key === '+' || e.key === '=') zoomBy(1.3); if (e.key === '-' || e.key === '_') zoomBy(1 / 1.3); });
+const touches = new Map(); let pinch0 = 0;
+const stEl = document.getElementById('stage');
+stEl.addEventListener('pointerdown', e => { if (e.pointerType === 'touch') touches.set(e.pointerId, [e.clientX, e.clientY]); });
+stEl.addEventListener('pointermove', e => {
+  if (!touches.has(e.pointerId)) return; touches.set(e.pointerId, [e.clientX, e.clientY]);
+  if (touches.size === 2) { const [a, b] = [...touches.values()], d = Math.hypot(a[0] - b[0], a[1] - b[1]); if (pinch0) zoomBy(d / pinch0); pinch0 = d; }
+});
+for (const n of ['pointerup', 'pointercancel']) stEl.addEventListener(n, e => { touches.delete(e.pointerId); pinch0 = 0; });
+const headAt = new THREE.Vector3(0, 1.4, 0);
 function follow(px, dt) {
   const k = 1 - Math.exp(-3 * dt);
-  focus.x += (px[0] - focus.x) * k; focus.z += (px[2] - focus.z) * k;
+  // closer in, aim at her head instead of her middle
+  if (world) headAt.set(...world.b[B.HEAD].x);
+  const near = Math.min(1, Math.max(0, (VIEW0.dist - view.dist) / (VIEW0.dist - 1.0)));
+  focus.x += (px[0] + near * (headAt.x - px[0]) - focus.x) * k; focus.z += (px[2] + near * (headAt.z - px[2]) - focus.z) * k;
+  focus.y += (0.85 + near * (headAt.y + 0.05 - 0.85) - focus.y) * k;
   const y = view.yaw * Math.PI / 180, p = view.pitch * Math.PI / 180;
   camera.position.set(focus.x + view.dist * Math.cos(p) * Math.sin(y), focus.y + view.dist * Math.sin(p), focus.z + view.dist * Math.cos(p) * Math.cos(y));
   camera.lookAt(focus);
