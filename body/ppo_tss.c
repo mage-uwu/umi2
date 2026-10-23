@@ -166,7 +166,7 @@ int main(int argc, char **argv) {
     const char *load_from = NULL, *out = "tsspolicy", *task = "balance", *mref = "data/motions_ref.bin";
     double seconds = 600, lr = 3e-4, hlr = 3e-4, vlr = 1e-3, gamma = 0.95, lam = 0.95, clipr = 0.2, ent = 0, log_std0 = -1.6;
     int threads = 4, nenv = 64, hor = 64, epochs = 4, mb = 4, seed = 0, d = 64, depth = 4, trees = 4;
-    TaskCfg tc = {.push_every = 2, .steps = 300, .init_noise = 0.05};
+    TaskCfg tc = {.push_every = 2, .steps = 300, .init_noise = 0.05}; int steps_set = 0;
     for (int i = 1; i < argc; i++) {
         const char *a = argv[i], *v = i + 1 < argc ? argv[i + 1] : NULL;
 #define OPT(nm, dst, conv) if (!strcmp(a, nm) && v) { dst = conv(v); i++; continue; }
@@ -174,12 +174,14 @@ int main(int argc, char **argv) {
         OPT("--seconds", seconds, atof) OPT("--lr", lr, atof) OPT("--head-lr", hlr, atof) OPT("--vlr", vlr, atof) OPT("--clip", clipr, atof)
         OPT("--log-std", log_std0, atof) OPT("--threads", threads, atoi) OPT("--envs", nenv, atoi) OPT("--horizon", hor, atoi)
         OPT("--epochs", epochs, atoi) OPT("--minibatches", mb, atoi) OPT("--seed", seed, atoi) OPT("--width", d, atoi) OPT("--depth", depth, atoi) OPT("--trees", trees, atoi)
-        OPT("--push", tc.push_max, atof) OPT("--steps", tc.steps, atoi) OPT("--assist", tc.assist, atof) OPT("--sway", tc.sway, atof) OPT("--arm-tone", tc.arm_tone, atof)
+        OPT("--push", tc.push_max, atof) OPT("--act-mul", tc.act_mul, atof) if (!strcmp(a, "--steps") && v) { tc.steps = atoi(v); steps_set = 1; i++; continue; } OPT("--assist", tc.assist, atof) OPT("--sway", tc.sway, atof) OPT("--arm-tone", tc.arm_tone, atof)
 #undef OPT
         fprintf(stderr, "unknown argument %s\n", a); return 2;
     }
     Motions M;
-    if (strcmp(task, "balance")) { if (mref_load(mref, &M) || !(tc.clip = mref_find(&M, task))) { fprintf(stderr, "no clip %s in %s\n", task, mref); return 1; } tc.task = TASK_IMITATE; tc.init_noise = 0; }
+    if (!strcmp(task, "crawl") || !strcmp(task, "getup")) {   /* the floor tasks: no clip, wider joint ranges */
+        tc.task = !strcmp(task, "crawl") ? TASK_CRAWL : TASK_GETUP; if (!tc.act_mul) tc.act_mul = 2.5; if (!steps_set) tc.steps = tc.task == TASK_CRAWL ? 300 : 240;
+    } else if (strcmp(task, "balance")) { if (mref_load(mref, &M) || !(tc.clip = mref_find(&M, task))) { fprintf(stderr, "no clip %s in %s\n", task, mref); return 1; } tc.task = TASK_IMITATE; tc.init_noise = 0; }
     /* the language model's defaults: pure SSM-tree + FFF, per-tree keys/queries, QK-norm, Muon; no rotary
      * (positions would differ between rollout and training chunks) */
     ssm_groups = trees; ssm_qknorm = 1; ssm_rope = 0; n_loops = 1;

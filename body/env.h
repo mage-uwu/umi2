@@ -11,6 +11,13 @@
  *                 velocity, reward pose, joint velocity, hand/foot and root tracking; the root's motion
  *                 accumulates across loops of the clip. A posture term ("golden thread") also pays for a
  *                 lifted, upright, steady head and level shoulders.
+ *   TASK_CRAWL    no clip: from all fours, move forward on hands and knees (a forward speed near 0.4 m/s, the
+ *                 pelvis low, the chest facing the floor, calm and low effort); rolling over ends the episode.
+ *                 The gait is whatever the controller finds.
+ *   TASK_GETUP    no clip: from where a limp fall left her (or from all fours), rise to a calm stand: head and
+ *                 pelvis up, chest upright, then the stand pose held still, with low effort and smooth commands.
+ * The two floor tasks measure her heading from the pelvis's forward and up axes together (forward alone is
+ * vertical when she lies face down), and take act_mul times the joint ranges.
  */
 #ifndef ENV_H
 #define ENV_H
@@ -22,7 +29,7 @@
 #define OBS_DIM (NB * 15 + 6)
 #define CTRL_HZ 30
 #define ACT_FILTER 0.35   /* each control step the joint command moves this share of the way to the new action */
-enum { TASK_BALANCE, TASK_IMITATE };
+enum { TASK_BALANCE, TASK_IMITATE, TASK_CRAWL, TASK_GETUP };
 
 typedef struct {
     int task;
@@ -35,7 +42,9 @@ typedef struct {
     double init_noise;   /* random joint rotation at reset (rad) */
     int fixed_start;     /* TASK_IMITATE: start at phase 0 instead of a random phase */
     double assist;       /* TASK_IMITATE training aid: strength (0..1) of a spring-damper pulling the pelvis
-                          * toward the reference root position and rotation; 0 for the final skill */
+                          * toward the reference root position and rotation; 0 for the final skill.
+                          * TASK_GETUP: a spring toward standing height above where her pelvis is, upright */
+    double act_mul;      /* joint ranges times this (0 = 1) */
 } TaskCfg;
 
 typedef struct {
@@ -54,6 +63,8 @@ typedef struct {
 
 extern const double ACT_SCALES[NB];
 void stand_pose(Quat *rel);
+/* On hands and knees: joint rotations and the root rotation (torso level, facing the floor). */
+void crawl_pose(Quat *rel, Quat *root_q);
 /* The stand pose with relaxed idle motion at time t, scaled by amp (rad of ankle sway): ankle sway forward/back
  * (0.23 Hz) and sideways (0.17 Hz) counterbalanced at the hips and spine, a slow weight shift between the
  * legs (0.07 Hz), breathing in the chest (0.25 Hz) and slow drifts of the head. */

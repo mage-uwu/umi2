@@ -36,6 +36,17 @@ void sway_pose(Quat *rel, double t, double amp) {
     rel[L_FARM] = qmul(rel[L_FARM], qexp(v3(0, -0.25 * k, 0))); rel[R_FARM] = qmul(rel[R_FARM], qexp(v3(0, 0.25 * k, 0)));
 }
 
+void crawl_pose(Quat *rel, Quat *root_q) {
+    for (int i = 0; i < NB; i++) rel[i] = QID;
+    const double q = M_PI / 2;
+    *root_q = qexp(v3(q, 0, 0));                                   /* torso level, chest to the floor */
+    rel[L_THIGH] = rel[R_THIGH] = qexp(v3(-q, 0, 0));              /* thighs straight down */
+    rel[L_SHIN] = rel[R_SHIN] = qexp(v3(q, 0, 0));                 /* shins along the floor */
+    rel[L_FOOT] = rel[R_FOOT] = qexp(v3(0.6, 0, 0));
+    rel[L_UARM] = qexp(v3(0, -q, 0)); rel[R_UARM] = qexp(v3(0, q, 0));   /* arms straight down to the hands */
+    rel[HEAD] = qexp(v3(-0.7, 0, 0));                              /* looking ahead */
+}
+
 static Vec hinge_axis(int h) { return h == 1 ? v3(1, 0, 0) : h == 2 ? v3(0, 1, 0) : v3(0, 0, 1); }
 
 double env_phase(const Env *E) { return E->cfg.task == TASK_IMITATE ? E->t0 + E->W.t : 0; }
@@ -46,6 +57,36 @@ static void ref_at(const Env *E, double t, Quat *rel, Quat *world, Vec *root) {
     mref_sample(c, t, root, world, rel);
     double cycles = floor(t / T); Vec loop = vsub(c->root[c->frames - 1], c->root[0]); loop.y = 0;
     *root = vadd(vadd(*root, vscale(loop, cycles)), E->clip_shift);
+}
+
+static void settle_to_ground(World *W) {
+    double lo = 1e9; for (int i = 0; i < NB; i++) { double y = world_lowest(W, i); if (y < lo) lo = y; }
+    for (int i = 0; i < NB; i++) { W->b[i].x.y -= lo; W->b[i].xprev = W->b[i].x; }
+}
+/* Start states on the floor: on all fours (with noise), or where a limp fall from standing left her. */
+static void floor_reset(Env *E) {
+    World *W = &E->W; Quat rel[NB], rq;
+    const int fall = E->cfg.task == TASK_GETUP && env_rand(&E->rng) < 0.6;
+    crawl_pose(rel, &rq);
+    if (fall) stand_pose(rel), rq = QID;
+    for (int i = 1; i < NB; i++) {
+        Vec n = v3(env_randn(&E->rng), env_randn(&E->rng), env_randn(&E->rng));
+        if (BODY_DEFS[i].hinge) n = vscale(hinge_axis(BODY_DEFS[i].hinge), n.x);
+        rel[i] = qmul(rel[i], qexp(vscale(n, 0.15)));
+    }
+    rq = qmul(qexp(v3(0, env_rand(&E->rng) * 2 * M_PI, 0)), rq);   /* any heading */
+    world_pose(W, v3(0, 1, 0), rq, rel, v3(0, 0, 0));
+    for (int i = 0; i < NB; i++) W->target[i] = rel[i];
+    settle_to_ground(W);
+    if (fall) {   /* go limp, get shoved, and settle wherever she lands */
+        const double a = env_rand(&E->rng) * 2 * M_PI, sp = 1 + 2 * env_rand(&E->rng);
+        for (int i = 0; i < NB; i++) W->b[i].v = vscale(v3(cos(a), 0, sin(a)), sp * (W->b[i].x.y / 1.2));
+        W->kp_scale = 0.03;
+        for (int s = 0; s < 75; s++) world_step(W);
+        W->kp_scale = 1; W->t = 0;
+        for (int i = 1; i < NB; i++) W->target[i] = qmul(qconj(W->b[BODY_DEFS[i].parent].q), W->b[i].q);   /* hold where she lies */
+    } else { for (int s = 0; s < 10; s++) world_step(W); W->t = 0; }
+    if (E->cfg.task == TASK_GETUP) stand_pose(E->ref); else crawl_pose(E->ref, &rq);
 }
 
 void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
@@ -79,6 +120,7 @@ void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
         for (int i = 0; i < NB; i++) E->W.target[i] = E->ref[i];
         return;
     }
+    if (cfg->task == TASK_CRAWL || cfg->task == TASK_GETUP) { floor_reset(E); return; }
     stand_pose(E->ref);
     Quat rel[NB];
     for (int i = 0; i < NB; i++) {
@@ -93,13 +135,16 @@ void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
 }
 
 /* heading frame: rotation removing the pelvis yaw */
-static Quat heading_inv(const World *W) {
-    Vec f = qrot(W->b[PELVIS].q, v3(0, 0, 1)); double yaw = atan2(f.x, f.z);
+static Quat heading_inv(const World *W, int floor) {
+    Vec f = qrot(W->b[PELVIS].q, v3(0, 0, 1));
+    if (floor) f = vadd(f, qrot(W->b[PELVIS].q, v3(0, 1, 0)));   /* face down, forward is vertical: up points ahead */
+    double yaw = atan2(f.x, f.z);
     return qexp(v3(0, -yaw, 0));
 }
+static int floor_task(const Env *E) { return E->cfg.task == TASK_CRAWL || E->cfg.task == TASK_GETUP; }
 
 void env_obs(const Env *E, float *o) {
-    const World *W = &E->W; Quat hi = heading_inv(W); Vec root = W->b[PELVIS].x; int k = 0;
+    const World *W = &E->W; Quat hi = heading_inv(W, floor_task(E)); Vec root = W->b[PELVIS].x; int k = 0;
     for (int i = 0; i < NB; i++) {
         const Body *b = W->b + i; Vec p = qrot(hi, vsub(b->x, root));
         if (i == 0) p.y = root.y;   /* the pelvis reports its height instead of a zero offset */
@@ -133,6 +178,28 @@ static double effort(const World *W) {
     for (int i = 1; i < NB; i++) { Quat rel = qmul(qconj(W->b[BODY_DEFS[i].parent].q), W->b[i].q); Vec e = qlog(qmul(W->target[i], qconj(rel))); e2 += vdot(e, e); }
     return e2;
 }
+static double pose_err(const World *W, const Quat *ref) {
+    double e2 = 0; for (int i = 1; i < NB; i++) { Quat rel = qmul(qconj(W->b[BODY_DEFS[i].parent].q), W->b[i].q); Vec e = qlog(qmul(rel, qconj(ref[i]))); e2 += vdot(e, e); }
+    return e2;
+}
+static double floor_reward(Env *E, double act2) {
+    World *W = &E->W; const double calm = 0.08 * exp(-20 * effort(W) / NJ) + 0.07 * exp(-2 * act2);
+    if (E->step >= E->cfg.steps) E->done = 1;
+    Vec cv; world_com(W, &cv);
+    if (E->cfg.task == TASK_CRAWL) {
+        Vec f = vadd(qrot(W->b[PELVIS].q, v3(0, 0, 1)), qrot(W->b[PELVIS].q, v3(0, 1, 0))); f.y = 0; f = vscale(f, 1 / (vlen(f) + 1e-9));
+        const double v = vdot(cv, f), side = cv.x * f.z - cv.z * f.x, py = W->b[PELVIS].x.y;
+        const Vec front = qrot(W->b[CHEST].q, v3(0, 0, 1));
+        if (front.y > 0.3) { E->done = 1; return 0; }   /* rolled over */
+        const double yaw_rate = W->b[PELVIS].w.y;
+        return 0.4 * exp(-pow((v - 0.4) / 0.25, 2)) + 0.15 * exp(-pow((py - 0.42) / 0.12, 2)) + 0.15 * fmax(0, -front.y)
+             + 0.1 * exp(-2 * side * side - 0.5 * yaw_rate * yaw_rate) + 0.1 * (W->b[HEAD].x.y > W->b[CHEST].x.y) + calm;
+    }
+    const double hd = fmin(1, fmax(0, W->b[HEAD].x.y / 1.42)), pv = fmin(1, fmax(0, W->b[PELVIS].x.y / 0.92));
+    const double up = qrot(W->b[CHEST].q, v3(0, 1, 0)).y;
+    const double stand = hd > 0.9 && pv > 0.9 ? exp(-2 * pose_err(W, E->ref) / NJ) * exp(-4 * vdot(cv, cv)) : 0;
+    return 0.35 * hd + 0.2 * pv + 0.15 * fmax(up, 0) + 0.15 * stand + calm;
+}
 static int fallen(const World *W) {
     if (W->b[PELVIS].x.y < 0.55 || W->b[HEAD].x.y < 1.0) return 1;
     for (int i = 0; i < NB; i++) if (i != L_FOOT && i != R_FOOT && i != L_SHIN && i != R_SHIN && world_lowest(W, i) < 0.05) return 1;
@@ -148,7 +215,7 @@ static double env_begin(Env *E, const float *a) {
         const BodyDef *d = BODY_DEFS + i; Vec r;
         if (d->hinge) { r = vscale(hinge_axis(d->hinge), f[k++]); }
         else { r = v3(f[k], f[k + 1], f[k + 2]); k += 3; }
-        W->target[i] = qmul(E->ref[i], qexp(vscale(r, ACT_SCALES[i])));
+        W->target[i] = qmul(E->ref[i], qexp(vscale(r, ACT_SCALES[i] * (E->cfg.act_mul > 0 ? E->cfg.act_mul : 1))));
     }
     for (int j = 0; j < ACT_DIM; j++) { double dd = a[j] - E->prev_act[j]; act2 += dd * dd; E->prev_act[j] = a[j]; }
     if (E->cfg.push_max > 0 && W->t >= E->next_push) {
@@ -161,12 +228,17 @@ static double env_begin(Env *E, const float *a) {
         ref_at(E, env_phase(E) + 1.0 / CTRL_HZ, rr, rw, &r2);
         W->assist = E->cfg.assist; W->assist_x = r2; W->assist_q = rw[PELVIS];   /* where the reference is at the end of this step */
         W->assist_v = vscale(vsub(r2, E->ref_root), CTRL_HZ);
+    } else if (E->cfg.task == TASK_GETUP && E->cfg.assist > 0) {   /* a hand up: toward standing height above her, upright */
+        Vec px = W->b[PELVIS].x, f = qrot(W->b[PELVIS].q, v3(0, 0, 1)); f = vadd(f, qrot(W->b[PELVIS].q, v3(0, 1, 0)));
+        W->assist = E->cfg.assist; W->assist_x = v3(px.x, BODY_DEFS[PELVIS].center.y, px.z); W->assist_v = v3(0, 0, 0);
+        W->assist_q = qexp(v3(0, atan2(f.x, f.z), 0));
     } else W->assist = 0;
     return act2;
 }
 static double env_end(Env *E, double act2) {
     World *W = &E->W;
     E->step++;
+    if (floor_task(E)) return floor_reward(E, act2);
     int fell = fallen(W);
     if (E->cfg.task == TASK_IMITATE) {
         ref_at(E, env_phase(E), E->ref, E->ref_world, &E->ref_root);

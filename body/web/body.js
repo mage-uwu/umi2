@@ -177,6 +177,14 @@ export function standPose() {
   rel[B.L_UARM] = qexp([0, 0, -a]); rel[B.R_UARM] = qexp([0, 0, a]);
   return rel;
 }
+// On hands and knees (env.c crawl_pose): joint rotations and the root rotation (torso level, facing the floor).
+export function crawlPose() {
+  const rel = BODY_DEFS.map(() => QID), q = Math.PI / 2;
+  rel[B.L_THIGH] = rel[B.R_THIGH] = qexp([-q, 0, 0]); rel[B.L_SHIN] = rel[B.R_SHIN] = qexp([q, 0, 0]);
+  rel[B.L_FOOT] = rel[B.R_FOOT] = qexp([0.6, 0, 0]);
+  rel[B.L_UARM] = qexp([0, -q, 0]); rel[B.R_UARM] = qexp([0, q, 0]); rel[B.HEAD] = qexp([-0.7, 0, 0]);
+  return { rel, rootQ: qexp([q, 0, 0]) };
+}
 // The stand pose with relaxed idle motion at time t, scaled by amp (rad of ankle sway; env.c sway_pose): ankle
 // sway counterbalanced at the hips and spine, a slow weight shift with the unloaded knee softening, breathing in
 // the chest and shoulders, slow drifts of the gaze, softly bent elbows.
@@ -197,19 +205,21 @@ export function swayPose(t, amp) {
   return rel;
 }
 // Joint targets: reference rotation followed by exp(scale * f), f the action low-passed by ACT_FILTER (kept on the world).
-export function applyAction(world, ref, a) {
+// mul: the floor skills (crawl, get up) widen every joint's range (env.c TaskCfg.act_mul)
+export function applyAction(world, ref, a, mul = 1) {
   world.filt ||= new Array(ACT_DIM).fill(0);
   for (let j = 0; j < ACT_DIM; j++) world.filt[j] += ACT_FILTER * (a[j] - world.filt[j]);
   const f = world.filt; let k = 0;
   for (let i = 1; i < NB; i++) {
     const d = BODY_DEFS[i];
     const r = d.hinge ? vscale(hingeAxis(d.hinge), f[k++]) : [f[k++], f[k++], f[k++]];
-    world.target[i] = qmul(ref[i], qexp(vscale(r, ACT_SCALES[i])));
+    world.target[i] = qmul(ref[i], qexp(vscale(r, ACT_SCALES[i] * mul)));
   }
 }
-// phase: radians of the reference clip's cycle (0 for balance)
-export function observe(world, phase = 0) {
-  const pf = qrot(world.b[0].q, [0, 0, 1]), hi = qexp([0, -Math.atan2(pf[0], pf[2]), 0]), root = world.b[0].x, o = [];
+// phase: radians of the reference clip's cycle (0 for balance); floor: the floor skills' heading (the pelvis's
+// forward and up axes together, since forward alone is vertical when she lies face down)
+export function observe(world, phase = 0, floor = false) {
+  const pz = qrot(world.b[0].q, [0, 0, 1]), py = qrot(world.b[0].q, [0, 1, 0]), pf = floor ? vadd(pz, py) : pz, hi = qexp([0, -Math.atan2(pf[0], pf[2]), 0]), root = world.b[0].x, o = [];
   for (let i = 0; i < NB; i++) {
     const b = world.b[i], p = qrot(hi, vsub(b.x, root)); if (i === 0) p[1] = root[1];
     const q = qmul(hi, b.q), ux = qrot(q, [1, 0, 0]), uy = qrot(q, [0, 1, 0]), v = qrot(hi, b.v), w = qrot(hi, b.w);

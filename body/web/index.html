@@ -60,6 +60,7 @@ button:disabled { opacity: .45; cursor: default; }
     <div class="group" role="group" aria-label="Skill">
       <span class="label">Skill</span>
       <span id="skills" class="group"></span>
+      <button id="standup" hidden title="The get-up controller takes over from wherever she is">Stand up</button>
     </div>
     <div class="group" role="group" aria-label="Push">
       <span class="label">Push</span>
@@ -103,7 +104,7 @@ button:disabled { opacity: .45; cursor: default; }
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm';
-import { World, BODY_DEFS, B, standPose, swayPose, applyAction, observe, fallen, loadPolicy, loadTssPolicy, loadClips, poseFromClip, setAssist, math, CTRL_HZ } from './body.js';
+import { World, BODY_DEFS, B, standPose, swayPose, crawlPose, applyAction, observe, fallen, loadPolicy, loadTssPolicy, loadClips, poseFromClip, setAssist, math, CTRL_HZ } from './body.js';
 import { createShaderView } from './shader-view.js';
 
 const status = document.getElementById('status');
@@ -316,7 +317,13 @@ const SKILLS = {
   balance: { label: 'Balance', file: 'balance.json', sway: 0.012, armTone: 0.4 },
   // assist: the pelvis support spring the controller was trained with (1 = full); 0 once it walks unaided
   walk: { label: 'Walk', file: 'walk_tss.json', clip: 'walk' },
+  // floor: a floor skill, trained without a clip (env.c TASK_CRAWL), with joint ranges widened by actMul
+  crawl: { label: 'Crawl', file: 'crawl_tss.json', floor: true, actMul: 2.5 },
 };
+// Getting up (TASK_GETUP) is not a button: it takes over when she falls, or when Stand up is pressed while she
+// crawls, and hands back to Balance once she stands calmly.
+const GETUP = { file: 'getup_tss.json', actMul: 2.5 };
+let mode = 'skill', getupPolicy = null, getupSince = 0, calmSince = -1;
 let world, ref, policy = null, skill = 'balance', upSince = 0, fallenAt = -1, listeners = {}, clips = null, clip = null;
 const policies = {};
 const emit = (ev, detail) => { (listeners[ev] || []).forEach(f => { try { f(detail); } catch (e) { console.error(e); } }); dispatchEvent(new CustomEvent('umibody:' + ev, { detail })); };
@@ -348,8 +355,14 @@ function reset() {
   focus.set(0, 0.85, 0);
   world = new World(45, 20, 1 / CTRL_HZ);
   if (SKILLS[skill].armTone) for (const i of [B.L_UARM, B.L_FARM, B.R_UARM, B.R_FARM]) world.tone[i] = SKILLS[skill].armTone;
+  mode = 'skill'; clip = SKILLS[skill].clip && clips ? clips[SKILLS[skill].clip] : null;   // getting up drops the clip
   if (clip) ref = poseFromClip(world, clip, 0).rel;
-  else {
+  else if (SKILLS[skill].floor) {   // on all fours, settled
+    const c = crawlPose(); ref = c.rel; world.pose([0, 1, 0], c.rootQ, ref);
+    let lo = 1e9; for (let i = 0; i < BODY_DEFS.length; i++) lo = Math.min(lo, world.lowest(i));
+    for (const b of world.b) { b.x = [b.x[0], b.x[1] - lo, b.x[2]]; b.xprev = b.x; }
+    world.target = ref.slice(); for (let k = 0; k < 10; k++) world.step();
+  } else {
     ref = standPose(); world.pose(BODY_DEFS[0].center, ref[0], ref);
     let lo = 1e9; for (let i = 0; i < BODY_DEFS.length; i++) lo = Math.min(lo, world.lowest(i));
     for (const b of world.b) { b.x = [b.x[0], b.x[1] - lo, b.x[2]]; b.xprev = b.x; }
@@ -373,16 +386,37 @@ function push(dir, newtons = PUSH_N, bodyName = 'chest') {
 // ---------- loop: fixed 30 Hz control, rendering interpolated between steps ----------
 const snapshot = () => world.b.map(b => ({ x: b.x.slice(), q: b.q.slice() }));
 let prev, acc = 0, last = performance.now();
+// Getting up: the get-up controller from wherever she is, toward the stand pose.
+async function getUp(why) {
+  try { getupPolicy ||= await loadTssPolicy(GETUP.file); } catch { getupPolicy = null; }
+  if (!getupPolicy) return false;
+  getupPolicy.reset(); mode = 'getup'; clip = null; ref = standPose(); getupSince = world.t; calmSince = -1; fallenAt = -1;
+  setStatus(why); emit('getup', {}); return true;
+}
 function control() {
   const phase = clip ? 2 * Math.PI * world.t / clip.T : 0;
+  const floor = mode === 'getup' || SKILLS[skill].floor, pol = mode === 'getup' ? getupPolicy : policy;
   if (clip) setAssist(world, clip, world.t, fallenAt < 0 ? SKILLS[skill].assist || 0 : 0);
-  if (fallenAt < 0 && policy) applyAction(world, ref, policy.act(observe(world, phase)));
+  if (fallenAt < 0 && pol) applyAction(world, ref, pol.act(observe(world, phase, floor)), floor ? GETUP.actMul : 1);
   prev = snapshot(); world.step();
   hist.push({ t: world.t, s: snapshot() }); if (hist.length > 12) hist.shift();
   if (clip) ref = clip.at(world.t).rel;
-  else if (SKILLS[skill].sway) ref = swayPose(world.t, SKILLS[skill].sway);
-  if (fallenAt < 0 && fallen(world)) { fallenAt = world.t; emit('fall', { upright: world.t - upSince }); setStatus('She fell. Getting up is not learned yet; resetting.', true); }
-  if (fallenAt >= 0 && world.t - fallenAt > 2.5) { reset(); setStatus(''); }
+  else if (mode === 'skill' && SKILLS[skill].sway) ref = swayPose(world.t, SKILLS[skill].sway);
+  if (mode === 'getup') {   // standing calmly for a second: back to Balance
+    const cv = world.com().v, still = world.b[B.HEAD].x[1] > 1.3 && world.b[0].x[1] > 0.8 && Math.hypot(cv[0], cv[2]) < 0.3;
+    if (!still) calmSince = -1; else if (calmSince < 0) calmSince = world.t;
+    if (calmSince >= 0 && world.t - calmSince > 1) {
+      mode = 'skill'; skill = 'balance'; policy = policies.balance; policy?.reset(); ref = standPose(); upSince = world.t;
+      for (const i of [B.L_UARM, B.L_FARM, B.R_UARM, B.R_FARM]) world.tone[i] = SKILLS.balance.armTone;
+      setPressed('[data-skill]', document.querySelector('[data-skill="balance"]')); setStatus(''); document.getElementById('standup').hidden = true; emit('stood', {});
+    } else if (world.t - getupSince > 12) { reset(); setStatus(''); }
+  } else if (SKILLS[skill].floor) {   // rolled onto her back or side
+    if (math.qrot(world.b[B.CHEST].q, [0, 0, 1])[1] > 0.3) getUp('She rolled over; getting up.');
+  } else if (fallenAt < 0 && fallen(world)) {
+    fallenAt = world.t; emit('fall', { upright: world.t - upSince });
+    getUp('She fell; getting up.').then(ok => { if (!ok) setStatus('She fell; resetting.', true); });
+  }
+  if (fallenAt >= 0 && mode !== 'getup' && world.t - fallenAt > 2.5) { reset(); setStatus(''); }
   emit('step', { t: world.t });
 }
 let frameErrors = 0;
@@ -452,6 +486,7 @@ function resize() {
 const setPressed = (sel, el) => document.querySelectorAll(sel).forEach(b => b.setAttribute('aria-pressed', String(b === el)));
 document.querySelectorAll('[data-push]').forEach(b => b.onclick = () => world && fallenAt < 0 && push(b.dataset.push));
 document.getElementById('reset').onclick = () => world && reset();
+document.getElementById('standup').onclick = () => world && mode !== 'getup' && getUp('Getting up.');
 // Look: the learned shader (art), the plain 3D render (model) or the physics boxes.
 const artCanvas = document.getElementById('art'), pelvisAt = new THREE.Vector3(0, 0.9, 0);
 let look = 'model', art = null, artLoad = null;
@@ -515,6 +550,7 @@ async function useSkill(name) {
   policies[name] ||= s.file.includes('tss') ? await loadTssPolicy(s.file) : await loadPolicy(s.file);
   if (s.clip) { clips ||= await loadClips('motions_ref.json'); clip = clips[s.clip]; } else clip = null;
   skill = name; policy = policies[name];
+  document.getElementById('standup').hidden = !s.floor;
   setPressed('[data-skill]', document.querySelector(`[data-skill="${name}"]`));
   document.getElementById('r-policy').textContent = `${policy.type === 'nanotss' ? 'nanotss (ternary SSM-tree + FFF, WebAssembly)' : policy.type === 'ssm' ? 'SSM-tree' : policy.type.toUpperCase()} · ${policy.params.toLocaleString()} weights${s.assist ? ` · pelvis support ${Math.round(s.assist * 100)}%` : ''}`;
   reset(); emit('skill', { skill: name });
@@ -532,12 +568,13 @@ for (const [k, s] of Object.entries(SKILLS)) {
 // window.umiBody.play(name)                   switch skill (returns a promise)
 // window.umiBody.push(dir, newtons?, body?)   dir: 'left' | 'right' | 'front' | 'back' or [x, z]
 // window.umiBody.reset()
-// window.umiBody.on(event, fn)                events: 'skill', 'reset', 'push', 'fall', 'step', 'parts' (also dispatched as 'umibody:<event>')
+// window.umiBody.standUp()                    hand over to the get-up controller (from crawling, or anywhere)
+// window.umiBody.on(event, fn)                events: 'skill', 'reset', 'push', 'fall', 'getup', 'stood', 'step', 'parts' (also dispatched as 'umibody:<event>')
 // window.umiBody.state()                      { t, upright, fallen, bodies: [{ name, bone, x, q }] }
 // window.umiBody.parts({ hair, dress, springs }) show or hide hair and dress, simulate or hold hair and cloth; returns the settings
 window.umiBody = {
   get skills() { return Object.keys(SKILLS); },
-  play: useSkill, push: (...a) => world && push(...a), reset: () => world && reset(),
+  play: useSkill, push: (...a) => world && push(...a), reset: () => world && reset(), standUp: () => world && getUp('Getting up.'),
   on(ev, fn) { (listeners[ev] ||= []).push(fn); return () => { listeners[ev] = listeners[ev].filter(f => f !== fn); }; },
   state: () => world && { t: world.t, upright: world.t - upSince, fallen: fallenAt >= 0,
     bodies: world.b.map((b, i) => ({ name: BODY_DEFS[i].name, bone: BODY_DEFS[i].bone, x: b.x.slice(), q: b.q.slice() })) },
