@@ -100,6 +100,24 @@ function columnSpan(o, x, z) {
   return lo > hi ? null : [lo, hi];
 }
 // the surface under (x, z) at or below ytop: the floor (0) or a room box's top there (body.c support_y)
+// the distance along unit direction d from o to the first room box, at most maxd (body.c ray_dist)
+export function rayDist(o, d, maxd) {
+  let best = maxd;
+  for (const b of ROOM) {
+    const oc = vsub(o, b.c), tc = vdot(oc, d), d2 = vdot(oc, oc) - tc * tc;
+    if (d2 > b.rad * b.rad || (tc > 0 && vdot(oc, oc) > b.rad * b.rad)) continue;
+    const qi = qconj(b.q), O = qrot(qi, oc), D = qrot(qi, d); let t0 = 0, t1 = best, hit = true;
+    for (let k = 0; k < 3 && hit; k++) {
+      if (Math.abs(D[k]) < 1e-12) { if (Math.abs(O[k]) > b.h[k]) hit = false; continue; }
+      let ta = (-b.h[k] - O[k]) / D[k], tb = (b.h[k] - O[k]) / D[k]; if (ta > tb) [ta, tb] = [tb, ta];
+      if (ta > t0) t0 = ta;
+      if (tb < t1) t1 = tb;
+      if (t0 > t1) hit = false;
+    }
+    if (hit && t0 < best) best = t0;
+  }
+  return best;
+}
 export function supportY(x, z, ytop) { let best = 0; for (const o of ROOM) { const s = columnSpan(o, x, z); if (s && s[1] <= ytop + 1e-9 && s[1] > best) best = s[1]; } return best; }
 
 export class World {
@@ -387,7 +405,8 @@ export function fallen(world) {   // heights from the surface under her (env.c f
 // The go-to skill's observation (env.c env_obs for TASK_GOTO, OBS_DIM 234): the bodies as in observe(), but the pelvis
 // height from her lowest foot corner and the foot flags from touch; then the goal from her pelvis in the heading
 // frame (horizontal at most 4 m) and its distance; then each body's touch as a share of her weight.
-export const OBS_GOTO = OBS_DIM + 4 + NB + NB - 1 + 10;   // 257: then touch, muscle sense, grip
+export const OBS_GOTO = OBS_DIM + 4 + NB + NB - 1 + 10 + 16;   // 273: then touch, muscle sense, grip, probes
+const PROBE_DIST = [0.3, 0.6, 0.9, 1.2, 0.6, 0.6], PROBE_ANG = [0, 0, 0, 0, 0.5, -0.5];   // env.c's ground probes (m, rad)
 export function observeGoto(world, phase, goal) {
   const o = observe(world, phase, false), root = world.b[0].x, wt = world.totalMass * G_ACC;
   o[1] = root[1] - Math.min(world.lowest(B.L_FOOT), world.lowest(B.R_FOOT));
@@ -401,6 +420,17 @@ export function observeGoto(world, phase, goal) {
     const p = world.handPoint(k), [j, at] = gripFind(p, 1.0);
     o.push(world.gripBox[k] >= 0 ? 1 : 0);
     if (j >= 0) { const d = qrot(hi, vsub(at, p)); o.push(d[0], d[1], d[2], 1); } else o.push(0, 0, 0, 0);
+  }
+  {   // probes: the ground ahead and what stands in the way (env.c)
+    const h = qconj(hi), foot = Math.min(world.lowest(B.L_FOOT), world.lowest(B.R_FOOT));
+    for (let i = 0; i < 6; i++) {
+      const d = qrot(h, [Math.sin(PROBE_ANG[i]), 0, Math.cos(PROBE_ANG[i])]);
+      o.push(Math.max(-1, Math.min(1, supportY(root[0] + PROBE_DIST[i] * d[0], root[2] + PROBE_DIST[i] * d[2], foot + 0.8) - foot)));
+    }
+    for (let lv = 0; lv < 2; lv++) for (let i = 0; i < 5; i++) {
+      const a = -1.0 + 0.5 * i, d = qrot(h, [Math.sin(a), 0, Math.cos(a)]);
+      o.push(rayDist([root[0], foot + (lv ? 0.9 : 0.35), root[2]], d, 1.5) / 1.5);
+    }
   }
   return o;
 }
@@ -490,13 +520,14 @@ export async function loadTssPolicy(url, wasmUrl = 'tss.wasm') {
   const X = instance.exports; X._initialize();
   const p = X.tss_buf(tss.length + head.length);
   const mem = new Uint8Array(X.memory.buffer, p, tss.length + head.length); mem.set(tss); mem.set(head, tss.length);
-  const d = X.tss_load(p, tss.length, head.length), nact = new DataView(head.buffer, head.byteOffset).getInt32(12, true);   // the head's outputs: 31, or 33 with grip
+  const hv = new DataView(head.buffer, head.byteOffset), nobs = hv.getInt32(8, true), nact = hv.getInt32(12, true);   // the head's inputs (216 .. 273) and outputs (31, or 33 with grip)
+  const d = X.tss_load(p, tss.length, head.length);
   if (d <= 0) throw new Error(`nanotss policy ${url} did not load (${d})`);
   return {
     type: 'nanotss', params: j.params, width: d,
     reset() { X.tss_reset(); },
     act(obs) {
-      new Float32Array(X.memory.buffer, X.tss_obs(), obs.length).set(obs);   // 216 inputs for the body/ skills, 234 for go-to
+      new Float32Array(X.memory.buffer, X.tss_obs(), nobs).set(obs.slice(0, nobs));   // as many inputs as the policy has (older ones: fewer, the newer inputs come last)
       return Array.from(new Float32Array(X.memory.buffer, X.tss_step(), nact));
     },
   };

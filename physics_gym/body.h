@@ -143,6 +143,7 @@ enum { GRIP_NONE, GRIP_LEDGE, GRIP_HOLD };   /* a box's grip label: nothing; its
  * column_hit: whether any box occupies the line between heights y0 and y1. */
 BHD double support_y(int room, double x, double z, double ytop);
 BHD int column_hit(int room, double x, double z, double y0, double y1);
+BHD double ray_dist(int room, Vec o, Vec d, double maxd);   /* distance along unit d from o to the first box (at most maxd) */
 BHD int room_banks(void);                 /* rooms in the bank (0: none, the open floor) */
 BHD int room_size(int room);
 BHD int grip_find(int room, Vec p, double reach, Vec *at);   /* the nearest holdable point within reach of p: its box, or -1 */

@@ -203,6 +203,28 @@ BHD double support_y(int r, double x, double z, double ytop) {
     for (int j = 0; j < room_n[r]; j++) if (column_span(room_box[r] + j, x, z, &t0, &t1) && t1 <= ytop + 1e-9 && t1 > best) best = t1;
     return best;
 }
+/* the distance along unit direction d from o to the first box of room r, at most maxd (0 from inside a box): the
+ * slab test in each box's own frame */
+BHD double ray_dist(int r, Vec o, Vec d, double maxd) {
+    double best = maxd;
+    for (int j = 0; j < room_n[r]; j++) {
+        const RoomBox *b = room_box[r] + j; const Vec oc = vsub(o, b->c);
+        const double t_c = vdot(oc, d), dist2 = vdot(oc, oc) - t_c * t_c;   /* broad phase: the ray's line against the bounding sphere */
+        if (dist2 > b->rad * b->rad || (t_c > 0 && vdot(oc, oc) > b->rad * b->rad)) continue;
+        const Quat qi = qconj(b->q); const Vec lo = qrot(qi, oc), ld = qrot(qi, d);
+        const double O[3] = {lo.x, lo.y, lo.z}, D[3] = {ld.x, ld.y, ld.z}, H[3] = {b->h.x, b->h.y, b->h.z};
+        double t0 = 0, t1 = best; int hit = 1;
+        for (int k = 0; k < 3 && hit; k++) {
+            if (fabs(D[k]) < 1e-12) { if (fabs(O[k]) > H[k]) hit = 0; continue; }
+            double ta = (-H[k] - O[k]) / D[k], tb = (H[k] - O[k]) / D[k]; if (ta > tb) { const double t = ta; ta = tb; tb = t; }
+            if (ta > t0) t0 = ta;
+            if (tb < t1) t1 = tb;
+            if (t0 > t1) hit = 0;
+        }
+        if (hit && t0 < best) best = t0;
+    }
+    return best;
+}
 BHD int column_hit(int r, double x, double z, double y0, double y1) {
     double t0, t1;
     for (int j = 0; j < room_n[r]; j++) if (column_span(room_box[r] + j, x, z, &t0, &t1) && t1 > y0 && t0 < y1) return 1;

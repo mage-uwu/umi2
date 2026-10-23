@@ -161,6 +161,7 @@ BHD void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
 }
 
 /* heading frame: rotation removing the pelvis yaw */
+static BHD Quat heading_q(Quat q) { const Vec f = qrot(q, v3(0, 0, 1)); return qexp(v3(0, b_atan2(f.x, f.z), 0)); }   /* the yaw of q alone */
 static BHD Quat heading_inv(const World *W, int floor) {
     Vec f = qrot(W->b[PELVIS].q, v3(0, 0, 1));
     if (floor) f = vadd(f, qrot(W->b[PELVIS].q, v3(0, 1, 0)));   /* face down, forward is vertical: up points ahead */
@@ -180,6 +181,7 @@ static BHD Quat hinge_limit(int i, Quat q) {
 }
 
 static BHD double b_sqrt_h(double x, double z) { return sqrt(x * x + z * z); }
+static BCONST double PROBE_DIST[6] = {0.3, 0.6, 0.9, 1.2, 0.6, 0.6}, PROBE_ANG[6] = {0, 0, 0, 0, 0.5, -0.5};   /* the ground probes (m, rad) */
 BHD void env_obs(const Env *E, float *o) {
     const World *W = &E->W; Quat hi = heading_inv(W, floor_task(E)); Vec root = W->b[PELVIS].x; int k = 0;
     for (int i = 0; i < NB; i++) {
@@ -209,6 +211,18 @@ BHD void env_obs(const Env *E, float *o) {
         o[k++] = W->grip_box[h] >= 0;
         if (j >= 0) { const Vec d = qrot(hi, vsub(at, p)); o[k++] = d.x; o[k++] = d.y; o[k++] = d.z; o[k++] = 1; }
         else { o[k++] = 0; o[k++] = 0; o[k++] = 0; o[k++] = 0; }
+    }
+    {   /* probes: the ground ahead and what stands in the way (env.h OBS_PROBE) */
+        const Quat h = qconj(hi); const double foot = fmin(world_lowest(W, L_FOOT), world_lowest(W, R_FOOT));
+        for (int i = 0; i < 6; i++) {
+            const Vec d = qrot(h, v3(b_sin(PROBE_ANG[i]), 0, b_cos(PROBE_ANG[i])));
+            const double x = root.x + PROBE_DIST[i] * d.x, z = root.z + PROBE_DIST[i] * d.z;
+            o[k++] = fmax(-1, fmin(1, support_y(W->room, x, z, foot + 0.8) - foot));
+        }
+        for (int lv = 0; lv < 2; lv++) for (int i = 0; i < 5; i++) {
+            const double a = -1.0 + 0.5 * i; const Vec d = qrot(h, v3(b_sin(a), 0, b_cos(a)));
+            o[k++] = ray_dist(W->room, v3(root.x, foot + (lv ? 0.9 : 0.35), root.z), d, 1.5) / 1.5;
+        }
     }
 }
 
@@ -452,12 +466,12 @@ static BHD double env_begin(Env *E, const float *a) {
         W->push_body = env_rand(&E->rng) < .5 ? CHEST : PELVIS; W->push_force = v3(f * b_cos(ang), 0, f * b_sin(ang)); W->push_left = 0.2;
         E->next_push = W->t + E->cfg.push_every * (0.5 + env_rand(&E->rng));
     }
-    if (E->cfg.task == TASK_IMITATE && E->cfg.assist > 0) {   /* training wheels toward the reference root */
+    if (E->cfg.task == TASK_IMITATE && E->cfg.assist > 0 && !E->cfg.free_heading) {   /* training wheels toward the reference root */
         Quat rr[NB], rw[NB]; Vec r2;
         ref_at(E, env_phase(E) + 1.0 / CTRL_HZ, rr, rw, &r2);
         W->assist = E->cfg.assist; W->assist_x = r2; W->assist_q = rw[PELVIS];   /* where the reference is at the end of this step */
         W->assist_v = vscale(vsub(r2, E->ref_root), CTRL_HZ);
-    } else if ((E->cfg.task == TASK_GETUP || E->cfg.task == TASK_GOTO) && E->cfg.assist > 0) {   /* a hand up: toward standing height above the surface under her, upright */
+    } else if ((E->cfg.task == TASK_GETUP || E->cfg.task == TASK_GOTO || E->cfg.task == TASK_IMITATE) && E->cfg.assist > 0) {   /* a hand up: toward standing height above the surface under her, upright */
         Vec px = W->b[PELVIS].x, f = qrot(W->b[PELVIS].q, v3(0, 0, 1)); f = vadd(f, qrot(W->b[PELVIS].q, v3(0, 1, 0)));
         W->assist = E->cfg.assist; W->assist_x = v3(px.x, support_y(W->room, px.x, px.z, px.y) + BODY_DEFS[PELVIS].center.y, px.z); W->assist_v = v3(0, 0, 0);
         W->assist_q = qexp(v3(0, b_atan2(f.x, f.z), 0));
@@ -473,17 +487,20 @@ static BHD double env_end(Env *E, double act2) {
     if (E->cfg.task == TASK_IMITATE) {
         ref_at(E, env_phase(E), E->ref, E->ref_world, &E->ref_root);
         Vec er = vsub(W->b[PELVIS].x, E->ref_root);
-        if (vlen(er) > 0.6) fell = 1;   /* drifted off the reference: end the episode */
+        const int fh = E->cfg.free_heading;
+        if (!fh && vlen(er) > 0.6) fell = 1;   /* drifted off the reference: end the episode */
         if (fell || E->step >= E->cfg.steps) E->done = 1;
         if (fell) return 0;
         /* pose: body world rotations; velocity: body angular velocity against the reference's */
         double pose = 0, vel = 0, ee = 0;
         Quat rw2[NB], rr2[NB]; Vec root2; ref_at(E, env_phase(E) + 1.0 / CTRL_HZ, rr2, rw2, &root2);
+        /* free heading: her world turned onto the reference's heading (about the vertical) before comparing */
+        const Quat to_ref = fh ? qmul(heading_q(E->ref_world[PELVIS]), qconj(heading_q(W->b[PELVIS].q))) : QID;
         for (int i = 1; i < NB; i++) {
             Quat rel = qmul(qconj(W->b[BODY_DEFS[i].parent].q), W->b[i].q); Vec e = qlog(qmul(rel, qconj(E->ref[i]))); pose += vdot(e, e);
-            Vec wr = vscale(qlog(qmul(rw2[i], qconj(E->ref_world[i]))), CTRL_HZ); Vec dw = vsub(W->b[i].w, wr); vel += vdot(dw, dw);
+            Vec wr = vscale(qlog(qmul(rw2[i], qconj(E->ref_world[i]))), CTRL_HZ); Vec dw = vsub(qrot(to_ref, W->b[i].w), wr); vel += vdot(dw, dw);
         }
-        { Vec e = qlog(qmul(W->b[PELVIS].q, qconj(E->ref_world[PELVIS]))); pose += vdot(e, e); }
+        { Vec e = qlog(qmul(qmul(to_ref, W->b[PELVIS].q), qconj(E->ref_world[PELVIS]))); pose += vdot(e, e); }
         /* hands and feet relative to the pelvis, against forward kinematics of the reference rotations */
         Vec rp = W->b[PELVIS].x; Quat rq = W->b[PELVIS].q; Vec fx[NB]; Quat fq[NB];
         fx[0] = v3(0, 0, 0); fq[0] = QID;
@@ -495,6 +512,11 @@ static BHD double env_end(Env *E, double act2) {
         const int EE[4] = {L_FARM, R_FARM, L_FOOT, R_FOOT};
         for (int j = 0; j < 4; j++) { Vec d = vsub(qrot(qconj(rq), vsub(W->b[EE[j]].x, rp)), fx[EE[j]]); ee += vdot(d, d); }
         Vec ce = vsub(W->b[PELVIS].x, E->ref_root);
+        if (fh) {   /* free heading: her pelvis velocity against the reference's, each in its own heading frame (no path) */
+            const Vec vr = qrot(qconj(heading_q(E->ref_world[PELVIS])), vscale(vsub(root2, E->ref_root), CTRL_HZ));
+            const Vec vh = qrot(qconj(heading_q(W->b[PELVIS].q)), W->b[PELVIS].v);
+            ce = vscale(v3(vh.x - vr.x, 0, vh.z - vr.z), 0.3);   /* 0.3 s of the velocity error, as a distance */
+        }
         double track = 0.5 * b_exp(-2 * pose / NJ) + 0.1 * b_exp(-0.1 * vel / NJ) + 0.2 * b_exp(-10 * ee) + 0.2 * b_exp(-10 * vdot(ce, ce));
         return 0.75 * track + 0.25 * golden_thread(E, qrot(E->ref_world[PELVIS], fx[HEAD]).y);
     }

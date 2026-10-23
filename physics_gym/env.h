@@ -51,7 +51,10 @@
 #define OBS_GOAL 4                /* goal x, y, z from her pelvis in the heading frame (horizontal at most 4 m), distance */
 #define OBS_GRIP 10               /* per hand: holding (0/1); the nearest holdable point within 1 m, from the hand in the heading
                                    * frame (x, y, z), and whether there is one (0/1) */
-#define OBS_DIM (OBS_BASE + OBS_GOAL + NB + NB - 1 + OBS_GRIP)   /* then touch: each body's mean contact force over the step / body
+#define OBS_PROBE 16              /* cheap looks ahead (heading frame): the ground under 6 points ahead, from her lowest foot (m,
+                                   * within +-1); then 10 horizontal rays (knee and hip height, 5 directions): distance to the
+                                   * first box over 1.5 m (1: nothing within reach) */
+#define OBS_DIM (OBS_BASE + OBS_GOAL + NB + NB - 1 + OBS_GRIP + OBS_PROBE)   /* then touch: each body's mean contact force over the step / body
                                                        weight; then muscle sense: each joint's activation (drive torque / strength);
                                                        then grip */
 #define CTRL_HZ 30
@@ -75,6 +78,8 @@ typedef struct {
     double act_mul;      /* joint ranges times this (0 = 1) */
     const Clip *style[8]; int nstyle;   /* floor tasks: motion style prior (env_style_prepare each first) */
     double style_start;  /* TASK_GETUP: share of episodes starting in a random frame of a style clip */
+    int free_heading;    /* TASK_IMITATE: imitate the clip's style, not its path: posture, limbs and speed in her own heading frame;
+                          * only a fall ends the episode (not drifting off the clip's line), so she learns to recover */
     double goal_tops;    /* TASK_GOTO: share of goals put on top of a room box (a stair landing, platform, foam, stone; at most
                           * 0.8 m up), the rest on open floor; 0 = 0.3 */
     double goal_cone;    /* TASK_GOTO: goals are drawn within this angle (rad) of her heading; 0 = any direction (a curriculum:

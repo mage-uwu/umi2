@@ -69,9 +69,10 @@ def main():
     A("--gamma", type=float, default=0.95); A("--lam", type=float, default=0.95); A("--ent", type=float, default=0)
     A("--device", default="cuda" if torch.cuda.is_available() else "cpu"); A("--cpu-physics", action="store_true")
     A("--assist-auto", action="store_true", help="adapt the assist: down by 15%% (at least 0.005) while episodes last over 60%% of their length, up 0.02 (to --assist at most) under 30%%")
-    A("--fresh-inputs", default="", help="on --load: inputs the loaded policy never saw vary (always zero in its task), as groups: goal, grip, touch, "
+    A("--fresh-inputs", default="", help="on --load: inputs the loaded policy never saw vary (always zero in its task), as groups: goal, grip, probe, touch, "
       "muscle; their weights are zeroed and their normaliser starts afresh, so the policy starts out acting exactly as it did "
       "(e.g. 'goal,grip' when a walk imitation prior starts go-to)")
+    A("--free-heading", type=int, default=0, help="imitation: imitate the clip's style, not its path (posture, limbs, speed in her own heading frame); only falls end episodes")
     A("--goal-tops", type=float, default=0, help="go-to: share of goals on top of room boxes (terrain); 0 = 0.3")
     A("--goal-cone", type=float, default=0, help="go-to: goals within this angle (rad) of her heading; 0 = any")
     A("--room", default=os.path.join(HERE, "../room.json"), help="room.json (physics_gym); '' for the empty floor")
@@ -80,7 +81,7 @@ def main():
     dev = torch.device(a.device)
     Pool = ge.GpuPool if dev.type == "cuda" and not a.cpu_physics else ge.CpuPool
     pool = Pool(a.envs, task=a.task, mref=a.mref, style=a.style, assist=a.assist, push=a.push, act_mul=a.act_mul, steps=a.steps,
-                style_start=a.style_start, sway=a.sway, arm_tone=a.arm_tone, goal_cone=a.goal_cone, goal_tops=a.goal_tops, seed=a.seed, device=dev, room=a.room)
+                style_start=a.style_start, sway=a.sway, arm_tone=a.arm_tone, goal_cone=a.goal_cone, goal_tops=a.goal_tops, free_heading=a.free_heading, seed=a.seed, device=dev, room=a.room)
     OBS, ACT, HZ = pool.OBS, pool.ACT, pool.HZ
 
     # the stack
@@ -116,7 +117,7 @@ def main():
         if len(raw) - o >= 4 * (sum(v.size for v in crit.values()) - CH * (OBS - hobs)):
             crit["W1"][:, :hobs] = take(CH * hobs).reshape(CH, hobs); crit["W1"][:, hobs:] = 0
             for k in ("b1", "W2", "b2", "W3", "b3"): crit[k] = take(crit[k].size).reshape(crit[k].shape)
-        GROUPS = {"goal": (216, 220), "touch": (220, 234), "muscle": (234, 247), "grip": (247, 257)}   # env.h OBS layout after OBS_BASE
+        GROUPS = {"goal": (216, 220), "touch": (220, 234), "muscle": (234, 247), "grip": (247, 257), "probe": (257, 273)}   # env.h OBS layout after OBS_BASE
         fresh = [GROUPS[g] for g in a.fresh_inputs.split(",") if g]
         for lo, hi in fresh:   # never varied in the prior's training: start them at zero effect, the normaliser at (0, 1)
             ends["Win"][:, lo:hi] = 0; crit["W1"][:, lo:hi] = 0; mean[lo:hi] = 0; sd[lo:hi] = 1

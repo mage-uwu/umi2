@@ -11,8 +11,10 @@ Principles that hold at every stage:
   is a line-for-line twin. What the viewer draws is what is simulated (room.json boxes, nothing else).
 - **Realism comes from the body, not the reward.** Joint ranges, muscle strength, how fast force rises and an energy
   cost are physics and observation; rewards say what to do, not how to look.
-- **Feel, don't see.** Terrain is sensed through touch, muscle effort and (later) a handful of cheap probes; no
-  height maps or rendered views in the policy's input.
+- **Feel, and glance.** Terrain is sensed through touch and muscle effort, plus 16 cheap probes (the ground at 6 points
+  ahead, 10 short rays at knee and hip height, from the same room queries the physics uses); no height maps or
+  rendered views. (Touch alone was not enough: in the cluttered room a blind walker trips over boxes it only learns
+  about on contact, falling in 98% of episodes.)
 - **Clean data for the true run.** Everything that ships is trained only on mocap we may use in products.
 - **Short GPU runs with a parity check first.** Every pod job re-proves CPU/GPU bit-identity before training.
 
@@ -64,6 +66,12 @@ commands); real-time in the browser (WASM, many characters at once); robustness 
 Exit: unseen procedural rooms, goals anywhere, more than 80 % reached without falling.
 
 ## Status
+
+- **Go-to diagnosis.** Three problems behind go-to collapsing without assist, and their fixes: (1) a warm-start bug:
+  inputs the walk never saw vary (goal, grip) had untrained weights and fed saturated values in go-to (open-floor
+  falls 98% -> 4% once zeroed; ppo_gpu --fresh-inputs); (2) the walk falls in 98% of 20 s episodes under its own
+  exploration noise, because the 0.6 m drift stop ended noisy episodes before they became falls (fix: free-heading
+  imitation, ppo_gpu --free-heading 1, where only falls end episodes, plus pushes); (3) blind in clutter (fix: probes).
 
 - **Fixed: CMU retargeting crossed the legs.** tools/cmu_to_ref.py copied each CMU bone's global rotation onto her
   body, but the two skeletons' rest poses point the bones differently (CMU's femurs slant 20 degrees outward, hers
