@@ -16,13 +16,15 @@ in commercially-sold products, but you may not resell this data directly, even i
 
     python3 tools/cmu_library.py --index        (fetch the motion index)
     python3 tools/cmu_library.py [--jobs 6]     (fetch and convert every trial, then pack)
+    python3 tools/cmu_library.py --fps 30 --name cmu30 --subset walk,run,jump,...   (trials whose description has a
+        keyword, at most --per-keyword each, at 30 Hz: for inverse dynamics, which needs finer time steps)
 """
 import argparse, html, json, os, re, subprocess, sys, tempfile, urllib.request
 from concurrent.futures import ThreadPoolExecutor
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE)
-OUT = os.path.join(ROOT, "data", "clean"); PARTS = os.path.join(OUT, "cmu_parts")
+OUT = os.path.join(ROOT, "data", "clean"); PARTS = os.path.join(OUT, "cmu_parts"); STEP = 12   # 120 Hz -> 10 Hz
 sys.path.insert(0, HERE)
 import cmu_to_ref as c2r
 
@@ -57,7 +59,7 @@ def one(tr, tmp):
     if not os.path.exists(asf) and not get(f"{SITE}/subjects/{s}/{s}.asf", asf): return tr["id"], "no asf"
     if not get(f"{SITE}/subjects/{s}/{tr['id']}.amc", amc): return tr["id"], "no amc"
     try:
-        frames, fps, scale = c2r.convert(asf, amc, step=12)   # 120 Hz -> 10 Hz
+        frames, fps, scale = c2r.convert(asf, amc, step=STEP)
         q = np.array([[qq for qq in f[1]] for f in frames], np.float32); r = np.array([f[0] for f in frames], np.float32)
         if not np.isfinite(q).all() or len(q) < 2: raise ValueError("bad frames")
         np.savez(part, q=q.astype(np.float16), root=r.astype(np.float16)); return tr["id"], f"{len(q)} frames"
@@ -68,10 +70,20 @@ def one(tr, tmp):
 
 
 def main():
+    global PARTS, STEP
     ap = argparse.ArgumentParser(); ap.add_argument("--index", action="store_true"); ap.add_argument("--jobs", type=int, default=6)
+    ap.add_argument("--fps", type=int, default=10); ap.add_argument("--name", default="cmu"); ap.add_argument("--subset", default="")
+    ap.add_argument("--per-keyword", type=int, default=60)
     a = ap.parse_args()
     if a.index: return index()
+    STEP = 120 // a.fps; PARTS = os.path.join(OUT, a.name + "_parts")
     trials = json.load(open(os.path.join(OUT, "cmu_index.json"))); os.makedirs(PARTS, exist_ok=True)
+    if a.subset:   # up to per-keyword trials for each keyword, spread over subjects (every k-th match)
+        pick = []
+        for kw in a.subset.split(","):
+            m = [t for t in trials if kw in t["desc"].lower() and t not in pick]; k = max(1, len(m) // a.per_keyword)
+            pick += m[::k][:a.per_keyword]
+        trials = pick
     with tempfile.TemporaryDirectory() as tmp, ThreadPoolExecutor(a.jobs) as ex:
         for k, (tid, msg) in enumerate(ex.map(lambda t: one(t, tmp), trials)):
             print(f"{k + 1}/{len(trials)} {tid}: {msg}", flush=True)
@@ -81,9 +93,9 @@ def main():
         if not os.path.exists(p): continue
         z = np.load(p); Q.append(z["q"]); R.append(z["root"]); T.append(np.full(len(z["q"]), len(man), np.int16))
         man.append(dict(tr, frames=int(len(z["q"]))))
-    np.savez(os.path.join(OUT, "cmu_library.npz"), q=np.concatenate(Q), root=np.concatenate(R), trial=np.concatenate(T))
-    json.dump({"source": SITE, "fps": 10, "terms": "free for research; may be included in commercially-sold products; may not be resold, even converted",
-               "trials": man}, open(os.path.join(OUT, "cmu_library.json"), "w"), indent=0)
+    np.savez(os.path.join(OUT, a.name + "_library.npz"), q=np.concatenate(Q), root=np.concatenate(R), trial=np.concatenate(T))
+    json.dump({"source": SITE, "fps": a.fps, "terms": "free for research; may be included in commercially-sold products; may not be resold, even converted",
+               "trials": man}, open(os.path.join(OUT, a.name + "_library.json"), "w"), indent=0)
     print(f"packed {len(man)} trials, {sum(m['frames'] for m in man)} frames")
 
 

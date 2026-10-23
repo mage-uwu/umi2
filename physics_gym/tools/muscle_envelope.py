@@ -1,7 +1,10 @@
 """muscle_envelope.py: how strong and how quick each joint's muscles are in the motion capture, on this body.
 
-Inverse dynamics of the capture clips (data/motions_ref.bin: walk, run, dance, bows, waves; her feet are the
-only contacts) on the simulated body (its 14 boxes, 45 kg, masses and inertias as body.c computes them): each
+Inverse dynamics of the clean capture library (data/clean/cmu30_library.npz: about 550 CMU trials of walking,
+running, jumping, dance, climbing, acrobatics, kicks, lifting, getting up, ... at 30 Hz; tools/cmu_library.py
+--fps 30 --name cmu30), or with --dev the development clips (data/motions_ref.bin, Bandai Namco, CC BY-NC); her
+feet are taken as the only contacts (hands on the floor or a bar are not modelled, so those trials' arm torques are
+low and their leg torques high; the percentiles below are robust to that) on the simulated body (its 14 boxes, 45 kg, masses and inertias as body.c computes them): each
 frame's pose by forward kinematics (as body.c world_pose), velocities and accelerations by central differences,
 the ground's push shared between the feet on the ground, then the Newton-Euler recursion from the hands, head and
 feet up to the pelvis gives the torque each joint's muscles must make, and how fast it changes. Every clip is
@@ -16,7 +19,7 @@ muscle_envelope.json and the muscles' limits for the physics (muscle.h for body.
   slew (N m/s): how fast the joint's torque may rise (activation dynamics): the larger of 10 x strength per
       second (about 0.1 s from rest to full force) and the capture's 95th percentile rate.
 
-    python3 tools/muscle_envelope.py
+    python3 tools/muscle_envelope.py [--dev]
 """
 import json, math, os, re, sys
 import numpy as np
@@ -106,8 +109,18 @@ def depth(i):
     return d
 
 
+def library():   # cmu30_library.npz as clips: name -> root, q, fps
+    z = np.load(os.path.join(ROOT, "data", "clean", "cmu30_library.npz")); man = json.load(open(os.path.join(ROOT, "data", "clean", "cmu30_library.json")))
+    Q = z["q"].astype(np.float64); Q /= np.linalg.norm(Q, axis=-1, keepdims=True); R = z["root"].astype(np.float64)
+    cuts = np.flatnonzero(np.diff(z["trial"])) + 1; out = {}
+    for q, r, t in zip(np.split(Q, cuts), np.split(R, cuts), np.split(z["trial"], cuts)):
+        if len(q) >= 30: out[man["trials"][int(t[0])]["id"]] = dict(root=r, q=q, fps=man["fps"])
+    return out
+
+
 def main():
-    clips = ge.load_mref(os.path.join(ROOT, "data", "motions_ref.bin")); tau = []; rate = []
+    dev = "--dev" in sys.argv
+    clips = ge.load_mref(os.path.join(ROOT, "data", "motions_ref.bin")) if dev else library(); tau = []; rate = []
     for name, c in clips.items():
         for root, q in ((c["root"], c["q"]), mirror_clip(c["root"], c["q"])):
             T = inverse_dynamics(root, q, c["fps"])[3:-3]   # the ends lack proper differences
@@ -119,7 +132,7 @@ def main():
         t50, t95, t99 = np.percentile(tau[:, i], [50, 95, 99]); r50, r95, r99 = np.percentile(rate[:, i], [50, 95, 99])
         out[NAMES[i]] = {k: round(float(v), 2) for k, v in (("tau50", t50), ("tau95", t95), ("tau99", t99), ("rate50", r50), ("rate95", r95), ("rate99", r99))}
         print(f"{NAMES[i]:8s} {t50:7.1f} {t95:7.1f} {t99:7.1f} {r50:8.0f} {r95:8.0f} {r99:8.0f}")
-    json.dump({"source": "data/motions_ref.bin, inverse dynamics on the 45 kg body, mirrored", "frames": int(len(tau)), "joints": out},
+    json.dump({"source": ("data/motions_ref.bin" if dev else f"data/clean/cmu30_library.npz ({len(clips)} CMU trials)") + ", inverse dynamics on the 45 kg body, mirrored", "frames": int(len(tau)), "joints": out},
               open(os.path.join(ROOT, "muscle_envelope.json"), "w"), indent=1)
     strength = [0.0] + [max(MVC[n.split("_")[-1]], out[n]["tau95"]) for n in NAMES[1:]]
     slew = [0.0] + [max(10 * strength[i], out[NAMES[i]]["rate95"]) for i in range(1, NB)]
