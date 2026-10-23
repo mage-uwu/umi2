@@ -392,7 +392,7 @@ function springs(t) {
 function reset() {
   springSettle = 2;
   focus.set(0, 0.85, 0);
-  world = new World(45, 20, 1 / CTRL_HZ);
+  world = new World(45, 20, 1 / CTRL_HZ); letGo = null; steadyAt = null;
   if (SKILLS[skill].armTone) for (const i of [B.L_UARM, B.L_FARM, B.R_UARM, B.R_FARM]) world.tone[i] = SKILLS[skill].armTone;
   mode = 'skill'; clip = SKILLS[skill].clip && clips ? clips[SKILLS[skill].clip] : null;   // getting up drops the clip
   if (clip) ref = poseFromClip(world, clip, 0).rel;
@@ -477,9 +477,10 @@ addEventListener('keydown', e => { if (e.target.closest?.('input, textarea')) re
 function control() {
   const phase = clip ? 2 * Math.PI * world.t / clip.T : 0;
   const floor = mode === 'getup' || SKILLS[skill].floor, pol = mode === 'getup' ? getupPolicy : policy;
+  world.assist = 0;   // set afresh each step (a clip's support, or the steadying hand while a limb is held)
   if (clip) setAssist(world, clip, world.t, fallenAt < 0 ? SKILLS[skill].assist || 0 : 0);
   if (fallenAt < 0 && pol) applyAction(world, ref, pol.act(observe(world, phase, floor)), floor ? GETUP.actMul : 1);
-  prev = snapshot(); world.step();
+  easeGrab(); aimLimb(); prev = snapshot(); world.step();
   hist.push({ t: world.t, s: snapshot() }); if (hist.length > 12) hist.shift();
   if (clip) ref = clip.at(world.t).rel;
   else if (mode === 'skill' && SKILLS[skill].sway) ref = swayPose(world.t, SKILLS[skill].sway);
@@ -660,9 +661,11 @@ document.getElementById('stage').addEventListener('pointerdown', e => {
   const from = right.multiplyScalar(dx).add(fwd.multiplyScalar(-dy * 0.6));   // the side the click came from
   push([-from.x, -from.z]);
 });
-// Grab: press on a body part (the physics box under the cursor, or the nearest on screen) and drag. A damped
-// spring pulls that point toward the cursor, which moves in the plane through it facing the camera; her
-// controller fights back. The force is capped (about her body weight).
+// Grab: press on a body part (the physics box under the cursor, or the nearest on screen) and drag, like guiding
+// a limb. A held arm or leg is steered by its joints: the shoulder (hip) aims the limb at the cursor and the
+// elbow (knee) bends to the distance, and her muscles carry it there (aimLimb); a held head turns toward it. A
+// light damped spring (at most 15 N on a limb, 40 N on the trunk) adds a nudge; the held point follows the cursor smoothly (about
+// 0.15 s), in the plane through it facing the camera. Her other joints keep balancing as before.
 let clickMode = 'push';
 for (const [id, m] of [['c-push', 'push'], ['c-grab', 'grab']]) document.getElementById(id).onclick = () => {
   clickMode = m; setPressed('#c-push, #c-grab', document.getElementById(id)); document.getElementById('stage').style.cursor = m === 'grab' ? 'grab' : '';
@@ -674,11 +677,79 @@ const grabRay = new THREE.Raycaster(), grabPlane = new THREE.Plane();
 function rayAt(e) { const r = document.getElementById('stage').getBoundingClientRect(); grabRay.setFromCamera({ x: (e.clientX - r.left) / r.width * 2 - 1, y: -((e.clientY - r.top) / r.height * 2 - 1) }, camera); }
 function grabStart(i, point) {
   const b = world.b[i], local = math.qrot(math.qconj(b.q), math.vsub(point, b.x));
-  world.grab = { body: i, r: local, target: point.slice(), k: 900, c: 90, max: 450 };
+  const limb = i === B.HEAD || i in LIMBS;   // a limb is steered by its joints; the spring only nudges it
+  world.grab = { body: i, r: local, target: point.slice(), goal: point.slice(), k: limb ? 60 : 150, c: limb ? 10 : 25, max: limb ? 15 : 40 };
   grabPlane.setFromNormalAndCoplanarPoint(camera.getWorldDirection(new THREE.Vector3()).negate(), new THREE.Vector3(...point));
   emit('grab', { body: BODY_DEFS[i].name });
 }
-function grabEnd() { if (world?.grab) { world.grab = null; emit('release', {}); } grabLine.visible = grabDot.visible = false; }
+// On release the held joints hand back to her controller gradually (over 1.2 s), not with a swing.
+let letGo = null;
+function grabEnd() {
+  if (world?.grab) { const g = world.grab, L = LIMBS[g.body], js = g.body === B.HEAD ? [B.HEAD] : L ? [L[0], L[1]] : [];
+    letGo = { t: world.t, q: js.map(j => [j, world.target[j].slice()]), leg: isLeg(g.body) }; world.grab = null; emit('release', {});
+  }
+  grabLine.visible = grabDot.visible = false;
+}
+const qslerp = (a, b, t) => { if (math.vdot([a[1], a[2], a[3]], [b[1], b[2], b[3]]) + a[0] * b[0] < 0) b = b.map(v => -v); return math.qnorm(a.map((v, i) => v + t * (b[i] - v))); };
+// The held limb's joint targets, aimed at the held point's target (after the controller's): each limb is a
+// root joint (shoulder, hip) and a hinge (elbow, knee) of lengths l1, l2.
+const LIMBS = {
+  [B.L_UARM]: [B.L_UARM, B.L_FARM, 0.22, 0.30], [B.L_FARM]: [B.L_UARM, B.L_FARM, 0.22, 0.30],
+  [B.R_UARM]: [B.R_UARM, B.R_FARM, 0.22, 0.30], [B.R_FARM]: [B.R_UARM, B.R_FARM, 0.22, 0.30],
+  [B.L_THIGH]: [B.L_THIGH, B.L_SHIN, 0.36, 0.42], [B.L_SHIN]: [B.L_THIGH, B.L_SHIN, 0.36, 0.42], [B.L_FOOT]: [B.L_THIGH, B.L_SHIN, 0.36, 0.42],
+  [B.R_THIGH]: [B.R_THIGH, B.R_SHIN, 0.36, 0.42], [B.R_SHIN]: [B.R_THIGH, B.R_SHIN, 0.36, 0.42], [B.R_FOOT]: [B.R_THIGH, B.R_SHIN, 0.36, 0.42],
+};
+const arcQ = (a, b) => { const c = math.vcross(a, b); return math.qnorm([1 + math.vdot(a, b), c[0], c[1], c[2]]); };
+const restAxis = i => { const d = BODY_DEFS[i], v = math.vsub(d.center, d.anchor), n = Math.hypot(...v); return v.map(x => x / n); };
+function anchorOf(i) { const d = BODY_DEFS[i], p = world.b[d.parent], pd = BODY_DEFS[d.parent]; return math.vadd(p.x, math.qrot(p.q, math.vsub(d.anchor, pd.center))); }
+// joint target turning body i (child of a body with world rotation qp) from where it points now to point along
+// unit world direction dir, by the smallest swing (no twist of its own is added)
+const aimTarget = (i, qp, dir) => { const q = world.b[i].q, now = math.qrot(q, restAxis(i)); return math.qmul(math.qconj(qp), math.qmul(arcQ(now, dir), q)); };
+// While a limb is held, and fading out over 1.5 s after (2.5 s for a leg), a light steadying hand keeps her trunk upright (her
+// controller never learned to have its arms moved for it): only the pelvis tilt is held, not where she is.
+// (Holding a leg means she stands on the other one, which she never learned: then her pelvis is held in place
+// too, as you would hold someone while lifting their leg.)
+let steadyAt = null;
+function steady(w, leg) {
+  if (w <= 0 || world.assist > 0) return;
+  const p = world.b[0], f = math.qrot(p.q, [0, 0, 1]);
+  if (leg) { steadyAt ||= p.x.slice(); world.assist = 0.35 * w; world.assistX = steadyAt; world.assistV = [0, 0, 0]; }
+  else { world.assist = 0.06 * w; world.assistX = p.x.slice(); world.assistV = p.v.slice(); }
+  world.assistQ = math.qexp([0, Math.atan2(f[0], f[2]), 0]);
+}
+const isLeg = i => [B.L_THIGH, B.L_SHIN, B.L_FOOT, B.R_THIGH, B.R_SHIN, B.R_FOOT].includes(i);
+function aimLimb() {
+  const g = world?.grab;
+  if (!g) {
+    if (letGo) {
+      const w = 1 - (world.t - letGo.t) / 1.2; if (w > 0) for (const [j, q] of letGo.q) world.target[j] = qslerp(world.target[j], q, w);
+      const ws = 1 - (world.t - letGo.t) / (letGo.leg ? 2.5 : 1.5); if (ws <= 0) { letGo = null; steadyAt = null; } else steady(ws, letGo.leg);
+    }
+    return;
+  }
+  letGo = null; steady(1, isLeg(g.body));
+  if (g.body === B.HEAD) {   // the head turns toward the point, within about 50 degrees of her chest's up
+    const a = anchorOf(B.HEAD), v = math.vsub(g.target, a), n = Math.hypot(...v); if (n < 1e-6) return;
+    let d = v.map(x => x / n); const up = math.qrot(world.b[B.CHEST].q, [0, 1, 0]), ang = Math.acos(Math.min(1, Math.max(-1, math.vdot(up, d))));
+    if (ang > 0.87) { const k = 0.87 / ang; d = up.map((u, j) => u + k * (d[j] - u)); const m = Math.hypot(...d); d = d.map(x => x / m); }
+    world.target[B.HEAD] = aimTarget(B.HEAD, world.b[B.CHEST].q, d); return;
+  }
+  const L = LIMBS[g.body]; if (!L) return;
+  const [root, hinge, l1, l2] = L, a = anchorOf(root), v = math.vsub(g.target, a), dist = Math.min(l1 + l2 - 1e-3, Math.max(0.05, Math.hypot(...v)));
+  const dir = v.map(x => x / Math.hypot(...v));
+  if (g.body === root) { world.target[root] = aimTarget(root, world.b[BODY_DEFS[root].parent].q, dir); return; }
+  // the limb straight at the target, the hinge bent so its length matches the distance
+  const flex = Math.PI - Math.acos(Math.min(1, Math.max(-1, (l1 * l1 + l2 * l2 - dist * dist) / (2 * l1 * l2))));
+  const ac = Math.acos(Math.min(1, Math.max(-1, (l1 * l1 + dist * dist - l2 * l2) / (2 * l1 * dist))));   // the upper bone leans off the line by this
+  const qRoot = aimTarget(root, world.b[BODY_DEFS[root].parent].q, dir);
+  // lean the upper bone off the line toward the side the hinge folds away from (the elbow / knee points that way)
+  const hAxis = BODY_DEFS[hinge].hinge === 1 ? [1, 0, 0] : [0, 1, 0], sign = hinge === B.L_FARM ? -1 : 1;
+  const qRootW = math.qmul(world.b[BODY_DEFS[root].parent].q, qRoot), axisW = math.qrot(qRootW, hAxis);
+  world.target[root] = math.qmul(qRoot, math.qexp(math.vscale(math.qrot(math.qconj(qRootW), axisW), -sign * ac)));
+  world.target[hinge] = math.qexp(math.vscale(hAxis, sign * flex));
+}
+// each control step the spring's target eases toward the cursor (no sudden yank)
+function easeGrab() { const g = world?.grab; if (!g) return; const k = 1 - Math.exp(-1 / CTRL_HZ / 0.15); g.target = g.target.map((v, j) => v + (g.goal[j] - v) * k); }
 const stageG = document.getElementById('stage');
 stageG.addEventListener('pointerdown', e => {
   if (clickMode !== 'grab' || !world || e.button !== 0) return;
@@ -694,13 +765,13 @@ stageG.addEventListener('pointerdown', e => {
 });
 stageG.addEventListener('pointermove', e => {
   if (!world?.grab) return; rayAt(e); const p = new THREE.Vector3();
-  if (grabRay.ray.intersectPlane(grabPlane, p)) world.grab.target = [p.x, Math.max(0.02, p.y), p.z];
+  if (grabRay.ray.intersectPlane(grabPlane, p)) world.grab.goal = [p.x, Math.max(0.02, p.y), p.z];
 });
 for (const n of ['pointerup', 'pointercancel']) stageG.addEventListener(n, () => { if (world?.grab) { grabEnd(); stageG.style.cursor = clickMode === 'grab' ? 'grab' : ''; } });
 function drawGrab() {   // the pull, from the held point to the cursor
   const g = world?.grab; if (!g) { grabLine.visible = grabDot.visible = false; return; }
   const b = world.b[g.body], p = math.vadd(b.x, math.qrot(b.q, g.r));
-  grabLine.geometry.setFromPoints([new THREE.Vector3(...p), new THREE.Vector3(...g.target)]); grabDot.position.set(...g.target);
+  grabLine.geometry.setFromPoints([new THREE.Vector3(...p), new THREE.Vector3(...g.goal)]); grabDot.position.set(...g.goal);
   grabLine.visible = grabDot.visible = true;
 }
 addEventListener('keydown', e => {
@@ -743,7 +814,7 @@ window.umiBody = {
   get skills() { return Object.keys(SKILLS); },
   face(set = {}) { if ('follow' in set) { face.follow = !!set.follow; document.getElementById('f-follow').setAttribute('aria-pressed', String(face.follow)); } if ('mouth' in set) { face.mouthTarget = Math.max(0, Math.min(1, +set.mouth)); document.getElementById('f-mouth').setAttribute('aria-pressed', String(face.mouthTarget > 0)); } return { follow: face.follow, mouth: face.mouthTarget }; },
   blink,
-  grab(name, target) { const i = BODY_DEFS.findIndex(d => d.name === name || d.bone === name); if (i < 0 || !world) return false; if (world.grab?.body !== i) grabStart(i, world.b[i].x.slice()); world.grab.target = target.slice(); return true; },   // held at its centre
+  grab(name, target) { const i = BODY_DEFS.findIndex(d => d.name === name || d.bone === name); if (i < 0 || !world) return false; if (world.grab?.body !== i) grabStart(i, world.b[i].x.slice()); world.grab.goal = target.slice(); return true; },   // held at its centre
   release: () => grabEnd(),
   play: useSkill, push: (...a) => world && push(...a), reset: () => world && reset(), standUp: () => world && getUp('Getting up.'),
   on(ev, fn) { (listeners[ev] ||= []).push(fn); return () => { listeners[ev] = listeners[ev].filter(f => f !== fn); }; },
