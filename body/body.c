@@ -102,6 +102,7 @@ static void substep(World *W) {
         Body *b = W->b + i;
         b->v.y -= h * G_ACC;
         if (i == W->push_body && W->push_left > 0) b->v = vadd(b->v, vscale(W->push_force, h * b->inv_mass));
+        if (i == PELVIS) { b->v = vadd(b->v, vscale(W->assist_f, h * b->inv_mass)); b->w = vadd(b->w, vscale(inv_I(b, W->assist_t), h)); }
         b->xprev = b->x; b->x = vadd(b->x, vscale(b->v, h));
         /* gyroscopic term, body frame */
         Vec wl = qrot(qconj(b->q), b->w), Il = v3(wl.x / b->inv_inertia.x, wl.y / b->inv_inertia.y, wl.z / b->inv_inertia.z);

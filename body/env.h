@@ -31,6 +31,8 @@ typedef struct {
     int steps;           /* episode length in control steps */
     double init_noise;   /* random joint rotation at reset (rad) */
     int fixed_start;     /* TASK_IMITATE: start at phase 0 instead of a random phase */
+    double assist;       /* TASK_IMITATE training aid: strength (0..1) of a spring-damper pulling the pelvis
+                          * toward the reference root position and rotation; 0 for the final skill */
 } TaskCfg;
 
 typedef struct {

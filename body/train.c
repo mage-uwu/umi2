@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
         OPT("--policy", ptype, (const char *)) OPT("--out", out, (const char *)) OPT("--load", in, (const char *))
         OPT("--seconds", seconds, atof) OPT("--sigma", sigma, atof) OPT("--lr", lr, atof) OPT("--pairs", pairs, atoi)
         OPT("--threads", threads, atoi) OPT("--seed", seed, atoi) OPT("--hidden", hidden, atoi)
-        OPT("--push", tc.push_max, atof) OPT("--steps", tc.steps, atoi) OPT("--task", task, (const char *)) OPT("--mref", mref, (const char *))
+        OPT("--push", tc.push_max, atof) OPT("--steps", tc.steps, atoi) OPT("--task", task, (const char *)) OPT("--assist", tc.assist, atof) OPT("--mref", mref, (const char *))
 #undef OPT
         fprintf(stderr, "unknown argument %s\n", a); return 2;
     }

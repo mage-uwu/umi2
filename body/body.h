@@ -44,6 +44,7 @@ typedef struct {
     int substeps, iters;   /* joint solver iterations per substep */
     double t, kp_scale, kd_scale;   /* muscle strength multipliers (1 = BODY_DEFS) */
     Vec push_force; int push_body; double push_left;   /* an external push (N) on one body for push_left s */
+    Vec assist_f, assist_t;    /* training aid: external force (N) and torque (N m) on the pelvis, held for the step */
 } World;
 
 extern const BodyDef BODY_DEFS[NB];
