@@ -174,7 +174,7 @@ int main(int argc, char **argv) {
         OPT("--seconds", seconds, atof) OPT("--lr", lr, atof) OPT("--head-lr", hlr, atof) OPT("--vlr", vlr, atof) OPT("--clip", clipr, atof)
         OPT("--log-std", log_std0, atof) OPT("--threads", threads, atoi) OPT("--envs", nenv, atoi) OPT("--horizon", hor, atoi)
         OPT("--epochs", epochs, atoi) OPT("--minibatches", mb, atoi) OPT("--seed", seed, atoi) OPT("--width", d, atoi) OPT("--depth", depth, atoi) OPT("--trees", trees, atoi)
-        OPT("--push", tc.push_max, atof) OPT("--act-mul", tc.act_mul, atof) OPT("--style", style_arg, (const char *)) if (!strcmp(a, "--steps") && v) { tc.steps = atoi(v); steps_set = 1; i++; continue; } OPT("--assist", tc.assist, atof) OPT("--sway", tc.sway, atof) OPT("--arm-tone", tc.arm_tone, atof)
+        OPT("--push", tc.push_max, atof) OPT("--act-mul", tc.act_mul, atof) OPT("--style", style_arg, (const char *)) OPT("--style-start", tc.style_start, atof) if (!strcmp(a, "--steps") && v) { tc.steps = atoi(v); steps_set = 1; i++; continue; } OPT("--assist", tc.assist, atof) OPT("--sway", tc.sway, atof) OPT("--arm-tone", tc.arm_tone, atof)
 #undef OPT
         fprintf(stderr, "unknown argument %s\n", a); return 2;
     }

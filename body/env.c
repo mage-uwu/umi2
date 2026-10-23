@@ -73,6 +73,18 @@ static void settle_to_ground(World *W) {
 /* Start states on the floor: on all fours (with noise), or where a limp fall from standing left her. */
 static void floor_reset(Env *E) {
     World *W = &E->W; Quat rel[NB], rq;
+    if (E->cfg.task == TASK_GETUP && E->cfg.nstyle && env_rand(&E->rng) < E->cfg.style_start) {
+        /* start in the pose of a random moment of a person getting up (reference state initialisation): from
+         * lying to nearly up, so every stage of rising gets practised; the heading is random */
+        const Clip *c = E->cfg.style[(int)(env_rand(&E->rng) * E->cfg.nstyle) % E->cfg.nstyle];
+        Quat wq[NB]; Vec root; mref_sample(c, env_rand(&E->rng) * (c->frames - 1) / c->fps, &root, wq, rel);
+        rq = qmul(qexp(v3(0, env_rand(&E->rng) * 2 * M_PI, 0)), wq[PELVIS]);
+        world_pose(W, v3(0, 1, 0), rq, rel, v3(0, 0, 0));
+        for (int i = 0; i < NB; i++) W->target[i] = rel[i];
+        settle_to_ground(W);
+        for (int s = 0; s < 3; s++) world_step(W);
+        W->t = 0; stand_pose(E->ref); return;
+    }
     const int fall = E->cfg.task == TASK_GETUP && env_rand(&E->rng) < 0.6;
     crawl_pose(rel, &rq);
     if (fall) stand_pose(rel), rq = QID;
