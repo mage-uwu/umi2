@@ -89,7 +89,9 @@ static BHD void floor_reset(Env *E) {
     crawl_pose(rel, &rq);
     if (fall) stand_pose(rel), rq = QID;
     for (int i = 1; i < NB; i++) {
-        Vec n = v3(env_randn(&E->rng), env_randn(&E->rng), env_randn(&E->rng));
+        /* drawn z, y, x: the order gcc evaluated the three calls in when they were arguments of v3 (an order C leaves
+         * open, and nvcc picks differently), so the CPU episodes stay as they were and the GPU build matches them */
+        const double nz = env_randn(&E->rng), ny = env_randn(&E->rng), nx = env_randn(&E->rng); Vec n = v3(nx, ny, nz);
         if (BODY_DEFS[i].hinge) n = vscale(hinge_axis(BODY_DEFS[i].hinge), n.x);
         rel[i] = qmul(rel[i], qexp(vscale(n, 0.15)));
     }
@@ -143,7 +145,9 @@ BHD void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
     stand_pose(E->ref);
     Quat rel[NB];
     for (int i = 0; i < NB; i++) {
-        Vec n = v3(env_randn(&E->rng), env_randn(&E->rng), env_randn(&E->rng));
+        /* drawn z, y, x: the order gcc evaluated the three calls in when they were arguments of v3 (an order C leaves
+         * open, and nvcc picks differently), so the CPU episodes stay as they were and the GPU build matches them */
+        const double nz = env_randn(&E->rng), ny = env_randn(&E->rng), nx = env_randn(&E->rng); Vec n = v3(nx, ny, nz);
         if (BODY_DEFS[i].hinge) n = vscale(hinge_axis(BODY_DEFS[i].hinge), n.x);
         rel[i] = i ? qmul(E->ref[i], qexp(vscale(n, cfg->init_noise))) : QID;
         E->W.target[i] = E->ref[i];

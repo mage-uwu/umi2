@@ -26,11 +26,12 @@ for name in a.cases.split(","):
     kw = CASES[name]
     g = ge.GpuPool(a.n, seed=3, **kw); c = ge.CpuPool(a.n, seed=3, **kw)
     gen = torch.Generator().manual_seed(11)
-    first = None; exact_steps = 0; worst_obs = 0.0; done_mismatch = 0; rew_diff = 0.0; episodes = 0
+    first = None; at = {}; exact_steps = 0; worst_obs = 0.0; done_mismatch = 0; rew_diff = 0.0; episodes = 0
     o0 = (g.obs().cpu() - c.obs()).abs().max().item()
     for t in range(a.steps):
         og, oc = g.obs().cpu(), c.obs()
         dobs = (og - oc).abs().max().item(); worst_obs = max(worst_obs, dobs)
+        if t in (1, 3, 10, 30, 100, 300): at[t] = dobs
         act = (torch.rand(a.n, g.ACT, generator=gen) * 2 - 1)
         rg, rc = g.step(act.cuda()), c.step(act)
         dr = (rg["rew"].cpu() - rc["rew"]).abs().max().item(); rew_diff = max(rew_diff, dr)
@@ -41,3 +42,4 @@ for name in a.cases.split(","):
     print(f"{name:8s} {a.n} envs x {a.steps} steps: initial obs diff {o0:.1e}; bit-identical steps {exact_steps}/{a.steps}"
           f" (first difference at step {first}); worst obs diff {worst_obs:.2e}, worst reward diff {rew_diff:.2e};"
           f" done flags differing {done_mismatch} of {episodes} episode ends", flush=True)
+    print("         max obs difference after step " + ", ".join(f"{k}: {v:.1e}" for k, v in sorted(at.items())), flush=True)
