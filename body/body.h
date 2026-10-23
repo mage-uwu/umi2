@@ -22,6 +22,7 @@
 #define BHD
 #define BCONST const
 #endif
+#include "bmath.h"   /* sin, cos, exp, log, atan2 with the same bits on every build (and in body.js) */
 
 #define NB 14          /* bodies */
 #define NJ 13          /* joints: body b>0 hangs from its parent */
@@ -85,12 +86,12 @@ static inline BHD Vec qrot(Quat q, Vec v) {   /* q v q* */
 }
 static inline BHD Quat qexp(Vec r) {          /* rotation vector -> quaternion */
     double a = vlen(r); if (a < 1e-12) { Quat i = {1, r.x * .5, r.y * .5, r.z * .5}; return qnorm(i); }
-    double s = sin(a * .5) / a; Quat q = {cos(a * .5), r.x * s, r.y * s, r.z * s}; return q;
+    double s = b_sin(a * .5) / a; Quat q = {b_cos(a * .5), r.x * s, r.y * s, r.z * s}; return q;
 }
 static inline BHD Vec qlog(Quat q) {          /* quaternion -> rotation vector (shortest) */
     if (q.w < 0) { q.w = -q.w; q.x = -q.x; q.y = -q.y; q.z = -q.z; }
     double s = sqrt(q.x * q.x + q.y * q.y + q.z * q.z); if (s < 1e-12) return v3(2 * q.x, 2 * q.y, 2 * q.z);
-    double a = 2 * atan2(s, q.w); return vscale(v3(q.x, q.y, q.z), a / s);
+    double a = 2 * b_atan2(s, q.w); return vscale(v3(q.x, q.y, q.z), a / s);
 }
 static BCONST Quat QID = {1, 0, 0, 0};
 

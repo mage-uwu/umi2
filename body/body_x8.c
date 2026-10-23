@@ -67,7 +67,7 @@ static V8 qlog8(Q8 q) {   /* body.c qlog_fast */
     const vd s2 = q.x * q.x + q.y * q.y + q.z * q.z, s = vsqrt8(s2), t2 = s2 / (q.w * q.w);
     vd f = S(2) / q.w * (S(1) + t2 * (S(-1.0 / 3) + t2 * (S(1.0 / 5) + t2 * (S(-1.0 / 7) + t2 * (S(1.0 / 9) + t2 * (S(-1.0 / 11) + t2 * (S(1.0 / 13) + t2 * (S(-1.0 / 15) + t2 * S(1.0 / 17)))))))));
     const vl tiny = s < S(1e-12), big = ~(s < S(0.1) * q.w) & ~tiny;
-    if (any(big)) for (int i = 0; i < 8; i++) if (big[i]) f[i] = 2 * atan2(s[i], q.w[i]) / s[i];
+    if (any(big)) for (int i = 0; i < 8; i++) if (big[i]) f[i] = 2 * b_atan2(s[i], q.w[i]) / s[i];
     return selv(tiny, V(S(2) * q.x, S(2) * q.y, S(2) * q.z), scl(V(q.x, q.y, q.z), f));
 }
 static vd genw(const B8 *b, V8 r, V8 n, V8 *k) { V8 rn = crs(r, n); *k = invI(b, rn); return b->inv_mass + dot(rn, *k); }

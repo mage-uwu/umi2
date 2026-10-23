@@ -87,7 +87,7 @@ static BHD Vec qlog_fast(Quat q) {
     if (s < 0.1 * q.w) {   /* 2 atan(t) / s with t = s / w: 2/w (1 - t^2/3 + t^4/5 - ...) */
         const double t2 = s2 / (q.w * q.w);
         f = 2 / q.w * (1 + t2 * (-1.0 / 3 + t2 * (1.0 / 5 + t2 * (-1.0 / 7 + t2 * (1.0 / 9 + t2 * (-1.0 / 11 + t2 * (1.0 / 13 + t2 * (-1.0 / 15 + t2 * (1.0 / 17)))))))));
-    } else f = 2 * atan2(s, q.w) / s;
+    } else f = 2 * b_atan2(s, q.w) / s;
     return vscale(v3(q.x, q.y, q.z), f);
 }
 /* Generalised inverse mass of a body point along n, and the world rotation per unit impulse (I^-1 (r x n)),
