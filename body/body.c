@@ -14,7 +14,7 @@
 #define ASSIST_KR 2000.0   /* N m / rad at full assist */
 /* Rest T-pose, from the VRM humanoid bones (model faces +Z, left = +X). Boxes enclose each segment.
  * Joint gains follow the DeepMimic humanoid (Peng et al. 2018, also about 45 kg); kd = 0.1 kp. */
-const BodyDef BODY_DEFS[NB] = {
+BCONST BodyDef BODY_DEFS[NB] = {
     /* name      bone             parent  anchor                       centre                      half extents            mass   kp    kd  hinge */
     {"pelvis", "hips", -1, {0, 0.928, 0.004}, {0, 0.915, 0.005}, {0.12, 0.07, 0.09}, 0.120, 0, 0, 0},
     {"spine", "spine", PELVIS, {0, 0.980, 0.016}, {0, 1.036, 0.017}, {0.11, 0.055, 0.08}, 0.140, 1000, 100, 0},
@@ -32,7 +32,7 @@ const BodyDef BODY_DEFS[NB] = {
     {"r_foot", "rightFoot", R_SHIN, {-0.076, 0.109, -0.033}, {-0.076, 0.035, 0.035}, {0.04, 0.035, 0.105}, 0.013, 400, 40, 0},
 };
 
-void world_init(World *W, double total_mass, int substeps, double dt) {
+BHD void world_init(World *W, double total_mass, int substeps, double dt) {
     memset(W, 0, sizeof(*W));
     W->total_mass = total_mass; W->substeps = substeps; W->h = dt / substeps; W->mu = 0.9; W->push_body = -1; W->kp_scale = W->kd_scale = 1; W->iters = 4; for (int i = 0; i < NB; i++) W->tone[i] = 1;
     double fsum = 0; for (int i = 0; i < NB; i++) fsum += BODY_DEFS[i].mass_frac;
@@ -45,7 +45,7 @@ void world_init(World *W, double total_mass, int substeps, double dt) {
     }
 }
 
-void world_pose(World *W, Vec root_x, Quat root_q, const Quat *rel, Vec root_v) {
+BHD void world_pose(World *W, Vec root_x, Quat root_q, const Quat *rel, Vec root_v) {
     for (int i = 0; i < NB; i++) {
         const BodyDef *d = BODY_DEFS + i; Body *b = W->b + i;
         if (d->parent < 0) { b->q = root_q; b->x = root_x; }
@@ -60,14 +60,14 @@ void world_pose(World *W, Vec root_x, Quat root_q, const Quat *rel, Vec root_v) 
 }
 
 /* world-space inverse inertia applied to a vector */
-static Vec inv_I(const Body *b, Vec v) {
+static BHD Vec inv_I(const Body *b, Vec v) {
     Vec l = qrot(qconj(b->q), v);
     l = v3(l.x * b->inv_inertia.x, l.y * b->inv_inertia.y, l.z * b->inv_inertia.z);
     return qrot(b->q, l);
 }
 /* Exact rotation by dw. The rotations here are tiny (a substep's worth), where sin and cos are replaced by
  * their series, accurate to double precision below 0.1 rad; larger ones take the library functions. */
-static void rotate_by(Body *b, Vec dw) {
+static BHD void rotate_by(Body *b, Vec dw) {
     const double a2 = vdot(dw, dw); Quat e;
     if (a2 < 1e-2) {
         const double s = 0.5 + a2 * (-1.0 / 48 + a2 * (1.0 / 3840 + a2 * (-1.0 / 645120 + a2 * (1.0 / 185794560))));
@@ -79,7 +79,7 @@ static void rotate_by(Body *b, Vec dw) {
 }
 /* Rotation vector of q (shortest), with atan2 replaced by its series for the small angles of most joint
  * errors (accurate to double precision for s < 0.1 w). */
-static Vec qlog_fast(Quat q) {
+static BHD Vec qlog_fast(Quat q) {
     if (q.w < 0) { q.w = -q.w; q.x = -q.x; q.y = -q.y; q.z = -q.z; }
     const double s2 = q.x * q.x + q.y * q.y + q.z * q.z, s = sqrt(s2);
     if (s < 1e-12) return v3(2 * q.x, 2 * q.y, 2 * q.z);
@@ -92,11 +92,11 @@ static Vec qlog_fast(Quat q) {
 }
 /* Generalised inverse mass of a body point along n, and the world rotation per unit impulse (I^-1 (r x n)),
  * which the solvers reuse to apply the correction. */
-static double gen_w_k(const Body *b, Vec r, Vec n, Vec *k) { Vec rn = vcross(r, n); *k = inv_I(b, rn); return b->inv_mass + vdot(rn, *k); }
+static BHD double gen_w_k(const Body *b, Vec r, Vec n, Vec *k) { Vec rn = vcross(r, n); *k = inv_I(b, rn); return b->inv_mass + vdot(rn, *k); }
 
 /* Positional constraint: move world points p1 (on b1, offset r1 from its centre) and p2 (on b2, or a fixed
  * point when b2 is NULL) to remove violation C along n (n points from p2 to p1). Returns the multiplier. */
-static double solve_pos(Body *b1, Body *b2, Vec r1, Vec r2, Vec n, double C, double alpha, double h, double cap) {
+static BHD double solve_pos(Body *b1, Body *b2, Vec r1, Vec r2, Vec n, double C, double alpha, double h, double cap) {
     Vec k1, k2 = {0, 0, 0}; const double w1 = gen_w_k(b1, r1, n, &k1), w2 = b2 ? gen_w_k(b2, r2, n, &k2) : 0, at = alpha / (h * h);
     if (w1 + w2 + at <= 0) return 0;
     double dl = -C / (w1 + w2 + at);
@@ -107,24 +107,29 @@ static double solve_pos(Body *b1, Body *b2, Vec r1, Vec r2, Vec n, double C, dou
     return dl;
 }
 /* Angular constraint: remove rotation error theta (b1 relative to b2, about unit axis n). */
-static void solve_ang(Body *b1, Body *b2, Vec n, double theta, double alpha, double h) {
+static BHD void solve_ang(Body *b1, Body *b2, Vec n, double theta, double alpha, double h) {
     const Vec k1 = inv_I(b1, n), k2 = inv_I(b2, n);
     const double w = vdot(n, k1) + vdot(n, k2), at = alpha / (h * h);
     const double dl = -theta / (w + at);
     rotate_by(b1, vscale(k1, dl)); rotate_by(b2, vscale(k2, -dl));
 }
 
-static const double CORNER[NCORNER][3] = {{-1, -1, -1}, {1, -1, -1}, {-1, 1, -1}, {1, 1, -1}, {-1, -1, 1}, {1, -1, 1}, {-1, 1, 1}, {1, 1, 1}};
-static Vec corner(int i, int k) { const Vec hf = BODY_DEFS[i].half; return v3(CORNER[k][0] * hf.x, CORNER[k][1] * hf.y, CORNER[k][2] * hf.z); }
+static BCONST double CORNER[NCORNER][3] = {{-1, -1, -1}, {1, -1, -1}, {-1, 1, -1}, {1, 1, -1}, {-1, -1, 1}, {1, -1, 1}, {-1, 1, 1}, {1, 1, 1}};
+static BHD Vec corner(int i, int k) { const Vec hf = BODY_DEFS[i].half; return v3(CORNER[k][0] * hf.x, CORNER[k][1] * hf.y, CORNER[k][2] * hf.z); }
 
 /* Velocity impulse at a body point along unit n changing the point's velocity there by dv. */
-static void vel_impulse(Body *b, Vec r, Vec n, double dv) {
+static BHD void vel_impulse(Body *b, Vec r, Vec n, double dv) {
     Vec k; const double w = gen_w_k(b, r, n, &k); if (w <= 0) return;
     const double j = dv / w;
     b->v = vadd(b->v, vscale(n, j * b->inv_mass)); b->w = vadd(b->w, vscale(k, j));
 }
+#ifdef __CUDACC__
+#define BODY_DEBUG(W, k)
+#else
 void (*body_debug)(World *, int) = 0;
-static void substep(World *W) {
+#define BODY_DEBUG(W, k) if (body_debug) body_debug(W, k)
+#endif
+static BHD void substep(World *W) {
     const double h = W->h;
     int cb[NB * NCORNER], ck[NB * NCORNER], nc = 0; double cl[NB * NCORNER];
     for (int i = 0; i < NB; i++) {
@@ -139,7 +144,7 @@ static void substep(World *W) {
         b->qprev = b->q; rotate_by(b, vscale(b->w, h));
     }
     if (W->push_left > 0) W->push_left -= h;
-    if (body_debug) body_debug(W, 0);
+    BODY_DEBUG(W, 0);
     /* joints: attachment, then hinge alignment, then drive (iterated) */
     for (int it = 0; it < W->iters; it++)
     for (int i = 1; i < NB; i++) {
@@ -164,7 +169,7 @@ static void substep(World *W) {
         if (th > 1e-12) { Vec n = vscale(e, 1 / th); double w = vdot(n, inv_I(p, n)), at = 1 / (W->assist * ASSIST_KR * h * h);
             rotate_by(p, inv_I(p, vscale(n, -th / (w + at)))); }
     }
-    if (body_debug) body_debug(W, 1);
+    BODY_DEBUG(W, 1);
     /* ground contacts (y = 0) at box corners; friction acts in the velocity pass */
     for (int i = 0; i < NB; i++) {
         const Vec hf = BODY_DEFS[i].half; if (W->b[i].x.y * W->b[i].x.y > vdot(hf, hf) && W->b[i].x.y > 0) continue;   /* above its bounding sphere: no corner can touch */
@@ -204,14 +209,14 @@ static void substep(World *W) {
     }
 }
 
-void world_step(World *W) { for (int s = 0; s < W->substeps; s++) substep(W); W->t += W->h * W->substeps; }
+BHD void world_step(World *W) { for (int s = 0; s < W->substeps; s++) substep(W); W->t += W->h * W->substeps; }
 
-Vec world_com(const World *W, Vec *vel) {
+BHD Vec world_com(const World *W, Vec *vel) {
     Vec c = v3(0, 0, 0), v = v3(0, 0, 0); double m = 0;
     for (int i = 0; i < NB; i++) { double mi = 1 / W->b[i].inv_mass; c = vadd(c, vscale(W->b[i].x, mi)); v = vadd(v, vscale(W->b[i].v, mi)); m += mi; }
     if (vel) *vel = vscale(v, 1 / m);
     return vscale(c, 1 / m);
 }
-double world_lowest(const World *W, int i) {
+BHD double world_lowest(const World *W, int i) {
     double lo = 1e9; for (int k = 0; k < NCORNER; k++) { double y = body_point(W->b + i, corner(i, k)).y; if (y < lo) lo = y; } return lo;
 }

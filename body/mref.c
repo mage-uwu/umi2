@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifndef __CUDACC__
 int mref_load(const char *path, Motions *M) {
     FILE *f = fopen(path, "rb"); char mg[4]; int n;
     if (!f || fread(mg, 1, 4, f) != 4 || memcmp(mg, "MREF", 4) || fread(&n, 4, 1, f) != 1) { if (f) fclose(f); return 1; }
@@ -19,12 +20,13 @@ int mref_load(const char *path, Motions *M) {
     fclose(f); return 0;
 }
 const Clip *mref_find(const Motions *M, const char *name) { for (int k = 0; k < M->n; k++) if (!strcmp(M->c[k].name, name)) return M->c + k; return NULL; }
+#endif
 
-static Quat qslerp(Quat a, Quat b, double t) {
+static BHD Quat qslerp(Quat a, Quat b, double t) {
     double d = a.w * b.w + a.x * b.x + a.y * b.y + a.z * b.z; if (d < 0) { b.w = -b.w; b.x = -b.x; b.y = -b.y; b.z = -b.z; d = -d; }
     Quat r = {a.w + t * (b.w - a.w), a.x + t * (b.x - a.x), a.y + t * (b.y - a.y), a.z + t * (b.z - a.z)}; (void)d; return qnorm(r);
 }
-void mref_sample(const Clip *c, double t, Vec *root, Quat *world, Quat *rel) {
+BHD void mref_sample(const Clip *c, double t, Vec *root, Quat *world, Quat *rel) {
     const double T = (c->frames - 1) / c->fps; double u = fmod(t, T); if (u < 0) u += T;
     double x = u * c->fps; int f0 = (int)x; if (f0 >= c->frames - 1) f0 = c->frames - 2; double w = x - f0;
     Quat W[NB];

@@ -192,7 +192,11 @@ def urand_stream(seeds, n):
 class _Draws:
     """Per-sequence position in the stream; layers take their draws in the C order."""
     def __init__(self, seeds, n, device):
-        self.u = torch.from_numpy(urand_stream(seeds, n)).to(device)
+        if torch.device(device).type == "cuda":   # the same stream, generated on the device (tssenv_kernels.cu)
+            import gpu_env
+            self.u = gpu_env.urand_cuda(seeds, n, device)
+        else:
+            self.u = torch.from_numpy(urand_stream(seeds, n)).to(device)
         self.off = torch.zeros(len(seeds), dtype=torch.long, device=device)
 
     def take(self, idx):        # idx [B, ...] offsets from this sequence's position

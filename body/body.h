@@ -13,6 +13,16 @@
 #include <math.h>
 #include <string.h>
 
+/* The same source also builds for the GPU (gpu/tssenv_cuda.cu, one thread per world): there BHD marks device
+ * functions and BCONST device constants. For the CPU both are empty. */
+#ifdef __CUDACC__
+#define BHD __device__
+#define BCONST __device__ const
+#else
+#define BHD
+#define BCONST const
+#endif
+
 #define NB 14          /* bodies */
 #define NJ 13          /* joints: body b>0 hangs from its parent */
 #define NCORNER 8
@@ -50,49 +60,51 @@ typedef struct {
     double assist; Vec assist_x, assist_v; Quat assist_q;
 } World;
 
+#ifndef __CUDACC__   /* the GPU build defines it ahead of every use, in one unit */
 extern const BodyDef BODY_DEFS[NB];
+#endif
 
 /* quaternion / vector helpers */
-static inline Vec v3(double x, double y, double z) { Vec r = {x, y, z}; return r; }
-static inline Vec vadd(Vec a, Vec b) { return v3(a.x + b.x, a.y + b.y, a.z + b.z); }
-static inline Vec vsub(Vec a, Vec b) { return v3(a.x - b.x, a.y - b.y, a.z - b.z); }
-static inline Vec vscale(Vec a, double s) { return v3(a.x * s, a.y * s, a.z * s); }
-static inline double vdot(Vec a, Vec b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
-static inline Vec vcross(Vec a, Vec b) { return v3(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x); }
-static inline double vlen(Vec a) { return sqrt(vdot(a, a)); }
-static inline Quat qmul(Quat a, Quat b) {
+static inline BHD Vec v3(double x, double y, double z) { Vec r = {x, y, z}; return r; }
+static inline BHD Vec vadd(Vec a, Vec b) { return v3(a.x + b.x, a.y + b.y, a.z + b.z); }
+static inline BHD Vec vsub(Vec a, Vec b) { return v3(a.x - b.x, a.y - b.y, a.z - b.z); }
+static inline BHD Vec vscale(Vec a, double s) { return v3(a.x * s, a.y * s, a.z * s); }
+static inline BHD double vdot(Vec a, Vec b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
+static inline BHD Vec vcross(Vec a, Vec b) { return v3(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x); }
+static inline BHD double vlen(Vec a) { return sqrt(vdot(a, a)); }
+static inline BHD Quat qmul(Quat a, Quat b) {
     Quat r = {a.w * b.w - a.x * b.x - a.y * b.y - a.z * b.z, a.w * b.x + a.x * b.w + a.y * b.z - a.z * b.y,
               a.w * b.y - a.x * b.z + a.y * b.w + a.z * b.x, a.w * b.z + a.x * b.y - a.y * b.x + a.z * b.w};
     return r;
 }
-static inline Quat qconj(Quat a) { Quat r = {a.w, -a.x, -a.y, -a.z}; return r; }
-static inline Quat qnorm(Quat a) { double n = sqrt(a.w * a.w + a.x * a.x + a.y * a.y + a.z * a.z); Quat r = {a.w / n, a.x / n, a.y / n, a.z / n}; return r; }
-static inline Vec qrot(Quat q, Vec v) {   /* q v q* */
+static inline BHD Quat qconj(Quat a) { Quat r = {a.w, -a.x, -a.y, -a.z}; return r; }
+static inline BHD Quat qnorm(Quat a) { double n = sqrt(a.w * a.w + a.x * a.x + a.y * a.y + a.z * a.z); Quat r = {a.w / n, a.x / n, a.y / n, a.z / n}; return r; }
+static inline BHD Vec qrot(Quat q, Vec v) {   /* q v q* */
     Vec u = v3(q.x, q.y, q.z), t = vscale(vcross(u, v), 2);
     return vadd(vadd(v, vscale(t, q.w)), vcross(u, t));
 }
-static inline Quat qexp(Vec r) {          /* rotation vector -> quaternion */
+static inline BHD Quat qexp(Vec r) {          /* rotation vector -> quaternion */
     double a = vlen(r); if (a < 1e-12) { Quat i = {1, r.x * .5, r.y * .5, r.z * .5}; return qnorm(i); }
     double s = sin(a * .5) / a; Quat q = {cos(a * .5), r.x * s, r.y * s, r.z * s}; return q;
 }
-static inline Vec qlog(Quat q) {          /* quaternion -> rotation vector (shortest) */
+static inline BHD Vec qlog(Quat q) {          /* quaternion -> rotation vector (shortest) */
     if (q.w < 0) { q.w = -q.w; q.x = -q.x; q.y = -q.y; q.z = -q.z; }
     double s = sqrt(q.x * q.x + q.y * q.y + q.z * q.z); if (s < 1e-12) return v3(2 * q.x, 2 * q.y, 2 * q.z);
     double a = 2 * atan2(s, q.w); return vscale(v3(q.x, q.y, q.z), a / s);
 }
-static const Quat QID = {1, 0, 0, 0};
+static BCONST Quat QID = {1, 0, 0, 0};
 
-void world_init(World *W, double total_mass, int substeps, double dt);
+BHD void world_init(World *W, double total_mass, int substeps, double dt);
 /* Place the bodies by forward kinematics from a root position/rotation and per-joint rotations (child
  * relative to parent), with the given root linear velocity; angular velocities zero. */
-void world_pose(World *W, Vec root_x, Quat root_q, const Quat *rel, Vec root_v);
+BHD void world_pose(World *W, Vec root_x, Quat root_q, const Quat *rel, Vec root_v);
 /* Advance dt = substeps * h, holding the current joint targets. */
-void world_step(World *W);
+BHD void world_step(World *W);
 /* world_step for n <= 8 worlds at once, one per vector lane (body_x8.c); they must share substeps, iters, h */
 void world_step_x8(World **W, int n);
 /* World position of a body's local point (relative to its centre, rest frame). */
-static inline Vec body_point(const Body *b, Vec r) { return vadd(b->x, qrot(b->q, r)); }
-Vec world_com(const World *W, Vec *vel);
-double world_lowest(const World *W, int body);   /* lowest corner height of a body */
+static inline BHD Vec body_point(const Body *b, Vec r) { return vadd(b->x, qrot(b->q, r)); }
+BHD Vec world_com(const World *W, Vec *vel);
+BHD double world_lowest(const World *W, int body);   /* lowest corner height of a body */
 
 #endif

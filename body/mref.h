@@ -10,5 +10,5 @@ int mref_load(const char *path, Motions *M);
 const Clip *mref_find(const Motions *M, const char *name);
 /* Pose at time t (s), looping; outputs root position, body world rotations, and joint rotations (child
  * relative to parent; rel[0] is the root's world rotation). */
-void mref_sample(const Clip *c, double t, Vec *root, Quat *world, Quat *rel);
+BHD void mref_sample(const Clip *c, double t, Vec *root, Quat *world, Quat *rel);
 #endif

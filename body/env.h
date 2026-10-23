@@ -69,21 +69,23 @@ typedef struct {
     float style_prev[STYLE_FEAT]; int style_has_prev;   /* the previous step's pose features (style prior) */
 } Env;
 
+#ifndef __CUDACC__   /* the GPU build defines it ahead of every use, in one unit */
 extern const double ACT_SCALES[NB];
-void stand_pose(Quat *rel);
+#endif
+BHD void stand_pose(Quat *rel);
 /* On hands and knees: joint rotations and the root rotation (torso level, facing the floor). */
-void crawl_pose(Quat *rel, Quat *root_q);
+BHD void crawl_pose(Quat *rel, Quat *root_q);
 /* The stand pose with relaxed idle motion at time t, scaled by amp (rad of ankle sway): ankle sway forward/back
  * (0.23 Hz) and sideways (0.17 Hz) counterbalanced at the hips and spine, a slow weight shift between the
  * legs (0.07 Hz), breathing in the chest (0.25 Hz) and slow drifts of the head. */
-void sway_pose(Quat *rel, double t, double amp);
-void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed);
-void env_obs(const Env *E, float *obs);
-double env_step(Env *E, const float *act);   /* returns the reward; sets E->done on a fall or at the end */
+BHD void sway_pose(Quat *rel, double t, double amp);
+BHD void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed);
+BHD void env_obs(const Env *E, float *obs);
+BHD double env_step(Env *E, const float *act);   /* returns the reward; sets E->done on a fall or at the end */
 /* env_step for n environments (sharing substeps and iters), their physics 8 at a time (body_x8.c) */
 void env_step_many(Env *const *E, const float *const *act, double *reward, int n);
-double env_rand(uint64_t *s);
-double env_phase(const Env *E);              /* reference time in the clip (s), or 0 */
+BHD double env_rand(uint64_t *s);
+BHD double env_phase(const Env *E);              /* reference time in the clip (s), or 0 */
 /* Motion style prior (floor tasks): each step her last two poses are compared with every pair of consecutive
  * frames of the style clips; the closest match pays. Call once per clip before stepping (not thread-safe). */
 void env_style_prepare(const Clip *c);

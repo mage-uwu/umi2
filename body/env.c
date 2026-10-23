@@ -2,19 +2,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-double env_rand(uint64_t *s) { *s ^= *s << 13; *s ^= *s >> 7; *s ^= *s << 17; return (*s >> 11) * (1.0 / 9007199254740992.0); }
-static double env_randn(uint64_t *s) { double a = env_rand(s) + 1e-12, b = env_rand(s); return sqrt(-2 * log(a)) * cos(6.283185307179586 * b); }
+BHD double env_rand(uint64_t *s) { *s ^= *s << 13; *s ^= *s >> 7; *s ^= *s << 17; return (*s >> 11) * (1.0 / 9007199254740992.0); }
+static BHD double env_randn(uint64_t *s) { double a = env_rand(s) + 1e-12, b = env_rand(s); return sqrt(-2 * log(a)) * cos(6.283185307179586 * b); }
 
 /* action range per joint (rad per unit action), indexed by the child body */
-const double ACT_SCALES[NB] = {0, 0.5, 0.5, 0.4, 0.8, 0.8, 0.8, 0.8, 1.0, 1.2, 0.6, 1.0, 1.2, 0.6};
+BCONST double ACT_SCALES[NB] = {0, 0.5, 0.5, 0.4, 0.8, 0.8, 0.8, 0.8, 1.0, 1.2, 0.6, 1.0, 1.2, 0.6};
 
-void stand_pose(Quat *rel) {   /* the shader page's training pose: arms relaxed 68 degrees down from the T-pose */
+BHD void stand_pose(Quat *rel) {   /* the shader page's training pose: arms relaxed 68 degrees down from the T-pose */
     for (int i = 0; i < NB; i++) rel[i] = QID;
     const double a = 68 * M_PI / 180;
     rel[L_UARM] = qexp(v3(0, 0, -a)); rel[R_UARM] = qexp(v3(0, 0, a));
 }
 
-void sway_pose(Quat *rel, double t, double amp) {
+BHD void sway_pose(Quat *rel, double t, double amp) {
     stand_pose(rel);
     if (amp <= 0) return;
     const double k = amp / 0.012;   /* idle motion scales with the sway */
@@ -37,10 +37,10 @@ void sway_pose(Quat *rel, double t, double amp) {
     rel[L_FARM] = qmul(rel[L_FARM], qexp(v3(0, -0.25 * k, 0))); rel[R_FARM] = qmul(rel[R_FARM], qexp(v3(0, 0.25 * k, 0)));
 }
 
-static Quat arc(Vec a, Vec b) {   /* shortest rotation taking unit a to unit b */
+static BHD Quat arc(Vec a, Vec b) {   /* shortest rotation taking unit a to unit b */
     Vec c = vcross(a, b); Quat q = {1 + vdot(a, b), c.x, c.y, c.z}; return qnorm(q);
 }
-void crawl_pose(Quat *rel, Quat *root_q) {
+BHD void crawl_pose(Quat *rel, Quat *root_q) {
     for (int i = 0; i < NB; i++) rel[i] = QID;
     /* torso sloping up toward the shoulders (her arms are longer than her thighs, as everyone's are), thighs and
      * arms vertical, shins along the floor */
@@ -54,24 +54,24 @@ void crawl_pose(Quat *rel, Quat *root_q) {
     rel[HEAD] = qexp(v3(-tilt + 0.25, 0, 0));   /* face ahead, a little down */
 }
 
-static Vec hinge_axis(int h) { return h == 1 ? v3(1, 0, 0) : h == 2 ? v3(0, 1, 0) : v3(0, 0, 1); }
+static BHD Vec hinge_axis(int h) { return h == 1 ? v3(1, 0, 0) : h == 2 ? v3(0, 1, 0) : v3(0, 0, 1); }
 
-double env_phase(const Env *E) { return E->cfg.task == TASK_IMITATE ? E->t0 + E->W.t : 0; }
+BHD double env_phase(const Env *E) { return E->cfg.task == TASK_IMITATE ? E->t0 + E->W.t : 0; }
 
 /* Reference at clip time t: joint rotations, body world rotations and root, the root carried across loops. */
-static void ref_at(const Env *E, double t, Quat *rel, Quat *world, Vec *root) {
+static BHD void ref_at(const Env *E, double t, Quat *rel, Quat *world, Vec *root) {
     const Clip *c = E->cfg.clip; const double T = (c->frames - 1) / c->fps;
     mref_sample(c, t, root, world, rel);
     double cycles = floor(t / T); Vec loop = vsub(c->root[c->frames - 1], c->root[0]); loop.y = 0;
     *root = vadd(vadd(*root, vscale(loop, cycles)), E->clip_shift);
 }
 
-static void settle_to_ground(World *W) {
+static BHD void settle_to_ground(World *W) {
     double lo = 1e9; for (int i = 0; i < NB; i++) { double y = world_lowest(W, i); if (y < lo) lo = y; }
     for (int i = 0; i < NB; i++) { W->b[i].x.y -= lo; W->b[i].xprev = W->b[i].x; }
 }
 /* Start states on the floor: on all fours (with noise), or where a limp fall from standing left her. */
-static void floor_reset(Env *E) {
+static BHD void floor_reset(Env *E) {
     World *W = &E->W; Quat rel[NB], rq;
     if (E->cfg.task == TASK_GETUP && E->cfg.nstyle && env_rand(&E->rng) < E->cfg.style_start) {
         /* start in the pose of a random moment of a person getting up (reference state initialisation): from
@@ -108,7 +108,7 @@ static void floor_reset(Env *E) {
     if (E->cfg.task == TASK_GETUP) stand_pose(E->ref); else crawl_pose(E->ref, &rq);
 }
 
-void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
+BHD void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
     E->cfg = *cfg; E->rng = seed * 0x9E3779B97F4A7C15ULL + 1; E->step = 0; E->done = 0; E->t0 = 0;
     world_init(&E->W, 45, 20, 1.0 / CTRL_HZ);
     if (cfg->arm_tone > 0) for (int i = L_UARM; i <= R_FARM; i++) E->W.tone[i] = cfg->arm_tone;
@@ -154,17 +154,17 @@ void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
 }
 
 /* heading frame: rotation removing the pelvis yaw */
-static Quat heading_inv(const World *W, int floor) {
+static BHD Quat heading_inv(const World *W, int floor) {
     Vec f = qrot(W->b[PELVIS].q, v3(0, 0, 1));
     if (floor) f = vadd(f, qrot(W->b[PELVIS].q, v3(0, 1, 0)));   /* face down, forward is vertical: up points ahead */
     double yaw = atan2(f.x, f.z);
     return qexp(v3(0, -yaw, 0));
 }
-static int floor_task(const Env *E) { return E->cfg.task == TASK_CRAWL || E->cfg.task == TASK_GETUP; }
+static BHD int floor_task(const Env *E) { return E->cfg.task == TASK_CRAWL || E->cfg.task == TASK_GETUP; }
 /* Elbows and knees bend one way, from straight to fully bent: a hinge target outside that range is held at its
  * edge (the floor skills, whose wide joint ranges could otherwise drive them backwards). Flexion is -y for the
  * left elbow, +y for the right, +x for the knees; the targets are pure rotations about the hinge axis. */
-static Quat hinge_limit(int i, Quat q) {
+static BHD Quat hinge_limit(int i, Quat q) {
     const int h = BODY_DEFS[i].hinge; const double c = h == 1 ? q.x : h == 2 ? q.y : q.z, ang = 2 * atan2(c, q.w);
     const double flex = i == L_FARM ? -ang : ang, mx = i == L_FARM || i == R_FARM ? 2.5 : 2.6;
     const double f = flex < 0 ? 0 : flex > mx ? mx : flex;
@@ -172,7 +172,7 @@ static Quat hinge_limit(int i, Quat q) {
     const double a = i == L_FARM ? -f : f; return qexp(vscale(hinge_axis(h), a));
 }
 
-void env_obs(const Env *E, float *o) {
+BHD void env_obs(const Env *E, float *o) {
     const World *W = &E->W; Quat hi = heading_inv(W, floor_task(E)); Vec root = W->b[PELVIS].x; int k = 0;
     for (int i = 0; i < NB; i++) {
         const Body *b = W->b + i; Vec p = qrot(hi, vsub(b->x, root));
@@ -193,7 +193,7 @@ void env_obs(const Env *E, float *o) {
 
 /* Golden thread (0..1): head lifted at least lift_ref above the pelvis, head upright, shoulders level,
  * little head spin and acceleration. */
-static double golden_thread(Env *E, double lift_ref) {
+static BHD double golden_thread(Env *E, double lift_ref) {
     const World *W = &E->W; const Body *hb = W->b + HEAD;
     double lift = (hb->x.y - W->b[PELVIS].x.y) - lift_ref, sag = lift < 0 ? lift : 0;
     Vec hu = qrot(hb->q, v3(0, 1, 0)), sx = qrot(W->b[CHEST].q, v3(1, 0, 0));
@@ -202,32 +202,38 @@ static double golden_thread(Env *E, double lift_ref) {
          + 0.15 * exp(-0.3 * vdot(hb->w, hb->w)) + 0.1 * exp(-0.01 * vdot(acc, acc));
 }
 /* Muscle effort (rad^2 summed over joints): how far each joint target sits from where the joint is. */
-static double effort(const World *W) {
+static BHD double effort(const World *W) {
     double e2 = 0;
     for (int i = 1; i < NB; i++) { Quat rel = qmul(qconj(W->b[BODY_DEFS[i].parent].q), W->b[i].q); Vec e = qlog(qmul(W->target[i], qconj(rel))); e2 += vdot(e, e); }
     return e2;
 }
 /* ---------- motion style prior ---------- */
 typedef struct { const Clip *c; float *f; int n; } StyleClip;
+#ifdef __CUDACC__
+__device__ StyleClip style_clips[16]; __device__ int style_n;   /* filled by tssenv_cuda.cu */
+#else
 static StyleClip style_clips[16]; static int style_n;
-static void pose_features(const Quat *wq, float *f) {   /* joint rotations (child in parent), gravity in the pelvis frame */
+#endif
+static BHD void pose_features(const Quat *wq, float *f) {   /* joint rotations (child in parent), gravity in the pelvis frame */
     int k = 0;
     for (int i = 1; i < NB; i++) { Quat r = qmul(qconj(wq[BODY_DEFS[i].parent]), wq[i]); f[k++] = r.w; f[k++] = r.x; f[k++] = r.y; f[k++] = r.z; }
     Vec gl = qrot(qconj(wq[PELVIS]), v3(0, -1, 0)); f[k++] = gl.x; f[k++] = gl.y; f[k++] = gl.z;
 }
+#ifndef __CUDACC__
 void env_style_prepare(const Clip *c) {
     for (int i = 0; i < style_n; i++) if (style_clips[i].c == c) return;
     StyleClip *s = style_clips + style_n++; s->c = c; s->n = c->frames; s->f = malloc(sizeof(float) * STYLE_FEAT * c->frames);
     for (int t = 0; t < c->frames; t++) pose_features(c->q + (size_t)t * NB, s->f + (size_t)t * STYLE_FEAT);
 }
-static double feat_dist(const float *a, const float *b) {   /* about the summed squared joint angles, plus the tilt */
+#endif
+static BHD double feat_dist(const float *a, const float *b) {   /* about the summed squared joint angles, plus the tilt */
     double d = 0;
     for (int j = 0; j < NB - 1; j++) { const float *p = a + 4 * j, *q = b + 4 * j; const double c = p[0] * q[0] + p[1] * q[1] + p[2] * q[2] + p[3] * q[3]; d += 4 * (1 - c * c); }
     for (int k = 4 * (NB - 1); k < STYLE_FEAT; k++) d += (a[k] - b[k]) * (a[k] - b[k]);
     return d;
 }
 /* 0..1: how closely her last two poses match two consecutive frames of a style clip */
-static double style_reward(Env *E) {
+static BHD double style_reward(Env *E) {
     if (!E->cfg.nstyle) return 0;
     Quat wq[NB]; for (int i = 0; i < NB; i++) wq[i] = E->W.b[i].q;
     float cur[STYLE_FEAT]; pose_features(wq, cur);
@@ -244,13 +250,13 @@ static double style_reward(Env *E) {
     memcpy(E->style_prev, cur, sizeof cur); E->style_has_prev = 1;
     return exp(-best / NJ);
 }
-static double pose_err(const World *W, const Quat *ref) {
+static BHD double pose_err(const World *W, const Quat *ref) {
     double e2 = 0; for (int i = 1; i < NB; i++) { Quat rel = qmul(qconj(W->b[BODY_DEFS[i].parent].q), W->b[i].q); Vec e = qlog(qmul(rel, qconj(ref[i]))); e2 += vdot(e, e); }
     return e2;
 }
 /* Height of the lowest corner at one end of a limb box: the far end (1: the hand end of a forearm, the knee end of
  * a shin) or the near end (0: the elbow end of a forearm, the ankle end of a shin). */
-static double end_height(const World *W, int i, int far) {
+static BHD double end_height(const World *W, int i, int far) {
     const Vec h = BODY_DEFS[i].half; const int arm = i == L_FARM || i == R_FARM;
     const double sgn = arm ? (i == L_FARM ? 1 : -1) * (far ? 1 : -1) : (far ? 1 : -1);   /* forearms run along x, shins along y (knee up) */
     double lo = 1e9;
@@ -260,7 +266,7 @@ static double end_height(const World *W, int i, int far) {
     }
     return lo;
 }
-static double floor_reward(Env *E, double act2) {
+static BHD double floor_reward(Env *E, double act2) {
     World *W = &E->W; const double calm = 0.08 * exp(-20 * effort(W) / NJ) + 0.07 * exp(-2 * act2);
     if (E->step >= E->cfg.steps) E->done = 1;
     Vec cv; world_com(W, &cv);
@@ -301,14 +307,14 @@ static double floor_reward(Env *E, double act2) {
     const double task = 0.35 * hd + 0.2 * pv + 0.15 * fmax(up, 0) + 0.15 * stand + calm;
     return E->cfg.nstyle ? 0.7 * task + 0.3 * style_reward(E) : task;
 }
-static int fallen(const World *W) {
+static BHD int fallen(const World *W) {
     if (W->b[PELVIS].x.y < 0.55 || W->b[HEAD].x.y < 1.0) return 1;
     for (int i = 0; i < NB; i++) if (i != L_FOOT && i != R_FOOT && i != L_SHIN && i != R_SHIN && world_lowest(W, i) < 0.05) return 1;
     return 0;
 }
 
 /* env_step in two halves around the physics, so a batch can step its worlds together (env_step_many) */
-static double env_begin(Env *E, const float *a) {
+static BHD double env_begin(Env *E, const float *a) {
     World *W = &E->W; int k = 0; double act2 = 0; const float *f = E->filt;
     if (E->cfg.task == TASK_BALANCE && E->cfg.sway > 0) sway_pose(E->ref, W->t, E->cfg.sway);
     for (int j = 0; j < ACT_DIM; j++) E->filt[j] += (float)ACT_FILTER * (a[j] - E->filt[j]);
@@ -337,7 +343,7 @@ static double env_begin(Env *E, const float *a) {
     } else W->assist = 0;
     return act2;
 }
-static double env_end(Env *E, double act2) {
+static BHD double env_end(Env *E, double act2) {
     World *W = &E->W;
     E->step++;
     if (floor_task(E)) return floor_reward(E, act2);
@@ -384,7 +390,8 @@ static double env_end(Env *E, double act2) {
              + 0.2 * exp(-2 * act2) + 0.4 * golden_thread(E, stand_lift) + 0.3 * exp(-20 * effort(W) / NJ);
 }
 
-double env_step(Env *E, const float *a) { const double act2 = env_begin(E, a); world_step(&E->W); return env_end(E, act2); }
+BHD double env_step(Env *E, const float *a) { const double act2 = env_begin(E, a); world_step(&E->W); return env_end(E, act2); }
+#ifndef __CUDACC__
 void env_step_many(Env *const *E, const float *const *a, double *reward, int n) {
     double act2[8]; World *W[8];
     for (int s = 0; s < n; s += 8) {
@@ -394,3 +401,4 @@ void env_step_many(Env *const *E, const float *const *a, double *reward, int n) 
         for (int j = 0; j < m; j++) reward[s + j] = env_end(E[s + j], act2[j]);
     }
 }
+#endif
