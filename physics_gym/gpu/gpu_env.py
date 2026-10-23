@@ -83,7 +83,7 @@ def cuda_lib():
     global _cuda
     if _cuda is None:
         out = os.path.join(HERE, "libtssenv_cuda.so")
-        srcs = [os.path.join(HERE, "tssenv_kernels.cu")] + [os.path.join(BODY, f) for f in ("body.c", "body.h", "bmath.h", "env.c", "env.h", "mref.c", "mref.h")]
+        srcs = [os.path.join(HERE, "tssenv_kernels.cu")] + [os.path.join(BODY, f) for f in ("body.c", "body.h", "bmath.h", "joint_limits.h", "env.c", "env.h", "mref.c", "mref.h")]
         if not os.path.exists(out) or os.path.getmtime(out) < max(map(os.path.getmtime, srcs)): _cuda_build_once(out)
         L = ctypes.CDLL(out); vp, i, d = ctypes.c_void_p, ctypes.c_int, ctypes.c_double
         L.tss_init.restype = ctypes.c_char_p; L.tss_error.restype = ctypes.c_char_p; L.tss_set_style.restype = ctypes.c_char_p

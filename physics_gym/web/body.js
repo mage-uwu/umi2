@@ -2,6 +2,8 @@
 // Units: metres, kilograms, seconds. The model faces +Z, her left is +X. Body frames are world-aligned in the
 // rest T-pose, so a body's world rotation is the bone's rotation relative to rest (as the shader page uses).
 
+import { JLIM_LO, JLIM_HI } from './joint_limits.js';   // joint ranges from the motion capture (tools/joint_limits.py; body.c's joint_limits.h)
+
 // ---------- vectors and quaternions ([x,y,z], [w,x,y,z]) ----------
 const v3 = (x, y, z) => [x, y, z];
 const vadd = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
@@ -72,7 +74,8 @@ export function supportY(x, z, ytop) { let best = 0; for (const o of ROOM) { con
 
 export class World {
   constructor(totalMass = 45, substeps = 20, dt = 1 / 30) {
-    this.totalMass = totalMass; this.substeps = substeps; this.h = dt / substeps; this.mu = 0.9; this.iters = 4; this.kpScale = 1; this.kdScale = 1; this.t = 0;
+    this.totalMass = totalMass; this.substeps = substeps; this.h = dt / substeps; this.mu = 0.9; this.iters = 4; this.limitK = 5000;   // limitK: joint ligaments (body.c World.limit_k); 0 = no limits
+    this.kpScale = 1; this.kdScale = 1; this.t = 0;
     this.tone = BODY_DEFS.map(() => 1);   // per-joint muscle tone (body.c tone)
     this.push = { body: -1, force: [0, 0, 0], left: 0 };
     // grab (viewer only, not in the C twin): a damped spring from a point on one body (r, in its rest frame)
@@ -153,6 +156,13 @@ export class World {
         const ta = vdot(e, aw);
         if (Math.abs(ta) > 1e-12) this.solveAng(c, p, ta > 0 ? aw : vscale(aw, -1), Math.abs(ta), 1 / kp);
       } else { const th = vlen(e); if (th > 1e-12) this.solveAng(c, p, vscale(e, 1 / th), th, 1 / kp); }
+      if (this.limitK > 0) {   // ligament: back inside the joint's range from the capture, if it left it
+        const r = qlog(qmul(qconj(p.q), c.q)), lo = JLIM_LO[i], hi = JLIM_HI[i], rc = r.map((v, k) => v < lo[k] ? lo[k] : v > hi[k] ? hi[k] : v);
+        if (rc[0] !== r[0] || rc[1] !== r[1] || rc[2] !== r[2]) {
+          const el = qlog(qmul(c.q, qconj(qmul(p.q, qexp(rc))))), tl = vlen(el);
+          if (tl > 1e-12) this.solveAng(c, p, vscale(el, 1 / tl), tl, 1 / this.limitK);
+        }
+      }
     }
     if (this.assist > 0) {
       const p = this.b[0], D = vsub(p.x, this.assistX), C = vlen(D);

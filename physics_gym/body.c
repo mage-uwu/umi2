@@ -8,6 +8,7 @@
  *   joint damping applied implicitly on the relative angular velocity
  */
 #include "body.h"
+#include "joint_limits.h"   /* JLIM_LO, JLIM_HI: joint ranges from the motion capture (tools/joint_limits.py) */
 #include <stdio.h>
 
 #define G_ACC 9.81
@@ -35,7 +36,7 @@ BCONST BodyDef BODY_DEFS[NB] = {
 
 BHD void world_init(World *W, double total_mass, int substeps, double dt) {
     memset(W, 0, sizeof(*W));
-    W->total_mass = total_mass; W->substeps = substeps; W->h = dt / substeps; W->mu = 0.9; W->push_body = -1; W->kp_scale = W->kd_scale = 1; W->iters = 4; for (int i = 0; i < NB; i++) W->tone[i] = 1;
+    W->total_mass = total_mass; W->substeps = substeps; W->h = dt / substeps; W->mu = 0.9; W->push_body = -1; W->kp_scale = W->kd_scale = 1; W->iters = 4; W->limit_k = 5000; for (int i = 0; i < NB; i++) W->tone[i] = 1;
     double fsum = 0; for (int i = 0; i < NB; i++) fsum += BODY_DEFS[i].mass_frac;
     for (int i = 0; i < NB; i++) {
         const BodyDef *d = BODY_DEFS + i; Body *b = W->b + i;
@@ -207,6 +208,14 @@ static BHD void substep(World *W) {
             tw = qmul(p->q, W->target[i]); e = qlog_fast(qmul(c->q, qconj(tw))); double ta = vdot(e, aw);
             if (fabs(ta) > 1e-12) solve_ang(c, p, ta > 0 ? aw : vscale(aw, -1), fabs(ta), 1 / (d->kp * W->kp_scale * W->tone[i]), h);
         } else if (th > 1e-12) solve_ang(c, p, vscale(e, 1 / th), th, 1 / (d->kp * W->kp_scale * W->tone[i]), h);
+        if (W->limit_k > 0) {   /* ligament: back inside the joint's range from the capture, if it left it */
+            const Vec r = qlog_fast(qmul(qconj(p->q), c->q)), lo = v3(JLIM_LO[i][0], JLIM_LO[i][1], JLIM_LO[i][2]), hi = v3(JLIM_HI[i][0], JLIM_HI[i][1], JLIM_HI[i][2]);
+            const Vec rc = v3(r.x < lo.x ? lo.x : r.x > hi.x ? hi.x : r.x, r.y < lo.y ? lo.y : r.y > hi.y ? hi.y : r.y, r.z < lo.z ? lo.z : r.z > hi.z ? hi.z : r.z);
+            if (rc.x != r.x || rc.y != r.y || rc.z != r.z) {
+                const Vec el = qlog_fast(qmul(c->q, qconj(qmul(p->q, qexp(rc))))); const double tl = vlen(el);
+                if (tl > 1e-12) solve_ang(c, p, vscale(el, 1 / tl), tl, 1 / W->limit_k, h);
+            }
+        }
     }
     if (W->assist > 0) {   /* pelvis support: compliant position and rotation constraints (stable at any stiffness) */
         Body *p = W->b + PELVIS; Vec D = vsub(p->x, W->assist_x); double C = vlen(D);
