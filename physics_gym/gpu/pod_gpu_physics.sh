@@ -4,7 +4,7 @@
 # :8000; writes out/DONE at the end.
 mkdir -p /w/out && cd /w
 python3 -m http.server 8000 --directory /w/out >/dev/null 2>&1 &
-G=/w/repo/body/gpu; B=/w/repo/body; O=/w/out
+G=/w/repo/physics_gym/gpu; B=/w/repo/physics_gym; O=/w/out
 { nvidia-smi; which nvcc; nvcc --version; lscpu | grep -i "model name"; python3 -c "import torch;print(torch.__version__, torch.cuda.get_device_name(0))"; } > $O/system.txt 2>&1
 cd $G && gcc -O3 -march=native -fopenmp -ffp-contract=off -shared -fPIC -o libtssenv.so tssenv.c ../env.c ../body.c ../body_x8.c ../mref.c ../room.c -lm 2> $O/build.log
 python3 -c "import gpu_env; gpu_env.cuda_lib(); print('cuda environments built')" >> $O/build.log 2>&1
