@@ -55,6 +55,9 @@ export class World {
     this.substeps = substeps; this.h = dt / substeps; this.mu = 0.9; this.iters = 4; this.kpScale = 1; this.kdScale = 1; this.t = 0;
     this.tone = BODY_DEFS.map(() => 1);   // per-joint muscle tone (body.c tone)
     this.push = { body: -1, force: [0, 0, 0], left: 0 };
+    // grab (viewer only, not in the C twin): a damped spring from a point on one body (r, in its rest frame)
+    // toward a target, its force capped: { body, r, target: [x, y, z], k, c, max }, or null
+    this.grab = null;
     // training aid (body.c): pelvis held to assistX / assistQ by compliant constraints, strength assist 0..1
     this.assist = 0; this.assistX = [0, 0, 0]; this.assistV = [0, 0, 0]; this.assistQ = QID;
     const fsum = BODY_DEFS.reduce((s, d) => s + d.mass_frac, 0);
@@ -103,6 +106,11 @@ export class World {
       const b = this.b[i];
       b.v = [b.v[0], b.v[1] - h * G_ACC, b.v[2]];
       if (i === this.push.body && this.push.left > 0) b.v = vadd(b.v, vscale(this.push.force, h * b.invMass));
+      if (this.grab && i === this.grab.body) {
+        const g = this.grab, rw = qrot(b.q, g.r), p = vadd(b.x, rw), vp = vadd(b.v, vcross(b.w, rw));
+        let F = vsub(vscale(vsub(g.target, p), g.k), vscale(vp, g.c)); const f = vlen(F); if (f > g.max) F = vscale(F, g.max / f);
+        const J = vscale(F, h); b.v = vadd(b.v, vscale(J, b.invMass)); b.w = vadd(b.w, this.invI(b, vcross(rw, J)));
+      }
       b.xprev = b.x; b.x = vadd(b.x, vscale(b.v, h));
       const wl = qrot(qconj(b.q), b.w), Il = [wl[0] / b.invI[0], wl[1] / b.invI[1], wl[2] / b.invI[2]];
       let tq = vcross(wl, Il); tq = [-tq[0] * b.invI[0], -tq[1] * b.invI[1], -tq[2] * b.invI[2]];

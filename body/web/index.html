@@ -67,6 +67,8 @@ button:disabled { opacity: .45; cursor: default; }
       <button data-push="left">Left</button><button data-push="right">Right</button>
       <button data-push="front">Front</button><button data-push="back">Back</button>
       <button id="reset">Reset</button>
+      <span class="label" style="margin-left:8px">Click</span>
+      <button id="c-push" aria-pressed="true" title="A click pushes her from that side">Push</button><button id="c-grab" aria-pressed="false" title="Press on a body part and drag it">Grab</button>
     </div>
     <div class="group" role="group" aria-label="View">
       <span class="label">View</span>
@@ -523,6 +525,7 @@ function step(now) {
     pelvisAt.set(px[0], px[1], px[2]);
   }
   resize();
+  drawGrab();
   const tD = performance.now();
   if (look === 'art' && art && vrm) {
     // The learned shader draws at its trained distance; zoom magnifies the finished drawing.
@@ -647,6 +650,7 @@ document.getElementById('v-model').onclick = () => { lookChosen = true; setLook(
 document.getElementById('v-boxes').onclick = () => { lookChosen = true; setLook('boxes'); };
 // Click the stage: push from the clicked side of her (screen left/right of her body, nearer/farther in depth).
 document.getElementById('stage').addEventListener('pointerdown', e => {
+  if (clickMode === 'grab') return;
   if (!world || fallenAt >= 0) return;
   const r = document.getElementById('stage').getBoundingClientRect(), p = new THREE.Vector3(...world.b[B.CHEST].x).project(camera);
   const sx = (e.clientX - r.left) / r.width * 2 - 1, sy = -((e.clientY - r.top) / r.height * 2 - 1);
@@ -656,6 +660,49 @@ document.getElementById('stage').addEventListener('pointerdown', e => {
   const from = right.multiplyScalar(dx).add(fwd.multiplyScalar(-dy * 0.6));   // the side the click came from
   push([-from.x, -from.z]);
 });
+// Grab: press on a body part (the physics box under the cursor, or the nearest on screen) and drag. A damped
+// spring pulls that point toward the cursor, which moves in the plane through it facing the camera; her
+// controller fights back. The force is capped (about her body weight).
+let clickMode = 'push';
+for (const [id, m] of [['c-push', 'push'], ['c-grab', 'grab']]) document.getElementById(id).onclick = () => {
+  clickMode = m; setPressed('#c-push, #c-grab', document.getElementById(id)); document.getElementById('stage').style.cursor = m === 'grab' ? 'grab' : '';
+};
+const grabLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]), new THREE.LineBasicMaterial({ color: 0xd4a52a, depthTest: false, transparent: true }));
+const grabDot = new THREE.Mesh(new THREE.SphereGeometry(0.025, 12, 8), new THREE.MeshBasicMaterial({ color: 0xd4a52a, depthTest: false, transparent: true }));
+grabLine.renderOrder = grabDot.renderOrder = 10; grabLine.visible = grabDot.visible = false; scene.add(grabLine, grabDot);
+const grabRay = new THREE.Raycaster(), grabPlane = new THREE.Plane();
+function rayAt(e) { const r = document.getElementById('stage').getBoundingClientRect(); grabRay.setFromCamera({ x: (e.clientX - r.left) / r.width * 2 - 1, y: -((e.clientY - r.top) / r.height * 2 - 1) }, camera); }
+function grabStart(i, point) {
+  const b = world.b[i], local = math.qrot(math.qconj(b.q), math.vsub(point, b.x));
+  world.grab = { body: i, r: local, target: point.slice(), k: 900, c: 90, max: 450 };
+  grabPlane.setFromNormalAndCoplanarPoint(camera.getWorldDirection(new THREE.Vector3()).negate(), new THREE.Vector3(...point));
+  emit('grab', { body: BODY_DEFS[i].name });
+}
+function grabEnd() { if (world?.grab) { world.grab = null; emit('release', {}); } grabLine.visible = grabDot.visible = false; }
+const stageG = document.getElementById('stage');
+stageG.addEventListener('pointerdown', e => {
+  if (clickMode !== 'grab' || !world || e.button !== 0) return;
+  rayAt(e);
+  const hit = grabRay.intersectObjects(boxes, false)[0];
+  let i = hit ? boxes.indexOf(hit.object) : -1, point = hit ? hit.point.toArray() : null;
+  if (i < 0) {   // nothing under the cursor: the body part nearest on screen, within 60 px
+    const r = stageG.getBoundingClientRect(); let best = 60;
+    boxes.forEach((m, j) => { const p = m.position.clone().project(camera), d = Math.hypot((p.x * 0.5 + 0.5) * r.width - (e.clientX - r.left), (0.5 - p.y * 0.5) * r.height - (e.clientY - r.top)); if (d < best) { best = d; i = j; point = m.position.toArray(); } });
+  }
+  if (i < 0) return;
+  stageG.setPointerCapture(e.pointerId); stageG.style.cursor = 'grabbing'; grabStart(i, point);
+});
+stageG.addEventListener('pointermove', e => {
+  if (!world?.grab) return; rayAt(e); const p = new THREE.Vector3();
+  if (grabRay.ray.intersectPlane(grabPlane, p)) world.grab.target = [p.x, Math.max(0.02, p.y), p.z];
+});
+for (const n of ['pointerup', 'pointercancel']) stageG.addEventListener(n, () => { if (world?.grab) { grabEnd(); stageG.style.cursor = clickMode === 'grab' ? 'grab' : ''; } });
+function drawGrab() {   // the pull, from the held point to the cursor
+  const g = world?.grab; if (!g) { grabLine.visible = grabDot.visible = false; return; }
+  const b = world.b[g.body], p = math.vadd(b.x, math.qrot(b.q, g.r));
+  grabLine.geometry.setFromPoints([new THREE.Vector3(...p), new THREE.Vector3(...g.target)]); grabDot.position.set(...g.target);
+  grabLine.visible = grabDot.visible = true;
+}
 addEventListener('keydown', e => {
   const k = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'back', ArrowDown: 'front' }[e.key];
   if (k && world && fallenAt < 0) { e.preventDefault(); push(k); }
@@ -687,14 +734,17 @@ for (const [k, s] of Object.entries(SKILLS)) {
 // window.umiBody.reset()
 // window.umiBody.face({ follow, mouth })      eyes follow the mouse (true) or look at you; mouth 0..1; returns the settings
 // window.umiBody.blink()
+// window.umiBody.grab(body, [x, y, z])         pull a body part ('chest', 'l_farm', ... or 'head') toward a world point; release()
 // window.umiBody.standUp()                    hand over to the get-up controller (from crawling, or anywhere)
-// window.umiBody.on(event, fn)                events: 'skill', 'reset', 'push', 'fall', 'getup', 'stood', 'step', 'parts' (also dispatched as 'umibody:<event>')
+// window.umiBody.on(event, fn)                events: 'skill', 'reset', 'push', 'grab', 'release', 'fall', 'getup', 'stood', 'step', 'parts' (also dispatched as 'umibody:<event>')
 // window.umiBody.state()                      { t, upright, fallen, bodies: [{ name, bone, x, q }] }
 // window.umiBody.parts({ hair, dress, springs }) show or hide hair and dress, simulate or hold hair and cloth; returns the settings
 window.umiBody = {
   get skills() { return Object.keys(SKILLS); },
   face(set = {}) { if ('follow' in set) { face.follow = !!set.follow; document.getElementById('f-follow').setAttribute('aria-pressed', String(face.follow)); } if ('mouth' in set) { face.mouthTarget = Math.max(0, Math.min(1, +set.mouth)); document.getElementById('f-mouth').setAttribute('aria-pressed', String(face.mouthTarget > 0)); } return { follow: face.follow, mouth: face.mouthTarget }; },
   blink,
+  grab(name, target) { const i = BODY_DEFS.findIndex(d => d.name === name || d.bone === name); if (i < 0 || !world) return false; if (world.grab?.body !== i) grabStart(i, world.b[i].x.slice()); world.grab.target = target.slice(); return true; },   // held at its centre
+  release: () => grabEnd(),
   play: useSkill, push: (...a) => world && push(...a), reset: () => world && reset(), standUp: () => world && getUp('Getting up.'),
   on(ev, fn) { (listeners[ev] ||= []).push(fn); return () => { listeners[ev] = listeners[ev].filter(f => f !== fn); }; },
   state: () => world && { t: world.t, upright: world.t - upSince, fallen: fallenAt >= 0,
