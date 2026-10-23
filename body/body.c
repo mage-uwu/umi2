@@ -65,27 +65,53 @@ static Vec inv_I(const Body *b, Vec v) {
     l = v3(l.x * b->inv_inertia.x, l.y * b->inv_inertia.y, l.z * b->inv_inertia.z);
     return qrot(b->q, l);
 }
-static void rotate_by(Body *b, Vec dw) { b->q = qnorm(qmul(qexp(dw), b->q)); }   /* exact rotation by dw */
-static double gen_w(const Body *b, Vec r, Vec n) { Vec rn = vcross(r, n); return b->inv_mass + vdot(rn, inv_I(b, rn)); }
+/* Exact rotation by dw. The rotations here are tiny (a substep's worth), where sin and cos are replaced by
+ * their series, accurate to double precision below 0.1 rad; larger ones take the library functions. */
+static void rotate_by(Body *b, Vec dw) {
+    const double a2 = vdot(dw, dw); Quat e;
+    if (a2 < 1e-2) {
+        const double s = 0.5 + a2 * (-1.0 / 48 + a2 * (1.0 / 3840 + a2 * (-1.0 / 645120 + a2 * (1.0 / 185794560))));
+        e.w = 1 + a2 * (-1.0 / 8 + a2 * (1.0 / 384 + a2 * (-1.0 / 46080 + a2 * (1.0 / 10321920))));
+        e.x = dw.x * s; e.y = dw.y * s; e.z = dw.z * s;
+    } else e = qexp(dw);
+    const Quat q = qmul(e, b->q); const double r = 1 / sqrt(q.w * q.w + q.x * q.x + q.y * q.y + q.z * q.z);
+    b->q.w = q.w * r; b->q.x = q.x * r; b->q.y = q.y * r; b->q.z = q.z * r;
+}
+/* Rotation vector of q (shortest), with atan2 replaced by its series for the small angles of most joint
+ * errors (accurate to double precision for s < 0.1 w). */
+static Vec qlog_fast(Quat q) {
+    if (q.w < 0) { q.w = -q.w; q.x = -q.x; q.y = -q.y; q.z = -q.z; }
+    const double s2 = q.x * q.x + q.y * q.y + q.z * q.z, s = sqrt(s2);
+    if (s < 1e-12) return v3(2 * q.x, 2 * q.y, 2 * q.z);
+    double f;
+    if (s < 0.1 * q.w) {   /* 2 atan(t) / s with t = s / w: 2/w (1 - t^2/3 + t^4/5 - ...) */
+        const double t2 = s2 / (q.w * q.w);
+        f = 2 / q.w * (1 + t2 * (-1.0 / 3 + t2 * (1.0 / 5 + t2 * (-1.0 / 7 + t2 * (1.0 / 9 + t2 * (-1.0 / 11 + t2 * (1.0 / 13 + t2 * (-1.0 / 15 + t2 * (1.0 / 17)))))))));
+    } else f = 2 * atan2(s, q.w) / s;
+    return vscale(v3(q.x, q.y, q.z), f);
+}
+/* Generalised inverse mass of a body point along n, and the world rotation per unit impulse (I^-1 (r x n)),
+ * which the solvers reuse to apply the correction. */
+static double gen_w_k(const Body *b, Vec r, Vec n, Vec *k) { Vec rn = vcross(r, n); *k = inv_I(b, rn); return b->inv_mass + vdot(rn, *k); }
 
 /* Positional constraint: move world points p1 (on b1, offset r1 from its centre) and p2 (on b2, or a fixed
  * point when b2 is NULL) to remove violation C along n (n points from p2 to p1). Returns the multiplier. */
 static double solve_pos(Body *b1, Body *b2, Vec r1, Vec r2, Vec n, double C, double alpha, double h, double cap) {
-    const double w1 = gen_w(b1, r1, n), w2 = b2 ? gen_w(b2, r2, n) : 0, at = alpha / (h * h);
+    Vec k1, k2 = {0, 0, 0}; const double w1 = gen_w_k(b1, r1, n, &k1), w2 = b2 ? gen_w_k(b2, r2, n, &k2) : 0, at = alpha / (h * h);
     if (w1 + w2 + at <= 0) return 0;
     double dl = -C / (w1 + w2 + at);
     if (cap >= 0 && fabs(dl) > cap) dl = dl < 0 ? -cap : cap;
-    Vec p = vscale(n, dl);
-    b1->x = vadd(b1->x, vscale(p, b1->inv_mass)); rotate_by(b1, inv_I(b1, vcross(r1, p)));
-    if (b2) { b2->x = vsub(b2->x, vscale(p, b2->inv_mass)); rotate_by(b2, vscale(inv_I(b2, vcross(r2, p)), -1)); }
+    Vec p = vscale(n, dl);   /* I^-1 (r x p) = dl I^-1 (r x n) */
+    b1->x = vadd(b1->x, vscale(p, b1->inv_mass)); rotate_by(b1, vscale(k1, dl));
+    if (b2) { b2->x = vsub(b2->x, vscale(p, b2->inv_mass)); rotate_by(b2, vscale(k2, -dl)); }
     return dl;
 }
 /* Angular constraint: remove rotation error theta (b1 relative to b2, about unit axis n). */
 static void solve_ang(Body *b1, Body *b2, Vec n, double theta, double alpha, double h) {
-    const double w = vdot(n, inv_I(b1, n)) + vdot(n, inv_I(b2, n)), at = alpha / (h * h);
+    const Vec k1 = inv_I(b1, n), k2 = inv_I(b2, n);
+    const double w = vdot(n, k1) + vdot(n, k2), at = alpha / (h * h);
     const double dl = -theta / (w + at);
-    Vec p = vscale(n, dl);
-    rotate_by(b1, inv_I(b1, p)); rotate_by(b2, vscale(inv_I(b2, p), -1));
+    rotate_by(b1, vscale(k1, dl)); rotate_by(b2, vscale(k2, -dl));
 }
 
 static const double CORNER[NCORNER][3] = {{-1, -1, -1}, {1, -1, -1}, {-1, 1, -1}, {1, 1, -1}, {-1, -1, 1}, {1, -1, 1}, {-1, 1, 1}, {1, 1, 1}};
@@ -93,9 +119,9 @@ static Vec corner(int i, int k) { const Vec hf = BODY_DEFS[i].half; return v3(CO
 
 /* Velocity impulse at a body point along unit n changing the point's velocity there by dv. */
 static void vel_impulse(Body *b, Vec r, Vec n, double dv) {
-    const double w = gen_w(b, r, n); if (w <= 0) return;
-    Vec J = vscale(n, dv / w);
-    b->v = vadd(b->v, vscale(J, b->inv_mass)); b->w = vadd(b->w, inv_I(b, vcross(r, J)));
+    Vec k; const double w = gen_w_k(b, r, n, &k); if (w <= 0) return;
+    const double j = dv / w;
+    b->v = vadd(b->v, vscale(n, j * b->inv_mass)); b->w = vadd(b->w, vscale(k, j));
 }
 void (*body_debug)(World *, int) = 0;
 static void substep(World *W) {
@@ -122,30 +148,32 @@ static void substep(World *W) {
         Vec D = vsub(vadd(c->x, rc), vadd(p->x, rp)); double C = vlen(D);
         if (C > 1e-12) solve_pos(c, p, rc, rp, vscale(D, 1 / C), C, 0, h, -1);
         /* drive: target world rotation of the child is q_parent * target; error rotation current * target^-1 */
-        Quat tw = qmul(p->q, W->target[i]); Vec e = qlog(qmul(c->q, qconj(tw))); double th = vlen(e);
+        Quat tw = qmul(p->q, W->target[i]); Vec e = qlog_fast(qmul(c->q, qconj(tw))); double th = vlen(e);
         if (d->hinge) {   /* hinge: the off-axis components are held rigidly, the axis one by the drive */
             Vec ax = d->hinge == 1 ? v3(1, 0, 0) : d->hinge == 2 ? v3(0, 1, 0) : v3(0, 0, 1);
             Vec aw = qrot(p->q, ax); Vec off = vsub(e, vscale(aw, vdot(e, aw))); double to = vlen(off);
             if (to > 1e-12) solve_ang(c, p, vscale(off, 1 / to), to, 0, h);
-            tw = qmul(p->q, W->target[i]); e = qlog(qmul(c->q, qconj(tw))); double ta = vdot(e, aw);
+            tw = qmul(p->q, W->target[i]); e = qlog_fast(qmul(c->q, qconj(tw))); double ta = vdot(e, aw);
             if (fabs(ta) > 1e-12) solve_ang(c, p, ta > 0 ? aw : vscale(aw, -1), fabs(ta), 1 / (d->kp * W->kp_scale * W->tone[i]), h);
         } else if (th > 1e-12) solve_ang(c, p, vscale(e, 1 / th), th, 1 / (d->kp * W->kp_scale * W->tone[i]), h);
     }
     if (W->assist > 0) {   /* pelvis support: compliant position and rotation constraints (stable at any stiffness) */
         Body *p = W->b + PELVIS; Vec D = vsub(p->x, W->assist_x); double C = vlen(D);
         if (C > 1e-12) solve_pos(p, NULL, v3(0, 0, 0), v3(0, 0, 0), vscale(D, 1 / C), C, 1 / (W->assist * ASSIST_K), h, -1);
-        Vec e = qlog(qmul(p->q, qconj(W->assist_q))); double th = vlen(e);
+        Vec e = qlog_fast(qmul(p->q, qconj(W->assist_q))); double th = vlen(e);
         if (th > 1e-12) { Vec n = vscale(e, 1 / th); double w = vdot(n, inv_I(p, n)), at = 1 / (W->assist * ASSIST_KR * h * h);
             rotate_by(p, inv_I(p, vscale(n, -th / (w + at)))); }
     }
     if (body_debug) body_debug(W, 1);
     /* ground contacts (y = 0) at box corners; friction acts in the velocity pass */
-    for (int i = 0; i < NB; i++) for (int k = 0; k < NCORNER; k++) {
+    for (int i = 0; i < NB; i++) {
+        const Vec hf = BODY_DEFS[i].half; if (W->b[i].x.y * W->b[i].x.y > vdot(hf, hf) && W->b[i].x.y > 0) continue;   /* above its bounding sphere: no corner can touch */
+        for (int k = 0; k < NCORNER; k++) {
         Body *b = W->b + i; Vec r = qrot(b->q, corner(i, k)), pw = vadd(b->x, r);
         if (pw.y >= 0) continue;
         double ln = solve_pos(b, NULL, r, v3(0, 0, 0), v3(0, -1, 0), -pw.y, 0, h, -1);
         cb[nc] = i; ck[nc] = k; cl[nc++] = ln;
-    }
+    } }
     /* velocities */
     for (int i = 0; i < NB; i++) {
         Body *b = W->b + i;
@@ -169,10 +197,10 @@ static void substep(World *W) {
     for (int i = 1; i < NB; i++) {
         const BodyDef *d = BODY_DEFS + i; Body *c = W->b + i, *p = W->b + d->parent;
         Vec dw = vsub(c->w, p->w); double m = vlen(dw); if (m < 1e-12) continue;
-        Vec n = vscale(dw, 1 / m); double weff = vdot(n, inv_I(c, n)) + vdot(n, inv_I(p, n));
+        Vec n = vscale(dw, 1 / m), kc = inv_I(c, n), kp = inv_I(p, n); double weff = vdot(n, kc) + vdot(n, kp);
         double f = h * d->kd * W->kd_scale * W->tone[i] * weff; if (f > 1) f = 1;
-        Vec imp = vscale(n, -f * m / weff);   /* angular impulse on the child; the parent gets the opposite */
-        c->w = vadd(c->w, inv_I(c, imp)); p->w = vsub(p->w, inv_I(p, imp));
+        const double j = -f * m / weff;   /* angular impulse on the child along n; the parent gets the opposite */
+        c->w = vadd(c->w, vscale(kc, j)); p->w = vsub(p->w, vscale(kp, j));
     }
 }
 
