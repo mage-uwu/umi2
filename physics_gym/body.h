@@ -59,6 +59,7 @@ typedef struct {
     /* training aid: a compliant constraint holding the pelvis to (assist_x, assist_q) with strength assist in
      * 0..1 (stiffness assist*ASSIST_K, assist*ASSIST_KR), damped toward the velocity assist_v */
     double assist; Vec assist_x, assist_v; Quat assist_q;
+    double touch[NB];   /* contact force on each body, mean over the last world_step (N): floor and room contacts */
 } World;
 
 #ifndef __CUDACC__   /* the GPU build defines it ahead of every use, in one unit */
@@ -114,6 +115,14 @@ BHD double world_lowest(const World *W, int body);   /* lowest corner height of 
 typedef struct { Vec c, h; Quat q; double mu, soft, rad; } RoomBox;
 #define ROOM_MAX 256
 #define ROOM_CONTACTS (NB * NCORNER * 2)
+/* Terrain queries (every build): the vertical line through (x, z) against the room.
+ * support_y: height of the highest surface under the line at or below ytop (the floor, y = 0, if none): what she
+ *   stands on there; boxes reaching above ytop there (a tunnel roof overhead) are not support.
+ * column_hit: whether any box occupies the line between heights y0 and y1. */
+BHD double support_y(double x, double z, double ytop);
+BHD int column_hit(double x, double z, double y0, double y1);
+BHD int room_size(void);
+BHD const RoomBox *room_at(int j);
 #ifndef __CUDACC__
 int room_set(const double *boxes, int n);    /* n boxes of 12 doubles: c (3), h (3), q (w x y z), mu, soft; returns n or -1 */
 int room_count(void);

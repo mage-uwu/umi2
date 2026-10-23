@@ -15,7 +15,7 @@ import torch
 HERE = os.path.dirname(os.path.abspath(__file__))
 BODY = os.path.dirname(HERE)
 U64 = 0xFFFFFFFFFFFFFFFF
-TASKS = {"balance": 0, "imitate": 1, "crawl": 2, "getup": 3}
+TASKS = {"balance": 0, "imitate": 1, "crawl": 2, "getup": 3, "goto": 4}
 
 
 def load_mref(path):
@@ -48,6 +48,10 @@ def task_setup(task, mref, style, assist, push, act_mul, steps, style_start, swa
         t["task"] = TASKS[task]; t["act_mul"] = act_mul or 2.5; t["steps"] = 300 if task == "crawl" else 240
         if style:
             f, names = style.split(":", 1); t["style_file"] = f; t["style"] = names.split(",")[:8]
+    elif task == "goto":   # physics_gym: the walk clip's cycle is the phase input; walking poses are the style
+        t["task"] = TASKS["goto"]; t["clip"] = "walk"; t["clip_file"] = mref; t["steps"] = 600
+        if style: f, names = style.split(":", 1); t["style_file"] = f; t["style"] = names.split(",")[:8]
+        else: t["style_file"] = mref; t["style"] = ["walk"]
     elif task != "balance":
         t["task"] = TASKS["imitate"]; t["clip"] = task; t["init_noise"] = 0.0; t["clip_file"] = mref
     if steps > 0: t["steps"] = steps

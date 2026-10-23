@@ -184,7 +184,7 @@ static void substep8(W8 *W, double hs, int iters) {
 }
 
 void world_step_x8(World **Ws, int n) {
-    if (room_count()) { for (int k = 0; k < n; k++) world_step(Ws[k]); return; }   /* room contacts: the scalar solver (body.c) */
+    { for (int k = 0; k < n; k++) world_step(Ws[k]); return; }   /* physics_gym: the scalar solver (body.c), which also records touch and room contacts */
     W8 W; World *w0 = Ws[0];
     for (int l = 0; l < 8; l++) {
         const World *w = Ws[l < n ? l : 0];

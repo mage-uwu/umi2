@@ -22,6 +22,17 @@
  * for moving as that person does: a pose-pair match against the clips, independent of timing and path.
  * The two floor tasks measure her heading from the pelvis's forward and up axes together (forward alone is
  * vertical when she lies face down), and take act_mul times the joint ranges.
+ *   TASK_GOTO     (physics_gym) reach a goal point anywhere in the room, on the floor or on top of a surface, preferably
+ *                 walking: pays for moving toward it near walking speed, facing it, an upright chest, low effort and
+ *                 smooth commands, and (with style clips: the walk capture) for walking poses; reaching it (within
+ *                 0.3 m, on its surface) pays a bonus and a new goal is drawn. Starts standing on a free spot of floor.
+ *
+ * Terrain is felt, not seen: the observation has no map or height scan. Each body reports its contact force over the
+ * last control step (touch, from the physics' contact solve), the pelvis height is measured from her lowest foot
+ * corner (kinematics, the same as the height above the floor while she stands there), and the foot flags come from
+ * touch. What the room is like underfoot is left to the controller's memory. The environment itself (fall test,
+ * reward, starts and goals) measures heights from the surface under her (body.c support_y), which on open floor is
+ * y = 0 as before. The observation ends with the goal relative to her (zeros for other tasks) and the 14 touches.
  */
 #ifndef ENV_H
 #define ENV_H
@@ -30,15 +41,17 @@
 #include <stdint.h>
 
 #define ACT_DIM 31
-#define OBS_DIM (NB * 15 + 6)
+#define OBS_BASE (NB * 15 + 6)   /* the bodies, foot contacts, centre of mass, clip phase (body/ policies read these) */
+#define OBS_GOAL 4                /* goal x, y, z from her pelvis in the heading frame (horizontal at most 4 m), distance */
+#define OBS_DIM (OBS_BASE + OBS_GOAL + NB)   /* then touch: each body's mean contact force over the step / body weight */
 #define CTRL_HZ 30
 #define ACT_FILTER 0.35
 #define STYLE_FEAT (4 * (NB - 1) + 3)   /* pose features: joint rotations, gravity in the pelvis frame */   /* each control step the joint command moves this share of the way to the new action */
-enum { TASK_BALANCE, TASK_IMITATE, TASK_CRAWL, TASK_GETUP };
+enum { TASK_BALANCE, TASK_IMITATE, TASK_CRAWL, TASK_GETUP, TASK_GOTO };
 
 typedef struct {
     int task;
-    const Clip *clip;    /* TASK_IMITATE */
+    const Clip *clip;    /* TASK_IMITATE; TASK_GOTO: its cycle sets the phase input (the walk clip) */
     double push_max;     /* largest push force (N), applied for 0.2 s */
     double sway;         /* TASK_BALANCE: amplitude (rad) of the relaxed idle motion in the stand reference; 0 = still */
     double arm_tone;     /* muscle tone of shoulders and elbows (0 or 1 = full; below 1 the arms hang looser) */
@@ -67,6 +80,7 @@ typedef struct {
     float prev_act[ACT_DIM], filt[ACT_DIM];   /* last raw action; low-passed action that sets the targets */
     Vec head_v;          /* head velocity at the previous control step (for the head-steadiness reward) */
     float style_prev[STYLE_FEAT]; int style_has_prev;   /* the previous step's pose features (style prior) */
+    Vec goal; int goals;   /* TASK_GOTO: the goal point (on a surface) and how many she has reached this episode */
 } Env;
 
 #ifndef __CUDACC__   /* the GPU build defines it ahead of every use, in one unit */
@@ -85,7 +99,8 @@ BHD double env_step(Env *E, const float *act);   /* returns the reward; sets E->
 /* env_step for n environments (sharing substeps and iters), their physics 8 at a time (body_x8.c) */
 void env_step_many(Env *const *E, const float *const *act, double *reward, int n);
 BHD double env_rand(uint64_t *s);
-BHD double env_phase(const Env *E);              /* reference time in the clip (s), or 0 */
+BHD double env_phase(const Env *E);
+BHD void env_set_goal(Env *E, Vec goal);   /* TASK_GOTO: put the goal somewhere else (the viewer's goal marker) */
 /* Motion style prior (floor tasks): each step her last two poses are compared with every pair of consecutive
  * frames of the style clips; the closest match pays. Call once per clip before stepping (not thread-safe). */
 void env_style_prepare(const Clip *c);

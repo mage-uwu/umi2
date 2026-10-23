@@ -45,6 +45,16 @@ Pool *pool_new(int n, const char *task, const char *mref, const char *style, dou
                 const Clip *cl = mref_find(&P->SM, tok); if (!cl) { fprintf(stderr, "no clip %s\n", tok); return NULL; }
                 env_style_prepare(cl); tc->style[tc->nstyle++] = cl; }
         }
+    } else if (!strcmp(task, "goto")) {   /* physics_gym: the walk clip's cycle is the phase input; walking poses are the style */
+        tc->task = TASK_GOTO; tc->steps = 600;
+        if (mref_load(mref, &P->M) || !(tc->clip = mref_find(&P->M, "walk"))) { fprintf(stderr, "no clip walk in %s\n", mref); return NULL; }
+        if (style && *style) {
+            char buf[1024]; snprintf(buf, sizeof buf, "%s", style); char *colon = strchr(buf, ':'); if (!colon) { fprintf(stderr, "--style file:clips\n"); return NULL; }
+            *colon = 0; if (mref_load(buf, &P->SM)) { fprintf(stderr, "cannot load %s\n", buf); return NULL; }
+            for (char *tok = strtok(colon + 1, ","); tok && tc->nstyle < 8; tok = strtok(NULL, ",")) {
+                const Clip *cl = mref_find(&P->SM, tok); if (!cl) { fprintf(stderr, "no clip %s\n", tok); return NULL; }
+                env_style_prepare(cl); tc->style[tc->nstyle++] = cl; }
+        } else { env_style_prepare(tc->clip); tc->style[tc->nstyle++] = tc->clip; }
     } else if (strcmp(task, "balance")) {
         if (mref_load(mref, &P->M) || !(tc->clip = mref_find(&P->M, task))) { fprintf(stderr, "no clip %s in %s\n", task, mref); return NULL; }
         tc->task = TASK_IMITATE; tc->init_noise = 0;

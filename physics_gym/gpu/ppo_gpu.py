@@ -96,14 +96,20 @@ def main():
     mean, sd = np.zeros(OBS, F32), np.ones(OBS, F32); on = 0.0; osum = np.zeros(OBS); osq = np.zeros(OBS)
     if a.load:
         raw = open(a.load + ".head", "rb").read()
-        assert raw[:4] == b"TSPH" and struct.unpack("<3i", raw[4:16]) == (d, OBS, ACT), "head does not match"
+        hd, hobs, hact = struct.unpack("<3i", raw[4:16])
+        # a head with fewer inputs (a body/ policy: 216) continues here with the new inputs (goal, touch) appended,
+        # their weights zero, so it starts out acting exactly as before
+        assert raw[:4] == b"TSPH" and hd == d and hact == ACT and hobs <= OBS, "head does not match"
         o = 16
         def take(n):
             nonlocal o; v = np.frombuffer(raw, F32, n, o).copy(); o += 4 * n; return v
-        for k, n in (("Win", d * OBS), ("bin", d), ("Wo", ACT * d), ("bo", ACT), ("log_std", ACT)): ends[k] = take(n).reshape(ends[k].shape)
-        mean, sd = take(OBS), take(OBS)
-        if len(raw) - o >= 4 * sum(v.size for v in crit.values()):
-            for k in ("W1", "b1", "W2", "b2", "W3", "b3"): crit[k] = take(crit[k].size).reshape(crit[k].shape)
+        ends["Win"][:, :hobs] = take(d * hobs).reshape(d, hobs); ends["Win"][:, hobs:] = 0
+        for k, n in (("bin", d), ("Wo", ACT * d), ("bo", ACT), ("log_std", ACT)): ends[k] = take(n).reshape(ends[k].shape)
+        mean[:hobs], sd[:hobs] = take(hobs), take(hobs)
+        if len(raw) - o >= 4 * (sum(v.size for v in crit.values()) - CH * (OBS - hobs)):
+            crit["W1"][:, :hobs] = take(CH * hobs).reshape(CH, hobs); crit["W1"][:, hobs:] = 0
+            for k in ("b1", "W2", "b2", "W3", "b3"): crit[k] = take(crit[k].size).reshape(crit[k].shape)
+        if hobs < OBS: print(json.dumps({"event": "load", "inputs": hobs, "widened_to": OBS}), flush=True)
         on = 1000.0; osum = mean.astype(np.float64) * on; osq = (sd.astype(np.float64) ** 2 + mean.astype(np.float64) ** 2) * on
         ends["log_std"][:] = a.log_std
     T_ = lambda v: torch.tensor(v, device=dev, requires_grad=True)

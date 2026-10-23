@@ -142,6 +142,33 @@ int room_get(double *v) {   /* the table back as room_set took it */
     return room_n;
 }
 #endif
+BHD int room_size(void) { return room_n; }
+BHD const RoomBox *room_at(int j) { return room_box + j; }
+/* the heights where the vertical line through (x, z) is inside box o: [*t0, *t1]; 0 if it misses */
+static BHD int column_span(const RoomBox *o, double x, double z, double *t0, double *t1) {
+    const double dx = x - o->c.x, dz = z - o->c.z; if (dx * dx + dz * dz > o->rad * o->rad) return 0;
+    const Quat qi = qconj(o->q); const Vec a = qrot(qi, v3(dx, -o->c.y, dz)), b = qrot(qi, v3(0, 1, 0));
+    const double A[3] = {a.x, a.y, a.z}, Bv[3] = {b.x, b.y, b.z}, H[3] = {o->h.x, o->h.y, o->h.z};
+    double lo = -1e30, hi = 1e30;
+    for (int k = 0; k < 3; k++) {
+        if (fabs(Bv[k]) < 1e-12) { if (fabs(A[k]) > H[k]) return 0; continue; }
+        double ta = (-H[k] - A[k]) / Bv[k], tb = (H[k] - A[k]) / Bv[k]; if (ta > tb) { const double t = ta; ta = tb; tb = t; }
+        if (ta > lo) lo = ta;
+        if (tb < hi) hi = tb;
+    }
+    if (lo > hi) return 0;
+    *t0 = lo; *t1 = hi; return 1;
+}
+BHD double support_y(double x, double z, double ytop) {
+    double best = 0, t0, t1;
+    for (int j = 0; j < room_n; j++) if (column_span(room_box + j, x, z, &t0, &t1) && t1 <= ytop + 1e-9 && t1 > best) best = t1;
+    return best;
+}
+BHD int column_hit(double x, double z, double y0, double y1) {
+    double t0, t1;
+    for (int j = 0; j < room_n; j++) if (column_span(room_box + j, x, z, &t0, &t1) && t1 > y0 && t0 < y1) return 1;
+    return 0;
+}
 #ifdef __CUDACC__
 #define BODY_DEBUG(W, k)
 #else
@@ -196,6 +223,7 @@ static BHD void substep(World *W) {
         Body *b = W->b + i; Vec r = qrot(b->q, corner(i, k)), pw = vadd(b->x, r);
         if (pw.y >= 0) continue;
         double ln = solve_pos(b, NULL, r, v3(0, 0, 0), v3(0, -1, 0), -pw.y, 0, h, -1);
+        W->touch[i] += fabs(ln) / (h * h);   /* the contact force this substep (N) */
         cb[nc] = i; ck[nc] = k; cl[nc++] = ln;
     } }
     /* room boxes: a corner inside one is pushed out through the face it is nearest, at the box's softness (XPBD
@@ -216,6 +244,7 @@ static BHD void substep(World *W) {
                 else { d = dz; nl = v3(0, 0, l.z < 0 ? -1 : 1); }
                 const Vec n = qrot(o->q, nl);   /* outward */
                 const double ln = solve_pos(b, NULL, r, v3(0, 0, 0), vscale(n, -1), d, o->soft, h, -1);
+                W->touch[i] += fabs(ln) / (h * h);
                 if (nr < ROOM_CONTACTS) { rb[nr] = i; rk[nr] = k; rl[nr] = ln; rn[nr] = n; rmu[nr] = o->mu; nr++; }
             }
         }
@@ -257,7 +286,12 @@ static BHD void substep(World *W) {
     }
 }
 
-BHD void world_step(World *W) { for (int s = 0; s < W->substeps; s++) substep(W); W->t += W->h * W->substeps; }
+BHD void world_step(World *W) {
+    for (int i = 0; i < NB; i++) W->touch[i] = 0;
+    for (int s = 0; s < W->substeps; s++) substep(W);
+    for (int i = 0; i < NB; i++) W->touch[i] /= W->substeps;   /* mean over the step */
+    W->t += W->h * W->substeps;
+}
 
 BHD Vec world_com(const World *W, Vec *vel) {
     Vec c = v3(0, 0, 0), v = v3(0, 0, 0); double m = 0;

@@ -17,6 +17,7 @@ CASES = {
     "balance": dict(task="balance", push=150),
     "walk": dict(task="walk", assist=0.3),
     "crawl": dict(task="crawl", style=f"{D}/cmu_ref.bin:crawl"),
+    "goto": dict(task="goto"),
     "getup": dict(task="getup", style=f"{D}/cmu_ref.bin:getup_back1,getup_back2,getup_face1,getup_face2,getup_side1,getup_side2", style_start=0.3),
 }
 
