@@ -54,6 +54,7 @@ export class World {
   constructor(totalMass = 45, substeps = 20, dt = 1 / 30) {
     this.substeps = substeps; this.h = dt / substeps; this.mu = 0.9; this.iters = 4; this.kpScale = 1; this.kdScale = 1; this.t = 0;
     this.push = { body: -1, force: [0, 0, 0], left: 0 };
+    this.assistF = [0, 0, 0]; this.assistT = [0, 0, 0];   // training aid on the pelvis (env.c assist)
     const fsum = BODY_DEFS.reduce((s, d) => s + d.mass_frac, 0);
     this.b = BODY_DEFS.map(d => {
       const m = totalMass * d.mass_frac / fsum, X = 2 * d.half[0], Y = 2 * d.half[1], Z = 2 * d.half[2];
@@ -100,6 +101,7 @@ export class World {
       const b = this.b[i];
       b.v = [b.v[0], b.v[1] - h * G_ACC, b.v[2]];
       if (i === this.push.body && this.push.left > 0) b.v = vadd(b.v, vscale(this.push.force, h * b.invMass));
+      if (i === 0) { b.v = vadd(b.v, vscale(this.assistF, h * b.invMass)); b.w = vadd(b.w, vscale(this.invI(b, this.assistT), h)); }
       b.xprev = b.x; b.x = vadd(b.x, vscale(b.v, h));
       const wl = qrot(qconj(b.q), b.w), Il = [wl[0] / b.invI[0], wl[1] / b.invI[1], wl[2] / b.invI[2]];
       let tq = vcross(wl, Il); tq = [-tq[0] * b.invI[0], -tq[1] * b.invI[1], -tq[2] * b.invI[2]];
@@ -317,4 +319,13 @@ export function poseFromClip(world, clip, t) {
   for (const b of world.b) b.xprev = b.x;
   world.target = A.rel.slice();
   return A;
+}
+
+// Pelvis support spring toward a clip's root path and rotation, strength s in 0..1 (env.c, TASK_IMITATE assist).
+export function setAssist(world, ref, s) {
+  if (!s) { world.assistF = [0, 0, 0]; world.assistT = [0, 0, 0]; return; }
+  let M = 0; for (const b of world.b) M += 1 / b.invMass;
+  const p = world.b[0], dx = vsub(ref.root, p.x), e = qlog(qmul(ref.world[0], qconj(p.q)));
+  world.assistF = vscale(vsub(vscale(dx, 60), vscale([p.v[0], 0, p.v[2]], 6)), s * M); world.assistF[1] = s * M * 60 * dx[1];
+  world.assistT = vscale(vsub(vscale(e, 150), vscale(p.w, 8)), s);
 }

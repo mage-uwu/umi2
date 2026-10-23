@@ -90,7 +90,7 @@ button:disabled { opacity: .45; cursor: default; }
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm';
-import { World, BODY_DEFS, B, standPose, applyAction, observe, fallen, loadPolicy, loadClips, poseFromClip, math, CTRL_HZ } from './body.js';
+import { World, BODY_DEFS, B, standPose, applyAction, observe, fallen, loadPolicy, loadClips, poseFromClip, setAssist, math, CTRL_HZ } from './body.js';
 
 const status = document.getElementById('status');
 const setStatus = (t, alert = false) => { status.textContent = t; status.classList.toggle('alert', alert); };
@@ -169,12 +169,14 @@ const boxes = BODY_DEFS.map(d => {
 // or a motion clip followed in time (the clip's phase is part of what the controller sees).
 const SKILLS = {
   balance: { label: 'Balance', file: 'balance.json' },
-  walk: { label: 'Walk', file: 'walk.json', clip: 'walk' },
+  // assist: the pelvis support spring the controller was trained with (1 = full); 0 once it walks unaided
+  walk: { label: 'Walk (assisted)', file: 'walk.json', clip: 'walk', assist: 1 },
 };
 let world, ref, policy = null, skill = 'balance', upSince = 0, fallenAt = -1, listeners = {}, clips = null, clip = null;
 const policies = {};
 const emit = (ev, detail) => { (listeners[ev] || []).forEach(f => { try { f(detail); } catch (e) { console.error(e); } }); dispatchEvent(new CustomEvent('umibody:' + ev, { detail })); };
 function reset() {
+  focus.set(0, 0.85, 0);
   world = new World(45, 20, 1 / CTRL_HZ);
   if (clip) ref = poseFromClip(world, clip, 0).rel;
   else {
@@ -203,6 +205,7 @@ const snapshot = () => world.b.map(b => ({ x: b.x.slice(), q: b.q.slice() }));
 let prev, acc = 0, last = performance.now();
 function control() {
   const phase = clip ? 2 * Math.PI * world.t / clip.T : 0;
+  if (clip) setAssist(world, clip.at(world.t), fallenAt < 0 ? SKILLS[skill].assist || 0 : 0);
   if (fallenAt < 0 && policy) applyAction(world, ref, policy.act(observe(world, phase)));
   prev = snapshot(); world.step();
   if (clip) ref = clip.at(world.t).rel;
@@ -211,7 +214,8 @@ function control() {
   emit('step', { t: world.t });
 }
 function frame(now) {
-  acc = Math.min(acc + (now - last) / 1000, 0.2); last = now;
+  const dt = Math.min((now - last) / 1000, 0.2);
+  acc = Math.min(acc + dt, 0.2); last = now;
   if (world) {
     while (acc >= 1 / CTRL_HZ) { control(); acc -= 1 / CTRL_HZ; }
     const a = acc * CTRL_HZ, Q = [];
@@ -222,16 +226,19 @@ function frame(now) {
     });
     const px = prev[0].x.map((v, k) => v + (world.b[0].x[k] - v) * a);
     if (vrm) { poseModel(Q, px); vrm.update(1 / 60); }
-    follow(px);
+    follow(px, dt);
     document.getElementById('r-time').textContent = fallenAt < 0 ? `upright ${(world.t - upSince).toFixed(1)} s` : 'fallen';
   }
   resize(); renderer.render(scene, camera);
   requestAnimationFrame(frame);
 }
+// The camera trails her pelvis at a rate independent of the frame rate, from a three-quarter side view
+// (she faces +Z, so walking carries her across the frame rather than into the lens).
 const focus = new THREE.Vector3(0, 0.85, 0);
-function follow(px) {
-  focus.x += (px[0] - focus.x) * 0.05; focus.z += (px[2] - focus.z) * 0.05;
-  camera.position.set(focus.x + 1.6, 1.25, focus.z + 3.6); camera.lookAt(focus);
+function follow(px, dt) {
+  const k = 1 - Math.exp(-3 * dt);
+  focus.x += (px[0] - focus.x) * k; focus.z += (px[2] - focus.z) * k;
+  camera.position.set(focus.x + 3.3, 1.25, focus.z + 1.9); camera.lookAt(focus);
   floor.position.set(focus.x, 0, focus.z); shadowCatcher.position.set(focus.x, 0.001, focus.z);
   sun.position.set(focus.x + 1, 3, focus.z + 2); sun.target.position.copy(focus);
 }
