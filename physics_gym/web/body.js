@@ -55,10 +55,24 @@ const hingeAxis = h => h === 1 ? [1, 0, 0] : h === 2 ? [0, 1, 0] : [0, 0, 1];
 let ROOM = [];
 export function setRoom(boxes) { ROOM = (boxes || []).map(b => ({ c: b.c, h: b.h, q: b.q, mu: b.mu, soft: b.soft, rad: Math.sqrt(b.h[0] * b.h[0] + b.h[1] * b.h[1] + b.h[2] * b.h[2]) })); }
 export const room = () => ROOM;
+// the heights where the vertical line through (x, z) is inside box o, or null (body.c column_span)
+function columnSpan(o, x, z) {
+  const dx = x - o.c[0], dz = z - o.c[2]; if (dx * dx + dz * dz > o.rad * o.rad) return null;
+  const qi = qconj(o.q), A = qrot(qi, [dx, -o.c[1], dz]), Bv = qrot(qi, [0, 1, 0]); let lo = -1e30, hi = 1e30;
+  for (let k = 0; k < 3; k++) {
+    if (Math.abs(Bv[k]) < 1e-12) { if (Math.abs(A[k]) > o.h[k]) return null; continue; }
+    let ta = (-o.h[k] - A[k]) / Bv[k], tb = (o.h[k] - A[k]) / Bv[k]; if (ta > tb) [ta, tb] = [tb, ta];
+    if (ta > lo) lo = ta;
+    if (tb < hi) hi = tb;
+  }
+  return lo > hi ? null : [lo, hi];
+}
+// the surface under (x, z) at or below ytop: the floor (0) or a room box's top there (body.c support_y)
+export function supportY(x, z, ytop) { let best = 0; for (const o of ROOM) { const s = columnSpan(o, x, z); if (s && s[1] <= ytop + 1e-9 && s[1] > best) best = s[1]; } return best; }
 
 export class World {
   constructor(totalMass = 45, substeps = 20, dt = 1 / 30) {
-    this.substeps = substeps; this.h = dt / substeps; this.mu = 0.9; this.iters = 4; this.kpScale = 1; this.kdScale = 1; this.t = 0;
+    this.totalMass = totalMass; this.substeps = substeps; this.h = dt / substeps; this.mu = 0.9; this.iters = 4; this.kpScale = 1; this.kdScale = 1; this.t = 0;
     this.tone = BODY_DEFS.map(() => 1);   // per-joint muscle tone (body.c tone)
     this.push = { body: -1, force: [0, 0, 0], left: 0 };
     // grab (viewer only, not in the C twin): a damped spring from a point on one body (r, in its rest frame)
@@ -73,6 +87,7 @@ export class World {
         invI: [12 / (m * (Y * Y + Z * Z)), 12 / (m * (X * X + Z * Z)), 12 / (m * (X * X + Y * Y))] };
     });
     this.target = BODY_DEFS.map(() => QID);
+    this.touch = BODY_DEFS.map(() => 0);   // contact force on each body, mean over the last step (N), as body.c World.touch
   }
   pose(rootX, rootQ, rel, rootV = [0, 0, 0]) {
     for (let i = 0; i < NB; i++) {
@@ -148,7 +163,8 @@ export class World {
     for (let i = 0; i < NB; i++) for (let k = 0; k < 8; k++) {
       const b = this.b[i], r = qrot(b.q, corner(i, k)), pw = vadd(b.x, r);
       if (pw[1] >= 0) continue;
-      contacts.push([i, k, this.solvePos(b, null, r, [0, 0, 0], [0, -1, 0], -pw[1], 0)]);
+      const ln = this.solvePos(b, null, r, [0, 0, 0], [0, -1, 0], -pw[1], 0); this.touch[i] += Math.abs(ln) / (h * h);
+      contacts.push([i, k, ln]);
     }
     // room boxes (body.c): a corner inside one is pushed out through its nearest face, at the box's softness
     const roomContacts = [];
@@ -163,7 +179,8 @@ export class World {
           let nl, d;
           if (dx <= dy && dx <= dz) { d = dx; nl = [l[0] < 0 ? -1 : 1, 0, 0]; } else if (dy <= dz) { d = dy; nl = [0, l[1] < 0 ? -1 : 1, 0]; } else { d = dz; nl = [0, 0, l[2] < 0 ? -1 : 1]; }
           const n = qrot(o.q, nl);
-          roomContacts.push([i, k, this.solvePos(b, null, r, [0, 0, 0], vscale(n, -1), d, o.soft), n, o.mu]);
+          const ln = this.solvePos(b, null, r, [0, 0, 0], vscale(n, -1), d, o.soft); this.touch[i] += Math.abs(ln) / (h * h);
+          roomContacts.push([i, k, ln, n, o.mu]);
         }
       }
     }
@@ -196,7 +213,12 @@ export class World {
       c.w = vadd(c.w, this.invI(c, imp)); p.w = vsub(p.w, this.invI(p, imp));
     }
   }
-  step() { for (let s = 0; s < this.substeps; s++) this.substep(); this.t += this.h * this.substeps; }
+  step() {
+    this.touch.fill(0);
+    for (let s = 0; s < this.substeps; s++) this.substep();
+    for (let i = 0; i < NB; i++) this.touch[i] /= this.substeps;
+    this.t += this.h * this.substeps;
+  }
   com() {
     let c = [0, 0, 0], v = [0, 0, 0], m = 0;
     for (const b of this.b) { const mi = 1 / b.invMass; c = vadd(c, vscale(b.x, mi)); v = vadd(v, vscale(b.v, mi)); m += mi; }
@@ -278,10 +300,25 @@ export function observe(world, phase = 0, floor = false) {
   o.push(Math.sin(phase), Math.cos(phase));
   return o;
 }
-export function fallen(world) {
-  if (world.b[0].x[1] < 0.55 || world.b[B.HEAD].x[1] < 1.0) return true;
-  for (let i = 0; i < NB; i++) if (![B.L_FOOT, B.R_FOOT, B.L_SHIN, B.R_SHIN].includes(i) && world.lowest(i) < 0.05) return true;
+export function fallen(world) {   // heights from the surface under her (env.c fallen; y = 0 on open floor)
+  const p = world.b[0].x, sp = supportY(p[0], p[2], p[1]);
+  if (p[1] - sp < 0.55 || world.b[B.HEAD].x[1] - sp < 1.0) return true;
+  for (let i = 0; i < NB; i++) if (![B.L_FOOT, B.R_FOOT, B.L_SHIN, B.R_SHIN].includes(i)) { const c = world.b[i].x; if (world.lowest(i) - supportY(c[0], c[2], c[1]) < 0.05) return true; }
   return false;
+}
+// The go-to skill's observation (env.c env_obs for TASK_GOTO, OBS_DIM 234): the bodies as in observe(), but the pelvis
+// height from her lowest foot corner and the foot flags from touch; then the goal from her pelvis in the heading
+// frame (horizontal at most 4 m) and its distance; then each body's touch as a share of her weight.
+export const OBS_GOTO = OBS_DIM + 4 + NB;
+export function observeGoto(world, phase, goal) {
+  const o = observe(world, phase, false), root = world.b[0].x, wt = world.totalMass * G_ACC;
+  o[1] = root[1] - Math.min(world.lowest(B.L_FOOT), world.lowest(B.R_FOOT));
+  o[NB * 15] = world.touch[B.L_FOOT] > 0.02 * wt ? 1 : 0; o[NB * 15 + 1] = world.touch[B.R_FOOT] > 0.02 * wt ? 1 : 0;
+  const pz = qrot(world.b[0].q, [0, 0, 1]), hi = qexp([0, -Math.atan2(pz[0], pz[2]), 0]);
+  const g = qrot(hi, vsub(goal, root)), r = Math.sqrt(g[0] * g[0] + g[2] * g[2]), s = r > 4 ? 4 / r : 1;
+  o.push(g[0] * s, g[1], g[2] * s, Math.min(r, 4));
+  for (let i = 0; i < NB; i++) o.push(Math.min(3, world.touch[i] / wt));
+  return o;
 }
 
 // ---------- policies (policy.c), loaded from the JSON written by tools/pol2json.py ----------
@@ -375,7 +412,7 @@ export async function loadTssPolicy(url, wasmUrl = 'tss.wasm') {
     type: 'nanotss', params: j.params, width: d,
     reset() { X.tss_reset(); },
     act(obs) {
-      new Float32Array(X.memory.buffer, X.tss_obs(), OBS_DIM).set(obs);
+      new Float32Array(X.memory.buffer, X.tss_obs(), obs.length).set(obs);   // 216 inputs for the body/ skills, 234 for go-to
       return Array.from(new Float32Array(X.memory.buffer, X.tss_step(), ACT_DIM));
     },
   };

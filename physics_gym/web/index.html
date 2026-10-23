@@ -68,7 +68,7 @@ button:disabled { opacity: .45; cursor: default; }
       <button data-push="front">Front</button><button data-push="back">Back</button>
       <button id="reset">Reset</button>
       <span class="label" style="margin-left:8px">Click</span>
-      <button id="c-push" aria-pressed="true" title="A click pushes her from that side">Push</button><button id="c-grab" aria-pressed="false" title="Press on a body part and drag it">Grab</button>
+      <button id="c-push" aria-pressed="true" title="A click pushes her from that side">Push</button><button id="c-grab" aria-pressed="false" title="Press on a body part and drag it">Grab</button><button id="c-goal" aria-pressed="false" title="Click a surface to put the goal there (the Go to skill walks to it)">Goal</button>
     </div>
     <div class="group" role="group" aria-label="View">
       <span class="label">View</span>
@@ -113,7 +113,7 @@ button:disabled { opacity: .45; cursor: default; }
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm';
-import { World, setRoom, BODY_DEFS, B, standPose, swayPose, crawlPose, applyAction, observe, fallen, loadPolicy, loadTssPolicy, loadClips, poseFromClip, setAssist, math, CTRL_HZ } from './body.js';
+import { World, setRoom, supportY, observeGoto, BODY_DEFS, B, standPose, swayPose, crawlPose, applyAction, observe, fallen, loadPolicy, loadTssPolicy, loadClips, poseFromClip, setAssist, math, CTRL_HZ } from './body.js';
 import { createShaderView } from './shader-view.js';
 
 const status = document.getElementById('status');
@@ -381,6 +381,9 @@ const SKILLS = {
   walk: { label: 'Walk', file: 'walk_tss.json', clip: 'walk' },
   // floor: a floor skill, trained without a clip (env.c TASK_CRAWL), with joint ranges widened by actMul
   crawl: { label: 'Crawl', file: 'crawl_tss.json', floor: true, actMul: 2.5 },
+  // goTo: physics_gym's go-to controller (env.c TASK_GOTO, trained on the GPU in the room): walks to the goal marker
+  // (Click: Goal), feeling the room through touch; its clock is the walk clip's cycle (phaseClip), with no reference
+  goto: { label: 'Go to', file: 'goto_tss.json', goTo: true, phaseClip: 'walk' },
 };
 // Getting up (TASK_GETUP) is not a button: it takes over when she falls, or when Stand up is pressed while she
 // crawls, and hands back to Balance once she stands calmly.
@@ -415,7 +418,7 @@ function springs(t) {
 function reset() {
   springSettle = 2;
   focus.set(0, 0.85, 0);
-  world = new World(45, 20, 1 / CTRL_HZ); letGo = null; steadyAt = null;
+  world = new World(45, 20, 1 / CTRL_HZ); letGo = null; steadyAt = null; reachedAt = -1;
   if (SKILLS[skill].armTone) for (const i of [B.L_UARM, B.L_FARM, B.R_UARM, B.R_FARM]) world.tone[i] = SKILLS[skill].armTone;
   mode = 'skill'; clip = SKILLS[skill].clip && clips ? clips[SKILLS[skill].clip] : null;   // getting up drops the clip
   if (clip) ref = poseFromClip(world, clip, 0).rel;
@@ -498,23 +501,32 @@ document.getElementById('f-mouth').onclick = () => setMouth(!face.mouthTarget);
 addEventListener('keydown', e => { if (e.target.closest?.('input, textarea')) return; if (e.key === 'b') blink(); if (e.key === 'm') setMouth(!face.mouthTarget); });
 
 function control() {
-  const phase = clip ? 2 * Math.PI * world.t / clip.T : 0;
+  const pc = mode === 'skill' && SKILLS[skill].phaseClip && clips ? clips[SKILLS[skill].phaseClip] : null;
+  const phase = clip ? 2 * Math.PI * world.t / clip.T : pc ? 2 * Math.PI * world.t / pc.T : 0;
   const floor = mode === 'getup' || SKILLS[skill].floor, pol = mode === 'getup' ? getupPolicy : policy;
   world.assist = 0;   // set afresh each step (a clip's support, or the steadying hand while a limb is held)
   if (clip) setAssist(world, clip, world.t, fallenAt < 0 ? SKILLS[skill].assist || 0 : 0);
-  if (fallenAt < 0 && pol) applyAction(world, ref, pol.act(observe(world, phase, floor)), floor ? GETUP.actMul : 1);
+  const goTo = mode === 'skill' && SKILLS[skill].goTo;
+  if (fallenAt < 0 && pol) applyAction(world, ref, pol.act(goTo ? observeGoto(world, phase, goalOr()) : observe(world, phase, floor)), floor ? GETUP.actMul : 1);
+  if (goTo) goalReached();
   easeGrab(); aimLimb(); prev = snapshot(); world.step();
   hist.push({ t: world.t, s: snapshot() }); if (hist.length > 12) hist.shift();
   if (clip) ref = clip.at(world.t).rel;
   else if (mode === 'skill' && SKILLS[skill].sway) ref = swayPose(world.t, SKILLS[skill].sway);
-  if (mode === 'getup') {   // standing calmly for 1.5 s: back to Balance
-    const cv = world.com().v, still = world.b[B.HEAD].x[1] > 1.3 && world.b[0].x[1] > 0.8 && world.b[0].x[1] < 1.0 && Math.hypot(cv[0], cv[2]) < 0.3 && Math.abs(cv[1]) < 0.2
-      && world.lowest(B.L_FOOT) < 0.03 && world.lowest(B.R_FOOT) < 0.03;   // on both feet, not mid-leap
+  if (mode === 'getup') {   // standing calmly for 1.5 s: back to Balance (or on to the goal)
+    const P = world.b[0].x, sp = supportY(P[0], P[2], P[1]), foot = i => world.lowest(i) - supportY(world.b[i].x[0], world.b[i].x[2], world.b[i].x[1]);   // heights from the surface under her
+    const cv = world.com().v, still = world.b[B.HEAD].x[1] - sp > 1.3 && P[1] - sp > 0.8 && P[1] - sp < 1.0 && Math.hypot(cv[0], cv[2]) < 0.3 && Math.abs(cv[1]) < 0.2
+      && foot(B.L_FOOT) < 0.03 && foot(B.R_FOOT) < 0.03;   // on both feet, not mid-leap
     if (!still) calmSince = -1; else if (calmSince < 0) calmSince = world.t;
     if (calmSince >= 0 && world.t - calmSince > 1.5) {
+      if (SKILLS[skill].goTo) {   // up again: carry on to the goal
+        mode = 'skill'; policy = policies[skill]; policy?.reset(); ref = standPose(); upSince = world.t;
+        setStatus(goal ? 'Going to the goal.' : ''); emit('stood', {});
+      } else {
       mode = 'skill'; skill = 'balance'; policy = policies.balance; policy?.reset(); ref = standPose(); upSince = world.t;
       for (const i of [B.L_UARM, B.L_FARM, B.R_UARM, B.R_FARM]) world.tone[i] = SKILLS.balance.armTone;
       setPressed('[data-skill]', document.querySelector('[data-skill="balance"]')); setStatus(''); document.getElementById('standup').hidden = true; emit('stood', {});
+      }
     } else if (world.t - getupSince > 12) { reset(); setStatus(''); }
   } else if (SKILLS[skill].floor) {   // rolled onto her back or side
     if (math.qrot(world.b[B.CHEST].q, [0, 0, 1])[1] > 0.3) getUp('She rolled over; getting up.');
@@ -677,7 +689,7 @@ document.getElementById('v-model').onclick = () => { lookChosen = true; setLook(
 document.getElementById('v-boxes').onclick = () => { lookChosen = true; setLook('boxes'); };
 // Click the stage: push from the clicked side of her (screen left/right of her body, nearer/farther in depth).
 document.getElementById('stage').addEventListener('pointerdown', e => {
-  if (clickMode === 'grab') return;
+  if (clickMode === 'grab' || clickMode === 'goal') return;
   if (!world || fallenAt >= 0) return;
   const r = document.getElementById('stage').getBoundingClientRect(), p = new THREE.Vector3(...world.b[B.CHEST].x).project(camera);
   const sx = (e.clientX - r.left) / r.width * 2 - 1, sy = -((e.clientY - r.top) / r.height * 2 - 1);
@@ -693,9 +705,46 @@ document.getElementById('stage').addEventListener('pointerdown', e => {
 // light damped spring (at most 15 N on a limb, 40 N on the trunk) adds a nudge; the held point follows the cursor smoothly (about
 // 0.15 s), in the plane through it facing the camera. Her other joints keep balancing as before.
 let clickMode = 'push';
-for (const [id, m] of [['c-push', 'push'], ['c-grab', 'grab']]) document.getElementById(id).onclick = () => {
-  clickMode = m; setPressed('#c-push, #c-grab', document.getElementById(id)); document.getElementById('stage').style.cursor = m === 'grab' ? 'grab' : '';
+for (const [id, m] of [['c-push', 'push'], ['c-grab', 'grab'], ['c-goal', 'goal']]) document.getElementById(id).onclick = () => {
+  clickMode = m; setPressed('#c-push, #c-grab, #c-goal', document.getElementById(id)); document.getElementById('stage').style.cursor = m === 'grab' ? 'grab' : m === 'goal' ? 'crosshair' : '';
 };
+// The goal (the Go to skill): a marker set on any surface she can stand on (a click on the floor or on the top of a
+// room box; a wall's side is no place to stand). It stays where it is across resets and skills.
+let goal = null;
+const goalMark = (() => {
+  const g = new THREE.Group(), gold = new THREE.MeshStandardMaterial({ color: 0xd4a52a, roughness: .4, emissive: 0x3a2a00 });
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.025, 10, 48), gold); ring.rotation.x = -Math.PI / 2; ring.position.y = 0.02;
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.9, 8), gold); pole.position.y = 0.45;
+  const flag = new THREE.Mesh(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0.9, 0), new THREE.Vector3(0.22, 0.8, 0), new THREE.Vector3(0, 0.7, 0)]), gold);
+  flag.geometry.setIndex([0, 1, 2]); flag.geometry.computeVertexNormals(); flag.material = gold.clone(); flag.material.side = THREE.DoubleSide;
+  g.add(ring, pole, flag); g.visible = false; scene.add(g); return g; })();
+function setGoal(p) {   // p: a point on a surface, [x, y, z]; y defaults to the surface under (x, z)
+  const y = p.length > 2 && p[1] != null ? p[1] : supportY(p[0], p[p.length - 1], 10);
+  goal = [p[0], y, p[p.length - 1]]; goalMark.position.set(...goal); goalMark.visible = true; reachedAt = -1; emit('goal', { goal: goal.slice() });
+  return goal.slice();
+}
+const goalOr = () => goal || [world.b[0].x[0], supportY(world.b[0].x[0], world.b[0].x[2], world.b[0].x[1]), world.b[0].x[2]];   // no goal yet: stay
+let reachedAt = -1;
+function goalReached() {
+  if (!goal || reachedAt >= 0) return;
+  const p = world.b[0].x, d = Math.hypot(goal[0] - p[0], goal[2] - p[2]);
+  if (d < 0.3 && Math.abs(supportY(p[0], p[2], p[1]) - goal[1]) < 0.2) { reachedAt = world.t; setStatus(`Reached the goal in ${world.t.toFixed(1)} s.`); emit('reached', { goal: goal.slice(), t: world.t }); }
+}
+const _goalRay = new THREE.Raycaster();
+document.getElementById('stage').addEventListener('pointerdown', e => {
+  if (clickMode !== 'goal' || e.button !== 0) return;
+  const r = canvas.getBoundingClientRect(); if (!r.width) return;
+  _goalRay.setFromCamera(new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height * 2 - 1)), camera);
+  for (const h of _goalRay.intersectObjects([...roomGroup.children, floor], false)) {
+    if (!h.face) continue;
+    const n = h.face.normal.clone().transformDirection(h.object.matrixWorld);
+    if (h.object.material?.opacity < 0.5 && h.object.userData.kind === 'outer') continue;   // look through the see-through outer walls
+    if (n.y < 0.7) { setStatus('That is a side, not a surface to stand on.'); return; }
+    setGoal([h.point.x, h.point.y, h.point.z]); setStatus(SKILLS[skill].goTo ? 'Going to the goal.' : 'Goal set. Choose Go to to walk there.');
+    if (h.object === floor) goal[1] = 0;
+    return;
+  }
+});
 const grabLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]), new THREE.LineBasicMaterial({ color: 0xd4a52a, depthTest: false, transparent: true }));
 const grabDot = new THREE.Mesh(new THREE.SphereGeometry(0.025, 12, 8), new THREE.MeshBasicMaterial({ color: 0xd4a52a, depthTest: false, transparent: true }));
 grabLine.renderOrder = grabDot.renderOrder = 10; grabLine.visible = grabDot.visible = false; scene.add(grabLine, grabDot);
@@ -809,7 +858,8 @@ addEventListener('keydown', e => {
 async function useSkill(name) {
   const s = SKILLS[name]; if (!s) throw new Error(`no skill named ${name}`);
   policies[name] ||= s.file.includes('tss') ? await loadTssPolicy(s.file) : await loadPolicy(s.file);
-  if (s.clip) { clips ||= await loadClips('motions_ref.json'); clip = clips[s.clip]; } else clip = null;
+  if (s.clip || s.phaseClip) clips ||= await loadClips('motions_ref.json');
+  clip = s.clip ? clips[s.clip] : null;
   skill = name; policy = policies[name];
   document.getElementById('standup').hidden = !s.floor;
   setPressed('[data-skill]', document.querySelector(`[data-skill="${name}"]`));
@@ -833,15 +883,17 @@ for (const [k, s] of Object.entries(SKILLS)) {
 // window.umiBody.blink()
 // window.umiBody.grab(body, [x, y, z])         pull a body part ('chest', 'l_farm', ... or 'head') toward a world point; release()
 // window.umiBody.standUp()                    hand over to the get-up controller (from crawling, or anywhere)
-// window.umiBody.on(event, fn)                events: 'skill', 'reset', 'push', 'grab', 'release', 'fall', 'getup', 'stood', 'step', 'parts' (also dispatched as 'umibody:<event>')
+// window.umiBody.on(event, fn)                events: 'skill', 'reset', 'push', 'grab', 'release', 'fall', 'getup', 'stood', 'step', 'parts', 'goal', 'reached' (also dispatched as 'umibody:<event>')
 // window.umiBody.state()                      { t, upright, fallen, bodies: [{ name, bone, x, q }] }
 // window.umiBody.parts({ hair, dress, springs }) show or hide hair and dress, simulate or hold hair and cloth; returns the settings
 // window.umiBody.room                        the room as loaded (room.json: boxes the physics collides with and the page draws), or null
+// window.umiBody.goal([x, y?, z])              put the goal marker there (y: the surface under it if left out); goal() returns it
 // window.umiBody.view({ yaw, pitch, dist })   the camera around her (degrees, metres); returns the settings
 // window.umiBody.place([x, y, z], yaw?)        start her again at a point of the room (feet at y), facing yaw (radians from +z)
 window.umiBody = {
   get skills() { return Object.keys(SKILLS); },
   get room() { return roomDoc; },
+  goal(p) { return p ? setGoal(p) : goal && goal.slice(); },
   view(set = {}) { for (const k of ['yaw', 'pitch', 'dist']) if (k in set) view[k] = +set[k]; return { ...view }; },
   place(at, yaw = 0) {   // the skill's start pose, moved and turned, settled onto what is under her
     if (!world) return false; reset(); const q = math.qexp([0, yaw, 0]), p0 = world.b[B.PELVIS].x.slice();
