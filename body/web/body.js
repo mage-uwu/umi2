@@ -177,13 +177,15 @@ export function standPose() {
   rel[B.L_UARM] = qexp([0, 0, -a]); rel[B.R_UARM] = qexp([0, 0, a]);
   return rel;
 }
-// On hands and knees (env.c crawl_pose): joint rotations and the root rotation (torso level, facing the floor).
+// On hands and knees (env.c crawl_pose): joint rotations and the root rotation; the torso slopes up toward the
+// shoulders, thighs and arms vertical, shins along the floor.
+const arc = (a, b) => { const c = vcross(a, b); return qnorm([1 + vdot(a, b), c[0], c[1], c[2]]); };
 export function crawlPose() {
-  const rel = BODY_DEFS.map(() => QID), q = Math.PI / 2;
-  rel[B.L_THIGH] = rel[B.R_THIGH] = qexp([-q, 0, 0]); rel[B.L_SHIN] = rel[B.R_SHIN] = qexp([q, 0, 0]);
+  const rel = BODY_DEFS.map(() => QID), tilt = Math.PI / 2 - 0.75, rootQ = qexp([tilt, 0, 0]), down = qrot(qconj(rootQ), [0, -1, 0]);
+  rel[B.L_THIGH] = rel[B.R_THIGH] = arc([0, -1, 0], down); rel[B.L_SHIN] = rel[B.R_SHIN] = qexp([Math.PI / 2, 0, 0]);
   rel[B.L_FOOT] = rel[B.R_FOOT] = qexp([0.6, 0, 0]);
-  rel[B.L_UARM] = qexp([0, -q, 0]); rel[B.R_UARM] = qexp([0, q, 0]); rel[B.HEAD] = qexp([-0.7, 0, 0]);
-  return { rel, rootQ: qexp([q, 0, 0]) };
+  rel[B.L_UARM] = arc([1, 0, 0], down); rel[B.R_UARM] = arc([-1, 0, 0], down); rel[B.HEAD] = qexp([-tilt + 0.25, 0, 0]);
+  return { rel, rootQ };
 }
 // The stand pose with relaxed idle motion at time t, scaled by amp (rad of ankle sway; env.c sway_pose): ankle
 // sway counterbalanced at the hips and spine, a slow weight shift with the unloaded knee softening, breathing in
@@ -205,6 +207,13 @@ export function swayPose(t, amp) {
   return rel;
 }
 // Joint targets: reference rotation followed by exp(scale * f), f the action low-passed by ACT_FILTER (kept on the world).
+// Elbows and knees bend one way, straight to fully bent (env.c hinge_limit; the floor skills): flexion is -y for
+// the left elbow, +y for the right, +x for the knees.
+function hingeLimit(i, q) {
+  const h = BODY_DEFS[i].hinge, ang = 2 * Math.atan2(q[h], q[0]), flex = i === B.L_FARM ? -ang : ang, mx = i === B.L_FARM || i === B.R_FARM ? 2.5 : 2.6;
+  const f = Math.min(mx, Math.max(0, flex));
+  return f === flex ? q : qexp(vscale(hingeAxis(h), i === B.L_FARM ? -f : f));
+}
 // mul: the floor skills (crawl, get up) widen every joint's range (env.c TaskCfg.act_mul)
 export function applyAction(world, ref, a, mul = 1) {
   world.filt ||= new Array(ACT_DIM).fill(0);
@@ -214,6 +223,7 @@ export function applyAction(world, ref, a, mul = 1) {
     const d = BODY_DEFS[i];
     const r = d.hinge ? vscale(hingeAxis(d.hinge), f[k++]) : [f[k++], f[k++], f[k++]];
     world.target[i] = qmul(ref[i], qexp(vscale(r, ACT_SCALES[i] * mul)));
+    if (d.hinge && mul > 1) world.target[i] = hingeLimit(i, world.target[i]);
   }
 }
 // phase: radians of the reference clip's cycle (0 for balance); floor: the floor skills' heading (the pelvis's

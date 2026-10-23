@@ -11,9 +11,11 @@
  *                 velocity, reward pose, joint velocity, hand/foot and root tracking; the root's motion
  *                 accumulates across loops of the clip. A posture term ("golden thread") also pays for a
  *                 lifted, upright, steady head and level shoulders.
- *   TASK_CRAWL    no clip: from all fours, move forward on hands and knees (a forward speed near 0.4 m/s, the
- *                 pelvis low, the chest facing the floor, calm and low effort); rolling over ends the episode.
- *                 The gait is whatever the controller finds.
+ *   TASK_CRAWL    no clip: from all fours, move forward on palms and knees (a forward speed near 0.4 m/s; the
+ *                 hand ends of the forearms and the knee ends of the shins on the floor, palms toward the feet;
+ *                 torso, head, upper arms and elbows off it), calm and low effort. Rolling over, or the
+ *                 pelvis, chest or head touching the floor, ends the episode. The gait is whatever the controller
+ *                 finds. Elbows and knees only bend one way (floor skills; env.c hinge_limit).
  *   TASK_GETUP    no clip: from where a limp fall left her (or from all fours), rise to a calm stand: head and
  *                 pelvis up, chest upright, then the stand pose held still, with low effort and smooth commands.
  * The two floor tasks measure her heading from the pelvis's forward and up axes together (forward alone is

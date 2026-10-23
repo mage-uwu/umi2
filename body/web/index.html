@@ -289,6 +289,7 @@ const FINGERS = ['Thumb', 'Index', 'Middle', 'Ring', 'Little'].flatMap(f => ['Pr
 const HIPS_REST = [0, 0.928, 0.004];
 const toQ = q => new THREE.Quaternion(q[1], q[2], q[3], q[0]);
 // Body world rotations -> normalized bone local rotations (bones without a body keep their rest rotation).
+const wrist = { [B.L_FARM]: 0, [B.R_FARM]: 0 };
 function poseModel(Q, pelvisX) {
   const local = (child, parent) => toQ(parent === null ? Q[child] : math.qmul(math.qconj(Q[parent]), Q[child]));
   const set = (name, child, parent) => { const b = bone(name); if (b) b.quaternion.copy(local(child, parent)); };
@@ -298,7 +299,14 @@ function poseModel(Q, pelvisX) {
   set('leftUpperLeg', B.L_THIGH, B.PELVIS); set('leftLowerLeg', B.L_SHIN, B.L_THIGH); set('leftFoot', B.L_FOOT, B.L_SHIN);
   set('rightUpperLeg', B.R_THIGH, B.PELVIS); set('rightLowerLeg', B.R_SHIN, B.R_THIGH); set('rightFoot', B.R_FOOT, B.R_SHIN);
   bone('neck')?.quaternion.copy(face.neck);   // the gaze turns the neck a little (drawn only, not simulated)
-  for (const n of ['upperChest', 'leftShoulder', 'rightShoulder', 'leftHand', 'rightHand', 'leftToes', 'rightToes']) bone(n)?.quaternion.identity();
+  // wrists: a hand on the floor is drawn bent back so the palm lies flat, fingers forward (the physics has no
+  // wrist; the hand is part of the forearm box)
+  for (const [n, i, sg] of [['leftHand', B.L_FARM, 1], ['rightHand', B.R_FARM, -1]]) {
+    const near = world && (mode === 'getup' || SKILLS[skill].floor) ? Math.min(1, Math.max(0, (0.12 - world.lowest(i)) / 0.1)) : 0;
+    wrist[i] += (near - wrist[i]) * 0.3;
+    bone(n)?.rotation.set(0, 0, sg * 1.4 * wrist[i]);
+  }
+  for (const n of ['upperChest', 'leftShoulder', 'rightShoulder', 'leftToes', 'rightToes']) bone(n)?.quaternion.identity();
   for (const side of ['left', 'right']) for (const f of FINGERS) {
     const c = f.startsWith('Thumb') ? 0.1 : f.endsWith('Proximal') ? 0.35 : 0.3;
     bone(side + f)?.rotation.set(0, 0, side === 'left' ? -c : c);

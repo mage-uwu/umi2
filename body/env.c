@@ -36,15 +36,21 @@ void sway_pose(Quat *rel, double t, double amp) {
     rel[L_FARM] = qmul(rel[L_FARM], qexp(v3(0, -0.25 * k, 0))); rel[R_FARM] = qmul(rel[R_FARM], qexp(v3(0, 0.25 * k, 0)));
 }
 
+static Quat arc(Vec a, Vec b) {   /* shortest rotation taking unit a to unit b */
+    Vec c = vcross(a, b); Quat q = {1 + vdot(a, b), c.x, c.y, c.z}; return qnorm(q);
+}
 void crawl_pose(Quat *rel, Quat *root_q) {
     for (int i = 0; i < NB; i++) rel[i] = QID;
-    const double q = M_PI / 2;
-    *root_q = qexp(v3(q, 0, 0));                                   /* torso level, chest to the floor */
-    rel[L_THIGH] = rel[R_THIGH] = qexp(v3(-q, 0, 0));              /* thighs straight down */
-    rel[L_SHIN] = rel[R_SHIN] = qexp(v3(q, 0, 0));                 /* shins along the floor */
+    /* torso sloping up toward the shoulders (her arms are longer than her thighs, as everyone's are), thighs and
+     * arms vertical, shins along the floor */
+    const double tilt = M_PI / 2 - 0.75;
+    *root_q = qexp(v3(tilt, 0, 0));
+    const Vec down = qrot(qconj(*root_q), v3(0, -1, 0));   /* straight down, in the torso's frame */
+    rel[L_THIGH] = rel[R_THIGH] = arc(v3(0, -1, 0), down);
+    rel[L_SHIN] = rel[R_SHIN] = qexp(v3(M_PI / 2, 0, 0));
     rel[L_FOOT] = rel[R_FOOT] = qexp(v3(0.6, 0, 0));
-    rel[L_UARM] = qexp(v3(0, -q, 0)); rel[R_UARM] = qexp(v3(0, q, 0));   /* arms straight down to the hands */
-    rel[HEAD] = qexp(v3(-0.7, 0, 0));                              /* looking ahead */
+    rel[L_UARM] = arc(v3(1, 0, 0), down); rel[R_UARM] = arc(v3(-1, 0, 0), down);
+    rel[HEAD] = qexp(v3(-tilt + 0.25, 0, 0));   /* face ahead, a little down */
 }
 
 static Vec hinge_axis(int h) { return h == 1 ? v3(1, 0, 0) : h == 2 ? v3(0, 1, 0) : v3(0, 0, 1); }
@@ -142,6 +148,16 @@ static Quat heading_inv(const World *W, int floor) {
     return qexp(v3(0, -yaw, 0));
 }
 static int floor_task(const Env *E) { return E->cfg.task == TASK_CRAWL || E->cfg.task == TASK_GETUP; }
+/* Elbows and knees bend one way, from straight to fully bent: a hinge target outside that range is held at its
+ * edge (the floor skills, whose wide joint ranges could otherwise drive them backwards). Flexion is -y for the
+ * left elbow, +y for the right, +x for the knees; the targets are pure rotations about the hinge axis. */
+static Quat hinge_limit(int i, Quat q) {
+    const int h = BODY_DEFS[i].hinge; const double c = h == 1 ? q.x : h == 2 ? q.y : q.z, ang = 2 * atan2(c, q.w);
+    const double flex = i == L_FARM ? -ang : ang, mx = i == L_FARM || i == R_FARM ? 2.5 : 2.6;
+    const double f = flex < 0 ? 0 : flex > mx ? mx : flex;
+    if (f == flex) return q;
+    const double a = i == L_FARM ? -f : f; return qexp(vscale(hinge_axis(h), a));
+}
 
 void env_obs(const Env *E, float *o) {
     const World *W = &E->W; Quat hi = heading_inv(W, floor_task(E)); Vec root = W->b[PELVIS].x; int k = 0;
@@ -182,18 +198,44 @@ static double pose_err(const World *W, const Quat *ref) {
     double e2 = 0; for (int i = 1; i < NB; i++) { Quat rel = qmul(qconj(W->b[BODY_DEFS[i].parent].q), W->b[i].q); Vec e = qlog(qmul(rel, qconj(ref[i]))); e2 += vdot(e, e); }
     return e2;
 }
+/* Height of the lowest corner at one end of a limb box: the far end (1: the hand end of a forearm, the knee end of
+ * a shin) or the near end (0: the elbow end of a forearm, the ankle end of a shin). */
+static double end_height(const World *W, int i, int far) {
+    const Vec h = BODY_DEFS[i].half; const int arm = i == L_FARM || i == R_FARM;
+    const double sgn = arm ? (i == L_FARM ? 1 : -1) * (far ? 1 : -1) : (far ? 1 : -1);   /* forearms run along x, shins along y (knee up) */
+    double lo = 1e9;
+    for (int a = -1; a <= 1; a += 2) for (int b = -1; b <= 1; b += 2) {
+        const Vec r = arm ? v3(sgn * h.x, a * h.y, b * h.z) : v3(a * h.x, sgn * h.y, b * h.z);
+        const double y = body_point(W->b + i, r).y; if (y < lo) lo = y;
+    }
+    return lo;
+}
 static double floor_reward(Env *E, double act2) {
     World *W = &E->W; const double calm = 0.08 * exp(-20 * effort(W) / NJ) + 0.07 * exp(-2 * act2);
     if (E->step >= E->cfg.steps) E->done = 1;
     Vec cv; world_com(W, &cv);
     if (E->cfg.task == TASK_CRAWL) {
+        /* on palms and knees, the torso carried: hand ends of the forearms down, knee
+         * ends of the shins down; pelvis, spine, chest, head, thighs, upper arms and elbows off the floor. The
+         * pelvis, chest or head touching ends the episode. */
+        const World *Wc = W;
+        if (world_lowest(Wc, PELVIS) < 0.02 || world_lowest(Wc, CHEST) < 0.02 || world_lowest(Wc, HEAD) < 0.02) { E->done = 1; return 0; }
         Vec f = vadd(qrot(W->b[PELVIS].q, v3(0, 0, 1)), qrot(W->b[PELVIS].q, v3(0, 1, 0))); f.y = 0; f = vscale(f, 1 / (vlen(f) + 1e-9));
         const double v = vdot(cv, f), side = cv.x * f.z - cv.z * f.x, py = W->b[PELVIS].x.y;
         const Vec front = qrot(W->b[CHEST].q, v3(0, 0, 1));
         if (front.y > 0.3) { E->done = 1; return 0; }   /* rolled over */
+        const double palmL = end_height(Wc, L_FARM, 1), palmR = end_height(Wc, R_FARM, 1), kneeL = end_height(Wc, L_SHIN, 1), kneeR = end_height(Wc, R_SHIN, 1);
+        const double contact = 0.25 * (exp(-palmL / 0.03) + exp(-palmR / 0.03) + exp(-kneeL / 0.03) + exp(-kneeR / 0.03));
+        /* the forearm's palm side (-y of the box) toward her feet: hands flat with the fingers forward, as a wrist
+         * bent back would place them (the hand is part of the forearm box; the viewer draws the wrist) */
+        const Vec back = vscale(f, -1);
+        const double palms = 0.5 * (fmax(0, vdot(qrot(W->b[L_FARM].q, v3(0, -1, 0)), back)) + fmax(0, vdot(qrot(W->b[R_FARM].q, v3(0, -1, 0)), back)));
+        int clear = 1; const int up_parts[] = {PELVIS, SPINE, CHEST, HEAD, L_UARM, R_UARM};   /* (the thighs' knee ends rest on the floor too) */
+        for (int j = 0; j < 6; j++) if (world_lowest(Wc, up_parts[j]) < 0.06) clear = 0;
+        if (end_height(Wc, L_FARM, 0) < 0.06 || end_height(Wc, R_FARM, 0) < 0.06) clear = 0;   /* elbows up */
         const double yaw_rate = W->b[PELVIS].w.y;
-        return 0.4 * exp(-pow((v - 0.4) / 0.25, 2)) + 0.15 * exp(-pow((py - 0.42) / 0.12, 2)) + 0.15 * fmax(0, -front.y)
-             + 0.1 * exp(-2 * side * side - 0.5 * yaw_rate * yaw_rate) + 0.1 * (W->b[HEAD].x.y > W->b[CHEST].x.y) + calm;
+        return 0.3 * exp(-pow((v - 0.4) / 0.25, 2)) + 0.2 * contact + 0.1 * palms + 0.1 * clear + 0.1 * exp(-pow((py - 0.45) / 0.12, 2))
+             + 0.05 * fmax(0, -front.y) + 0.05 * exp(-2 * side * side - 0.5 * yaw_rate * yaw_rate) + calm;
     }
     const double hd = fmin(1, fmax(0, W->b[HEAD].x.y / 1.42)), pv = fmin(1, fmax(0, W->b[PELVIS].x.y / 0.92));
     const double up = qrot(W->b[CHEST].q, v3(0, 1, 0)).y;
@@ -216,6 +258,7 @@ static double env_begin(Env *E, const float *a) {
         if (d->hinge) { r = vscale(hinge_axis(d->hinge), f[k++]); }
         else { r = v3(f[k], f[k + 1], f[k + 2]); k += 3; }
         W->target[i] = qmul(E->ref[i], qexp(vscale(r, ACT_SCALES[i] * (E->cfg.act_mul > 0 ? E->cfg.act_mul : 1))));
+        if (d->hinge && floor_task(E)) W->target[i] = hinge_limit(i, W->target[i]);
     }
     for (int j = 0; j < ACT_DIM; j++) { double dd = a[j] - E->prev_act[j]; act2 += dd * dd; E->prev_act[j] = a[j]; }
     if (E->cfg.push_max > 0 && W->t >= E->next_push) {
