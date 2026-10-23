@@ -17,7 +17,7 @@ import nanotss_torch as nt
 def build(exe):
     src = os.path.join(HERE, "tss_parity.c")
     if not os.path.exists(exe) or os.path.getmtime(exe) < max(os.path.getmtime(src), os.path.getmtime(os.path.join(HERE, "../../nanotss_blt.c"))):
-        subprocess.check_call(["gcc", "-O3", "-march=native", "-fopenmp", "-ffp-contract=off", "-o", exe, src, "-lm"])
+        subprocess.check_call(["gcc", "-O3", os.environ.get("PARITY_MARCH", "-march=native"), "-fopenmp", "-ffp-contract=off", "-o", exe, src, "-lm"])
 
 
 def rel(a, b):
@@ -32,6 +32,8 @@ def main():
     ap.add_argument("--B", type=int, default=8); ap.add_argument("--L", type=int, default=24)
     ap.add_argument("--steps", type=int, default=3); ap.add_argument("--lr", type=float, default=3e-4)
     ap.add_argument("--seed", type=int, default=1)
+    ap.add_argument("--tape", choices=("auto", "bf16", "fp32"), default="auto",
+                    help="state tape precision on the torch side; auto = what the C build here uses (bf16 only with AVX-512)")
     a = ap.parse_args()
     exe = os.path.join(HERE, "tss_parity"); build(exe)
     tmp = tempfile.mkdtemp()
@@ -66,7 +68,10 @@ def main():
     Gc = {f: take(z[f]) for f in nt.FIELDS}; hit_c = take(c.rows, np.uint8).astype(bool)
     losses_c = take(a.steps, np.float64); Pc = {f: take(z[f]) for f in nt.FIELDS}
     # the same on the torch side, from the checkpoint C wrote
-    m = nt.TSS.load(init_path, device=a.device)
+    avx512 = "__AVX512F__" in subprocess.run(["gcc", os.environ.get("PARITY_MARCH", "-march=native"), "-dM", "-E", "-x", "c", "/dev/null"], capture_output=True, text=True).stdout
+    bf = {"auto": None if avx512 else False, "bf16": True, "fp32": False}[a.tape]
+    m = nt.TSS.load(init_path, device=a.device, bf16_tape=bf)
+    print(f"C build: {'AVX-512 (bf16 state tape)' if avx512 else 'portable (fp32 state tape)'}; torch tape: {'bf16' if m.bf16_tape else 'fp32'}")
     if a.model.startswith("init:"):
         print(f"init: python params_init vs C   max rel {max(rel(P0[f], m.P[f].cpu().numpy()) for f in nt.FIELDS):.1e}")
     dev = m.device

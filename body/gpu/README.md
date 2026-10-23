@@ -38,7 +38,7 @@ Not ported, and loading such a checkpoint raises: fast-weight layers, `ssm_ltc`,
 cd body/gpu
 gcc -O3 -march=native -fopenmp -ffp-contract=off -shared -fPIC -o libtssenv.so tssenv.c ../env.c ../body.c ../body_x8.c ../mref.c -lm
 python3 parity.py init:3 --device cuda          # check the GPU build against C first
-python3 ppo_gpu.py --task getup --style ../data/cmu_ref.bin:140_01,140_02,140_03,140_04,140_08,140_09 \
+python3 ppo_gpu.py --task getup --style ../data/cmu_ref.bin:getup_back1,getup_back2,getup_face1,getup_face2,getup_side1,getup_side2 \
     --envs 2048 --horizon 64 --seconds 3600 --out getup_gpu
 ```
 
