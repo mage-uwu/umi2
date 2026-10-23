@@ -75,6 +75,12 @@ button:disabled { opacity: .45; cursor: default; }
       <button id="v-boxes" aria-pressed="false">Physics</button>
       <button id="v-reset">Reset view</button>
     </div>
+    <div class="group" role="group" aria-label="Face">
+      <span class="label">Face</span>
+      <button id="f-follow" aria-pressed="true" title="Her eyes follow the mouse (and her head turns a little); off, she looks at you">Eyes follow mouse</button>
+      <button id="f-blink" title="Blink (B)">Blink</button>
+      <button id="f-mouth" aria-pressed="false" title="Open or close her mouth (M)">Mouth</button>
+    </div>
     <div class="group" role="group" aria-label="Parts (for checking the render)">
       <span class="label">Parts</span>
       <button id="p-hair" aria-pressed="true" title="Show or hide her hair">Hair</button>
@@ -291,7 +297,8 @@ function poseModel(Q, pelvisX) {
   set('rightUpperArm', B.R_UARM, B.CHEST); set('rightLowerArm', B.R_FARM, B.R_UARM);
   set('leftUpperLeg', B.L_THIGH, B.PELVIS); set('leftLowerLeg', B.L_SHIN, B.L_THIGH); set('leftFoot', B.L_FOOT, B.L_SHIN);
   set('rightUpperLeg', B.R_THIGH, B.PELVIS); set('rightLowerLeg', B.R_SHIN, B.R_THIGH); set('rightFoot', B.R_FOOT, B.R_SHIN);
-  for (const n of ['upperChest', 'neck', 'leftShoulder', 'rightShoulder', 'leftHand', 'rightHand', 'leftToes', 'rightToes']) bone(n)?.quaternion.identity();
+  bone('neck')?.quaternion.copy(face.neck);   // the gaze turns the neck a little (drawn only, not simulated)
+  for (const n of ['upperChest', 'leftShoulder', 'rightShoulder', 'leftHand', 'rightHand', 'leftToes', 'rightToes']) bone(n)?.quaternion.identity();
   for (const side of ['left', 'right']) for (const f of FINGERS) {
     const c = f.startsWith('Thumb') ? 0.1 : f.endsWith('Proximal') ? 0.35 : 0.3;
     bone(side + f)?.rotation.set(0, 0, side === 'left' ? -c : c);
@@ -393,6 +400,48 @@ async function getUp(why) {
   getupPolicy.reset(); mode = 'getup'; clip = null; ref = standPose(); getupSince = world.t; calmSince = -1; fallenAt = -1;
   setStatus(why); emit('getup', {}); return true;
 }
+// ---------- face: VTuber-style gaze, blinking and mouth ----------
+// The eyes look at a point under the mouse at her head's depth (or at the camera), eased so they glide; the neck
+// turns up to 15 degrees toward it. She blinks every 2 to 6 s (sometimes twice). B blinks, M opens the mouth.
+const face = { follow: true, mouse: null, gaze: null, mouth: 0, mouthTarget: 0, blinkAt: -1, nextBlink: 2, neck: new THREE.Quaternion() };
+const lookTarget = new THREE.Object3D();
+const stageEl = document.getElementById('stage');
+stageEl.addEventListener('pointermove', e => { const r = stageEl.getBoundingClientRect(); face.mouse = [(e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height * 2 - 1)]; });
+stageEl.addEventListener('pointerleave', () => { face.mouse = null; });
+function blink() { face.blinkAt = performance.now() / 1000; }
+const _v = new THREE.Vector3(), _h = new THREE.Vector3(), _q = new THREE.Quaternion(), _ray = new THREE.Raycaster(), _plane = new THREE.Plane();
+function updateFace(dt) {
+  if (!vrm) return;
+  const now = performance.now() / 1000;
+  bone('head').getWorldPosition(_h);
+  // where to look: the mouse, on the plane through her head facing the camera; else the camera
+  let goal = camera.position.clone();
+  if (face.follow && face.mouse) {
+    _ray.setFromCamera({ x: face.mouse[0], y: face.mouse[1] }, camera);
+    _plane.setFromNormalAndCoplanarPoint(camera.getWorldDirection(_v).negate(), _h);
+    _ray.ray.intersectPlane(_plane, goal) || goal.copy(camera.position);
+  }
+  face.gaze = face.gaze ? face.gaze.lerp(goal, 1 - Math.exp(-dt * 10)) : goal;
+  lookTarget.position.copy(face.gaze); lookTarget.updateMatrixWorld();
+  if (vrm.lookAt) vrm.lookAt.target = lookTarget;
+  // the neck: a share of the gaze direction, in the chest's frame, within 15 degrees
+  bone('chest').getWorldQuaternion(_q);
+  const d = _v.copy(face.gaze).sub(_h).applyQuaternion(_q.invert());
+  const yaw = Math.max(-0.26, Math.min(0.26, 0.4 * Math.atan2(d.x, d.z))), up = Math.max(-0.2, Math.min(0.2, 0.4 * Math.atan2(d.y, Math.hypot(d.x, d.z))));
+  face.neck.setFromEuler(new THREE.Euler(-up, yaw, 0, 'YXZ'));
+  // blinking: closes in 60 ms, opens in 100 ms
+  if (now > face.nextBlink) { blink(); face.nextBlink = now + 2 + 4 * Math.random(); if (Math.random() < 0.15) setTimeout(blink, 250); }
+  const b = face.blinkAt < 0 ? 1 : now - face.blinkAt, lid = b < 0.06 ? b / 0.06 : b < 0.16 ? 1 - (b - 0.06) / 0.1 : 0;
+  face.mouth += (face.mouthTarget - face.mouth) * (1 - Math.exp(-dt * 15));
+  const em = vrm.expressionManager;
+  if (em) { em.setValue('blink', Math.max(0, Math.min(1, lid))); em.setValue('aa', face.mouth); }
+}
+document.getElementById('f-follow').onclick = e => { face.follow = !face.follow; e.currentTarget.setAttribute('aria-pressed', String(face.follow)); };
+document.getElementById('f-blink').onclick = () => blink();
+const setMouth = open => { face.mouthTarget = open ? 1 : 0; document.getElementById('f-mouth').setAttribute('aria-pressed', String(open)); };
+document.getElementById('f-mouth').onclick = () => setMouth(!face.mouthTarget);
+addEventListener('keydown', e => { if (e.target.closest?.('input, textarea')) return; if (e.key === 'b') blink(); if (e.key === 'm') setMouth(!face.mouthTarget); });
+
 function control() {
   const phase = clip ? 2 * Math.PI * world.t / clip.T : 0;
   const floor = mode === 'getup' || SKILLS[skill].floor, pol = mode === 'getup' ? getupPolicy : policy;
@@ -432,6 +481,7 @@ function step(now) {
     while (acc >= 1 / CTRL_HZ) { control(); acc -= 1 / CTRL_HZ; }
     const renderT = world.t - 1 / CTRL_HZ + acc;   // drawn one control step behind, interpolated
     const tS = performance.now();
+    updateFace(dt);
     if (vrm) { if (!parts.springs) springSettle = 1; springs(renderT); }   /* off: posed, then held at rest */
     perf.springs += 0.05 * (performance.now() - tS - perf.springs);
     const { Q, X } = poseAt(renderT), px = X[0];
@@ -568,12 +618,16 @@ for (const [k, s] of Object.entries(SKILLS)) {
 // window.umiBody.play(name)                   switch skill (returns a promise)
 // window.umiBody.push(dir, newtons?, body?)   dir: 'left' | 'right' | 'front' | 'back' or [x, z]
 // window.umiBody.reset()
+// window.umiBody.face({ follow, mouth })      eyes follow the mouse (true) or look at you; mouth 0..1; returns the settings
+// window.umiBody.blink()
 // window.umiBody.standUp()                    hand over to the get-up controller (from crawling, or anywhere)
 // window.umiBody.on(event, fn)                events: 'skill', 'reset', 'push', 'fall', 'getup', 'stood', 'step', 'parts' (also dispatched as 'umibody:<event>')
 // window.umiBody.state()                      { t, upright, fallen, bodies: [{ name, bone, x, q }] }
 // window.umiBody.parts({ hair, dress, springs }) show or hide hair and dress, simulate or hold hair and cloth; returns the settings
 window.umiBody = {
   get skills() { return Object.keys(SKILLS); },
+  face(set = {}) { if ('follow' in set) { face.follow = !!set.follow; document.getElementById('f-follow').setAttribute('aria-pressed', String(face.follow)); } if ('mouth' in set) { face.mouthTarget = Math.max(0, Math.min(1, +set.mouth)); document.getElementById('f-mouth').setAttribute('aria-pressed', String(face.mouthTarget > 0)); } return { follow: face.follow, mouth: face.mouthTarget }; },
+  blink,
   play: useSkill, push: (...a) => world && push(...a), reset: () => world && reset(), standUp: () => world && getUp('Getting up.'),
   on(ev, fn) { (listeners[ev] ||= []).push(fn); return () => { listeners[ev] = listeners[ev].filter(f => f !== fn); }; },
   state: () => world && { t: world.t, upright: world.t - upSince, fallen: fallenAt >= 0,
