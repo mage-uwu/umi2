@@ -63,9 +63,18 @@ between any two works more than 90 % of the time.
 commands); real-time in the browser (WASM, many characters at once); robustness to pushes and unseen room seeds.
 Exit: unseen procedural rooms, goals anywhere, more than 80 % reached without falling.
 
-## Now
+## Status
 
-- Go-to run 3 (development, Bandai walk prior): goal cone curriculum and a linear move reward, with the new
-  muscle physics. Its job is to validate the go-to task and the realism physics, not to ship.
-- M1: CMU library download and conversion; joint limits from it.
-- M2: room.json v2 with grip labels, the climbing wall, ledges and the parkour lane.
+- M1: the CMU library is packed (2,431 trials, 348,504 poses at 10 Hz, about 9.7 h). **Joint limits now come from
+  it** (joint_limits.h, web/joint_limits.js): per-trial ranges with robust statistics over trials, joined with the
+  CMU range-of-motion trials, after anatomical sanity caps drop capture errors (feet flipped half a turn in about
+  4 % of trials). Shoulders reach 87 degrees above the chest's horizontal and hips abduct to 132 (splits): an
+  overhead hang is inside the range, which the development clips did not allow. Still to do: muscle envelopes from
+  CMU (inverse dynamics needs 30 Hz clips: a second, smaller conversion), and the CMU walk/run priors.
+- M2: room.json v2 with grip labels; the stage-1 room (climbing wall with 76 holds, mantle block, high ledge,
+  parkour lane, stepping stones). Still to do: per-world procedural rooms; a spatial grid for the broadphase (the
+  stage-1 room's 125 boxes cost about 25 % of CPU step time).
+- M3: the grip constraint is in C, CUDA and JS (tools/grip_test.c and .mjs agree on every grip state and force; the
+  JS twin drifts in the last bits once she tumbles). Still to do: GPU parity on the next pod.
+- Go-to run 3 (development, Bandai walk prior) is training: its job is to validate the go-to task and the realism
+  physics, not to ship.

@@ -4,7 +4,16 @@ Every frame of the clean library (data/clean/cmu_library.npz: the whole CMU data
 running, jumping, dancing, climbing, acrobatics, ..., at 10 Hz; tools/cmu_library.py), or with --dev the development
 clips (data/motions_ref.bin: Bandai Namco, CC BY-NC; data/cmu_ref.bin: CMU crawling and getting up), and its
 left-right mirror image, gives each joint's rotation (child in parent, as a rotation vector in the parent's rest
-frame). Each joint's range per axis is the 0.25 to 99.75 percentile of those, widened by a margin. Elbows and knees
+frame). The range is what people use in a meaningful number of motions, not how often: in the library, each trial's
+own 1st to 99th percentile per axis (a marker glitch inside a trial cannot set it), then the 0.5th to 99.5th
+percentile of those over all trials and their mirrors (a motion needs about a dozen trials, and a few bad trials
+cannot move it), joined with the range of each "range of motion" trial (subjects moving every joint to its
+extremes on purpose, which ordinary motion rarely reaches: arms fully overhead); with --dev, the 0.25 to 99.75 percentile of all frames. Widened by a margin.
+
+Data errors are kept out by generous anatomical caps on each joint's total rotation (SANITY: about twice the normal
+adult range of motion; the ankle 100 degrees, where it moves about 70 in all): frames past the cap are capture or
+bone-mapping errors (a foot flipped half a turn through a whole cartwheel trial) and are dropped, and a trial with more
+than 2% of them is left out for that joint. The caps only filter errors; the capture sets the limits inside them. Elbows and knees
 are hinges here, so only their flexion axis is limited (the capture's forearm twist is not a motion this body has).
 
 Writes joint_limits.h (body.c includes it; every build: CPU, CUDA) and web/joint_limits.js (body.js imports it), from
@@ -22,7 +31,8 @@ import gpu_env as ge
 NAMES = ["pelvis", "spine", "chest", "head", "l_uarm", "l_farm", "r_uarm", "r_farm", "l_thigh", "l_shin", "l_foot", "r_thigh", "r_shin", "r_foot"]
 PARENT = [-1, 0, 1, 2, 2, 4, 2, 6, 0, 8, 9, 0, 11, 12]
 MIRROR = [0, 1, 2, 3, 6, 7, 4, 5, 11, 12, 13, 8, 9, 10]   # left <-> right
-HINGE = {5: 1, 7: 1, 9: 0, 12: 0}                         # body: its hinge axis (elbows y, knees x), as in body.c BODY_DEFS
+HINGE = {5: 1, 7: 1, 9: 0, 12: 0}
+SANITY = [180, 90, 90, 120, 180, 180, 180, 180, 165, 180, 100, 165, 180, 100]   # deg, total rotation per joint (see above)                         # body: its hinge axis (elbows y, knees x), as in body.c BODY_DEFS
 
 
 def qmul(a, b):
@@ -43,13 +53,31 @@ def main():
     a = ap.parse_args(); margin = math.radians(a.margin_deg)
     if a.dev: Q = np.concatenate([c["q"] for f in ("data/motions_ref.bin", "data/cmu_ref.bin") for c in ge.load_mref(os.path.join(ROOT, f)).values()])
     else:
-        Q = np.load(os.path.join(ROOT, "data", "clean", "cmu_library.npz"))["q"].astype(np.float64)
+        z = np.load(os.path.join(ROOT, "data", "clean", "cmu_library.npz")); Q = z["q"].astype(np.float64); trial = z["trial"]
+        import json
+        man = json.load(open(os.path.join(ROOT, "data", "clean", "cmu_library.json")))["trials"]
+        rom = {k for k, t in enumerate(man) if "range of motion" in t["desc"].lower()}
         Q /= np.linalg.norm(Q, axis=-1, keepdims=True)
     src = "the development clips" if a.dev else "the CMU library"
     E = np.stack([qlog(qmul(Q[:, PARENT[i]] * np.array([1, -1, -1, -1]), Q[:, i])) if i else np.zeros((len(Q), 3)) for i in range(14)], 1)
     Em = E[:, MIRROR] * np.array([1, -1, -1])   # the mirror image: rotation vectors (x, y, z) -> (x, -y, -z), left and right swapped
-    E2 = np.concatenate([E, Em])
-    lo = np.percentile(E2, a.pct, axis=0) - margin; hi = np.percentile(E2, 100 - a.pct, axis=0) + margin
+    if a.dev:
+        E2 = np.concatenate([E, Em]); lo = np.percentile(E2, a.pct, axis=0); hi = np.percentile(E2, 100 - a.pct, axis=0)
+    else:
+        cuts = np.flatnonzero(np.diff(trial)) + 1; lo = np.zeros((14, 3)); hi = np.zeros((14, 3)); dropped = {}
+        for i in range(1, 14):
+            lo_t, hi_t, lo_r, hi_r = [], [], [], []; cap = np.radians(SANITY[i]); dropped[NAMES[i]] = 0
+            for X in (E, Em):
+                for seg, tr in zip(np.split(X[:, i], cuts), np.split(trial, cuts)):
+                    ok = np.linalg.norm(seg, axis=-1) <= cap
+                    if len(seg) < 5 or ok.mean() < 0.98: dropped[NAMES[i]] += 1; continue
+                    l, h = np.percentile(seg[ok], 1, axis=0), np.percentile(seg[ok], 99, axis=0)
+                    lo_t.append(l); hi_t.append(h)
+                    if int(tr[0]) in rom: lo_r.append(l); hi_r.append(h)
+            lo[i] = np.percentile(np.array(lo_t), 0.5, axis=0); hi[i] = np.percentile(np.array(hi_t), 99.5, axis=0)
+            if lo_r: lo[i] = np.minimum(lo[i], np.min(lo_r, 0)); hi[i] = np.maximum(hi[i], np.max(hi_r, 0))
+        print("trials (and mirrors) left out per joint by the sanity caps:", {k: v for k, v in dropped.items() if v}, "; range-of-motion trials:", len(rom))
+    lo -= margin; hi += margin
     lo[0] = -np.pi; hi[0] = np.pi                      # the pelvis has no parent
     for i, ax in HINGE.items():                        # hinges: flexion only; the other axes are held by the hinge itself
         for k in range(3):
