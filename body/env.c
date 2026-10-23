@@ -93,6 +93,22 @@ void env_obs(const Env *E, float *o) {
     o[k++] = sin(ph); o[k++] = cos(ph);
 }
 
+/* Golden thread (0..1): head lifted at least lift_ref above the pelvis, head upright, shoulders level,
+ * little head spin and acceleration. */
+static double golden_thread(Env *E, double lift_ref) {
+    const World *W = &E->W; const Body *hb = W->b + HEAD;
+    double lift = (hb->x.y - W->b[PELVIS].x.y) - lift_ref, sag = lift < 0 ? lift : 0;
+    Vec hu = qrot(hb->q, v3(0, 1, 0)), sx = qrot(W->b[CHEST].q, v3(1, 0, 0));
+    Vec acc = vscale(vsub(hb->v, E->head_v), CTRL_HZ); E->head_v = hb->v;
+    return 0.3 * exp(-200 * sag * sag) + 0.25 * exp(-10 * (1 - hu.y)) + 0.2 * exp(-30 * sx.y * sx.y)
+         + 0.15 * exp(-0.3 * vdot(hb->w, hb->w)) + 0.1 * exp(-0.01 * vdot(acc, acc));
+}
+/* Muscle effort (rad^2 summed over joints): how far each joint target sits from where the joint is. */
+static double effort(const World *W) {
+    double e2 = 0;
+    for (int i = 1; i < NB; i++) { Quat rel = qmul(qconj(W->b[BODY_DEFS[i].parent].q), W->b[i].q); Vec e = qlog(qmul(W->target[i], qconj(rel))); e2 += vdot(e, e); }
+    return e2;
+}
 static int fallen(const World *W) {
     if (W->b[PELVIS].x.y < 0.55 || W->b[HEAD].x.y < 1.0) return 1;
     for (int i = 0; i < NB; i++) if (i != L_FOOT && i != R_FOOT && i != L_SHIN && i != R_SHIN && world_lowest(W, i) < 0.05) return 1;
@@ -149,24 +165,18 @@ double env_step(Env *E, const float *a) {
         for (int j = 0; j < 4; j++) { Vec d = vsub(qrot(qconj(rq), vsub(W->b[EE[j]].x, rp)), fx[EE[j]]); ee += vdot(d, d); }
         Vec ce = vsub(W->b[PELVIS].x, E->ref_root);
         double track = 0.5 * exp(-2 * pose / NJ) + 0.1 * exp(-0.1 * vel / NJ) + 0.2 * exp(-10 * ee) + 0.2 * exp(-10 * vdot(ce, ce));
-        /* golden thread: head lifted at least as high above the pelvis as in the clip, head upright,
-         * shoulders level, little head spin and acceleration */
-        const Body *hb = W->b + HEAD; double lift = (hb->x.y - rp.y) - qrot(E->ref_world[PELVIS], fx[HEAD]).y;
-        Vec hu = qrot(hb->q, v3(0, 1, 0)), sx = qrot(W->b[CHEST].q, v3(1, 0, 0));
-        Vec acc = vscale(vsub(hb->v, E->head_v), CTRL_HZ); E->head_v = hb->v;
-        double sag = lift < 0 ? lift : 0;
-        double thread = 0.3 * exp(-200 * sag * sag) + 0.25 * exp(-10 * (1 - hu.y)) + 0.2 * exp(-30 * sx.y * sx.y)
-                      + 0.15 * exp(-0.3 * vdot(hb->w, hb->w)) + 0.1 * exp(-0.01 * vdot(acc, acc));
-        return 0.75 * track + 0.25 * thread;
+        return 0.75 * track + 0.25 * golden_thread(E, qrot(E->ref_world[PELVIS], fx[HEAD]).y);
     }
     if (fell || E->step >= E->cfg.steps) E->done = 1;
     if (fell) return 0;
     /* balance: upper body near the stand pose, torso upright, head over the feet, coming to rest, a calm trunk,
-     * smooth commands; the legs are free */
+     * smooth commands, the golden thread, and low muscle effort (relaxed, not braced); the legs are free */
     double pose = 0;
     for (int i = SPINE; i <= R_FARM; i++) { Quat rel = qmul(qconj(W->b[BODY_DEFS[i].parent].q), W->b[i].q); Vec e = qlog(qmul(rel, qconj(E->ref[i]))); pose += vdot(e, e); }
     Vec feet = vscale(vadd(W->b[L_FOOT].x, W->b[R_FOOT].x), .5), hd = vsub(W->b[HEAD].x, feet); double lean = hd.x * hd.x + hd.z * hd.z;
     Vec up = qrot(W->b[CHEST].q, v3(0, 1, 0)), cv; world_com(W, &cv); double sp = cv.x * cv.x + cv.z * cv.z;
     double spin = vdot(W->b[PELVIS].w, W->b[PELVIS].w) + vdot(W->b[CHEST].w, W->b[CHEST].w);
-    return 1 + 0.4 * exp(-2 * pose / 7) + 0.4 * exp(-20 * lean) + 0.3 * fmax(up.y, 0) + 0.3 * exp(-4 * sp) + 0.3 * exp(-0.5 * spin) + 0.3 * exp(-2 * act2);
+    const double stand_lift = BODY_DEFS[HEAD].center.y - BODY_DEFS[PELVIS].center.y;
+    return 1 + 0.3 * exp(-2 * pose / 7) + 0.3 * exp(-20 * lean) + 0.2 * fmax(up.y, 0) + 0.2 * exp(-4 * sp) + 0.2 * exp(-0.5 * spin)
+             + 0.2 * exp(-2 * act2) + 0.4 * golden_thread(E, stand_lift) + 0.3 * exp(-20 * effort(W) / NJ);
 }
