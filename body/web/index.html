@@ -186,7 +186,7 @@ function reset() {
   policy?.reset();
   upSince = world.t; fallenAt = -1; prev = snapshot(); emit('reset', { skill });
 }
-const PUSH_N = 160;
+const PUSH_N = 100;   // the strongest push the current balance controller has trained on
 function push(dir, newtons = PUSH_N, bodyName = 'chest') {
   // dir: 'left' | 'right' | 'front' | 'back' (her own sides), or a world vector [x, z]
   const f = math.qrot(world.b[0].q, [0, 0, 1]), yaw = Math.atan2(f[0], f[2]);
