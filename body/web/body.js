@@ -176,6 +176,17 @@ export function standPose() {
   rel[B.L_UARM] = qexp([0, 0, -a]); rel[B.R_UARM] = qexp([0, 0, a]);
   return rel;
 }
+// The stand pose with relaxed postural sway at time t (env.c sway_pose): ankles lean slowly forward/back
+// (0.23 Hz) and side to side (0.17 Hz) by up to amp rad; hips and spine counterbalance by a fraction.
+export function swayPose(t, amp) {
+  const rel = standPose(); if (!(amp > 0)) return rel;
+  const fb = amp * Math.sin(2 * Math.PI * 0.23 * t), lr = 0.6 * amp * Math.sin(2 * Math.PI * 0.17 * t + 1.0);
+  const ankle = qexp([fb, 0, lr]), hip = qexp([-0.4 * fb, 0, -0.4 * lr]), spine = qexp([0.25 * fb, 0, 0.25 * lr]);
+  rel[B.L_FOOT] = qmul(rel[B.L_FOOT], ankle); rel[B.R_FOOT] = qmul(rel[B.R_FOOT], ankle);
+  rel[B.L_THIGH] = qmul(rel[B.L_THIGH], hip); rel[B.R_THIGH] = qmul(rel[B.R_THIGH], hip);
+  rel[B.SPINE] = qmul(rel[B.SPINE], spine);
+  return rel;
+}
 // Joint targets: reference rotation followed by exp(scale * f), f the action low-passed by ACT_FILTER (kept on the world).
 export function applyAction(world, ref, a) {
   world.filt ||= new Array(ACT_DIM).fill(0);

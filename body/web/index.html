@@ -96,7 +96,7 @@ button:disabled { opacity: .45; cursor: default; }
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm';
-import { World, BODY_DEFS, B, standPose, applyAction, observe, fallen, loadPolicy, loadClips, poseFromClip, setAssist, math, CTRL_HZ } from './body.js';
+import { World, BODY_DEFS, B, standPose, swayPose, applyAction, observe, fallen, loadPolicy, loadClips, poseFromClip, setAssist, math, CTRL_HZ } from './body.js';
 import { createShaderView } from './shader-view.js';
 
 const status = document.getElementById('status');
@@ -182,7 +182,8 @@ const boxes = BODY_DEFS.map(d => {
 // Each skill: a controller (policy JSON from the C trainer) and what its actions offset: the stand pose,
 // or a motion clip followed in time (the clip's phase is part of what the controller sees).
 const SKILLS = {
-  balance: { label: 'Balance', file: 'balance.json' },
+  // sway: relaxed postural sway (rad at the ankles), counterbalanced at the hips and spine
+  balance: { label: 'Balance', file: 'balance.json', sway: 0.012 },
   // assist: the pelvis support spring the controller was trained with (1 = full); 0 once it walks unaided
   walk: { label: 'Walk (assisted)', file: 'walk.json', clip: 'walk', assist: 0.07 },
 };
@@ -248,6 +249,7 @@ function control() {
   prev = snapshot(); world.step();
   hist.push({ t: world.t, s: snapshot() }); if (hist.length > 12) hist.shift();
   if (clip) ref = clip.at(world.t).rel;
+  else if (SKILLS[skill].sway) ref = swayPose(world.t, SKILLS[skill].sway);
   if (fallenAt < 0 && fallen(world)) { fallenAt = world.t; emit('fall', { upright: world.t - upSince }); setStatus('She fell. Getting up is not learned yet; resetting.', true); }
   if (fallenAt >= 0 && world.t - fallenAt > 2.5) { reset(); setStatus(''); }
   emit('step', { t: world.t });

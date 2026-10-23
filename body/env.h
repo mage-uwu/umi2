@@ -28,6 +28,7 @@ typedef struct {
     int task;
     const Clip *clip;    /* TASK_IMITATE */
     double push_max;     /* largest push force (N), applied for 0.2 s */
+    double sway;         /* TASK_BALANCE: amplitude (rad) of the relaxed ankle sway in the stand reference; 0 = still */
     double push_every;   /* mean seconds between pushes */
     int steps;           /* episode length in control steps */
     double init_noise;   /* random joint rotation at reset (rad) */
@@ -52,6 +53,9 @@ typedef struct {
 
 extern const double ACT_SCALES[NB];
 void stand_pose(Quat *rel);
+/* The stand pose with relaxed postural sway at time t: the ankles lean slowly forward/back (0.23 Hz) and
+ * side to side (0.17 Hz) by up to amp rad, the hips and spine counterbalancing by a fraction of that. */
+void sway_pose(Quat *rel, double t, double amp);
 void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed);
 void env_obs(const Env *E, float *obs);
 double env_step(Env *E, const float *act);   /* returns the reward; sets E->done on a fall or at the end */

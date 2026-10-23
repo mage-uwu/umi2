@@ -13,6 +13,16 @@ void stand_pose(Quat *rel) {   /* the shader page's training pose: arms relaxed 
     rel[L_UARM] = qexp(v3(0, 0, -a)); rel[R_UARM] = qexp(v3(0, 0, a));
 }
 
+void sway_pose(Quat *rel, double t, double amp) {
+    stand_pose(rel);
+    if (amp <= 0) return;
+    const double fb = amp * sin(2 * M_PI * 0.23 * t), lr = 0.6 * amp * sin(2 * M_PI * 0.17 * t + 1.0);
+    const Quat ankle = qexp(v3(fb, 0, lr)), hip = qexp(v3(-0.4 * fb, 0, -0.4 * lr)), spine = qexp(v3(0.25 * fb, 0, 0.25 * lr));
+    rel[L_FOOT] = qmul(rel[L_FOOT], ankle); rel[R_FOOT] = qmul(rel[R_FOOT], ankle);
+    rel[L_THIGH] = qmul(rel[L_THIGH], hip); rel[R_THIGH] = qmul(rel[R_THIGH], hip);
+    rel[SPINE] = qmul(rel[SPINE], spine);
+}
+
 static Vec hinge_axis(int h) { return h == 1 ? v3(1, 0, 0) : h == 2 ? v3(0, 1, 0) : v3(0, 0, 1); }
 
 double env_phase(const Env *E) { return E->cfg.task == TASK_IMITATE ? E->t0 + E->W.t : 0; }
@@ -117,6 +127,7 @@ static int fallen(const World *W) {
 
 double env_step(Env *E, const float *a) {
     World *W = &E->W; int k = 0; double act2 = 0; const float *f = E->filt;
+    if (E->cfg.task == TASK_BALANCE && E->cfg.sway > 0) sway_pose(E->ref, W->t, E->cfg.sway);
     for (int j = 0; j < ACT_DIM; j++) E->filt[j] += (float)ACT_FILTER * (a[j] - E->filt[j]);
     for (int i = 1; i < NB; i++) {
         const BodyDef *d = BODY_DEFS + i; Vec r;
