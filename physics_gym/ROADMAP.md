@@ -76,5 +76,10 @@ Exit: unseen procedural rooms, goals anywhere, more than 80 % reached without fa
   stage-1 room's 125 boxes cost about 25 % of CPU step time).
 - M3: the grip constraint is in C, CUDA and JS (tools/grip_test.c and .mjs agree on every grip state and force; the
   JS twin drifts in the last bits once she tumbles). Still to do: GPU parity on the next pod.
-- Go-to run 3 (development, Bandai walk prior) is training: its job is to validate the go-to task and the realism
-  physics, not to ship.
+- Go-to run 3 (development, Bandai walk prior), stopped early: at assist 0.15 she walks 13 s episodes and reaches
+  goals ahead of her; every fixed step-down of the assist (0.15 -> 0.05 -> 0) collapsed to falls within 1-2 s under
+  the muscle limits. So the curriculum now adapts (ppo_gpu --assist-auto): the assist comes down only while she
+  lasts most of each episode, and goes back up when she falls.
+- M1 muscles: strength and slew from inverse dynamics of 557 CMU trials at 30 Hz. The CMU gait cycles
+  (tools/cmu_cycle.py: walk 16_16, 1.17 s at 0.98 m/s; run 35_20, 0.73 s at 3.1 m/s) are the clean prior's
+  reference; gpu/pod_cmu_walk.sh trains it (imitation, then go-to) with no Bandai data.
