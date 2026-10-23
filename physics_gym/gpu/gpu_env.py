@@ -172,6 +172,10 @@ class GpuPool(_Pool):
         torch.cuda.synchronize(self.dev); e = self.L.tss_error()
         if e: raise RuntimeError(e.decode())
 
+    def set_assist(self, x):
+        """the hand-up assist for episodes that start from now (each environment takes it at its next reset)"""
+        self.L.tss_cfg_set_assist.argtypes = [ctypes.c_void_p, ctypes.c_double]; self.L.tss_cfg_set_assist(_ptr(self.cfg), x)
+
     def obs(self):
         out = torch.empty(self.n, self.OBS, device=self.dev); self.L.tss_obs(_ptr(self.envs), self.n, _ptr(out), self._st()); return out
 
@@ -210,6 +214,10 @@ class CpuPool(_Pool):
         self.steps = L.pool_steps(self.p)
         self.b = dict(rew=np.zeros(n, np.float32), done=np.zeros(n, np.int32), fell=np.zeros(n, np.int32), tobs=np.zeros((n, self.OBS), np.float32),
                       ep_ret=np.zeros(n, np.float32), ep_len=np.zeros(n, np.int32))
+
+    def set_assist(self, x):
+        """the hand-up assist for episodes that start from now (each environment takes it at its next reset)"""
+        self.L.pool_set_assist.argtypes = [ctypes.c_void_p, ctypes.c_double]; self.L.pool_set_assist(self.p, x)
 
     def obs(self):
         o = np.zeros((self.n, self.OBS), np.float32); self.L.pool_obs(self.p, o.ctypes.data_as(ctypes.c_void_p)); return torch.from_numpy(o).to(self.dev)

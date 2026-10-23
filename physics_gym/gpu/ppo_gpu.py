@@ -68,6 +68,7 @@ def main():
     A("--steps", type=int, default=0); A("--assist", type=float, default=0); A("--sway", type=float, default=0); A("--arm-tone", type=float, default=0)
     A("--gamma", type=float, default=0.95); A("--lam", type=float, default=0.95); A("--ent", type=float, default=0)
     A("--device", default="cuda" if torch.cuda.is_available() else "cpu"); A("--cpu-physics", action="store_true")
+    A("--assist-auto", action="store_true", help="adapt the assist: down 0.02 while episodes last over 60%% of their length, up 0.02 (to --assist at most) under 30%%")
     A("--goal-cone", type=float, default=0, help="go-to: goals within this angle (rad) of her heading; 0 = any")
     A("--room", default=os.path.join(HERE, "../room.json"), help="room.json (physics_gym); '' for the empty floor")
     a = ap.parse_args()
@@ -148,6 +149,7 @@ def main():
     gen = torch.Generator(device=dev); gen.manual_seed(a.seed * 7919 + 1)
     erng = XorShift(a.seed * 7919 + 1)
     hstep = cstep = 0; t0 = time.time(); best = -1e30; it = 0; steps_total = 0; t_roll = 0.0; t_train = 0.0
+    cur_assist = a.assist; best_assist = 1e9
     ep_ret_sum = torch.zeros((), device=dev, dtype=torch.float64); ep_len_sum = torch.zeros_like(ep_ret_sum); ep_cnt = torch.zeros((), device=dev, dtype=torch.long)
     norm_obs = lambda x: ((x - mean) / sd).clamp(-5, 5)
     sync = (lambda: torch.cuda.synchronize(dev)) if dev.type == "cuda" else (lambda: None)
@@ -246,7 +248,14 @@ def main():
                               "episodes": cnt, "goals_reached": goals_it, "clip_frac": round(int(clipped) / (a.epochs * nenv * hor), 3), "value_loss": round(float(vloss) / (a.epochs * nenv * hor), 3),
                               "std": round(float(torch.exp(EN["log_std"]).mean()), 3), "lp_gap": float(f"{float(lpdiff) / max(lpn, 1):.2e}"),
                               "rollout_share": round(t_roll / el, 2), "train_share": round(t_train / el, 2), "steps_per_s": round(steps_total / el)}), flush=True)
-            if cnt >= 8 and rw > best:
+            if a.assist_auto:   # the checkpoint: the lowest assist reached, the best return there
+                if cnt >= 8 and (cur_assist < best_assist - 1e-9 or (abs(cur_assist - best_assist) < 1e-9 and rw > best)):
+                    best_assist, best = cur_assist, rw; m.save(a.out + ".tss"); save_head(a.out + ".head", EN, mean, sd, d, OBS, ACT, CR)
+                frac = ln * HZ / pool.steps if cnt else 0
+                new = max(0.0, cur_assist - 0.02) if frac > 0.6 else min(a.assist, cur_assist + 0.02) if frac < 0.3 else cur_assist
+                if new != cur_assist: cur_assist = new; pool.set_assist(cur_assist)
+                print(json.dumps({"event": "assist", "iter": it, "survival": round(frac, 2), "assist": round(cur_assist, 3), "checkpoint_assist": round(best_assist, 3)}), flush=True)
+            elif cnt >= 8 and rw > best:
                 best = rw; m.save(a.out + ".tss"); save_head(a.out + ".head", EN, mean, sd, d, OBS, ACT, CR)
             ep_ret_sum.zero_(); ep_len_sum.zero_(); ep_cnt.zero_()
     print(json.dumps({"event": "done", "iterations": it, "steps": steps_total, "best_episode_return": round(best, 1)}), flush=True)

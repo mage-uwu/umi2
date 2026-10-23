@@ -9,6 +9,7 @@
  */
 #include <cuda_runtime.h>
 #include <stdint.h>
+#include <stddef.h>
 #include "../body.c"
 #include "../env.c"
 #include "../mref.c"
@@ -113,5 +114,7 @@ const char *tss_set_room(const double *v, int n) {
     cudaMemcpyToSymbol(room_n, &n, sizeof n);
     cudaError_t r = cudaDeviceSynchronize(); return r == cudaSuccess ? NULL : cudaGetErrorString(r);
 }
+/* the hand-up assist in a TaskCfg on the device, for episodes reset from now on */
+void tss_cfg_set_assist(void *cfg, double a) { cudaMemcpy((char *)cfg + offsetof(TaskCfg, assist), &a, sizeof a, cudaMemcpyHostToDevice); }
 const char *tss_error(void) { cudaError_t r = cudaGetLastError(); return r == cudaSuccess ? NULL : cudaGetErrorString(r); }
 }
