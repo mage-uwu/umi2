@@ -19,7 +19,7 @@
 :root[data-theme="dark"] {
   --stage-top: #0e1030; --stage-bottom: #1d2052; --floor: #2a2e6a; --tile-a: #23347e; --tile-b: #283b8a; --tile-line: #3b51aa;
   --ink: #eef0ff; --muted: #a3a8dc; --gold: #e2bd62; --chip: rgba(20,22,60,.72); --line: rgba(238,240,255,.16); --alert: #ff8095; color-scheme: dark }
-html, body { height: 100%; }
+html, body { height: 100%; height: 100dvh; }
 body { background: var(--stage-bottom); color: var(--ink); font-family: var(--body); overflow: hidden; }
 .app { height: 100%; display: grid; grid-template-rows: auto 1fr auto; background: linear-gradient(var(--stage-top), var(--stage-bottom)); }
 header { display: flex; align-items: baseline; justify-content: space-between; gap: 6px 12px; flex-wrap: wrap;
@@ -42,14 +42,39 @@ button[aria-pressed="true"] { border-color: var(--gold); color: var(--gold); }
 button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 button:disabled { opacity: .45; cursor: default; }
 .readout { font-family: var(--mono); font-size: .8rem; font-variant-numeric: tabular-nums; display: grid; gap: 2px; margin-left: auto; min-width: 14em; }
-@media (max-width: 560px) { .readout { margin-left: 0; } }
+#more-toggle, .hint-short { display: none; }
+/* Phones (narrow, or touch with a short screen): the stage takes most of the screen; the skills stay in one swipeable
+   row with a Controls button; the other groups (push, click, view, face, parts) open in a drawer that scrolls and never
+   takes more than 45% of the height; the readout keeps two short lines. */
+@media (max-width: 640px), (pointer: coarse) and (max-height: 520px) {
+  header { padding-block: 8px 0; }
+  h1 { font-size: 1.15rem; }
+  .hint-long { display: none; }
+  .hint-short { display: inline; font-size: .78rem; }
+  footer { gap: 8px; padding-block: 8px max(10px, env(safe-area-inset-bottom, 0px)); max-height: 45dvh; overflow-y: auto; overscroll-behavior: contain; }
+  footer > .group { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; width: 100%; padding-bottom: 2px; }
+  footer > .group::-webkit-scrollbar { display: none; }
+  /* rows that scroll fade at the right edge, so a cut-off chip reads as "more this way" */
+  footer > .secondary, .skill-row > #skills { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); padding-right: 24px; }
+  footer > .group > .group { flex-wrap: nowrap; }
+  footer > .skill-row { overflow: visible; }   /* only the chips scroll; Stand up and Controls stay in reach at the right */
+  .skill-row > #skills { flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+  .skill-row > #skills::-webkit-scrollbar { display: none; }
+  footer button { flex: none; padding: 7px 13px; font-size: .82rem; }
+  .label { flex: none; }
+  #more-toggle { display: inline-block; }
+  .app:not(.more-open) footer > .secondary { display: none; }
+  .readout { margin-left: 0; min-width: 0; width: 100%; font-size: .72rem; grid-auto-flow: column; justify-content: start; gap: 2px 12px; }
+  #r-look, #r-perf { display: none; }
+}
 @media (prefers-reduced-motion: reduce) { #status { transition: none; } }
 </style>
 
 <div class="app">
   <header>
     <h1>physics-gym</h1>
-    <span class="hint">She moves under real physics: 14 rigid bodies, 45 kg, a muscle at every joint, driven 30 times a second by a small learned SSM-tree controller. Click the stage to push her from that side; scroll to turn the view, Shift + scroll to raise it; zoom with + and &minus;, Ctrl + scroll or a pinch (close up, the view centres on her face).</span>
+    <span class="hint hint-short">Tap the stage to push her · pinch to zoom · drag to turn.</span>
+    <span class="hint hint-long">She moves under real physics: 14 rigid bodies, 45 kg, a muscle at every joint, driven 30 times a second by a small learned SSM-tree controller. Click the stage to push her from that side; scroll to turn the view, Shift + scroll to raise it; zoom with + and &minus;, Ctrl + scroll or a pinch (close up, the view centres on her face).</span>
   </header>
   <div id="stage" tabindex="0" aria-label="Live physics view; click to push her">
     <canvas id="view"></canvas>
@@ -57,12 +82,13 @@ button:disabled { opacity: .45; cursor: default; }
     <div id="status">loading model and controller…</div>
   </div>
   <footer>
-    <div class="group" role="group" aria-label="Skill">
+    <div class="group skill-row" role="group" aria-label="Skill">
       <span class="label">Skill</span>
       <span id="skills" class="group"></span>
       <button id="standup" hidden title="The get-up controller takes over from wherever she is">Stand up</button>
+      <button id="more-toggle" aria-expanded="false" aria-controls="push-group">Controls</button>
     </div>
-    <div class="group" role="group" aria-label="Push">
+    <div class="group secondary" id="push-group" role="group" aria-label="Push">
       <span class="label">Push</span>
       <button data-push="left">Left</button><button data-push="right">Right</button>
       <button data-push="front">Front</button><button data-push="back">Back</button>
@@ -70,7 +96,7 @@ button:disabled { opacity: .45; cursor: default; }
       <span class="label" style="margin-left:8px">Click</span>
       <button id="c-push" aria-pressed="true" title="A click pushes her from that side">Push</button><button id="c-grab" aria-pressed="false" title="Press on a body part and drag it">Grab</button><button id="c-goal" aria-pressed="false" title="Click a surface to put the goal there (the Go to skill walks to it)">Goal</button>
     </div>
-    <div class="group" role="group" aria-label="View">
+    <div class="group secondary" role="group" aria-label="View">
       <span class="label">View</span>
       <button id="v-art" aria-pressed="false" title="Drawn by the ANIME NEURAL SHADER's learned shader">Learned shader</button>
       <button id="v-model" aria-pressed="true">3D</button>
@@ -79,13 +105,13 @@ button:disabled { opacity: .45; cursor: default; }
       <button id="v-reset">Reset view</button>
       <button id="v-room" aria-pressed="true" title="The room's boxes, drawn and simulated; off: the open floor">Room</button>
     </div>
-    <div class="group" role="group" aria-label="Face">
+    <div class="group secondary" role="group" aria-label="Face">
       <span class="label">Face</span>
-      <button id="f-follow" aria-pressed="true" title="Her eyes follow the mouse (and her head turns a little); off, she looks at you">Eyes follow mouse</button>
+      <button id="f-follow" aria-pressed="true" title="Her eyes follow the mouse or your finger (and her head turns a little); off, she looks at you">Eyes follow</button>
       <button id="f-blink" title="Blink (B)">Blink</button>
       <button id="f-mouth" aria-pressed="false" title="Open or close her mouth (M)">Mouth</button>
     </div>
-    <div class="group" role="group" aria-label="Parts (for checking the render)">
+    <div class="group secondary" role="group" aria-label="Parts (for checking the render)">
       <span class="label">Parts</span>
       <button id="p-hair" aria-pressed="true" title="Show or hide her hair">Hair</button>
       <button id="p-dress" aria-pressed="true" title="Show or hide the dress and top (the shorts stay)">Dress</button>
@@ -609,6 +635,10 @@ document.getElementById('stage').addEventListener('wheel', e => {
   else view.yaw = (view.yaw + d * 0.15) % 360;
 }, { passive: false });
 document.getElementById('v-reset').onclick = () => Object.assign(view, VIEW0);
+document.getElementById('more-toggle').onclick = e => {   // phones: open or close the drawer of controls
+  const open = document.querySelector('.app').classList.toggle('more-open'); e.currentTarget.setAttribute('aria-expanded', String(open));
+  e.currentTarget.setAttribute('aria-pressed', String(open));
+};
 // Room off: the open floor, nothing drawn and nothing simulated but the ground (setRoom([])); on: room.json again
 let roomOn = !!roomDoc;
 function setRoomOn(on) {
@@ -706,8 +736,24 @@ document.getElementById('v-art').onclick = () => { lookChosen = true; if (vrm) u
 document.getElementById('v-model').onclick = () => { lookChosen = true; setLook('model'); };
 document.getElementById('v-boxes').onclick = () => { lookChosen = true; setLook('boxes'); };
 // Click the stage: push from the clicked side of her (screen left/right of her body, nearer/farther in depth).
+// A mouse click pushes at once; a finger pushes on lifting, if it did not move (a one-finger drag turns the view,
+// two fingers zoom).
+const tap = new Map();
 document.getElementById('stage').addEventListener('pointerdown', e => {
   if (clickMode === 'grab' || clickMode === 'goal') return;
+  if (e.pointerType === 'touch') { tap.set(e.pointerId, { x: e.clientX, y: e.clientY, lx: e.clientX, ly: e.clientY, moved: false }); return; }
+  pushAt(e);
+});
+document.getElementById('stage').addEventListener('pointermove', e => {
+  const t = tap.get(e.pointerId); if (!t) return;
+  if (tap.size > 1) { t.moved = true; return; }   // two fingers: a pinch, not a tap
+  if (Math.hypot(e.clientX - t.x, e.clientY - t.y) > 10) t.moved = true;
+  if (t.moved) { view.yaw -= (e.clientX - t.lx) * 0.35; view.pitch = Math.min(70, Math.max(-5, view.pitch + (e.clientY - t.ly) * 0.25)); }
+  t.lx = e.clientX; t.ly = e.clientY;
+});
+document.getElementById('stage').addEventListener('pointerup', e => { const t = tap.get(e.pointerId); tap.delete(e.pointerId); if (t && !t.moved && tap.size === 0) pushAt(e); });
+document.getElementById('stage').addEventListener('pointercancel', e => tap.delete(e.pointerId));
+function pushAt(e) {
   if (!world || fallenAt >= 0) return;
   const r = document.getElementById('stage').getBoundingClientRect(), p = new THREE.Vector3(...world.b[B.CHEST].x).project(camera);
   const sx = (e.clientX - r.left) / r.width * 2 - 1, sy = -((e.clientY - r.top) / r.height * 2 - 1);
@@ -716,7 +762,7 @@ document.getElementById('stage').addEventListener('pointerdown', e => {
   const dx = sx - p.x, dy = sy - p.y;
   const from = right.multiplyScalar(dx).add(fwd.multiplyScalar(-dy * 0.6));   // the side the click came from
   push([-from.x, -from.z]);
-});
+}
 // Grab: press on a body part (the physics box under the cursor, or the nearest on screen) and drag, like guiding
 // a limb. A held arm or leg is steered by its joints: the shoulder (hip) aims the limb at the cursor and the
 // elbow (knee) bends to the distance, and her muscles carry it there (aimLimb); a held head turns toward it. A
