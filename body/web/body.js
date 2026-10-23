@@ -52,7 +52,7 @@ const hingeAxis = h => h === 1 ? [1, 0, 0] : h === 2 ? [0, 1, 0] : [0, 0, 1];
 
 export class World {
   constructor(totalMass = 45, substeps = 20, dt = 1 / 30) {
-    this.substeps = substeps; this.h = dt / substeps; this.mu = 0.9; this.iters = 1; this.kpScale = 1; this.kdScale = 1; this.t = 0;
+    this.substeps = substeps; this.h = dt / substeps; this.mu = 0.9; this.iters = 4; this.kpScale = 1; this.kdScale = 1; this.t = 0;
     this.push = { body: -1, force: [0, 0, 0], left: 0 };
     const fsum = BODY_DEFS.reduce((s, d) => s + d.mass_frac, 0);
     this.b = BODY_DEFS.map(d => {
@@ -159,7 +159,9 @@ export class World {
 }
 
 // ---------- the control interface (env.c) ----------
-export const ACT_DIM = 31, OBS_DIM = NB * 15 + 4, ACT_SCALE = 0.6, CTRL_HZ = 30;
+export const ACT_DIM = 31, OBS_DIM = NB * 15 + 6, CTRL_HZ = 30;
+// action range per joint (rad per unit action), indexed by the child body (env.c ACT_SCALES)
+export const ACT_SCALES = [0, 0.5, 0.5, 0.4, 0.8, 0.8, 0.8, 0.8, 1.0, 1.2, 0.6, 1.0, 1.2, 0.6];
 export function standPose() {
   const rel = BODY_DEFS.map(() => QID), a = 68 * Math.PI / 180;
   rel[B.L_UARM] = qexp([0, 0, -a]); rel[B.R_UARM] = qexp([0, 0, a]);
@@ -171,10 +173,11 @@ export function applyAction(world, ref, a) {
   for (let i = 1; i < NB; i++) {
     const d = BODY_DEFS[i];
     const r = d.hinge ? vscale(hingeAxis(d.hinge), a[k++]) : [a[k++], a[k++], a[k++]];
-    world.target[i] = qmul(ref[i], qexp(vscale(r, ACT_SCALE)));
+    world.target[i] = qmul(ref[i], qexp(vscale(r, ACT_SCALES[i])));
   }
 }
-export function observe(world) {
+// phase: radians of the reference clip's cycle (0 for balance)
+export function observe(world, phase = 0) {
   const pf = qrot(world.b[0].q, [0, 0, 1]), hi = qexp([0, -Math.atan2(pf[0], pf[2]), 0]), root = world.b[0].x, o = [];
   for (let i = 0; i < NB; i++) {
     const b = world.b[i], p = qrot(hi, vsub(b.x, root)); if (i === 0) p[1] = root[1];
@@ -183,6 +186,7 @@ export function observe(world) {
   }
   o.push(world.lowest(B.L_FOOT) < 0.01 ? 1 : 0, world.lowest(B.R_FOOT) < 0.01 ? 1 : 0);
   const d = qrot(hi, vsub(world.com().x, root)); o.push(d[0], d[2]);
+  o.push(Math.sin(phase), Math.cos(phase));
   return o;
 }
 export function fallen(world) {
@@ -262,4 +266,50 @@ export async function loadPolicy(url) {
   const j = await (await fetch(url)).json();
   const f32 = s => new Float32Array(Uint8Array.from(atob(s), c => c.charCodeAt(0)).buffer);
   return new Policy({ ...j, theta: f32(j.theta), mean: f32(j.mean), std: f32(j.std) });
+}
+
+// ---------- reference clips (motions_ref.bin from tools/motions_to_ref.py; mref.c) ----------
+const qslerp = (a, b, t) => { if (a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3] < 0) b = b.map(v => -v); return qnorm(a.map((v, i) => v + t * (b[i] - v))); };
+export class Clip {
+  constructor(name, frames, fps, root, q) { Object.assign(this, { name, frames, fps, root, q }); this.T = (frames - 1) / fps; this.shift = [0, 0, 0]; }
+  // Reference at clip time t: joint rotations (rel[0] = root rotation), body world rotations, root position,
+  // the root carried forward across loops and offset by this.shift.
+  at(t) {
+    const u = ((t % this.T) + this.T) % this.T, x = u * this.fps; let f0 = Math.floor(x); if (f0 >= this.frames - 1) f0 = this.frames - 2;
+    const w = x - f0, world = [];
+    for (let i = 0; i < NB; i++) world.push(qslerp(this.q[f0 * NB + i], this.q[(f0 + 1) * NB + i], w));
+    const r0 = this.root[f0], r1 = this.root[f0 + 1], cyc = Math.floor(t / this.T), last = this.root[this.frames - 1], first = this.root[0];
+    const root = [0, 1, 2].map(k => r0[k] + w * (r1[k] - r0[k]) + (k === 1 ? 0 : cyc * (last[k] - first[k])) + this.shift[k]);
+    const rel = world.map((q, i) => i ? qmul(qconj(world[BODY_DEFS[i].parent]), q) : q);
+    return { rel, world, root };
+  }
+}
+export async function loadClips(url) {
+  const buf = await (await fetch(url)).arrayBuffer(), dv = new DataView(buf); let o = 4;
+  const n = dv.getInt32(o, true); o += 4; const clips = {};
+  for (let k = 0; k < n; k++) {
+    const name = new TextDecoder().decode(new Uint8Array(buf, o, 16)).replace(/\0+$/, ''); o += 16;
+    const frames = dv.getInt32(o, true), fps = dv.getFloat32(o + 4, true); o += 8;
+    const root = [], q = [];
+    for (let f = 0; f < frames; f++) {
+      root.push([dv.getFloat32(o, true), dv.getFloat32(o + 4, true), dv.getFloat32(o + 8, true)]); o += 12;
+      for (let i = 0; i < NB; i++) { q.push(qnorm([0, 1, 2, 3].map(j => dv.getFloat32(o + 4 * j, true)))); o += 16; }
+    }
+    clips[name] = new Clip(name, frames, fps, root, q);
+  }
+  return clips;
+}
+// Place the world in a clip's pose at time t with the clip's velocities (env.c env_reset, TASK_IMITATE).
+export function poseFromClip(world, clip, t) {
+  clip.shift = [0, 0, 0];
+  const a = clip.at(t); clip.shift = [-a.root[0], 0, -a.root[2]];
+  const A = clip.at(t), Bn = clip.at(t + 1 / CTRL_HZ), dt = 1 / CTRL_HZ;
+  const W2 = new World(45, 20, dt); W2.pose(Bn.root, Bn.rel[0], Bn.rel);
+  world.pose(A.root, A.rel[0], A.rel);
+  world.b.forEach((b, i) => { b.v = vscale(vsub(W2.b[i].x, b.x), 1 / dt); b.w = vscale(qlog(qmul(W2.b[i].q, qconj(b.q))), 1 / dt); });
+  let lo = 1e9; for (let i = 0; i < NB; i++) lo = Math.min(lo, world.lowest(i));
+  if (lo < 0) for (const b of world.b) b.x = [b.x[0], b.x[1] - lo, b.x[2]];
+  for (const b of world.b) b.xprev = b.x;
+  world.target = A.rel.slice();
+  return A;
 }

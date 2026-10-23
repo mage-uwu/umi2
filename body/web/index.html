@@ -1,4 +1,4 @@
-<title>Magical Girl Body</title>
+<title>neural-anime-movement</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700&family=Shippori+Mincho:wght@600&family=JetBrains+Mono:wght@400&display=swap">
@@ -46,8 +46,8 @@ button:disabled { opacity: .45; cursor: default; }
 
 <div class="app">
   <header>
-    <h1>Magical Girl Body</h1>
-    <span class="hint">She stands under real physics: 14 rigid bodies, 45 kg, a muscle at every joint, driven 30 times a second by a small learned controller. Click the stage to push her from that side.</span>
+    <h1>neural-anime-movement</h1>
+    <span class="hint">She moves under real physics: 14 rigid bodies, 45 kg, a muscle at every joint, driven 30 times a second by a small learned SSM-tree controller. Click the stage to push her from that side.</span>
   </header>
   <div id="stage" tabindex="0" aria-label="Live physics view; click to push her">
     <canvas id="view"></canvas>
@@ -90,7 +90,7 @@ button:disabled { opacity: .45; cursor: default; }
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm';
-import { World, BODY_DEFS, B, standPose, applyAction, observe, fallen, loadPolicy, math, CTRL_HZ } from './body.js';
+import { World, BODY_DEFS, B, standPose, applyAction, observe, fallen, loadPolicy, loadClips, poseFromClip, math, CTRL_HZ } from './body.js';
 
 const status = document.getElementById('status');
 const setStatus = (t, alert = false) => { status.textContent = t; status.classList.toggle('alert', alert); };
@@ -165,16 +165,25 @@ const boxes = BODY_DEFS.map(d => {
 });
 
 // ---------- skills ----------
-// Each skill: a controller (policy JSON from the C trainer) and the reference pose its actions offset.
-const SKILLS = { balance: { label: 'Balance', file: 'balance.json', ref: () => standPose() } };
-let world, ref, policy = null, skill = 'balance', upSince = 0, fallenAt = -1, listeners = {};
+// Each skill: a controller (policy JSON from the C trainer) and what its actions offset: the stand pose,
+// or a motion clip followed in time (the clip's phase is part of what the controller sees).
+const SKILLS = {
+  balance: { label: 'Balance', file: 'balance.json' },
+  walk: { label: 'Walk', file: 'walk.json', clip: 'walk' },
+};
+let world, ref, policy = null, skill = 'balance', upSince = 0, fallenAt = -1, listeners = {}, clips = null, clip = null;
+const policies = {};
 const emit = (ev, detail) => { (listeners[ev] || []).forEach(f => { try { f(detail); } catch (e) { console.error(e); } }); dispatchEvent(new CustomEvent('umibody:' + ev, { detail })); };
 function reset() {
-  world = new World(45, 20, 1 / CTRL_HZ); ref = SKILLS[skill].ref();
-  world.pose(BODY_DEFS[0].center, ref[0], ref);
-  let lo = 1e9; for (let i = 0; i < BODY_DEFS.length; i++) lo = Math.min(lo, world.lowest(i));
-  for (const b of world.b) { b.x = [b.x[0], b.x[1] - lo, b.x[2]]; b.xprev = b.x; }
-  world.target = ref.slice(); policy?.reset();
+  world = new World(45, 20, 1 / CTRL_HZ);
+  if (clip) ref = poseFromClip(world, clip, 0).rel;
+  else {
+    ref = standPose(); world.pose(BODY_DEFS[0].center, ref[0], ref);
+    let lo = 1e9; for (let i = 0; i < BODY_DEFS.length; i++) lo = Math.min(lo, world.lowest(i));
+    for (const b of world.b) { b.x = [b.x[0], b.x[1] - lo, b.x[2]]; b.xprev = b.x; }
+    world.target = ref.slice();
+  }
+  policy?.reset();
   upSince = world.t; fallenAt = -1; prev = snapshot(); emit('reset', { skill });
 }
 const PUSH_N = 160;
@@ -193,8 +202,10 @@ function push(dir, newtons = PUSH_N, bodyName = 'chest') {
 const snapshot = () => world.b.map(b => ({ x: b.x.slice(), q: b.q.slice() }));
 let prev, acc = 0, last = performance.now();
 function control() {
-  if (fallenAt < 0 && policy) applyAction(world, ref, policy.act(observe(world)));
+  const phase = clip ? 2 * Math.PI * world.t / clip.T : 0;
+  if (fallenAt < 0 && policy) applyAction(world, ref, policy.act(observe(world, phase)));
   prev = snapshot(); world.step();
+  if (clip) ref = clip.at(world.t).rel;
   if (fallenAt < 0 && fallen(world)) { fallenAt = world.t; emit('fall', { upright: world.t - upSince }); setStatus('She fell. Getting up is not learned yet; resetting.', true); }
   if (fallenAt >= 0 && world.t - fallenAt > 2.5) { reset(); setStatus(''); }
   emit('step', { t: world.t });
@@ -255,15 +266,20 @@ addEventListener('keydown', e => {
 });
 
 async function useSkill(name) {
-  const s = SKILLS[name]; skill = name;
-  policy = await loadPolicy(s.file);
+  const s = SKILLS[name]; if (!s) throw new Error(`no skill named ${name}`);
+  policies[name] ||= await loadPolicy(s.file);
+  if (s.clip) { clips ||= await loadClips('motions_ref.bin'); clip = clips[s.clip]; } else clip = null;
+  skill = name; policy = policies[name];
+  setPressed('[data-skill]', document.querySelector(`[data-skill="${name}"]`));
   document.getElementById('r-policy').textContent = `${policy.type === 'ssm' ? 'SSM-tree' : policy.type.toUpperCase()} · ${policy.params.toLocaleString()} weights`;
   reset(); emit('skill', { skill: name });
 }
 const skillBox = document.getElementById('skills');
 for (const [k, s] of Object.entries(SKILLS)) {
   const b = document.createElement('button'); b.textContent = s.label; b.dataset.skill = k; b.setAttribute('aria-pressed', String(k === skill));
-  b.onclick = () => { setPressed('[data-skill]', b); useSkill(k); }; skillBox.append(b);
+  b.onclick = () => useSkill(k).catch(e => setStatus(`Could not load ${s.label}: ${e.message}`, true)); skillBox.append(b);
+  // A skill whose controller is not trained yet stays disabled.
+  fetch(s.file, { method: 'HEAD' }).then(r => { b.disabled = !r.ok; if (!r.ok) b.title = 'Not trained yet'; }).catch(() => {});
 }
 
 // ---------- hooks for other pages ----------

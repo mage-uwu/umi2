@@ -31,7 +31,7 @@ const BodyDef BODY_DEFS[NB] = {
 
 void world_init(World *W, double total_mass, int substeps, double dt) {
     memset(W, 0, sizeof(*W));
-    W->total_mass = total_mass; W->substeps = substeps; W->h = dt / substeps; W->mu = 0.9; W->push_body = -1; W->kp_scale = W->kd_scale = 1; W->iters = 1;
+    W->total_mass = total_mass; W->substeps = substeps; W->h = dt / substeps; W->mu = 0.9; W->push_body = -1; W->kp_scale = W->kd_scale = 1; W->iters = 4;
     double fsum = 0; for (int i = 0; i < NB; i++) fsum += BODY_DEFS[i].mass_frac;
     for (int i = 0; i < NB; i++) {
         const BodyDef *d = BODY_DEFS + i; Body *b = W->b + i;

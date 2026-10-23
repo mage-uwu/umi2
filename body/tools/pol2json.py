@@ -1,6 +1,6 @@
 """Convert a .pol file written by train.c into JSON for body.js (weights as base64 float32)."""
 import base64, json, struct, sys
-OBS_DIM = 14 * 15 + 4
+OBS_DIM = 14 * 15 + 6
 raw = open(sys.argv[1], "rb").read()
 t, i, o, h, L, T, D, n, p = struct.unpack("<9i", raw[:36])
 P = (len(raw) - 36) // 4 - 2 * OBS_DIM

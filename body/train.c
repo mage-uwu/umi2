@@ -7,6 +7,7 @@
  */
 #include "env.h"
 #include "policy.h"
+#include "mref.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -36,7 +37,7 @@ static double rollout(const PolCfg *pc, const float *th, PolState *ps, const Tas
 }
 
 int main(int argc, char **argv) {
-    const char *ptype = "ssm", *out = "body.pol", *in = NULL;
+    const char *ptype = "ssm", *out = "body.pol", *in = NULL, *task = "balance", *mref = "motions_ref.bin";
     double seconds = 300, sigma = 0.02, lr = 0.01, wd = 0.005;
     int pairs = 64, threads = 4, seed = 0, eval_eps = 8, hidden = 0;
     TaskCfg tc = {.push_max = 120, .push_every = 2.0, .steps = 300, .init_noise = 0.05};
@@ -46,9 +47,13 @@ int main(int argc, char **argv) {
         OPT("--policy", ptype, (const char *)) OPT("--out", out, (const char *)) OPT("--load", in, (const char *))
         OPT("--seconds", seconds, atof) OPT("--sigma", sigma, atof) OPT("--lr", lr, atof) OPT("--pairs", pairs, atoi)
         OPT("--threads", threads, atoi) OPT("--seed", seed, atoi) OPT("--hidden", hidden, atoi)
-        OPT("--push", tc.push_max, atof) OPT("--steps", tc.steps, atoi)
+        OPT("--push", tc.push_max, atof) OPT("--steps", tc.steps, atoi) OPT("--task", task, (const char *)) OPT("--mref", mref, (const char *))
 #undef OPT
         fprintf(stderr, "unknown argument %s\n", a); return 2;
+    }
+    Motions M; if (strcmp(task, "balance")) {
+        if (mref_load(mref, &M) || !(tc.clip = mref_find(&M, task))) { fprintf(stderr, "no clip %s in %s\n", task, mref); return 1; }
+        tc.task = TASK_IMITATE; tc.init_noise = 0;
     }
     PolCfg pc = {.in = OBS_DIM, .out = ACT_DIM};
     if (!strcmp(ptype, "mlp")) { pc.type = POL_MLP; pc.hidden = hidden ? hidden : 64; }
@@ -63,7 +68,7 @@ int main(int argc, char **argv) {
               fread(th, sizeof(float), P, f) != (size_t)P || fread(nm.mean, sizeof(float), OBS_DIM, f) != OBS_DIM || fread(nm.std, sizeof(float), OBS_DIM, f) != OBS_DIM) { fprintf(stderr, "cannot load %s\n", in); return 1; } fclose(f); }
     PolState **ps = malloc(threads * sizeof(PolState *)); for (int t = 0; t < threads; t++) ps[t] = pol_state_new(&pc);
     double *F = malloc(2 * pairs * sizeof(double)), *alive = malloc(2 * pairs * sizeof(double));
-    printf("{\"event\":\"config\",\"policy\":\"%s\",\"params\":%d,\"pairs\":%d,\"sigma\":%g,\"lr\":%g,\"push\":%g}\n", pol_name(pc.type), P, pairs, sigma, lr, tc.push_max);
+    printf("{\"event\":\"config\",\"task\":\"%s\",\"policy\":\"%s\",\"params\":%d,\"pairs\":%d,\"sigma\":%g,\"lr\":%g,\"push\":%g}\n", task, pol_name(pc.type), P, pairs, sigma, lr, tc.push_max);
     uint64_t rng = (uint64_t)seed * 7919 + 13; double t0 = now(), best = -1; int gen = 0;
     while (now() - t0 < seconds) {
         gen++;

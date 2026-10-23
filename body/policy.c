@@ -53,7 +53,8 @@ void pol_init(const PolCfg *c, float *th, uint64_t seed) {
         for (int i = 0; i < c->trees * c->p * d; i++) *q++ = uni(&s, 0.3 / sqrt(c->p * c->trees));   /* U */
     }
     for (int i = 0; i < d; i++) *q++ = 1;
-    for (int i = 0; i < O * d; i++) *q++ = uni(&s, 0.1 / sqrt(d)); for (int i = 0; i < O; i++) *q++ = 0;
+    for (int i = 0; i < O * d; i++) *q++ = 0;   /* zero output: training starts from "hold the reference" */
+    for (int i = 0; i < O; i++) *q++ = 0;
 }
 
 PolState *pol_state_new(const PolCfg *c) {
