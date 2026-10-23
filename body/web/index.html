@@ -27,7 +27,8 @@ header { display: flex; align-items: baseline; justify-content: space-between; g
 h1 { margin: 0; font-family: var(--display); font-size: clamp(1.25rem, 3.5vw, 1.7rem); text-wrap: balance; }
 .hint { color: var(--muted); font-size: .85rem; max-width: 62ch; }
 #stage { position: relative; min-height: 0; touch-action: none; cursor: crosshair; overflow: hidden; }
-#view { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#view, #art { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#art { transform-origin: 50% 50%; }
 #status { position: absolute; inset: auto 0 12px; text-align: center; color: var(--muted); font-size: .8rem; font-family: var(--mono); }
 #status.alert { color: var(--alert); }
 footer { display: flex; align-items: center; gap: 12px 18px; flex-wrap: wrap; padding-block: 10px 14px;
@@ -51,6 +52,7 @@ button:disabled { opacity: .45; cursor: default; }
   </header>
   <div id="stage" tabindex="0" aria-label="Live physics view; click to push her">
     <canvas id="view"></canvas>
+    <canvas id="art" hidden></canvas>
     <div id="status">loading model and controller…</div>
   </div>
   <footer>
@@ -66,12 +68,14 @@ button:disabled { opacity: .45; cursor: default; }
     </div>
     <div class="group" role="group" aria-label="View">
       <span class="label">View</span>
-      <button id="v-model" aria-pressed="true">Character</button>
+      <button id="v-art" aria-pressed="false" title="Drawn by the ANIME NEURAL SHADER's learned shader">Learned shader</button>
+      <button id="v-model" aria-pressed="true">3D</button>
       <button id="v-boxes" aria-pressed="false">Physics</button>
       <button id="v-reset">Reset view</button>
     </div>
     <div class="readout" aria-live="polite">
       <span id="r-policy">controller –</span>
+      <span id="r-look">3D render</span>
       <span id="r-time">upright –</span>
     </div>
   </footer>
@@ -92,6 +96,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm';
 import { World, BODY_DEFS, B, standPose, applyAction, observe, fallen, loadPolicy, loadClips, poseFromClip, setAssist, math, CTRL_HZ } from './body.js';
+import { createShaderView } from './shader-view.js';
 
 const status = document.getElementById('status');
 const setStatus = (t, alert = false) => { status.textContent = t; status.classList.toggle('alert', alert); };
@@ -229,8 +234,14 @@ function frame(now) {
     if (vrm) { poseModel(Q, px); vrm.update(1 / 60); }
     follow(px, dt);
     document.getElementById('r-time').textContent = fallenAt < 0 ? `upright ${(world.t - upSince).toFixed(1)} s` : 'fallen';
+    pelvisAt.set(px[0], px[1], px[2]);
   }
-  resize(); renderer.render(scene, camera);
+  resize();
+  if (look === 'art' && art && vrm) {
+    // The learned shader draws at its trained distance; zoom magnifies the finished drawing.
+    artCanvas.style.transform = `scale(${(VIEW0.dist / view.dist).toFixed(3)})`;
+    art.frame({ target: pelvisAt, yaw: view.yaw, pitch: view.pitch });
+  } else renderer.render(scene, camera);
   requestAnimationFrame(frame);
 }
 // The camera trails her pelvis at a rate independent of the frame rate, from a three-quarter side view
@@ -257,7 +268,8 @@ function follow(px, dt) {
   sun.position.set(focus.x + 1, 3, focus.z + 2); sun.target.position.copy(focus);
 }
 function resize() {
-  const w = canvas.clientWidth, h = canvas.clientHeight;
+  const st = document.getElementById('stage'), w = st.clientWidth, h = st.clientHeight;   // the 3D canvas is hidden in art mode
+  if (!w || !h) return;
   if (canvas.width !== Math.round(w * renderer.getPixelRatio()) || canvas.height !== Math.round(h * renderer.getPixelRatio())) {
     renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
   }
@@ -267,12 +279,32 @@ function resize() {
 const setPressed = (sel, el) => document.querySelectorAll(sel).forEach(b => b.setAttribute('aria-pressed', String(b === el)));
 document.querySelectorAll('[data-push]').forEach(b => b.onclick = () => world && fallenAt < 0 && push(b.dataset.push));
 document.getElementById('reset').onclick = () => world && reset();
-document.getElementById('v-model').onclick = e => { setPressed('#v-model, #v-boxes', e.currentTarget); if (vrm) vrm.scene.visible = true; boxes.forEach(m => m.visible = false); };
-document.getElementById('v-boxes').onclick = e => { setPressed('#v-model, #v-boxes', e.currentTarget); if (vrm) vrm.scene.visible = false; boxes.forEach(m => m.visible = true); };
+// Look: the learned shader (art), the plain 3D render (model) or the physics boxes.
+const artCanvas = document.getElementById('art'), pelvisAt = new THREE.Vector3(0, 0.9, 0);
+let look = 'model', art = null, artLoad = null;
+function setLook(next) {
+  look = next;
+  setPressed('#v-art, #v-model, #v-boxes', document.getElementById({ art: 'v-art', model: 'v-model', boxes: 'v-boxes' }[next]));
+  if (vrm) { vrm.scene.visible = next !== 'boxes'; (next === 'art' && art ? art.scene : scene).add(vrm.scene); }
+  boxes.forEach(m => m.visible = next === 'boxes');
+  artCanvas.hidden = next !== 'art' || !art; canvas.hidden = !artCanvas.hidden;
+  document.getElementById('r-look').textContent = next === 'art' ? (art ? art.engine : 'loading the learned shader…') : next === 'boxes' ? 'physics bodies' : '3D render';
+}
+async function useArt() {
+  setLook('art');
+  if (!art) {
+    artLoad ||= createShaderView({ THREE, vrm, canvas: artCanvas, detail: 'smooth' });
+    try { art = await artLoad; } catch (e) { console.error(e); setStatus(`The learned shader could not start: ${e.message}`, true); artLoad = null; setLook('model'); return; }
+    if (look === 'art') setLook('art');
+  }
+}
+document.getElementById('v-art').onclick = () => vrm && useArt();
+document.getElementById('v-model').onclick = () => setLook('model');
+document.getElementById('v-boxes').onclick = () => setLook('boxes');
 // Click the stage: push from the clicked side of her (screen left/right of her body, nearer/farther in depth).
 document.getElementById('stage').addEventListener('pointerdown', e => {
   if (!world || fallenAt >= 0) return;
-  const r = canvas.getBoundingClientRect(), p = new THREE.Vector3(...world.b[B.CHEST].x).project(camera);
+  const r = document.getElementById('stage').getBoundingClientRect(), p = new THREE.Vector3(...world.b[B.CHEST].x).project(camera);
   const sx = (e.clientX - r.left) / r.width * 2 - 1, sy = -((e.clientY - r.top) / r.height * 2 - 1);
   const right = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0).setY(0).normalize();
   const fwd = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 2).setY(0).normalize();   // toward the camera
@@ -323,6 +355,8 @@ try {
   await useSkill('balance');
   setStatus('loading the model…');
   await loadModel();
-  setStatus('');
+  setStatus('loading the learned shader…');
+  await useArt();
+  if (art) setStatus('');
 } catch (e) { console.error(e); setStatus(`Could not start: ${e.message}`, true); }
 </script>
