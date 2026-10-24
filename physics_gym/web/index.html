@@ -533,7 +533,7 @@ document.getElementById('f-follow').onclick = e => { face.follow = !face.follow;
 document.getElementById('f-blink').onclick = () => blink();
 const setMouth = open => { face.mouthTarget = open ? 1 : 0; document.getElementById('f-mouth').setAttribute('aria-pressed', String(open)); };
 document.getElementById('f-mouth').onclick = () => setMouth(!face.mouthTarget);
-addEventListener('keydown', e => { if (e.target.closest?.('input, textarea')) return; if (e.key === 'b') blink(); if (e.key === 'm') setMouth(!face.mouthTarget); });
+addEventListener('keydown', e => { if (e.target.closest?.('input, textarea') || e.ctrlKey || e.metaKey || e.altKey) return; if (e.key === 'b') blink(); if (e.key === 'm') setMouth(!face.mouthTarget); });
 
 function control() {
   const pc = mode === 'skill' && SKILLS[skill].phaseClip && clips ? clips[SKILLS[skill].phaseClip] : null;
@@ -664,7 +664,8 @@ const DIST_MIN = 0.7, DIST_MAX = 9;
 function zoomBy(f) { view.dist = Math.min(DIST_MAX, Math.max(look === 'art' ? VIEW0.dist / 4 : DIST_MIN, view.dist / f)); }
 document.getElementById('v-in').onclick = () => zoomBy(1.3);
 document.getElementById('v-out').onclick = () => zoomBy(1 / 1.3);
-addEventListener('keydown', e => { if (e.target.closest?.('input, textarea')) return; if (e.key === '+' || e.key === '=') zoomBy(1.3); if (e.key === '-' || e.key === '_') zoomBy(1 / 1.3); });
+addEventListener('keydown', e => {   // (with Ctrl / Cmd / Alt the keys are the browser's page zoom: left to it)
+  if (e.target.closest?.('input, textarea') || e.ctrlKey || e.metaKey || e.altKey) return; if (e.key === '+' || e.key === '=') zoomBy(1.3); if (e.key === '-' || e.key === '_') zoomBy(1 / 1.3); });
 const touches = new Map(); let pinch0 = 0;
 const stEl = document.getElementById('stage');
 stEl.addEventListener('pointerdown', e => { if (e.pointerType === 'touch') touches.set(e.pointerId, [e.clientX, e.clientY]); });
@@ -694,6 +695,9 @@ function follow(px, dt) {
 function resize() {
   const st = document.getElementById('stage'), w = st.clientWidth, h = st.clientHeight;   // the 3D canvas is hidden in art mode
   if (!w || !h) return;
+  // the browser's page zoom changes devicePixelRatio: keep the 3D canvas at the screen's pixels (as the shader's canvas)
+  const pr = Math.min(devicePixelRatio || 1, 2);
+  if (renderer.getPixelRatio() !== pr) renderer.setPixelRatio(pr);
   if (canvas.width !== Math.round(w * renderer.getPixelRatio()) || canvas.height !== Math.round(h * renderer.getPixelRatio())) {
     renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
   }
