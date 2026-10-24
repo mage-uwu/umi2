@@ -41,7 +41,9 @@ IB = np.stack([MASS * (Y * Y + Z * Z) / 12, MASS * (X * X + Z * Z) / 12, MASS * 
 MIRROR = [0, 1, 2, 3, 6, 7, 4, 5, 11, 12, 13, 8, 9, 10]
 # maximum voluntary joint torque (N m), adult women, the stronger direction, times 45/60 for this body: trunk (the
 # spine joint takes the lumbar share, the chest joint the thoracic), neck, shoulder, elbow, hip, knee, ankle
-MVC = {k: round(v * 45 / 60, 1) for k, v in {"spine": 150, "chest": 100, "head": 20, "uarm": 40, "farm": 35, "thigh": 160, "shin": 135, "foot": 95}.items()}
+# (the arms: their pushing strength, shoulder extension/adduction 70 and elbow extension 50 at 60 kg: the free motions'
+# inverse dynamics never load them, and at the first values, 40 and 35, she could not push herself up off the floor)
+MVC = {k: round(v * 45 / 60, 1) for k, v in {"spine": 150, "chest": 100, "head": 20, "uarm": 70, "farm": 50, "thigh": 160, "shin": 135, "foot": 95}.items()}
 G = np.array([0, -9.81, 0]); FEET = (10, 13)
 
 

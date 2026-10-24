@@ -68,6 +68,7 @@ def main():
     A("--steps", type=int, default=0); A("--assist", type=float, default=0); A("--sway", type=float, default=0); A("--arm-tone", type=float, default=0)
     A("--gamma", type=float, default=0.95); A("--lam", type=float, default=0.95); A("--ent", type=float, default=0)
     A("--device", default="cuda" if torch.cuda.is_available() else "cpu"); A("--cpu-physics", action="store_true")
+    A("--assist-decay", type=float, default=0, help="the assist from --assist down to 0 in a straight line over this many seconds, then none (getting up, where no episode ends early and --assist-auto has nothing to go by); the checkpoint as --assist-auto's")
     A("--assist-auto", action="store_true", help="adapt the assist: down by 15%% (at least 0.005) while episodes last over 60%% of their length, up 0.02 (to --assist at most) under 30%%")
     A("--fresh-inputs", default="", help="on --load: inputs the loaded policy never saw vary (always zero in its task), as groups: goal, grip, probe, path, touch, "
       "muscle; their weights are zeroed and their normaliser starts afresh, so the policy starts out acting exactly as it did "
@@ -258,7 +259,13 @@ def main():
                               "episodes": cnt, "goals_reached": goals_it, "clip_frac": round(int(clipped) / (a.epochs * nenv * hor), 3), "value_loss": round(float(vloss) / (a.epochs * nenv * hor), 3),
                               "std": round(float(torch.exp(EN["log_std"]).mean()), 3), "lp_gap": float(f"{float(lpdiff) / max(lpn, 1):.2e}"),
                               "rollout_share": round(t_roll / el, 2), "train_share": round(t_train / el, 2), "steps_per_s": round(steps_total / el)}), flush=True)
-            if a.assist_auto:   # the checkpoint: the lowest assist reached, the best return there
+            if a.assist_decay > 0:   # the checkpoint: the lowest assist reached, the best return there
+                if cnt >= 8 and (cur_assist < best_assist - 1e-9 or (abs(cur_assist - best_assist) < 1e-9 and rw > best)):
+                    best_assist, best = cur_assist, rw; m.save(a.out + ".tss"); save_head(a.out + ".head", EN, mean, sd, d, OBS, ACT, CR)
+                new = a.assist * max(0.0, 1 - el / a.assist_decay); new = new if new > 0.004 else 0.0
+                if new != cur_assist: cur_assist = new; pool.set_assist(cur_assist)
+                print(json.dumps({"event": "assist", "iter": it, "assist": round(cur_assist, 3), "checkpoint_assist": round(best_assist, 3)}), flush=True)
+            elif a.assist_auto:   # the checkpoint: the lowest assist reached, the best return there
                 if cnt >= 8 and (cur_assist < best_assist - 1e-9 or (abs(cur_assist - best_assist) < 1e-9 and rw > best)):
                     best_assist, best = cur_assist, rw; m.save(a.out + ".tss"); save_head(a.out + ".head", EN, mean, sd, d, OBS, ACT, CR)
                 frac = ln * HZ / pool.steps if cnt else 0
