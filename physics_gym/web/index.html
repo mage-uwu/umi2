@@ -609,7 +609,15 @@ function step(now) {
     artCanvas.style.transform = art.zoomInPass ? '' : `scale(${zoom.toFixed(3)})`;
     // On WebGPU the drawing is transparent around her and the 3D canvas beneath shows the floor, its camera
     // matched to the shader's (redrawn only with a new drawing, so the two stay in step).
-    if (art.frame({ target: pelvisAt, yaw: view.yaw, pitch: view.pitch, zoom, about: headAt }) && art.syncCamera) {
+    let drew = false;
+    try { drew = art.frame({ target: pelvisAt, yaw: view.yaw, pitch: view.pitch, zoom, about: headAt }); }
+    catch (e) {   // a WebGPU device that starts but cannot take the G-buffer: the CPU shader instead
+      if (artCpu) throw e;
+      console.warn('WebGPU shader frame failed, using the CPU shader:', e);
+      const fresh = artCanvas.cloneNode(); artCanvas.replaceWith(fresh); artCanvas = fresh;
+      artCpu = true; art = null; artLoad = null; useArt();
+    }
+    if (drew && art?.syncCamera) {
       const st = document.getElementById('stage');
       art.syncCamera(camera, st.clientWidth, st.clientHeight);
       blob.visible = true; blob.position.set(pelvisAt.x, 0.0015, pelvisAt.z);
@@ -697,7 +705,7 @@ document.getElementById('reset').onclick = () => world && reset();
 document.getElementById('standup').onclick = () => world && mode !== 'getup' && getUp('Getting up.');
 fetch(GETUP.file, { method: 'HEAD' }).then(r => { const b = document.getElementById('standup'); b.disabled = !r.ok; if (!r.ok) b.title = 'Getting up is still training'; }).catch(() => {});
 // Look: the learned shader (art), the plain 3D render (model) or the physics boxes.
-const artCanvas = document.getElementById('art'), pelvisAt = new THREE.Vector3(0, 0.9, 0);
+let artCanvas = document.getElementById('art'); const pelvisAt = new THREE.Vector3(0, 0.9, 0);
 let look = 'model', art = null, artLoad = null;
 function setLook(next) {
   look = next;
@@ -707,18 +715,27 @@ function setLook(next) {
   artCanvas.hidden = next !== 'art' || !art; canvas.hidden = !artCanvas.hidden && !art?.syncCamera;   // WebGPU: the floor shows beneath the drawing
   document.getElementById('r-look').textContent = next === 'art' ? (art ? art.engine : 'loading the learned shader…') : next === 'boxes' ? 'physics bodies' : '3D render';
 }
+let artCpu = /cpu/.test(location.hash);
 async function useArt() {
   setLook('art');
   if (!art) {
-    // The nanotss shader on the CPU (WebAssembly workers, any browser); #crisp for the WebGPU network.
-    const detail = /crisp/.test(location.hash) ? 'crisp' : 'cpu';
-    artLoad ||= createShaderView({ THREE, vrm, canvas: artCanvas, detail, transparent: true, onPaint: () => {
+    // The shader page's two engines: its WebGPU network where the browser has WebGPU, else its nanotss
+    // shader on the CPU (WebAssembly workers). #cpu or #crisp picks one.
+    const detail = artCpu ? 'cpu' : /crisp/.test(location.hash) ? 'crisp' : 'auto';
+    const onPaint = () => {
       if (look !== 'art' || !art) return;
       const st = document.getElementById('stage');
       art.syncCamera(camera, st.clientWidth, st.clientHeight);
       blob.visible = true; blob.position.set(pelvisAt.x, 0.0015, pelvisAt.z);
       renderer.render(scene, camera);
-    } });
+    };
+    // a WebGPU device that fails to start falls back to the CPU shader (on a fresh canvas: the old one holds a WebGPU context)
+    artLoad ||= createShaderView({ THREE, vrm, canvas: artCanvas, detail, transparent: true, onPaint }).catch(e => {
+      if (detail === 'cpu') throw e;
+      console.warn('WebGPU shader failed, using the CPU shader:', e);
+      const fresh = artCanvas.cloneNode(); artCanvas.replaceWith(fresh); artCanvas = fresh;
+      return createShaderView({ THREE, vrm, canvas: artCanvas, detail: 'cpu', transparent: true, onPaint });
+    });
     try { art = await artLoad; } catch (e) { console.error(e); setStatus(`The learned shader could not start: ${e.message}`, true); artLoad = null; setLook('model'); return; }
     if (look === 'art') setLook('art');
   }

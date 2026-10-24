@@ -11,7 +11,7 @@
 //   art.engine                           // e.g. 'WebGPU f16 · crisp' or 'WebGL · fast'
 //   transparent: true (WebGPU) draws only her; art.syncCamera(camera, w, h) lines a scene up beneath it
 //
-// Detail: 'cpu' (the nanotss shader: ternary stencil and FFF blocks, trained on the CPU, run on the CPU in WebAssembly
+// Detail: 'auto' (crisp on WebGPU, else cpu), 'cpu' (the nanotss shader: ternary stencil and FFF blocks, trained on the CPU, run on the CPU in WebAssembly
 // workers by the shader page's nts.js; any browser, no WebGPU needed), 'crisp', 'smooth' (sharp, fine-tuned against
 // flicker; WebGPU), 'sharp' (WebGPU), 'fast' (half resolution; the WebGL engine runs this one whatever is asked).
 
@@ -24,10 +24,12 @@ const DIRS = { fast: 'fast/', sharp: 'sharp/', smooth: 'equi/', crisp: 'crisp/',
 
 export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', webgl = false, transparent = false, onPaint = null }) {
   let gpuAdapter = null;
-  const CPU = detail === 'cpu';
-  if (navigator.gpu && !webgl && !CPU) {
+  if (navigator.gpu && !webgl && detail !== 'cpu') {
     try { gpuAdapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' }); } catch { gpuAdapter = null; }
   }
+  // 'auto': the WebGPU network ('crisp') where there is an adapter, else the CPU shader
+  if (detail === 'auto') detail = gpuAdapter ? 'crisp' : 'cpu';
+  const CPU = detail === 'cpu';
   let DETAIL = CPU ? 'cpu' : gpuAdapter ? detail : 'fast';
   const [NW, NH] = gpuAdapter || CPU ? [720, 800] : [TRAIN_W, TRAIN_H];
   const VIEW_FOV = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(FOV / 2)) * NH / TRAIN_H));
