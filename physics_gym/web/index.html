@@ -440,6 +440,14 @@ const GETUP = { file: 'getup_gym_tss.json', actMul: 2.5, gym: true, assist: 0.2 
 // follows, with the muscle limits and no hand-up. If she is not up within GETUP_TRACK.give, the get-up above takes over.
 const GETUP_TRACK = { file: 'getup_track_tss.json', clips: 'getup_clips.json', give: 8 };
 let trackPolicy = null, trackClips = null, track = null;   // track: { clip, t0, start } while following a clip
+// After a fall she goes limp and settles first (as the training's falls did: matched once she lay still), then the
+// nearest frame is found. settle: { since } while that lasts.
+let settle = null;
+function startTrack() {
+  settle = null; world.kpScale = 1;
+  const [c, t0] = nearestFrame(world, trackClips); track = { clip: c, t0, start: world.t }; trackPolicy.reset();
+  ref = track.clip.at(t0).rel; getupSince = world.t;
+}
 let mode = 'skill', getupPolicy = null, getupSince = 0, calmSince = -1, stillAt = -1;
 let world, ref, policy = null, skill = 'balance', upSince = 0, fallenAt = -1, listeners = {}, clips = null, clip = null;
 const policies = {};
@@ -473,7 +481,7 @@ function reset() {
   world = new World(45, 20, 1 / CTRL_HZ); letGo = null; steadyAt = null; reachedAt = -1;
   if (SKILLS[skill].legacy) { world.limitK = 0; world.strength = 0; }   // body/ skills: no joint ranges or muscle limits, as they were trained
   if (SKILLS[skill].armTone) for (const i of [B.L_UARM, B.L_FARM, B.R_UARM, B.R_FARM]) world.tone[i] = SKILLS[skill].armTone;
-  mode = 'skill'; clip = SKILLS[skill].clip && clips ? clips[SKILLS[skill].clip] : null;   // getting up drops the clip
+  mode = 'skill'; track = null; settle = null; clip = SKILLS[skill].clip && clips ? clips[SKILLS[skill].clip] : null;   // getting up drops the clip
   if (clip) ref = poseFromClip(world, clip, 0).rel;
   else if (SKILLS[skill].floor) {   // on all fours, settled
     const c = crawlPose(); ref = c.rel; world.pose([0, 1, 0], c.rootQ, ref);
@@ -505,13 +513,13 @@ function push(dir, newtons = PUSH_N, bodyName = 'chest') {
 const snapshot = () => world.b.map(b => ({ x: b.x.slice(), q: b.q.slice() }));
 let prev, acc = 0, last = performance.now();
 // Getting up: the get-up controller from wherever she is, toward the stand pose.
-async function getUp(why) {
+async function getUp(why, fell = false) {
   try { getupPolicy ||= await loadTssPolicy(GETUP.file); } catch { getupPolicy = null; }
   try { trackPolicy ||= await loadTssPolicy(GETUP_TRACK.file); trackClips ||= Object.values(await loadClips(GETUP_TRACK.clips)).filter(c => c.name.startsWith('getup')); } catch { trackPolicy = null; }
   if (!getupPolicy && !trackPolicy) return false;
-  track = null;
-  if (trackPolicy && trackClips?.length) { const [c, t0] = nearestFrame(world, trackClips); track = { clip: c, t0, start: world.t }; trackPolicy.reset(); }
-  getupPolicy?.reset(); mode = 'getup'; clip = null; ref = track ? track.clip.at(track.t0).rel : standPose(); getupSince = world.t; calmSince = -1; fallenAt = -1;
+  track = null; settle = null;
+  getupPolicy?.reset(); mode = 'getup'; clip = null; ref = standPose(); getupSince = world.t; calmSince = -1; fallenAt = -1;
+  if (trackPolicy && trackClips?.length) { if (fell) { settle = { since: world.t }; world.kpScale = 0.03; } else startTrack(); }
   if (GETUP.gym) { world.limitK = 5000; world.strength = 1; } else { world.limitK = 0; world.strength = 0; }   // getting up is a body/ skill (legacy): played without the joint ranges and muscle limits
   setStatus(why); emit('getup', {}); return true;
 }
@@ -561,12 +569,13 @@ function control() {
   const pc = mode === 'skill' && SKILLS[skill].phaseClip && clips ? clips[SKILLS[skill].phaseClip] : null;
   const phase = clip ? 2 * Math.PI * world.t / clip.T : pc ? 2 * Math.PI * world.t / pc.T : 0;
   if (mode === 'getup' && track && world.t - track.start > GETUP_TRACK.give) { track = null; ref = standPose(); getupPolicy?.reset(); }   // not up yet: the hand-up get-up
-  const floor = mode === 'getup' || SKILLS[skill].floor, pol = mode === 'getup' ? (track ? trackPolicy : getupPolicy) : policy;
+  if (mode === 'getup' && settle && world.t - settle.since > 0.6 && (Math.hypot(...world.com().v) < 0.2 || world.t - settle.since > 2.5)) startTrack();   // lying still (or 2.5 s on)
+  const floor = mode === 'getup' || SKILLS[skill].floor, pol = mode === 'getup' ? (settle ? null : track ? trackPolicy : getupPolicy) : policy;
   world.assist = 0;   // set afresh each step (a clip's support, or the steadying hand while a limb is held)
   const goTo = mode === 'skill' && SKILLS[skill].goTo;
   if (goTo) setHandUp(world, fallenAt < 0 ? SKILLS[skill].assist || 0 : 0);   // go-to's hand-up (env.c), while a policy still trains with one
   else if (clip) setAssist(world, clip, world.t, fallenAt < 0 ? SKILLS[skill].assist || 0 : 0);
-  else if (mode === 'getup' && GETUP.assist && !track) setHandUp(world, GETUP.assist);
+  else if (mode === 'getup' && GETUP.assist && !track && !settle) setHandUp(world, GETUP.assist);
   const gym = mode === 'skill' && SKILLS[skill].gym;
   const obs = goTo ? observeGoto(world, phase, goalOr()) : gym ? observeGoto(world, phase, null) : mode === 'getup' && GETUP.gym ? observeGoto(world, 0, null, true) : observe(world, phase, floor);
   if (fallenAt < 0 && pol) applyAction(world, ref, pol.act(obs), floor ? GETUP.actMul : 1);
@@ -597,7 +606,7 @@ function control() {
     if (math.qrot(world.b[B.CHEST].q, [0, 0, 1])[1] > 0.3) getUp('She rolled over; getting up.');
   } else if (fallenAt < 0 && fallen(world)) {
     fallenAt = world.t; emit('fall', { upright: world.t - upSince });
-    getUp('She fell; getting up.').then(ok => { if (!ok) setStatus('She fell; resetting.', true); });
+    getUp('She fell; getting up.', true).then(ok => { if (!ok) setStatus('She fell; resetting.', true); });
   }
   if (fallenAt >= 0 && mode !== 'getup' && world.t - fallenAt > 2.5) { reset(); setStatus(''); }
   emit('step', { t: world.t });
@@ -1070,7 +1079,7 @@ for (const [k, s] of Object.entries(SKILLS)) {
 // window.umiBody.grab(body, [x, y, z])         pull a body part ('chest', 'l_farm', ... or 'head') toward a world point; release()
 // window.umiBody.standUp()                    hand over to the get-up controller (from crawling, or anywhere)
 // window.umiBody.on(event, fn)                events: 'skill', 'reset', 'push', 'grab', 'release', 'fall', 'getup', 'stood', 'step', 'parts', 'goal', 'reached' (also dispatched as 'umibody:<event>')
-// window.umiBody.state()                      { t, upright, fallen, bodies: [{ name, bone, x, q }] }
+// window.umiBody.state()                      { t, upright, fallen, getup ('settling' | 'tracking <clip>' | 'hand-up' | null), bodies: [{ name, bone, x, q }] }
 // window.umiBody.parts({ hair, dress, springs }) show or hide hair and dress, simulate or hold hair and cloth; returns the settings
 // window.umiBody.room                        the room as loaded (room.json: boxes the physics collides with and the page draws), or null
 // window.umiBody.roomOn(on?)                  the room on (drawn and simulated) or off (the open floor); returns the setting
@@ -1094,7 +1103,7 @@ window.umiBody = {
   release: () => grabEnd(),
   play: useSkill, push: (...a) => world && push(...a), reset: () => world && reset(), standUp: () => world && getUp('Getting up.'),
   on(ev, fn) { (listeners[ev] ||= []).push(fn); return () => { listeners[ev] = listeners[ev].filter(f => f !== fn); }; },
-  state: () => world && { t: world.t, upright: world.t - upSince, fallen: fallenAt >= 0,
+  state: () => world && { t: world.t, upright: world.t - upSince, fallen: fallenAt >= 0, getup: mode !== 'getup' ? null : settle ? 'settling' : track ? `tracking ${track.clip.name}` : 'hand-up',
     bodies: world.b.map((b, i) => ({ name: BODY_DEFS[i].name, bone: BODY_DEFS[i].bone, x: b.x.slice(), q: b.q.slice() })) },
   parts(set = {}) {
     for (const k of Object.keys(parts)) if (k in set) { parts[k] = !!set[k]; document.getElementById(`p-${k}`).setAttribute('aria-pressed', String(parts[k])); }
