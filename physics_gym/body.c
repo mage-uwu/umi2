@@ -128,6 +128,21 @@ static BHD int leg_is_foot(int i) { return i == L_FOOT || i == R_FOOT; }
 static BHD Vec leg_axis(int i) { return leg_is_foot(i) ? v3(0, 0, 1) : v3(0, 1, 0); }
 static BHD double leg_rad(int i) { const Vec h = BODY_DEFS[i].half; return 0.9 * fmin(h.x, leg_is_foot(i) ? h.y : h.z); }
 static BHD double leg_half(int i) { const Vec h = BODY_DEFS[i].half; return fmax(0, (leg_is_foot(i) ? h.z : h.y) - leg_rad(i)); }
+/* Static friction at the position level (after Mueller et al. 2020, "Detailed Rigid Body Simulation with Extended
+ * Position Based Dynamics"): after a contact's normal correction ln, the contact point's slide along the surface during
+ * this substep (from the body's pose at its start) is undone, when holding it takes no more than mu times the normal
+ * correction (judged at the contact point, its inverse effective mass along the slide); a bigger slide is left to the kinetic friction of the velocity pass. The slide is undone by moving the
+ * body (no turn): turning it about one corner moved its other corners, and correcting corner by corner in a fixed order
+ * then walked the feet along flat ground. Without it a resting contact crept downhill on any slope (lying limp:
+ * 1 cm/s at 8 degrees, 2.3 cm/s at 18): ramps felt like ice. */
+static BHD void static_friction(Body *b, Vec rl, Vec n, double ln, double mu) {
+    const Vec p = vadd(b->x, qrot(b->q, rl)), p0 = vadd(b->xprev, qrot(b->qprev, rl));
+    Vec dp = vsub(p, p0); dp = vsub(dp, vscale(n, vdot(dp, n))); const double lt = vlen(dp);
+    if (lt < 1e-12) return;
+    Vec k; const double w = gen_w_k(b, qrot(b->q, rl), vscale(dp, 1 / lt), &k);   /* the contact point's inverse effective mass along the slide */
+    if (w <= 0 || lt / w > mu * fabs(ln)) return;
+    b->x = vsub(b->x, dp);
+}
 static BHD Vec corner(int i, int k) { const Vec hf = BODY_DEFS[i].half; return v3(CORNER[k][0] * hf.x, CORNER[k][1] * hf.y, CORNER[k][2] * hf.z); }
 
 /* Velocity impulse at a body point along unit n changing the point's velocity there by dv. */
@@ -309,6 +324,7 @@ static BHD void substep(World *W) {
         if (pw.y >= 0) continue;
         double ln = solve_pos(b, NULL, r, v3(0, 0, 0), v3(0, -1, 0), -pw.y, 0, h, -1);
         W->touch[i] += fabs(ln) / (h * h);   /* the contact force this substep (N) */
+        static_friction(b, corner(i, k), v3(0, 1, 0), ln, W->mu);
         cb[nc] = i; ck[nc] = k; cl[nc++] = ln;
     } }
     /* room boxes: a corner inside one is pushed out through the face it is nearest, at the box's softness (XPBD
@@ -331,6 +347,7 @@ static BHD void substep(World *W) {
                 const Vec n = qrot(o->q, nl);   /* outward */
                 const double ln = solve_pos(b, NULL, r, v3(0, 0, 0), vscale(n, -1), d, o->soft, h, -1);
                 W->touch[i] += fabs(ln) / (h * h);
+                static_friction(b, corner(i, k), n, ln, o->mu);
                 if (nr < ROOM_CONTACTS) { rb[nr] = i; rk[nr] = k; rl[nr] = ln; rn[nr] = n; rmu[nr] = o->mu; nr++; }
             }
         }

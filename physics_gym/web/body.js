@@ -157,6 +157,14 @@ export class World {
   invI(b, v) { let l = qrot(qconj(b.q), v); l = [l[0] * b.invI[0], l[1] * b.invI[1], l[2] * b.invI[2]]; return qrot(b.q, l); }
   rotateBy(b, dw) { b.q = qnorm(qmul(qexp(dw), b.q)); }
   genW(b, r, n) { const rn = vcross(r, n); return b.invMass + vdot(rn, this.invI(b, rn)); }
+  // static friction at the position level (body.c static_friction): a resting contact's slide along the surface this
+  // substep is undone by moving the body, when holding it takes no more than mu times the normal correction ln
+  staticFriction(b, rl, n, ln, mu) {
+    let dp = vsub(vadd(b.x, qrot(b.q, rl)), vadd(b.xprev, qrot(b.qprev, rl))); dp = vsub(dp, vscale(n, vdot(dp, n)));
+    const lt = vlen(dp); if (lt < 1e-12) return;
+    const w = this.genW(b, qrot(b.q, rl), vscale(dp, 1 / lt)); if (w <= 0 || lt / w > mu * Math.abs(ln)) return;
+    b.x = vsub(b.x, dp);
+  }
   solvePos(b1, b2, r1, r2, n, C, alpha, cap = -1) {   // cap >= 0: the correction is at most cap (body.c solve_pos)
     const h = this.h, w1 = this.genW(b1, r1, n), w2 = b2 ? this.genW(b2, r2, n) : 0, at = alpha / (h * h);
     if (w1 + w2 + at <= 0) return 0;
@@ -240,6 +248,7 @@ export class World {
       const b = this.b[i], r = qrot(b.q, corner(i, k)), pw = vadd(b.x, r);
       if (pw[1] >= 0) continue;
       const ln = this.solvePos(b, null, r, [0, 0, 0], [0, -1, 0], -pw[1], 0); this.touch[i] += Math.abs(ln) / (h * h);
+      this.staticFriction(b, corner(i, k), [0, 1, 0], ln, this.mu);
       contacts.push([i, k, ln]);
     }
     // room boxes (body.c): a corner inside one is pushed out through its nearest face, at the box's softness
@@ -256,6 +265,7 @@ export class World {
           if (dx <= dy && dx <= dz) { d = dx; nl = [l[0] < 0 ? -1 : 1, 0, 0]; } else if (dy <= dz) { d = dy; nl = [0, l[1] < 0 ? -1 : 1, 0]; } else { d = dz; nl = [0, 0, l[2] < 0 ? -1 : 1]; }
           const n = qrot(o.q, nl);
           const ln = this.solvePos(b, null, r, [0, 0, 0], vscale(n, -1), d, o.soft); this.touch[i] += Math.abs(ln) / (h * h);
+          this.staticFriction(b, corner(i, k), n, ln, o.mu);
           roomContacts.push([i, k, ln, n, o.mu]);
         }
       }

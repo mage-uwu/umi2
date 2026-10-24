@@ -67,6 +67,13 @@ Exit: unseen procedural rooms, goals anywhere, more than 80 % reached without fa
 
 ## Status
 
+- **Fixed: ramps were slick.** Friction acted only on velocities, so every substep gravity slid a resting contact a
+  little before friction caught it: lying limp, she crept downhill at 1 cm/s on the 8 degree ramp and 2.3 cm/s on the
+  18 degree one (tools/slope_test.c). Contacts now get position-level static friction (body.c static_friction, after
+  Mueller et al. 2020): a contact's slide within the substep is undone by moving the body when mu times its normal
+  correction can hold it; she now lies still on both ramps. C, CUDA and JS (slope_test.mjs matches within 3 mm). The
+  gaits trained before it had learned to let feet slip and trip on gripping ground, so the walk is retrained on it.
+
 - **Go-to diagnosis.** Three problems behind go-to collapsing without assist, and their fixes: (1) a warm-start bug:
   inputs the walk never saw vary (goal, grip) had untrained weights and fed saturated values in go-to (open-floor
   falls 98% -> 4% once zeroed; ppo_gpu --fresh-inputs); (2) the walk falls in 98% of 20 s episodes under its own
