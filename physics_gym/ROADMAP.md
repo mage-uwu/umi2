@@ -109,3 +109,21 @@ Exit: unseen procedural rooms, goals anywhere, more than 80 % reached without fa
 - M1 muscles: strength and slew from inverse dynamics of 557 CMU trials at 30 Hz. The CMU gait cycles
   (tools/cmu_cycle.py: walk 16_16, 1.17 s at 0.98 m/s; run 35_20, 0.73 s at 3.1 m/s) are the clean prior's
   reference; gpu/pod_cmu_walk.sh trains it (imitation, then go-to) with no Bandai data.
+- Contact fix (ramps slick, second time): static friction was judged corner by corner against each corner's share of
+  the load as a correction impulse; a light foot's corrections go mostly into turning it, so a loaded foot read as
+  barely pressed and slid ("plants her feet and they butter down"). Now once per body and surface after its corners,
+  slide against mu times penetration depth (Coulomb's cone in displacements), and no bounce off contacts (a corner
+  that came in leaves with no normal speed; feet hopped on slopes). Planted feet hold every substep on the 18 degree
+  ramp once settled. Walk, Balance (half its starts on ramps and box tops: env.c top_start) and go-to retrained.
+- M2 slope gym (room.py --stage 2): ramps 6..20 degrees, two stair pyramids, a ridge, a gradient hill, 36 uneven
+  tiles, a jump terrace (step-ups to 0.45 m, a 0.4 m gap), walls and pillars across the straight lines; graded bank.
+  tools/glitch_scan.mjs walked go-to over 32 of them: no penetration of 2 cm into rigid boxes, loaded feet slide no
+  more on ramps, stairs and hills than on flat floor, and the only velocity spikes are foot strikes (a stamping gait:
+  soft landings are now rewarded).
+- Path helper (C, CUDA, JS): a 64 x 64 nav grid per room (25 cm cells: the surface height, blocked where something
+  stands in the way to head height, with a cell's margin off walls and rises over 0.3 m), a breadth-first search from
+  the goal whenever it changes, and OBS_PATH 4: the waypoint ~1 m along the shortest walkable path and the path to go.
+  Go-to in a room steers by it and is rewarded for progress along the path, not the straight line.
+- Natural get-up: the old one (body/, no joint ranges, no muscle limits, actions x2.5) righted itself in flips and
+  leaps and with static friction stalled on all fours; gpu/pod_getup.sh retrains it in the gym's physics with the CMU
+  get-up clips as style.
