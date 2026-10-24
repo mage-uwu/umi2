@@ -111,6 +111,26 @@ static BHD void floor_reset(Env *E) {
     if (E->cfg.task == TASK_GETUP) stand_pose(E->ref); else crawl_pose(E->ref, &rq);
 }
 
+/* TASK_BALANCE with goal_tops: standing on the top of a room box (a ramp, a landing, a platform, a stone: tilted at most
+ * about 25 degrees, at most 1 m up, clear to head height), any heading, each body lifted so the lowest point of all
+ * sits on the surface under it. The pose stays as drawn when no such spot turns up. */
+static BHD void top_start(Env *E) {
+    const int rm = E->W.room;
+    for (int tries = 0; tries < 32; tries++) {
+        const RoomBox *o = room_at(rm, (int)(env_rand(&E->rng) * room_size(rm)) % room_size(rm));
+        const double u = 2 * env_rand(&E->rng) - 1, w = 2 * env_rand(&E->rng) - 1, yaw = env_rand(&E->rng) * 2 * M_PI;
+        if (qrot(o->q, v3(0, 1, 0)).y < 0.9) continue;
+        const Vec top = vadd(o->c, qrot(o->q, v3(0.6 * u * o->h.x, o->h.y, 0.6 * w * o->h.z)));
+        const double y = support_y(rm, top.x, top.z, top.y + 0.01);
+        if (y < 0.05 || y > 1.0 || column_hit(rm, top.x, top.z, y + 0.3, y + 1.9)) continue;
+        const Quat qy = qexp(v3(0, yaw, 0)); const Vec p0 = E->W.b[PELVIS].x;
+        for (int i = 0; i < NB; i++) { Body *b = E->W.b + i; const Vec d = qrot(qy, vsub(b->x, p0)); b->x = v3(top.x + d.x, p0.y + d.y, top.z + d.z); b->q = qmul(qy, b->q); }
+        double lift = -1e9;
+        for (int i = 0; i < NB; i++) { const Vec c = E->W.b[i].x; lift = fmax(lift, support_y(rm, c.x, c.z, y + 1.9) - world_lowest(&E->W, i)); }
+        for (int i = 0; i < NB; i++) { E->W.b[i].x.y += lift; E->W.b[i].xprev = E->W.b[i].x; E->W.b[i].qprev = E->W.b[i].q; }
+        return;
+    }
+}
 BHD void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
     E->cfg = *cfg; E->rng = seed * 0x9E3779B97F4A7C15ULL + 1; E->step = 0; E->done = 0; E->t0 = 0;
     world_init(&E->W, 45, 20, 1.0 / CTRL_HZ);
@@ -158,6 +178,7 @@ BHD void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
     world_pose(&E->W, BODY_DEFS[PELVIS].center, rel[0], rel, v3(0, 0, 0));
     double lo = 1e9; for (int i = 0; i < NB; i++) { double y = world_lowest(&E->W, i); if (y < lo) lo = y; }
     for (int i = 0; i < NB; i++) { E->W.b[i].x.y -= lo; E->W.b[i].xprev = E->W.b[i].x; }
+    if (cfg->task == TASK_BALANCE && cfg->goal_tops > 0 && room_size(E->W.room) && env_rand(&E->rng) < cfg->goal_tops) top_start(E);
 }
 
 /* heading frame: rotation removing the pelvis yaw */

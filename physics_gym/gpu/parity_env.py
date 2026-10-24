@@ -19,6 +19,7 @@ CASES = {
     "crawl": dict(task="crawl", style=f"{D}/cmu_ref.bin:crawl"),
     "goto": dict(task="goto"),
     "grip": dict(task="goto", grip=True),
+    "balance_tops": dict(task="balance", push=60, goal_tops=0.7, room=os.path.join(ge.BODY, "rooms_bank.json")),   # balance starting on ramps, landings, platforms (env.c top_start)
     "bank": dict(task="goto", room=os.path.join(ge.BODY, "rooms_bank.json")),   # per-world rooms (python3 room.py --bank 32 --out rooms_bank.json)   # go-to with both hands always trying to close (the grip constraint exercised)
     "getup": dict(task="getup", style=f"{D}/cmu_ref.bin:getup_back1,getup_back2,getup_face1,getup_face2,getup_side1,getup_side2", style_start=0.3),
 }

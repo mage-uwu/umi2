@@ -81,7 +81,8 @@ typedef struct {
     int free_heading;    /* TASK_IMITATE: imitate the clip's style, not its path: posture, limbs and speed in her own heading frame;
                           * only a fall ends the episode (not drifting off the clip's line), so she learns to recover */
     double goal_tops;    /* TASK_GOTO: share of goals put on top of a room box (a stair landing, platform, foam, stone; at most
-                          * 0.8 m up), the rest on open floor; 0 = 0.3 */
+                          * 0.8 m up), the rest on open floor; 0 = 0.3. TASK_BALANCE: share of episodes that start standing on
+                          * the top of a room box (ramps too: env.c top_start); 0 = none */
     double goal_cone;    /* TASK_GOTO: goals are drawn within this angle (rad) of her heading; 0 = any direction (a curriculum:
                           * walking to a goal ahead comes before turning toward one) */
 } TaskCfg;

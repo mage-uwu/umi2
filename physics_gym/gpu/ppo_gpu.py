@@ -73,7 +73,7 @@ def main():
       "muscle; their weights are zeroed and their normaliser starts afresh, so the policy starts out acting exactly as it did "
       "(e.g. 'goal,grip' when a walk imitation prior starts go-to)")
     A("--free-heading", type=int, default=0, help="imitation: imitate the clip's style, not its path (posture, limbs, speed in her own heading frame); only falls end episodes")
-    A("--goal-tops", type=float, default=0, help="go-to: share of goals on top of room boxes (terrain); 0 = 0.3")
+    A("--goal-tops", type=float, default=0, help="go-to: share of goals on top of room boxes (terrain); balance: share of episodes starting on top of one (ramps too); 0 = 0.3")
     A("--goal-cone", type=float, default=0, help="go-to: goals within this angle (rad) of her heading; 0 = any")
     A("--room", default=os.path.join(HERE, "../room.json"), help="room.json (physics_gym); '' for the empty floor")
     a = ap.parse_args()
