@@ -428,7 +428,16 @@ const SKILLS = {
   // standing height, upright; shown as "pelvis support"). The unified run's last stage (gpu/pod_unified.sh: the slope gym
   // and stage 1, steering by the path helper, 40 s of chained goals).
   goto: { label: 'Go to', file: 'goto_tss.json', goTo: true, clip: 'cmu_walk', assist: 0.05 },   // data/clean/warm/aware (gpu/pod_aware.sh)
+  // jump: the jump tracker on a course of platforms laid down as she goes (JUMP below)
+  jump: { label: 'Jump', file: 'jump_tss.json', jump: true },
 };
+// Jump (gpu/pod_jump.sh): she follows CMU jumps (data/cmu_jump.bin) from platform to platform. Each jump brings its own
+// takeoff and landing platforms (data/jump_bank.json, as she trained on them: the gap where the clip's feet are off the
+// ground), set down where she stands and turned to her heading, from the frame of its run-up nearest her pose; the clip
+// then plays on as the reference she follows (actions round its pose, as the get-up tracker). Once she has landed and
+// the clip is done, the next jump. Dropping into a gap, or falling over, starts the course again.
+const JUMP = { clips: 'jump_clips.json', bank: 'jump_bank.json', order: ['fjump1', 'run_leap2', 'fjump2', 'run_jump2', 'run_leap1', 'run_jump1'], height: 0.58, actMul: 2.5 };
+let jumpClips = null, jumpBank = null, jump = null;   // jump: { n, clip, t0, start, T: { yaw, x, z }, landed }
 // Getting up (TASK_GETUP) is not a button: it takes over when she falls, or when Stand up is pressed while she
 // crawls, and hands back to Balance once she stands calmly.
 // The gym's get-up (gpu/pod_night.sh: CMU get-up clips as style, the muscle limits, trained with a hand-up fading to
@@ -494,6 +503,7 @@ function reset() {
     for (const b of world.b) { b.x = [b.x[0], b.x[1] - lo, b.x[2]]; b.xprev = b.x; }
     world.target = ref.slice();
   }
+  if (SKILLS[skill].jump && jumpClips) jumpStart();
   policy?.reset();
   upSince = world.t; fallenAt = -1; prev = snapshot(); hist = [{ t: world.t, s: prev }]; springT = world.t; emit('reset', { skill });
 }
@@ -565,7 +575,49 @@ const setMouth = open => { face.mouthTarget = open ? 1 : 0; document.getElementB
 document.getElementById('f-mouth').onclick = () => setMouth(!face.mouthTarget);
 addEventListener('keydown', e => { if (e.target.closest?.('input, textarea') || e.ctrlKey || e.metaKey || e.altKey) return; if (e.key === 'b') blink(); if (e.key === 'm') setMouth(!face.mouthTarget); });
 
+// ---------- jump courses ----------
+const yawOf = q => { const f = math.qrot(q, [0, 0, 1]); return Math.atan2(f[0], f[2]); };
+const jumpXf = (T, p) => [p[0] * Math.cos(T.yaw) + p[2] * Math.sin(T.yaw) + T.x, p[1], -p[0] * Math.sin(T.yaw) + p[2] * Math.cos(T.yaw) + T.z];
+function jumpBoxes(name, T) {   // the clip's two platforms (its room of the bank nearest JUMP.height), placed by T
+  const R = jumpBank.rooms.filter(r => r.clip === name).reduce((a, b) => Math.abs(b.height - JUMP.height) < Math.abs(a.height - JUMP.height) ? b : a);
+  const qy = math.qexp([0, T.yaw, 0]);
+  return R.boxes.map(b => ({ ...b, c: jumpXf(T, b.c), q: math.qmul(qy, b.q) }));
+}
+function jumpCourse(boxes) {   // the room: the platforms so far (the last few) on the open floor
+  const xs = boxes.flatMap(b => [b.c[0] - 3, b.c[0] + 3]), zs = boxes.flatMap(b => [b.c[2] - 3, b.c[2] + 3]);
+  roomDoc = { name: 'Jump course', boxes, bounds: [Math.min(...xs), Math.max(...xs), Math.min(...zs), Math.max(...zs)] }; buildRoom(); roomOn = true; roomGroup.visible = true;
+}
+function jumpNext(n, first) {   // the n-th jump of the course, from where she is now (first: posed at its start)
+  const c = jumpClips[JUMP.order[n % JUMP.order.length]]; const r0 = (c.shift = [0, 0, 0], c.at(0).root); c.shift = [-r0[0], 0, -r0[2]];
+  const t0 = first ? 0 : nearestFrame(world, [c], 0.4)[1], a = c.at(t0), p = world.b[0].x;
+  const T = first ? { yaw: 0, x: 0, z: 0 } : { yaw: yawOf(world.b[0].q) - yawOf(a.rel[0]), x: 0, z: 0 };
+  if (!first) { const q = jumpXf(T, a.root); T.x = p[0] - q[0]; T.z = p[2] - q[2]; }
+  const keep = first ? [] : roomDoc.boxes.slice(-2);
+  jumpCourse([...keep, ...jumpBoxes(c.name, T)]);
+  if (first) {   // standing at the clip's start on its takeoff platform, moving as the clip does
+    const B1 = c.at(t0 + 1 / CTRL_HZ), up = r => [r[0], r[1] + JUMP.height, r[2]], W2 = new World(45, 20, 1 / CTRL_HZ);
+    W2.pose(up(B1.root), B1.rel[0], B1.rel); world.pose(up(a.root), a.rel[0], a.rel);
+    world.b.forEach((b, i) => { b.v = math.vscale(math.vsub(W2.b[i].x, b.x), CTRL_HZ); b.w = math.vscale(math.qlog(math.qmul(W2.b[i].q, math.qconj(b.q))), CTRL_HZ); b.xprev = b.x; });
+    world.target = a.rel.slice();
+  }
+  jump = { n, clip: c, t0, start: world.t, T, landed: -1 }; ref = a.rel; policy?.reset();
+  setStatus(`Jump ${n + 1}: ${c.name.replace(/\d$/, '').replace('_', ' ')}.`);
+}
+function jumpStart() { jumpNext(0, true); }
+function jumpStep() {   // after each control step in jump mode: the clip on, the next jump, or start over
+  const c = jump.clip, t = jump.t0 + world.t - jump.start; ref = c.at(Math.min(t, c.T * (1 - 1e-9))).rel;
+  const foot = Math.min(world.lowest(B.L_FOOT), world.lowest(B.R_FOOT));
+  const P = world.b[0].x, sp = supportY(P[0], P[2], P[1]), lying = P[1] - sp < 0.4 && world.b[B.HEAD].x[1] - sp < 0.7;   // (a landing's crouch, hands down, is not down)
+  if (foot < JUMP.height - 0.25 || lying) { emit('fall', { upright: world.t - upSince }); setStatus(`Down after ${jump.n} jump${jump.n === 1 ? '' : 's'}: starting over.`); reset(); return; }
+  if (t > c.T + 0.3) jumpNext(jump.n + 1, false);
+}
 function control() {
+  if (mode === 'skill' && SKILLS[skill].jump) {   // the jump tracker (gpu/pod_jump.sh): the clip's pose plus its actions
+    if (!jump) return world.step();
+    applyAction(world, ref, policy.act(observeGoto(world, 0, null, true, null, true)), JUMP.actMul); prev = snapshot(); world.step();
+    hist.push({ t: world.t, s: snapshot() }); if (hist.length > 12) hist.shift();
+    jumpStep(); emit('step', { t: world.t }); return;
+  }
   const pc = mode === 'skill' && SKILLS[skill].phaseClip && clips ? clips[SKILLS[skill].phaseClip] : null;
   const phase = clip ? 2 * Math.PI * world.t / clip.T : pc ? 2 * Math.PI * world.t / pc.T : 0;
   if (mode === 'getup' && track && world.t - track.start > GETUP_TRACK.give) { track = null; ref = standPose(); getupPolicy?.reset(); }   // not up yet: the hand-up get-up
@@ -1077,6 +1129,8 @@ async function useSkill(name) {
   policies[name] ||= s.file.includes('tss') ? await loadTssPolicy(s.file) : await loadPolicy(s.file);
   if (s.clip || s.phaseClip) clips ||= { ...await loadClips('motions_ref.json'),   // Bandai Namco clips (development), and the CMU gait cycles as cmu_walk, cmu_run
     ...Object.fromEntries(Object.entries(await loadClips('cmu_gait.json')).map(([k, c]) => ['cmu_' + k, c])) };
+  if (s.jump) { jumpClips ||= await loadClips(JUMP.clips); jumpBank ||= await (await fetch(JUMP.bank)).json(); }
+  else if (SKILLS[skill]?.jump) { jump = null; roomDoc = ROOMS[roomIdx]?.doc || null; buildRoom(); setRoomOn(!!roomDoc); }   // leaving the jump course: the room as it was
   clip = s.clip ? clips[s.clip] : null;
   skill = name; policy = policies[name];
   document.getElementById('standup').hidden = !s.floor;

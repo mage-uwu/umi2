@@ -716,11 +716,11 @@ export function featDist(a, b) {   // env.c feat_dist: about the summed squared 
 }
 // The clip frame nearest her pose, over clips (env.c matched_start, match_dist): joint angles, the pelvis's tilt (4x) and its
 // height above the surface under her (20 per m^2): [clip, time (s)]
-export function nearestFrame(world, clips) {
+export function nearestFrame(world, clips, upTo = 1) {   // upTo: only the clips' first share of frames (a jump's run-up)
   const cur = poseFeatures(world.b.map(b => b.q)), p = world.b[0].x, hp = p[1] - supportY(p[0], p[2], p[1]); let best = Infinity, bc = null, bt = 0;
   for (const c of clips) {
     c.feats ||= Array.from({ length: c.frames }, (_, t) => poseFeatures(c.q.slice(t * NB, (t + 1) * NB)));
-    for (let t = 0; t < c.frames - 1; t++) {
+    for (let t = 0; t < Math.min(c.frames - 1, Math.ceil(upTo * c.frames)); t++) {
       const f = c.feats[t]; let d = featDist(cur, f);
       for (let k = 4 * (NB - 1); k < f.length; k++) d += 3 * (cur[k] - f[k]) * (cur[k] - f[k]);
       d += 20 * (hp - c.root[t][1]) * (hp - c.root[t][1]);
