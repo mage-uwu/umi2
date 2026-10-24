@@ -629,7 +629,8 @@ function step(now) {
     renderer.render(scene, camera);
   }
   perf.draw += 0.05 * (performance.now() - tD - perf.draw);
-  if (++perf.n % 15 === 0) document.getElementById('r-perf').textContent = `hair/cloth ${perf.springs.toFixed(2)} ms · draw ${perf.draw.toFixed(2)} ms (CPU)`;
+  if (++perf.n % 15 === 0) document.getElementById('r-perf').textContent = `hair/cloth ${perf.springs.toFixed(2)} ms · draw ${perf.draw.toFixed(2)} ms (CPU)`
+    + (look === 'art' && art?.ms != null ? ` · shader ${art.ms.toFixed(0)} ms${art.gpuMs != null ? ` (GPU ${art.gpuMs.toFixed(1)} ms)` : ''}` : '');
 }
 // The camera trails her pelvis at a rate independent of the frame rate, from a three-quarter side view
 // (she faces +Z, so walking carries her across the frame rather than into the lens).
@@ -719,8 +720,8 @@ let artCpu = /cpu/.test(location.hash);
 async function useArt() {
   setLook('art');
   if (!art) {
-    // The shader page's two engines: its WebGPU network where the browser has WebGPU, else its nanotss
-    // shader on the CPU (WebAssembly workers). #cpu or #crisp picks one.
+    // The shader page's nanotss shader on the GPU (gpu-nts.js, WebGPU compute; its CPU path, nts.js, where
+    // there is no WebGPU). #cpu forces the CPU path, #crisp the older WebGPU network.
     const detail = artCpu ? 'cpu' : /crisp/.test(location.hash) ? 'crisp' : 'auto';
     const onPaint = () => {
       if (look !== 'art' || !art) return;

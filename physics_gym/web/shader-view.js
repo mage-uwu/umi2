@@ -11,7 +11,8 @@
 //   art.engine                           // e.g. 'WebGPU f16 · crisp' or 'WebGL · fast'
 //   transparent: true (WebGPU) draws only her; art.syncCamera(camera, w, h) lines a scene up beneath it
 //
-// Detail: 'auto' (crisp on WebGPU, else cpu), 'cpu' (the nanotss shader: ternary stencil and FFF blocks, trained on the CPU, run on the CPU in WebAssembly
+// Detail: 'nts' (the nanotss shader on the GPU: the shader page's gpu-nts.js, WebGPU compute, itself falling back
+// to its CPU path where there is no WebGPU), 'auto' (= nts), 'cpu' (the nanotss shader: ternary stencil and FFF blocks, trained on the CPU, run on the CPU in WebAssembly
 // workers by the shader page's nts.js; any browser, no WebGPU needed), 'crisp', 'smooth' (sharp, fine-tuned against
 // flicker; WebGPU), 'sharp' (WebGPU), 'fast' (half resolution; the WebGL engine runs this one whatever is asked).
 
@@ -20,17 +21,17 @@
 // and the network only runs inside the crop box around her, so standing costs what it did.
 const TRAIN_W = 360, TRAIN_H = 640, FOV = 30, GREEN = 0x00b140;
 const CROP_PAD = 32;   // past her silhouette: the drawing inside matches computing the whole frame
-const DIRS = { fast: 'fast/', sharp: 'sharp/', smooth: 'equi/', crisp: 'crisp/', cpu: 'nts/' };
+const DIRS = { fast: 'fast/', sharp: 'sharp/', smooth: 'equi/', crisp: 'crisp/', cpu: 'nts/', nts: 'nts/' };
 
 export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', webgl = false, transparent = false, onPaint = null }) {
   let gpuAdapter = null;
-  if (navigator.gpu && !webgl && detail !== 'cpu') {
+  if (detail === 'auto') detail = 'nts';
+  const NTS = detail === 'nts' || detail === 'cpu';   // the nanotss shader, on the GPU or the CPU
+  if (navigator.gpu && !webgl && !NTS) {
     try { gpuAdapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' }); } catch { gpuAdapter = null; }
   }
-  // 'auto': the WebGPU network ('crisp') where there is an adapter, else the CPU shader
-  if (detail === 'auto') detail = gpuAdapter ? 'crisp' : 'cpu';
-  const CPU = detail === 'cpu';
-  let DETAIL = CPU ? 'cpu' : gpuAdapter ? detail : 'fast';
+  const CPU = NTS;   // (below, CPU means the nanotss engines' path: tiles read back, the drawing painted in 2D)
+  let DETAIL = CPU ? detail : gpuAdapter ? detail : 'fast';
   const [NW, NH] = gpuAdapter || CPU ? [720, 800] : [TRAIN_W, TRAIN_H];
   const VIEW_FOV = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(FOV / 2)) * NH / TRAIN_H));
   const dir = () => DIRS[DETAIL];
@@ -245,12 +246,16 @@ export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', w
     cam.aspect = w / h; cam.setViewOffset(w, h, -vx / z * w, -vy / z * h, w / z, h / z); cam.updateMatrixWorld();
   }
 
-  // ---------- CPU path (the shader page's nts.js: the nanotss shader in WebAssembly workers) ----------
+  // ---------- nanotss path (the shader page's gpu-nts.js on WebGPU, or its nts.js in WebAssembly workers) ----------
   // The five G-buffer tiles are read back from the offscreen canvas; the network's drawing (NW x NH, straight
   // alpha) is painted onto the stage with the view's zoom and shift (the shader page's drawCpu and paintCpu).
   if (CPU) {
     const { createCpuShader } = await import('./nts.js');
-    const cpu = await createCpuShader({ base: DIRS.cpu, maxPixels: NW * NH });
+    const toCpu = () => createCpuShader({ base: DIRS.cpu, maxPixels: NW * NH }).then(c => Object.assign(c, { gpu: false }));
+    let cpu = detail === 'cpu' ? await toCpu() : await (await import('./gpu-nts.js')).createGpuShader({ base: DIRS.nts, maxPixels: NW * NH });
+    const engine = () => cpu.gpu ? `WebGPU compute · nanotss (${cpu.kernel.replace(/^WebGPU compute \(|\)$/g, '')})`
+      : `CPU WebAssembly ${cpu.relaxed ? 'relaxed ' : ''}SIMD ${cpu.kernel} x ${cpu.threads} · nanotss`;
+    let swapping = false;
     renderer.setPixelRatio(1);
     renderer.setSize(NW * 5, NH, false);
     assignParts(cpu.parts);
@@ -271,13 +276,14 @@ export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', w
       ctx2d.drawImage(netCanvas, (vx + z * (1 - bw) / 2) * W, (vy + z * (1 - bh) / 2) * H, z * bw * W, z * bh * H);
     }
     return {
-      engine: `CPU WebAssembly ${cpu.relaxed ? 'relaxed ' : ''}SIMD ${cpu.kernel} x ${cpu.threads} · nanotss`,
+      get engine() { return engine(); },
       zoomInPass: true, scene,
-      get busy() { return cpu.busy; },
+      get busy() { return swapping || cpu.busy; },
       get ms() { return cpu.ms; },
+      get gpuMs() { return cpu.gpuMs ?? null; },
       syncCamera,
       frame({ target: t, yaw, pitch, zoom = 1, about = null }) {
-        if (cpu.busy) return false;
+        if (swapping || cpu.busy) return false;
         placeCamera(t, yaw, pitch);
         viewAbout(zoom, about);
         const crop = cropBox(true);
@@ -290,6 +296,11 @@ export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', w
           netCtx.putImageData(new ImageData(rgba, w, h), x0, y0);
           paint();
           onPaint?.();   // the drawing arrives a frame or more later: the caller matches its floor to it then
+        }, e => {   // a GPU that fails mid-run (device lost, say): the CPU path from the next frame
+          if (!cpu.gpu) { console.error(e); return; }
+          console.warn('gpu-nts frame failed, using the CPU shader:', e);
+          swapping = true;
+          toCpu().then(c => { cpu = c; }).finally(() => { swapping = false; });
         });
         return false;
       },
