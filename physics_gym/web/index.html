@@ -142,7 +142,7 @@ button:disabled { opacity: .45; cursor: default; }
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm';
-import { World, setRoom, supportY, setHandUp, observeGoto, navField, navGrid, NAV_N, NAV_CELL, NAV_HALF, BODY_DEFS, B, standPose, swayPose, crawlPose, applyAction, observe, fallen, loadPolicy, loadTssPolicy, loadClips, poseFromClip, setAssist, math, CTRL_HZ } from './body.js';
+import { World, setRoom, supportY, setHandUp, observeGoto, navField, navGrid, NAV_N, NAV_CELL, NAV_HALF, nearestFrame, BODY_DEFS, B, standPose, swayPose, crawlPose, applyAction, observe, fallen, loadPolicy, loadTssPolicy, loadClips, poseFromClip, setAssist, math, CTRL_HZ } from './body.js';
 import { createShaderView } from './shader-view.js';
 
 const status = document.getElementById('status');
@@ -435,6 +435,11 @@ const SKILLS = {
 // none): alone it gets to an upright kneel; with a light hand-up (a spotter's 20%, env.c's pelvis support) it stands.
 // (The body/ get-up it replaces had no muscle limits: it righted itself in leaps and flips.)
 const GETUP = { file: 'getup_gym_tss.json', actMul: 2.5, gym: true, assist: 0.2 };
+// The get-up tracker (gpu/pod_getup_track.sh): when she is down, the frame of the six CMU get-ups nearest her pose is
+// found (body.js nearestFrame, as env.c matched_start) and that clip plays on from there as the reference the policy
+// follows, with the muscle limits and no hand-up. If she is not up within GETUP_TRACK.give, the get-up above takes over.
+const GETUP_TRACK = { file: 'getup_track_tss.json', clips: 'getup_clips.json', give: 8 };
+let trackPolicy = null, trackClips = null, track = null;   // track: { clip, t0, start } while following a clip
 let mode = 'skill', getupPolicy = null, getupSince = 0, calmSince = -1, stillAt = -1;
 let world, ref, policy = null, skill = 'balance', upSince = 0, fallenAt = -1, listeners = {}, clips = null, clip = null;
 const policies = {};
@@ -502,8 +507,11 @@ let prev, acc = 0, last = performance.now();
 // Getting up: the get-up controller from wherever she is, toward the stand pose.
 async function getUp(why) {
   try { getupPolicy ||= await loadTssPolicy(GETUP.file); } catch { getupPolicy = null; }
-  if (!getupPolicy) return false;
-  getupPolicy.reset(); mode = 'getup'; clip = null; ref = standPose(); getupSince = world.t; calmSince = -1; fallenAt = -1;
+  try { trackPolicy ||= await loadTssPolicy(GETUP_TRACK.file); trackClips ||= Object.values(await loadClips(GETUP_TRACK.clips)).filter(c => c.name.startsWith('getup')); } catch { trackPolicy = null; }
+  if (!getupPolicy && !trackPolicy) return false;
+  track = null;
+  if (trackPolicy && trackClips?.length) { const [c, t0] = nearestFrame(world, trackClips); track = { clip: c, t0, start: world.t }; trackPolicy.reset(); }
+  getupPolicy?.reset(); mode = 'getup'; clip = null; ref = track ? track.clip.at(track.t0).rel : standPose(); getupSince = world.t; calmSince = -1; fallenAt = -1;
   if (GETUP.gym) { world.limitK = 5000; world.strength = 1; } else { world.limitK = 0; world.strength = 0; }   // getting up is a body/ skill (legacy): played without the joint ranges and muscle limits
   setStatus(why); emit('getup', {}); return true;
 }
@@ -552,12 +560,13 @@ addEventListener('keydown', e => { if (e.target.closest?.('input, textarea') || 
 function control() {
   const pc = mode === 'skill' && SKILLS[skill].phaseClip && clips ? clips[SKILLS[skill].phaseClip] : null;
   const phase = clip ? 2 * Math.PI * world.t / clip.T : pc ? 2 * Math.PI * world.t / pc.T : 0;
-  const floor = mode === 'getup' || SKILLS[skill].floor, pol = mode === 'getup' ? getupPolicy : policy;
+  if (mode === 'getup' && track && world.t - track.start > GETUP_TRACK.give) { track = null; ref = standPose(); getupPolicy?.reset(); }   // not up yet: the hand-up get-up
+  const floor = mode === 'getup' || SKILLS[skill].floor, pol = mode === 'getup' ? (track ? trackPolicy : getupPolicy) : policy;
   world.assist = 0;   // set afresh each step (a clip's support, or the steadying hand while a limb is held)
   const goTo = mode === 'skill' && SKILLS[skill].goTo;
   if (goTo) setHandUp(world, fallenAt < 0 ? SKILLS[skill].assist || 0 : 0);   // go-to's hand-up (env.c), while a policy still trains with one
   else if (clip) setAssist(world, clip, world.t, fallenAt < 0 ? SKILLS[skill].assist || 0 : 0);
-  else if (mode === 'getup' && GETUP.assist) setHandUp(world, GETUP.assist);
+  else if (mode === 'getup' && GETUP.assist && !track) setHandUp(world, GETUP.assist);
   const gym = mode === 'skill' && SKILLS[skill].gym;
   const obs = goTo ? observeGoto(world, phase, goalOr()) : gym ? observeGoto(world, phase, null) : mode === 'getup' && GETUP.gym ? observeGoto(world, 0, null, true) : observe(world, phase, floor);
   if (fallenAt < 0 && pol) applyAction(world, ref, pol.act(obs), floor ? GETUP.actMul : 1);
@@ -565,6 +574,7 @@ function control() {
   easeGrab(); aimLimb(); prev = snapshot(); world.step();
   hist.push({ t: world.t, s: snapshot() }); if (hist.length > 12) hist.shift();
   if (clip) ref = clip.at(world.t).rel;
+  else if (mode === 'getup' && track) ref = track.clip.at(Math.min(track.t0 + world.t - track.start, track.clip.T * (1 - 1e-9))).rel;   // the clip plays on, once
   else if (mode === 'skill' && SKILLS[skill].sway) ref = swayPose(world.t, SKILLS[skill].sway);
   if (mode === 'getup') {   // standing calmly for 1.5 s: back to Balance (or on to the goal)
     const P = world.b[0].x, sp = supportY(P[0], P[2], P[1]), foot = i => world.lowest(i) - supportY(world.b[i].x[0], world.b[i].x[2], world.b[i].x[1]);   // heights from the surface under her

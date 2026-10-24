@@ -658,6 +658,28 @@ export async function loadClips(url) {
   return clips;
 }
 // Place the world in a clip's pose at time t with the clip's velocities (env.c env_reset, TASK_IMITATE).
+// Pose features (env.c pose_features): each joint's rotation in its parent, and gravity in the pelvis frame; from world rotations
+export function poseFeatures(wq) {
+  const f = [];
+  for (let i = 1; i < NB; i++) { const r = qmul(qconj(wq[BODY_DEFS[i].parent]), wq[i]); f.push(r[0], r[1], r[2], r[3]); }
+  const g = qrot(qconj(wq[0]), [0, -1, 0]); f.push(g[0], g[1], g[2]);
+  return f;
+}
+export function featDist(a, b) {   // env.c feat_dist: about the summed squared joint angles, plus the tilt
+  let d = 0;
+  for (let j = 0; j < NB - 1; j++) { const c = a[4 * j] * b[4 * j] + a[4 * j + 1] * b[4 * j + 1] + a[4 * j + 2] * b[4 * j + 2] + a[4 * j + 3] * b[4 * j + 3]; d += 4 * (1 - c * c); }
+  for (let k = 4 * (NB - 1); k < a.length; k++) d += (a[k] - b[k]) * (a[k] - b[k]);
+  return d;
+}
+// The clip frame nearest her pose, over clips (env.c matched_start): [clip, time (s)]
+export function nearestFrame(world, clips) {
+  const cur = poseFeatures(world.b.map(b => b.q)); let best = Infinity, bc = null, bt = 0;
+  for (const c of clips) {
+    c.feats ||= Array.from({ length: c.frames }, (_, t) => poseFeatures(c.q.slice(t * NB, (t + 1) * NB)));
+    for (let t = 0; t < c.frames - 1; t++) { const d = featDist(cur, c.feats[t]); if (d < best) { best = d; bc = c; bt = t; } }
+  }
+  return [bc, bt / bc.fps];
+}
 export function poseFromClip(world, clip, t) {
   clip.shift = [0, 0, 0];
   const a = clip.at(t); clip.shift = [-a.root[0], 0, -a.root[2]];
