@@ -327,6 +327,11 @@ static BHD double style_reward(Env *E) {
  * reference picks up. She is turned about the vertical to the frame's heading (the floor does not mind) and the clip
  * is shifted under her, so the tracking reward and the drift limit apply as from a clip's own frame; she learns to
  * join a get-up from wherever a fall left her (the viewer does the same matching when she falls). */
+static BHD double match_dist(const float *a, const float *b, double ha, double hb) {
+    double d = feat_dist(a, b);
+    for (int k = 4 * (NB - 1); k < STYLE_FEAT; k++) d += 3 * (a[k] - b[k]) * (a[k] - b[k]);   /* the tilt 4x in all */
+    return d + 20 * (ha - hb) * (ha - hb);   /* 0.5 m of height: about as far as 1.2 rad over the joints */
+}
 static BHD double floor_yaw(Quat q) { const Vec f = vadd(qrot(q, v3(0, 0, 1)), qrot(q, v3(0, 1, 0))); return b_atan2(f.x, f.z); }
 static BHD void matched_start(Env *E) {
     World *W = &E->W; Quat rel[NB], rq;
@@ -343,15 +348,17 @@ static BHD void matched_start(Env *E) {
     if (fall) {
         const double a = env_rand(&E->rng) * 2 * M_PI, sp = 1 + 2 * env_rand(&E->rng);
         for (int i = 0; i < NB; i++) W->b[i].v = vscale(v3(b_cos(a), 0, b_sin(a)), sp * (W->b[i].x.y / 1.2));
-        W->kp_scale = 0.03; for (int s = 0; s < 75; s++) world_step(W); W->kp_scale = 1;
+        W->kp_scale = 0.03; for (int s = 0; s < 40; s++) world_step(W); W->kp_scale = 1;   /* (1.3 s: the reset runs inside the batch's step) */
     } else for (int s = 0; s < 10; s++) world_step(W);
-    /* the nearest frame of the set */
+    /* the nearest frame of the set: joint angles, and (weighted up) the pelvis's tilt and height, since a limp body's
+     * straight legs and loose arms are also a standing pose's */
     Quat wq[NB]; for (int i = 0; i < NB; i++) wq[i] = W->b[i].q;
     float cur[STYLE_FEAT]; pose_features(wq, cur);
+    const double hp = W->b[PELVIS].x.y;
     const Clip *bc = E->cfg.style[0]; int bt = 0; double best = 1e30;
     for (int k = 0; k < E->cfg.nstyle; k++) for (int i = 0; i < style_n; i++) if (style_clips[i].c == E->cfg.style[k]) {
         const StyleClip *sc = style_clips + i;
-        for (int t = 0; t < sc->n - 1; t++) { const double d = feat_dist(cur, sc->f + (size_t)t * STYLE_FEAT); if (d < best) { best = d; bc = sc->c; bt = t; } }
+        for (int t = 0; t < sc->n - 1; t++) { const double d = match_dist(cur, sc->f + (size_t)t * STYLE_FEAT, hp, sc->c->root[t].y); if (d < best) { best = d; bc = sc->c; bt = t; } }
     }
     E->rc = bc; E->t0 = bt / bc->fps;
     /* her turned to the frame's heading, about her pelvis; the clip shifted under her */

@@ -671,12 +671,18 @@ export function featDist(a, b) {   // env.c feat_dist: about the summed squared 
   for (let k = 4 * (NB - 1); k < a.length; k++) d += (a[k] - b[k]) * (a[k] - b[k]);
   return d;
 }
-// The clip frame nearest her pose, over clips (env.c matched_start): [clip, time (s)]
+// The clip frame nearest her pose, over clips (env.c matched_start, match_dist): joint angles, the pelvis's tilt (4x) and its
+// height above the surface under her (20 per m^2): [clip, time (s)]
 export function nearestFrame(world, clips) {
-  const cur = poseFeatures(world.b.map(b => b.q)); let best = Infinity, bc = null, bt = 0;
+  const cur = poseFeatures(world.b.map(b => b.q)), p = world.b[0].x, hp = p[1] - supportY(p[0], p[2], p[1]); let best = Infinity, bc = null, bt = 0;
   for (const c of clips) {
     c.feats ||= Array.from({ length: c.frames }, (_, t) => poseFeatures(c.q.slice(t * NB, (t + 1) * NB)));
-    for (let t = 0; t < c.frames - 1; t++) { const d = featDist(cur, c.feats[t]); if (d < best) { best = d; bc = c; bt = t; } }
+    for (let t = 0; t < c.frames - 1; t++) {
+      const f = c.feats[t]; let d = featDist(cur, f);
+      for (let k = 4 * (NB - 1); k < f.length; k++) d += 3 * (cur[k] - f[k]) * (cur[k] - f[k]);
+      d += 20 * (hp - c.root[t][1]) * (hp - c.root[t][1]);
+      if (d < best) { best = d; bc = c; bt = t; }
+    }
   }
   return [bc, bt / bc.fps];
 }
