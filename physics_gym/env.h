@@ -54,7 +54,10 @@
 #define OBS_PROBE 16              /* cheap looks ahead (heading frame): the ground under 6 points ahead, from her lowest foot (m,
                                    * within +-1); then 10 horizontal rays (knee and hip height, 5 directions): distance to the
                                    * first box over 1.5 m (1: nothing within reach) */
-#define OBS_DIM (OBS_BASE + OBS_GOAL + NB + NB - 1 + OBS_GRIP + OBS_PROBE)   /* then touch: each body's mean contact force over the step / body
+#define OBS_PATH 4                /* TASK_GOTO in a room: the path helper's waypoint, about 1 m along the shortest walkable path
+                                   * to the goal (env.c nav_waypoint over the room's nav grid), from her pelvis in the heading frame
+                                   * (x, y, z), and the path still to go (m, at most 10) */
+#define OBS_DIM (OBS_BASE + OBS_GOAL + NB + NB - 1 + OBS_GRIP + OBS_PROBE + OBS_PATH)   /* then touch: each body's mean contact force over the step / body
                                                        weight; then muscle sense: each joint's activation (drive torque / strength);
                                                        then grip */
 #define CTRL_HZ 30
@@ -102,6 +105,10 @@ typedef struct {
     float style_prev[STYLE_FEAT]; int style_has_prev;   /* the previous step's pose features (style prior) */
     Vec goal; int goals;   /* TASK_GOTO: the goal point (on a surface) and how many she has reached this episode */
     double goal_d;         /* TASK_GOTO: her horizontal distance to the goal at the last step */
+    double path_len;       /* TASK_GOTO in a room: the path to go at the last step (m) */
+    int foot_on[2]; double foot_vy[2];   /* each foot on the ground at the last step, and its vertical speed then (landings) */
+    unsigned char nav_d[NAV_N * NAV_N];  /* TASK_GOTO in a room: steps from each nav cell to the goal's (255: no way there) */
+    unsigned short nav_q[NAV_N * NAV_N]; /* the search's queue */
 } Env;
 
 #ifndef __CUDACC__   /* the GPU build defines it ahead of every use, in one unit */

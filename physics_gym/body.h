@@ -143,6 +143,18 @@ enum { GRIP_NONE, GRIP_LEDGE, GRIP_HOLD };   /* a box's grip label: nothing; its
  * column_hit: whether any box occupies the line between heights y0 and y1. */
 BHD double support_y(int room, double x, double z, double ytop);
 BHD int column_hit(int room, double x, double z, double y0, double y1);
+/* the nav grid, for env.c's path helper: NAV_N x NAV_N cells of NAV_CELL m over x, z in +-NAV_HALF, each the height of
+ * the surface she would stand on there (support_y below 2 m), or NAV_BLOCK where something stands in the way above it
+ * (to 1.6 m) or the cell is next to one of those or to a rise of more than NAV_STEP (paths keep a cell off walls). Built
+ * once per room after its boxes are set (room_set_bank on the CPU, tssenv_kernels.cu on the device: nav_pass 0, 1, 2
+ * over every cell, each pass reading only what the one before wrote, so cells can go in any order or all at once). */
+#define NAV_N 64
+#define NAV_CELL 0.25
+#define NAV_HALF 8.0
+#define NAV_STEP 0.3
+#define NAV_BLOCK 1000.0f
+BHD float nav_h(int room, int cell);
+BHD void nav_pass(int room, int pass, int cell);
 BHD double ray_dist(int room, Vec o, Vec d, double maxd);   /* distance along unit d from o to the first box (at most maxd) */
 BHD int room_banks(void);                 /* rooms in the bank (0: none, the open floor) */
 BHD int room_size(int room);

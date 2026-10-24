@@ -18,7 +18,7 @@ where every task starts her, facing +z) is kept free.
 import argparse, json, math, random
 
 FOAM = ["#7fa8f0", "#f2c75c", "#f08a7f", "#8fd6a8", "#c39ff0"]
-COL = {"wall": "#d9dce8", "outer": "#c9cde0", "tunnel": "#6fb7b0", "stair": "#d8b48a", "slope": "#c9a27a", "platform": "#d2ae86",
+COL = {"tile": "#b8c79a", "step": "#c7a98f", "pillar": "#b3b7cc", "wall": "#d9dce8", "outer": "#c9cde0", "tunnel": "#6fb7b0", "stair": "#d8b48a", "slope": "#c9a27a", "platform": "#d2ae86",
        "climb": "#b9a7d6", "hold": "#f2884b", "ledge": "#9fb8c9", "parkour": "#a9c99f"}
 # grip labels (room.json v2), for the hands: 0 nothing to hold, 1 a ledge (its top edges can be held), 2 a handhold (all of it)
 NONE, LEDGE, HOLD = 0, 1, 2
@@ -85,6 +85,17 @@ class Room:
         c, q = self.place(o, yaw, [0, rise / 2, depth + landing / 2])
         self.box("platform", c, [width / 2, rise / 2, landing / 2], q, mu=0.9, feature=name)
 
+
+    def slope_on(self, o, angle_deg, length, width, yaw=0.0, thick=0.2, name="slope"):
+        """a ramp rising along the forward axis from height o[1] at o, no landing (pitches of a hill chained end to end),
+        with a solid block under it down to the floor so nothing can get beneath"""
+        a = math.radians(angle_deg); rise = length * math.sin(a); depth = length * math.cos(a)
+        qy = qaxis([0, 1, 0], yaw); qr = qmul(qy, qaxis([1, 0, 0], -a))
+        mid_top = [0, o[1] + rise / 2, depth / 2]; nrm = [0, math.cos(a), -math.sin(a)]
+        p = [mid_top[i] - nrm[i] * thick / 2 for i in range(3)]
+        d = rot(qy, p); self.box("slope", [o[0] + d[0], d[1], o[2] + d[2]], [width / 2, thick / 2, length / 2], qr, mu=0.9, feature=name)
+        if o[1] > 0.02:   # the fill under the ramp, up to its low end
+            c, q = self.place([o[0], 0, o[2]], yaw, [0, o[1] / 2, depth / 2]); self.box("platform", c, [width / 2, o[1] / 2, depth / 2], q, mu=0.9, feature=name)
 
     def block(self, o, size, yaw=0.0, kind="parkour", name=None, grip=LEDGE, mu=0.9):
         """a solid block standing on the floor (size: width, height, depth); by default its top edges can be held"""
@@ -168,13 +179,64 @@ def stage1(seed=None, d=1.0):
     return R
 
 
+def stage2(seed=None, d=1.0):
+    """stage 2, the slope gym (16 x 16 m): ground to walk, not to climb. Ramps from 6 to 20 degrees (a ridge to cross
+    up and over, a steep pair, a gradient hill whose pitch grows and eases), stair pyramids (up one side, down the
+    other), a field of uneven tiles, a terrace of step-ups for small jumps and a gap to hop, and walls and pillars that
+    stand in the straight line so a path has to go round. Everything is walkable at d = 1: ramps at most 20 degrees
+    (static friction holds to 42 at mu 0.9), stair rise at most 0.17 m on a 0.30 m run, step-ups at most 0.45 m,
+    every edge a box's own (no slivers or hairline gaps for a foot to catch). d scales pitches, rises and heights."""
+    rng = random.Random(seed if seed is not None else 2); j = (lambda a: rng.uniform(-a, a)) if seed is not None else (lambda a: 0.0)
+    R = Room(); half = 8.0
+    for o, yaw in (([0, 0, half], 0.0), ([0, 0, -half], 0.0), ([half, 0, 0], math.pi / 2), ([-half, 0, 0], math.pi / 2)):
+        R.wall(o, 2 * half + 0.2, 2.4, yaw, kind="outer")
+    E, W = math.pi / 2, -math.pi / 2   # yaw that makes a feature rise toward +x / -x
+    # north-west: the ridge, up 10 degrees from the west, a crest, down 14 degrees to the east
+    a1, a2 = (10 + j(2)) * d, (14 + j(2)) * d; L1 = 2.4; r1 = L1 * math.sin(math.radians(a1)); crest = 1.0
+    x0 = -7.2 + j(.1); z = 5.6 + j(.2); x1 = x0 + L1 * math.cos(math.radians(a1))
+    R.slope([x0, 0, z], a1, L1, 1.8, crest, yaw=E, name="ridge")
+    L2 = r1 / math.sin(math.radians(a2)); x2 = x1 + crest + L2 * math.cos(math.radians(a2))
+    R.slope([x2, 0, z], a2, L2, 1.8, 0.01, yaw=W, name="ridge")
+    # north-east: a stair pyramid, up from the west, down to the east
+    rise = (0.15 + j(.02)) * d; n = 5; run = 0.30; xs = 1.6 + j(.15); zs = 5.6 + j(.2)
+    R.stairs([xs, 0, zs], n, rise, run, 1.6, 1.0, yaw=E, name="stair pyramid")
+    R.stairs([xs + 2 * n * run + 1.0, 0, zs], n, rise, run, 1.6, 0.01, yaw=W, name="stair pyramid")
+    # west: uneven ground, 6 x 6 tiles of 0.5 m, heights 1 to 11 cm (a gravel bed, a rough lawn)
+    tx, tz = -6.4 + j(.1), -1.2 + j(.1)
+    for a in range(6):
+        for b in range(6):
+            R.block([tx + 0.5 * a, 0, tz + 0.5 * b], [0.5, (0.01 + 0.10 * rng.random()) * d, 0.5], kind="tile", name="uneven tiles", grip=NONE)
+    # east: the gradient hill, rising north in pitches of 5, 10, 15 degrees, a top, and 12 back down
+    hx, zc, h = 6.6 + j(.1), -4.0 + j(.1), 0.0
+    for ang in (5, 10, 15):
+        ang *= d; R.slope_on([hx, h, zc], ang, 1.0, 1.8, yaw=0.0, name="gradient hill")
+        zc += math.cos(math.radians(ang)); h += math.sin(math.radians(ang))
+    R.block([hx, 0, zc + 0.5], [1.8, h, 1.0], kind="platform", name="gradient hill", grip=NONE)
+    a3 = 12 * d; L3 = h / math.sin(math.radians(a3))
+    R.slope([hx, 0, zc + 1.0 + L3 * math.cos(math.radians(a3))], a3, L3, 1.8, 0.01, yaw=math.pi, name="gradient hill")
+    # south-west: a steep pair, 16 and 20 degrees, side by side up to one landing
+    for k, ang in enumerate(((16 + j(2)) * d, (20 + j(1)) * d)):
+        R.slope([-5.6 + 1.9 * k + j(.05), 0, -6.6], ang, 1.8, 1.6, 0.9, yaw=0.0, name="steep pair")
+    # south-east: the jump terrace, step-ups of 0.15 to 0.45 m, then a 0.4 m gap to a platform at 0.3 m
+    x = 1.4 + j(.1)
+    for k, hh in enumerate((0.15, 0.25, 0.35, 0.45)):
+        R.block([x + 0.8 * k, 0, -6.4], [0.8, hh * d, 1.6], kind="step", name="jump terrace", grip=LEDGE)
+    R.block([x + 3.2 + 0.4 * d + 0.6, 0, -6.4], [1.2, 0.3 * d, 1.6], kind="step", name="jump terrace", grip=LEDGE)
+    # walls and pillars across the straight lines (paths go round)
+    R.wall([-2.6 + j(.2), 0, 2.6 + j(.2)], 2.6, 1.2, yaw=0.3 + j(.2))
+    R.wall([3.0 + j(.2), 0, -2.8 + j(.2)], 2.4, 1.2, yaw=-0.4 + j(.2))
+    for px, pz in ((-0.6, -4.2), (4.6, 3.0), (-4.4, 3.4)):
+        R.block([px + j(.2), 0, pz + j(.2)], [0.5, 2.0, 0.5], kind="pillar", name="pillar", grip=NONE)
+    return R
+
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--seed", type=int); ap.add_argument("--out", default="room.json"); ap.add_argument("--stage", type=int, default=1)
     ap.add_argument("--bank", type=int, default=0, help="write a room bank of this many seeded variants instead")
     ap.add_argument("--difficulty", default="1:1", help="bank: terrain difficulty from the first room to the last, lo:hi (1 = as designed)")
     ap.add_argument("--web", default="web/room.json", help="also written here, for the viewer ('' to skip)")
     a = ap.parse_args()
-    build = stage1 if a.stage == 1 else stage0; half = 8.0 if a.stage == 1 else 6.0
+    build = {0: stage0, 1: stage1, 2: stage2}[a.stage]; half = 6.0 if a.stage == 0 else 8.0
     if a.bank:
         rooms = []; lo, hi = (float(v) for v in a.difficulty.split(":"))
         for sd in range(1, a.bank + 1):

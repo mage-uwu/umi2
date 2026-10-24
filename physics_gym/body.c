@@ -163,7 +163,9 @@ int room_set_bank(int r, const double *v, int n) {
         RoomBox *o = room_box[r] + j; o->c = v3(v[0], v[1], v[2]); o->h = v3(v[3], v[4], v[5]);
         o->q.w = v[6]; o->q.x = v[7]; o->q.y = v[8]; o->q.z = v[9]; o->mu = v[10]; o->soft = v[11]; o->rad = vlen(o->h); o->grip = (int)v[12];
     }
-    room_n[r] = n; if (r >= room_nb) room_nb = r + 1; return n;
+    room_n[r] = n; if (r >= room_nb) room_nb = r + 1;
+    for (int pass = 0; pass < 3; pass++) for (int c = 0; c < NAV_N * NAV_N; c++) nav_pass(r, pass, c);
+    return n;
 }
 int room_set(const double *v, int n) { room_nb = 0; const int k = room_set_bank(0, v, n); if (!n) room_nb = 0; return k; }   /* one room for every world */
 int room_count(void) { return room_n[0]; }
@@ -245,6 +247,28 @@ BHD int column_hit(int r, double x, double z, double y0, double y1) {
     double t0, t1;
     for (int j = 0; j < room_n[r]; j++) if (column_span(room_box[r] + j, x, z, &t0, &t1) && t1 > y0 && t0 < y1) return 1;
     return 0;
+}
+#ifdef __CUDACC__
+__device__ float room_nav[ROOM_BANK][NAV_N * NAV_N];
+#else
+static float room_nav[ROOM_BANK][NAV_N * NAV_N];
+#endif
+BHD float nav_h(int r, int c) { return room_nav[r][c]; }
+static BHD float nav_orig(float v) { return v < 0 ? -v - 1 : v; }   /* pass 1 marks a cell to block as -h - 1 */
+BHD void nav_pass(int r, int pass, int c) {
+    float *g = room_nav[r]; const int ix = c % NAV_N, iz = c / NAV_N;
+    if (pass == 0) {   /* the surface height, or blocked */
+        const double x = -NAV_HALF + (ix + 0.5) * NAV_CELL, z = -NAV_HALF + (iz + 0.5) * NAV_CELL, h = support_y(r, x, z, 2.0);
+        g[c] = column_hit(r, x, z, h + 0.05, h + 1.6) ? NAV_BLOCK : (float)h;
+    } else if (pass == 1) {   /* next to a blocked cell or a rise of more than NAV_STEP: marked */
+        if (g[c] >= NAV_BLOCK) return;
+        const float h = nav_orig(g[c]); int near = 0;
+        for (int dz = -1; dz <= 1 && !near; dz++) for (int dx = -1; dx <= 1; dx++) {
+            const int nx = ix + dx, nz = iz + dz; if ((!dx && !dz) || nx < 0 || nz < 0 || nx >= NAV_N || nz >= NAV_N) continue;
+            const float v = nav_orig(g[nz * NAV_N + nx]); if (v >= NAV_BLOCK || v > h + (float)NAV_STEP) { near = 1; break; }
+        }
+        if (near) g[c] = -h - 1;
+    } else if (g[c] < 0) g[c] = NAV_BLOCK;   /* pass 2: the marks become blocks */
 }
 #ifdef __CUDACC__
 #define BODY_DEBUG(W, k)

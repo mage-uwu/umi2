@@ -101,6 +101,7 @@ void tss_step(void *envs, int n, const float *act, float *rew, int *done, int *f
 void tss_urand(const void *seeds, int B, int n, float *out, cudaStream_t st) { k_urand<<<GRID(B), 0, st>>>((const uint64_t *)seeds, B, n, out); }
 void tss_consts(double *o) { k_consts<<<1, 1>>>(o); }
 void tss_world_step(void *envs, int e) { k_world_step<<<1, 1>>>((Env *)envs, e); }
+__global__ void k_nav(int r, int pass) { const int c = blockIdx.x * blockDim.x + threadIdx.x; if (c < NAV_N * NAV_N) nav_pass(r, pass, c); }
 /* room r of the bank (room.json as ROOM_REC doubles per box: c, h, q, mu, soft, grip), filled as body.c room_set_bank
  * fills it; nb: the bank's size (rooms 0..nb-1 in use) */
 const char *tss_set_room_bank(int r, const double *v, int n, int nb) {
@@ -114,6 +115,7 @@ const char *tss_set_room_bank(int r, const double *v, int n, int nb) {
     if (n) cudaMemcpyToSymbol(room_box, t, sizeof(RoomBox) * n, sizeof(RoomBox) * ROOM_MAX * r);
     cudaMemcpyToSymbol(room_n, &n, sizeof n, sizeof(int) * r);
     cudaMemcpyToSymbol(room_nb, &nb, sizeof nb);
+    for (int pass = 0; pass < 3; pass++) k_nav<<<GRID(NAV_N * NAV_N), 0>>>(r, pass);   /* its nav grid, as room_set_bank builds it */
     cudaError_t e = cudaDeviceSynchronize(); return e == cudaSuccess ? NULL : cudaGetErrorString(e);
 }
 const char *tss_set_room(const double *v, int n) { return tss_set_room_bank(0, v, n, n ? 1 : 0); }

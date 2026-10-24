@@ -62,7 +62,7 @@ const hingeAxis = h => h === 1 ? [1, 0, 0] : h === 2 ? [0, 1, 0] : [0, 0, 1];
 // ---------- the room (physics_gym): static oriented boxes from room.json, the same table body.c collides with ----------
 // [{c, h, q, mu, soft}] -> each box also gets rad = |h| (broad phase). One room for every World, as in body.c.
 let ROOM = [];
-export function setRoom(boxes) { ROOM = (boxes || []).map(b => ({ c: b.c, h: b.h, q: b.q, mu: b.mu, soft: b.soft, grip: b.grip | 0, rad: Math.sqrt(b.h[0] * b.h[0] + b.h[1] * b.h[1] + b.h[2] * b.h[2]) })); }
+export function setRoom(boxes) { ROOM = (boxes || []).map(b => ({ c: b.c, h: b.h, q: b.q, mu: b.mu, soft: b.soft, grip: b.grip | 0, rad: Math.sqrt(b.h[0] * b.h[0] + b.h[1] * b.h[1] + b.h[2] * b.h[2]) })); navBuild(); }
 export const room = () => ROOM;
 // grip (body.c GRIP_*): a box's label 0 nothing, 1 ledge (its top edges, if its top faces up), 2 handhold (all of it)
 export const GRIP_LEDGE = 1, GRIP_HOLD = 2, GRIP_REACH = 0.06, GRIP_ON = 0.2, GRIP_MAX = 450;
@@ -118,6 +118,71 @@ export function rayDist(o, d, maxd) {
   }
   return best;
 }
+const columnHit = (x, z, y0, y1) => ROOM.some(o => { const s = columnSpan(o, x, z); return s && s[1] > y0 && s[0] < y1; });   // body.c column_hit
+// ---------- the path helper (body.c nav grid, env.c nav_field / nav_waypoint) ----------
+export const NAV_N = 64, NAV_CELL = 0.25, NAV_HALF = 8.0, NAV_STEP = 0.3, NAV_BLOCK = 1000;
+let NAV = new Float32Array(NAV_N * NAV_N), navCache = null;
+const NAV_DX = [1, -1, 0, 0, 1, 1, -1, -1], NAV_DZ = [0, 0, 1, -1, 1, -1, 1, -1];
+function navBuild() {   // each cell: the surface she would stand on, or blocked (in the way to 1.6 m, or next to that or a rise over NAV_STEP)
+  const g = new Float32Array(NAV_N * NAV_N); navCache = null;
+  for (let c = 0; c < NAV_N * NAV_N; c++) {
+    const x = -NAV_HALF + (c % NAV_N + 0.5) * NAV_CELL, z = -NAV_HALF + (Math.floor(c / NAV_N) + 0.5) * NAV_CELL, h = supportY(x, z, 2.0);
+    g[c] = columnHit(x, z, h + 0.05, h + 1.6) ? NAV_BLOCK : Math.fround(h);
+  }
+  const out = g.slice();
+  for (let c = 0; c < NAV_N * NAV_N; c++) {
+    if (g[c] >= NAV_BLOCK) continue; const ix = c % NAV_N, iz = Math.floor(c / NAV_N);
+    for (let dz = -1; dz <= 1; dz++) for (let dx = -1; dx <= 1; dx++) {
+      const nx = ix + dx, nz = iz + dz; if ((!dx && !dz) || nx < 0 || nz < 0 || nx >= NAV_N || nz >= NAV_N) continue;
+      const v = g[nz * NAV_N + nx]; if (v >= NAV_BLOCK || v > g[c] + Math.fround(NAV_STEP)) out[c] = NAV_BLOCK;
+    }
+  }
+  NAV = out;
+}
+const navOn = () => ROOM.length > 0;
+const navCell = (x, z) => { const ix = Math.min(NAV_N - 1, Math.max(0, Math.floor((x + NAV_HALF) / NAV_CELL))), iz = Math.min(NAV_N - 1, Math.max(0, Math.floor((z + NAV_HALF) / NAV_CELL))); return iz * NAV_N + ix; };
+const navLink = (a, b) => NAV[b] < NAV_BLOCK && Math.abs(NAV[b] - NAV[a]) <= Math.fround(NAV_STEP);
+export function navField(goal) {   // steps from each cell to the goal's (255: no way there), breadth first
+  const d = new Uint8Array(NAV_N * NAV_N).fill(255); if (!navOn()) return d;
+  const q = new Uint16Array(NAV_N * NAV_N), g = navCell(goal[0], goal[2]); let head = 0, tail = 0; d[g] = 0; q[tail++] = g;
+  while (head < tail) {
+    const c = q[head++], cx = c % NAV_N, cz = Math.floor(c / NAV_N); if (d[c] >= 254) continue;
+    for (let k = 0; k < 8; k++) {
+      const nx = cx + NAV_DX[k], nz = cz + NAV_DZ[k]; if (nx < 0 || nz < 0 || nx >= NAV_N || nz >= NAV_N) continue;
+      const n = nz * NAV_N + nx; if (d[n] !== 255 || !navLink(c, n)) continue;
+      if (k >= 4 && (!navLink(c, cz * NAV_N + nx) || !navLink(c, nz * NAV_N + cx))) continue;
+      d[n] = d[c] + 1; q[tail++] = n;
+    }
+  }
+  return d;
+}
+function navFrom(d, p) {
+  const c = navCell(p[0], p[2]); if (d[c] !== 255) return c;
+  const cx = c % NAV_N, cz = Math.floor(c / NAV_N); let best = -1, bd = 1 << 30;
+  for (let dz = -3; dz <= 3; dz++) for (let dx = -3; dx <= 3; dx++) {
+    const nx = cx + dx, nz = cz + dz; if (nx < 0 || nz < 0 || nx >= NAV_N || nz >= NAV_N) continue;
+    const n = nz * NAV_N + nx; if (d[n] === 255) continue; const sc = 16 * (dx * dx + dz * dz) + d[n]; if (sc < bd) { bd = sc; best = n; }
+  }
+  return best;
+}
+// [waypoint about 1 m along the shortest walkable path, path to go (m)]: four steps down the distances (env.c nav_waypoint)
+export function navWaypoint(p, goal, d) {
+  const straight = Math.hypot(goal[0] - p[0], goal[2] - p[2]); if (!navOn()) return [goal, straight];
+  let w = navFrom(d, p); if (w < 0) return [goal, straight];
+  for (let s = 0; s < 4 && d[w] > 0; s++) {
+    const cx = w % NAV_N, cz = Math.floor(w / NAV_N); let best = w;
+    for (let k = 0; k < 8; k++) { const nx = cx + NAV_DX[k], nz = cz + NAV_DZ[k]; if (nx < 0 || nz < 0 || nx >= NAV_N || nz >= NAV_N) continue; const n = nz * NAV_N + nx; if (d[n] < d[best] && navLink(w, n)) best = n; }
+    if (best === w) break; w = best;
+  }
+  if (d[w] === 0) return [goal, straight];
+  const at = [-NAV_HALF + (w % NAV_N + 0.5) * NAV_CELL, NAV[w], -NAV_HALF + (Math.floor(w / NAV_N) + 0.5) * NAV_CELL];
+  return [at, d[w] * NAV_CELL + Math.hypot(at[0] - p[0], at[2] - p[2])];
+}
+export function navPath(goal) {   // the field for a goal, kept until the goal or the room changes
+  if (!navCache || navCache.g[0] !== goal[0] || navCache.g[1] !== goal[1] || navCache.g[2] !== goal[2]) navCache = { g: goal.slice(), d: navField(goal) };
+  return navCache.d;
+}
+export const navGrid = () => NAV;
 export function supportY(x, z, ytop) { let best = 0; for (const o of ROOM) { const s = columnSpan(o, x, z); if (s && s[1] <= ytop + 1e-9 && s[1] > best) best = s[1]; } return best; }
 
 export class World {
@@ -425,7 +490,7 @@ export function fallen(world) {   // heights from the surface under her (env.c f
 // The go-to skill's observation (env.c env_obs for TASK_GOTO, OBS_DIM 234): the bodies as in observe(), but the pelvis
 // height from her lowest foot corner and the foot flags from touch; then the goal from her pelvis in the heading
 // frame (horizontal at most 4 m) and its distance; then each body's touch as a share of her weight.
-export const OBS_GOTO = OBS_DIM + 4 + NB + NB - 1 + 10 + 16;   // 273: then touch, muscle sense, grip, probes
+export const OBS_GOTO = OBS_DIM + 4 + NB + NB - 1 + 10 + 16 + 4;   // 277: then touch, muscle sense, grip, probes, path
 const PROBE_DIST = [0.3, 0.6, 0.9, 1.2, 0.6, 0.6], PROBE_ANG = [0, 0, 0, 0, 0.5, -0.5];   // env.c's ground probes (m, rad)
 export function observeGoto(world, phase, goal) {
   const o = observe(world, phase, false), root = world.b[0].x, wt = world.totalMass * G_ACC;
@@ -452,6 +517,10 @@ export function observeGoto(world, phase, goal) {
       o.push(rayDist([root[0], foot + (lv ? 0.9 : 0.35), root[2]], d, 1.5) / 1.5);
     }
   }
+  if (goal) {   // the path helper: the waypoint from her pelvis (heading frame, horizontal at most 2 m) and the path to go (env.c)
+    const [wp, len] = navWaypoint(root, goal, navPath(goal)), g = qrot(hi, vsub(wp, root)), r = Math.hypot(g[0], g[2]), s = r > 2 ? 2 / r : 1;
+    o.push(g[0] * s, g[1], g[2] * s, Math.min(len, 10));
+  } else o.push(0, 0, 0, 0);
   return o;
 }
 
