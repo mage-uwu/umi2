@@ -179,6 +179,39 @@ export function navWaypoint(p, goal, d, steps = 4) {
   const at = [-NAV_HALF + (w % NAV_N + 0.5) * NAV_CELL, NAV[w], -NAV_HALF + (Math.floor(w / NAV_N) + 0.5) * NAV_CELL];
   return [at, d[w] * NAV_CELL + Math.hypot(at[0] - p[0], at[2] - p[2])];
 }
+// the path itself, as points on the surface from her cell to the goal's (the cells down the distances; [] off the grid)
+export function navRoute(p, goal, max = 64) {
+  const d = navPath(goal); if (!navOn()) return [];
+  let w = navFrom(d, p); const out = []; if (w < 0) return out;
+  const pt = c => [-NAV_HALF + (c % NAV_N + 0.5) * NAV_CELL, NAV[c], -NAV_HALF + (Math.floor(c / NAV_N) + 0.5) * NAV_CELL];
+  out.push(pt(w));
+  while (d[w] > 0 && out.length < max) {
+    const cx = w % NAV_N, cz = Math.floor(w / NAV_N); let best = w;
+    for (let k = 0; k < 8; k++) { const nx = cx + NAV_DX[k], nz = cz + NAV_DZ[k]; if (nx < 0 || nz < 0 || nx >= NAV_N || nz >= NAV_N) continue; const n = nz * NAV_N + nx; if (d[n] < d[best] && navLink(w, n)) best = n; }
+    if (best === w) break; w = best; out.push(pt(w));
+  }
+  return out;
+}
+// a point along the path to steer by: far (m) on, or near where the path within 1 m runs beside a drop of over 0.3 m or
+// turns, so she slows there; the goal itself when the path is shorter
+export function navAim(p, goal, far = 1.5, near = 0.8) {
+  const route = navRoute(p, goal); if (route.length < 3) return goal;
+  let L = far, acc = 0, prev = [p[0], 0, p[2]]; const d0 = [route[1][0] - p[0], route[1][2] - p[2]], n0 = Math.hypot(...d0) + 1e-9;
+  for (const q of route) {
+    acc += Math.hypot(q[0] - prev[0], q[2] - prev[2]); prev = q; if (acc > 1.0) break;
+    const dq = [q[0] - p[0], q[2] - p[2]], c = (dq[0] * d0[0] + dq[1] * d0[1]) / (Math.hypot(...dq) * n0 + 1e-9);
+    if (navDrop(q[0], q[2]) > 0.3 || (acc > 0.4 && c < 0.7)) { L = near; break; }
+  }
+  acc = 0; prev = [p[0], 0, p[2]];
+  for (const q of route) { acc += Math.hypot(q[0] - prev[0], q[2] - prev[2]); prev = q; if (acc >= L) return q; }
+  return goal;
+}
+// how far the ground falls away beside a cell (m): the deepest drop to one of its 8 neighbours, blocked ones aside
+export function navDrop(x, z) {
+  const c = navCell(x, z), cx = c % NAV_N, cz = Math.floor(c / NAV_N), h = NAV[c]; let drop = 0; if (!navOn() || h >= NAV_BLOCK) return 0;
+  for (let k = 0; k < 8; k++) { const nx = cx + NAV_DX[k], nz = cz + NAV_DZ[k]; if (nx < 0 || nz < 0 || nx >= NAV_N || nz >= NAV_N) continue; const v = NAV[nz * NAV_N + nx]; if (v < NAV_BLOCK) drop = Math.max(drop, h - v); }
+  return drop;
+}
 export function navPath(goal) {   // the field for a goal, kept until the goal or the room changes
   if (!navCache || navCache.g[0] !== goal[0] || navCache.g[1] !== goal[1] || navCache.g[2] !== goal[2]) navCache = { g: goal.slice(), d: navField(goal) };
   return navCache.d;
@@ -493,13 +526,13 @@ export function fallen(world) {   // heights from the surface under her (env.c f
 // frame (horizontal at most 4 m) and its distance; then each body's touch as a share of her weight.
 export const OBS_GOTO = OBS_DIM + 4 + NB + NB - 1 + 10 + 16 + 4;   // 277: then touch, muscle sense, grip, probes, path
 const PROBE_DIST = [0.3, 0.6, 0.9, 1.2, 0.6, 0.6], PROBE_ANG = [0, 0, 0, 0, 0.5, -0.5];   // env.c's ground probes (m, rad)
-export function observeGoto(world, phase, goal, floor = false) {   // floor: the floor tasks' heading (getting up: forward is where her head points when face down)
+export function observeGoto(world, phase, goal, floor = false, aim = goal) {   // floor: the floor tasks' heading (getting up: forward is where her head points when face down); aim: what the goal inputs point at (the goal itself unless the viewer steers by a point along the path), the path inputs always toward goal
   const o = observe(world, phase, floor), root = world.b[0].x, wt = world.totalMass * G_ACC;
   o[1] = root[1] - Math.min(world.lowest(B.L_FOOT), world.lowest(B.R_FOOT));
   o[NB * 15] = world.touch[B.L_FOOT] > 0.02 * wt ? 1 : 0; o[NB * 15 + 1] = world.touch[B.R_FOOT] > 0.02 * wt ? 1 : 0;
   let pz = qrot(world.b[0].q, [0, 0, 1]); if (floor) pz = vadd(pz, qrot(world.b[0].q, [0, 1, 0]));
   const hi = qexp([0, -Math.atan2(pz[0], pz[2]), 0]);
-  if (goal) { const g = qrot(hi, vsub(goal, root)), r = Math.sqrt(g[0] * g[0] + g[2] * g[2]), s = r > 4 ? 4 / r : 1; o.push(g[0] * s, g[1], g[2] * s, Math.min(r, 4)); }
+  if (goal) { const g = qrot(hi, vsub(aim, root)), r = Math.sqrt(g[0] * g[0] + g[2] * g[2]), s = r > 4 ? 4 / r : 1; o.push(g[0] * s, g[1], g[2] * s, Math.min(r, 4)); }
   else o.push(0, 0, 0, 0);   // no goal (the gym's other tasks: imitation): the goal inputs are zero, as in env.c
   for (let i = 0; i < NB; i++) o.push(Math.min(3, world.touch[i] / wt));
   for (let i = 1; i < NB; i++) o.push(world.act[i]);   // muscle sense

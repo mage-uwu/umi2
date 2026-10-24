@@ -142,7 +142,7 @@ button:disabled { opacity: .45; cursor: default; }
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm';
-import { World, setRoom, supportY, setHandUp, observeGoto, navField, navGrid, NAV_N, NAV_CELL, NAV_HALF, nearestFrame, BODY_DEFS, B, standPose, swayPose, crawlPose, applyAction, observe, fallen, loadPolicy, loadTssPolicy, loadClips, poseFromClip, setAssist, math, CTRL_HZ } from './body.js';
+import { World, setRoom, supportY, setHandUp, observeGoto, navField, navGrid, navRoute, navAim, NAV_N, NAV_CELL, NAV_HALF, nearestFrame, BODY_DEFS, B, standPose, swayPose, crawlPose, applyAction, observe, fallen, loadPolicy, loadTssPolicy, loadClips, poseFromClip, setAssist, math, CTRL_HZ } from './body.js';
 import { createShaderView } from './shader-view.js';
 
 const status = document.getElementById('status');
@@ -577,7 +577,7 @@ function control() {
   else if (clip) setAssist(world, clip, world.t, fallenAt < 0 ? SKILLS[skill].assist || 0 : 0);
   else if (mode === 'getup' && GETUP.assist && !track && !settle) setHandUp(world, GETUP.assist);
   const gym = mode === 'skill' && SKILLS[skill].gym;
-  const obs = goTo ? observeGoto(world, phase, goalOr()) : gym ? observeGoto(world, phase, null) : mode === 'getup' && GETUP.gym ? observeGoto(world, 0, null, true) : observe(world, phase, floor);
+  const obs = goTo ? observeGoto(world, phase, goalOr(), false, goal ? navAim(world.b[0].x, goal, STEER.far, STEER.near) : goalOr()) : gym ? observeGoto(world, phase, null) : mode === 'getup' && GETUP.gym ? observeGoto(world, 0, null, true) : observe(world, phase, floor);
   if (fallenAt < 0 && pol) applyAction(world, ref, pol.act(obs), floor ? GETUP.actMul : 1);
   if (goTo) { goalReached(); if (roam && reachedAt >= 0 && world.t - reachedAt > 0.8) roamGoal(); }
   easeGrab(); aimLimb(); prev = snapshot(); world.step();
@@ -622,6 +622,7 @@ function step(now) {
   acc = Math.min(acc + dt, 0.2); last = now;
   if (world) {
     while (acc >= 1 / CTRL_HZ) { control(); acc -= 1 / CTRL_HZ; }
+    drawPath();
     const renderT = world.t - 1 / CTRL_HZ + acc;   // drawn one control step behind, interpolated
     const tS = performance.now();
     updateFace(dt);
@@ -901,6 +902,27 @@ function setGoal(p) {   // p: a point on a surface, [x, y, z]; y defaults to the
   return goal.slice();
 }
 const goalOr = () => goal || [world.b[0].x[0], supportY(world.b[0].x[0], world.b[0].x[2], world.b[0].x[1]), world.b[0].x[2]];   // no goal yet: stay
+// Go to steers by a point along her path (body.js navAim) rather than straight at the goal: STEER.far m on, STEER.near
+// where the path runs beside a drop or turns (so she slows to step round it); her path inputs follow the path helper
+// either way. The path and that point are drawn on the ground while she goes (P hides or shows them).
+const STEER = { far: 1.5, near: 0.8 };
+const pathLine = new THREE.Mesh(new THREE.BufferGeometry(), new THREE.MeshBasicMaterial({ color: 0xd4a52a, transparent: true, opacity: 0.55, depthWrite: false, side: THREE.DoubleSide }));   // a ribbon 6 cm wide
+const aimDot = new THREE.Mesh(new THREE.SphereGeometry(0.05, 12, 8), new THREE.MeshBasicMaterial({ color: 0xd4a52a }));
+pathLine.visible = aimDot.visible = false; scene.add(pathLine, aimDot);
+let showPath = true, pathAt = -1;
+function drawPath() {
+  const on = !!(showPath && world && goal && mode === 'skill' && SKILLS[skill].goTo && reachedAt < 0);
+  pathLine.visible = aimDot.visible = on; if (!on || Math.abs(world.t - pathAt) < 0.2) return; pathAt = world.t;
+  const p = world.b[0].x, pts = [[p[0], supportY(p[0], p[2], p[1]), p[2]], ...navRoute(p, goal), goal], v = [], idx = [];
+  pts.forEach((q, i) => {
+    const a = pts[Math.max(0, i - 1)], c = pts[Math.min(pts.length - 1, i + 1)], dx = c[0] - a[0], dz = c[2] - a[2], l = Math.hypot(dx, dz) || 1, w = 0.03;
+    v.push(q[0] - dz / l * w, q[1] + 0.03, q[2] + dx / l * w, q[0] + dz / l * w, q[1] + 0.03, q[2] - dx / l * w);
+    if (i) { const k = 2 * i; idx.push(k - 2, k - 1, k, k - 1, k + 1, k); }
+  });
+  const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(v, 3)); geo.setIndex(idx);
+  pathLine.geometry.dispose(); pathLine.geometry = geo;
+  const a = navAim(p, goal, STEER.far, STEER.near); aimDot.position.set(a[0], a[1] + 0.05, a[2]);
+}
 let reachedAt = -1;
 function goalReached() {
   if (!goal || reachedAt >= 0) return;
@@ -1047,6 +1069,7 @@ addEventListener('keydown', e => {
   const k = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'back', ArrowDown: 'front' }[e.key];
   if (k && world && fallenAt < 0) { e.preventDefault(); push(k); }
   if (e.key === 'r') reset();
+  if (e.key === 'p') showPath = !showPath;
 });
 
 async function useSkill(name) {
