@@ -157,14 +157,14 @@ export class World {
   invI(b, v) { let l = qrot(qconj(b.q), v); l = [l[0] * b.invI[0], l[1] * b.invI[1], l[2] * b.invI[2]]; return qrot(b.q, l); }
   rotateBy(b, dw) { b.q = qnorm(qmul(qexp(dw), b.q)); }
   genW(b, r, n) { const rn = vcross(r, n); return b.invMass + vdot(rn, this.invI(b, rn)); }
-  // static friction at the position level (body.c static_friction): a resting contact's slide along the surface this
-  // substep is undone by moving the body, when holding it takes no more than mu times the normal correction ln
-  // (stick = false: the friction before it, for the skills trained without it)
-  staticFriction(b, rl, n, ln, mu) {
+  // static friction at the position level (body.c static_friction), once per body and surface after its corners: the
+  // slide along the surface this substep (at the corners' mean point) is undone by moving the body when it is at most mu
+  // times how deep the body had gone in (Coulomb's cone in displacements). stick = false: none, for skills trained without
+  // it
+  staticFriction(b, rl, n, depth, mu) {
     if (!this.stick) return;
     let dp = vsub(vadd(b.x, qrot(b.q, rl)), vadd(b.xprev, qrot(b.qprev, rl))); dp = vsub(dp, vscale(n, vdot(dp, n)));
-    const lt = vlen(dp); if (lt < 1e-12) return;
-    const w = this.genW(b, qrot(b.q, rl), vscale(dp, 1 / lt)); if (w <= 0 || lt / w > mu * Math.abs(ln)) return;
+    const lt = vlen(dp); if (lt < 1e-12 || lt > mu * depth) return;
     b.x = vsub(b.x, dp);
   }
   solvePos(b1, b2, r1, r2, n, C, alpha, cap = -1) {   // cap >= 0: the correction is at most cap (body.c solve_pos)
@@ -246,12 +246,17 @@ export class World {
         if (this.strength > 0) { const a = f / this.gripMax; this.metab += a * a; }
       }
     }
-    for (let i = 0; i < NB; i++) for (let k = 0; k < 8; k++) {
-      const b = this.b[i], r = qrot(b.q, corner(i, k)), pw = vadd(b.x, r);
-      if (pw[1] >= 0) continue;
-      const ln = this.solvePos(b, null, r, [0, 0, 0], [0, -1, 0], -pw[1], 0); this.touch[i] += Math.abs(ln) / (h * h);
-      this.staticFriction(b, corner(i, k), [0, 1, 0], ln, this.mu);
-      contacts.push([i, k, ln]);
+    for (let i = 0; i < NB; i++) {   // ground contacts at box corners; static friction once per body, after its corners
+      const b = this.b[i]; let sl = 0, nc = 0, rl = [0, 0, 0];
+      for (let k = 0; k < 8; k++) {
+        const r = qrot(b.q, corner(i, k)), pw = vadd(b.x, r);
+        if (pw[1] >= 0) continue;
+        const v0 = vadd(b.v, vcross(b.w, r))[1];   // its approach speed, before the solve (b.v is still the predicted velocity)
+        const ln = this.solvePos(b, null, r, [0, 0, 0], [0, -1, 0], -pw[1], 0); this.touch[i] += Math.abs(ln) / (h * h);
+        sl = Math.max(sl, -pw[1]); rl = vadd(rl, corner(i, k)); nc++;
+        contacts.push([i, k, ln, v0]);
+      }
+      if (nc) this.staticFriction(b, vscale(rl, 1 / nc), [0, 1, 0], sl, this.mu);
     }
     // room boxes (body.c): a corner inside one is pushed out through its nearest face, at the box's softness
     const roomContacts = [];
@@ -259,6 +264,7 @@ export class World {
       const b = this.b[i], hb = BODY_DEFS[i].half, br = Math.sqrt(hb[0] * hb[0] + hb[1] * hb[1] + hb[2] * hb[2]);
       for (const o of ROOM) {
         const dc = vsub(b.x, o.c); if (vdot(dc, dc) > (br + o.rad) * (br + o.rad)) continue;
+        let sl = 0, nc = 0, rl = [0, 0, 0], ns = [0, 0, 0];
         for (let k = 0; k < 8; k++) {
           const r = qrot(b.q, corner(i, k)), l = qrot(qconj(o.q), vsub(vadd(b.x, r), o.c));
           const dx = o.h[0] - Math.abs(l[0]), dy = o.h[1] - Math.abs(l[1]), dz = o.h[2] - Math.abs(l[2]);
@@ -266,10 +272,12 @@ export class World {
           let nl, d;
           if (dx <= dy && dx <= dz) { d = dx; nl = [l[0] < 0 ? -1 : 1, 0, 0]; } else if (dy <= dz) { d = dy; nl = [0, l[1] < 0 ? -1 : 1, 0]; } else { d = dz; nl = [0, 0, l[2] < 0 ? -1 : 1]; }
           const n = qrot(o.q, nl);
+          const v0 = vdot(vadd(b.v, vcross(b.w, r)), n);
           const ln = this.solvePos(b, null, r, [0, 0, 0], vscale(n, -1), d, o.soft); this.touch[i] += Math.abs(ln) / (h * h);
-          this.staticFriction(b, corner(i, k), n, ln, o.mu);
-          roomContacts.push([i, k, ln, n, o.mu]);
+          sl = Math.max(sl, d); rl = vadd(rl, corner(i, k)); ns = vadd(ns, n); nc++;
+          roomContacts.push([i, k, ln, n, o.mu, v0]);
         }
+        if (nc) { const nl = vlen(ns); if (nl > 1e-9) this.staticFriction(b, vscale(rl, 1 / nc), vscale(ns, 1 / nl), sl, o.mu); }
       }
     }
     for (const [ia, ib] of LEG_PAIR) {   // the legs against each other: capsules along each leg body's long axis (body.c)
@@ -289,17 +297,17 @@ export class World {
       const dq = qmul(b.q, qconj(b.qprev)), w = vscale([dq[1], dq[2], dq[3]], 2 / h);
       b.w = dq[0] >= 0 ? w : vscale(w, -1);
     }
-    for (const [i, k, ln] of contacts) {
-      const b = this.b[i], r = qrot(b.q, corner(i, k));
+    for (const [i, k, ln, v0] of contacts) {   // no restitution: a corner that came in leaves with no normal speed (the push out of
+      const b = this.b[i], r = qrot(b.q, corner(i, k));   // the surface would otherwise throw it back up: feet hopping on slopes)
       let vp = vadd(b.v, vcross(b.w, r));
-      if (vp[1] < 0) this.velImpulse(b, r, [0, 1, 0], -vp[1]);
+      if (vp[1] < 0 || v0 < 0) this.velImpulse(b, r, [0, 1, 0], -vp[1]);
       vp = vadd(b.v, vcross(b.w, r)); const vt = [vp[0], 0, vp[2]], s = vlen(vt);
       if (s > 1e-9) this.velImpulse(b, r, vscale(vt, 1 / s), -Math.min(s, this.mu * Math.abs(ln) / h));
     }
-    for (const [i, k, ln, n, mu] of roomContacts) {
+    for (const [i, k, ln, n, mu, v0] of roomContacts) {
       const b = this.b[i], r = qrot(b.q, corner(i, k));
       let vp = vadd(b.v, vcross(b.w, r)), vn = vdot(vp, n);
-      if (vn < 0) this.velImpulse(b, r, n, -vn);
+      if (vn < 0 || v0 < 0) this.velImpulse(b, r, n, -vn);
       vp = vadd(b.v, vcross(b.w, r)); vn = vdot(vp, n); const vt = vsub(vp, vscale(n, vn)), s = vlen(vt);
       if (s > 1e-9) this.velImpulse(b, r, vscale(vt, 1 / s), -Math.min(s, mu * Math.abs(ln) / h));
     }

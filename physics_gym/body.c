@@ -129,18 +129,19 @@ static BHD Vec leg_axis(int i) { return leg_is_foot(i) ? v3(0, 0, 1) : v3(0, 1, 
 static BHD double leg_rad(int i) { const Vec h = BODY_DEFS[i].half; return 0.9 * fmin(h.x, leg_is_foot(i) ? h.y : h.z); }
 static BHD double leg_half(int i) { const Vec h = BODY_DEFS[i].half; return fmax(0, (leg_is_foot(i) ? h.z : h.y) - leg_rad(i)); }
 /* Static friction at the position level (after Mueller et al. 2020, "Detailed Rigid Body Simulation with Extended
- * Position Based Dynamics"): after a contact's normal correction ln, the contact point's slide along the surface during
- * this substep (from the body's pose at its start) is undone, when holding it takes no more than mu times the normal
- * correction (judged at the contact point, its inverse effective mass along the slide); a bigger slide is left to the kinetic friction of the velocity pass. The slide is undone by moving the
- * body (no turn): turning it about one corner moved its other corners, and correcting corner by corner in a fixed order
- * then walked the feet along flat ground. Without it a resting contact crept downhill on any slope (lying limp:
- * 1 cm/s at 8 degrees, 2.3 cm/s at 18): ramps felt like ice. */
-static BHD void static_friction(Body *b, Vec rl, Vec n, double ln, double mu) {
+ * Position Based Dynamics"), once per body and surface after its corners' normal corrections: the slide along the
+ * surface during this substep (from the body's pose at its start, at the touching corners' mean point) is undone when
+ * it is at most mu times how deep the body had gone in (the deepest corner): Coulomb's cone in displacements, so a
+ * block on a slope holds while tan(slope) <= mu. A bigger slide is left to the kinetic friction of the velocity pass.
+ * The slide is undone by moving the body (no turn): turning it about one corner moved its other corners, and
+ * correcting corner by corner in a fixed order walked the feet along flat ground. Ramps felt like ice twice: with no
+ * static friction (a resting contact crept downhill) and with it judged corner by corner against each corner's share
+ * of the load measured as a correction impulse (a light foot's corrections go mostly into turning it, so a loaded
+ * foot read as barely pressed and slid). */
+static BHD void static_friction(Body *b, Vec rl, Vec n, double depth, double mu) {
     const Vec p = vadd(b->x, qrot(b->q, rl)), p0 = vadd(b->xprev, qrot(b->qprev, rl));
     Vec dp = vsub(p, p0); dp = vsub(dp, vscale(n, vdot(dp, n))); const double lt = vlen(dp);
-    if (lt < 1e-12) return;
-    Vec k; const double w = gen_w_k(b, qrot(b->q, rl), vscale(dp, 1 / lt), &k);   /* the contact point's inverse effective mass along the slide */
-    if (w <= 0 || lt / w > mu * fabs(ln)) return;
+    if (lt < 1e-12 || lt > mu * depth) return;
     b->x = vsub(b->x, dp);
 }
 static BHD Vec corner(int i, int k) { const Vec hf = BODY_DEFS[i].half; return v3(CORNER[k][0] * hf.x, CORNER[k][1] * hf.y, CORNER[k][2] * hf.z); }
@@ -253,7 +254,7 @@ void (*body_debug)(World *, int) = 0;
 #endif
 static BHD void substep(World *W) {
     const double h = W->h;
-    int cb[NB * NCORNER], ck[NB * NCORNER], nc = 0; double cl[NB * NCORNER];
+    int cb[NB * NCORNER], ck[NB * NCORNER], nc = 0; double cl[NB * NCORNER], cv0[NB * NCORNER];
     for (int i = 0; i < NB; i++) {
         Body *b = W->b + i;
         b->v.y -= h * G_ACC;
@@ -316,26 +317,32 @@ static BHD void substep(World *W) {
         }
     }
     BODY_DEBUG(W, 1);
-    /* ground contacts (y = 0) at box corners; friction acts in the velocity pass */
+    /* ground contacts (y = 0) at box corners; dynamic friction acts in the velocity pass, static friction once per body
+     * after its corners (static_friction) */
     for (int i = 0; i < NB; i++) {
         const Vec hf = BODY_DEFS[i].half; if (W->b[i].x.y * W->b[i].x.y > vdot(hf, hf) && W->b[i].x.y > 0) continue;   /* above its bounding sphere: no corner can touch */
+        Body *b = W->b + i; double sl = 0; int n0 = 0; Vec rs = v3(0, 0, 0);
         for (int k = 0; k < NCORNER; k++) {
-        Body *b = W->b + i; Vec r = qrot(b->q, corner(i, k)), pw = vadd(b->x, r);
+        Vec r = qrot(b->q, corner(i, k)), pw = vadd(b->x, r);
         if (pw.y >= 0) continue;
+        const double v0 = vadd(b->v, vcross(b->w, r)).y;   /* its approach speed before the solve (b->v is still the predicted velocity) */
         double ln = solve_pos(b, NULL, r, v3(0, 0, 0), v3(0, -1, 0), -pw.y, 0, h, -1);
         W->touch[i] += fabs(ln) / (h * h);   /* the contact force this substep (N) */
-        static_friction(b, corner(i, k), v3(0, 1, 0), ln, W->mu);
-        cb[nc] = i; ck[nc] = k; cl[nc++] = ln;
-    } }
+        sl = fmax(sl, -pw.y); rs = vadd(rs, corner(i, k)); n0++;
+        cb[nc] = i; ck[nc] = k; cv0[nc] = v0; cl[nc++] = ln;
+        }
+        if (n0) static_friction(b, vscale(rs, 1.0 / n0), v3(0, 1, 0), sl, W->mu);
+    }
     /* room boxes: a corner inside one is pushed out through the face it is nearest, at the box's softness (XPBD
      * compliance; foam gives a little); friction along that face in the velocity pass */
-    int rb[ROOM_CONTACTS], rk[ROOM_CONTACTS], nr = 0; double rl[ROOM_CONTACTS], rmu[ROOM_CONTACTS]; Vec rn[ROOM_CONTACTS];
+    int rb[ROOM_CONTACTS], rk[ROOM_CONTACTS], nr = 0; double rl[ROOM_CONTACTS], rmu[ROOM_CONTACTS], rv0[ROOM_CONTACTS]; Vec rn[ROOM_CONTACTS];
     const int R = W->room, RN = room_n[R];
     for (int i = 0; i < NB && RN; i++) {
         Body *b = W->b + i; const double br = vlen(BODY_DEFS[i].half);
         for (int j = 0; j < RN; j++) {
             const RoomBox *o = room_box[R] + j; const Vec dc = vsub(b->x, o->c);
             if (vdot(dc, dc) > (br + o->rad) * (br + o->rad)) continue;   /* bounding spheres apart */
+            double sl = 0; int n0 = 0; Vec rs = v3(0, 0, 0), ns = v3(0, 0, 0);
             for (int k = 0; k < NCORNER; k++) {
                 const Vec r = qrot(b->q, corner(i, k)), l = qrot(qconj(o->q), vsub(vadd(b->x, r), o->c));
                 const double dx = o->h.x - fabs(l.x), dy = o->h.y - fabs(l.y), dz = o->h.z - fabs(l.z);
@@ -345,11 +352,13 @@ static BHD void substep(World *W) {
                 else if (dy <= dz) { d = dy; nl = v3(0, l.y < 0 ? -1 : 1, 0); }
                 else { d = dz; nl = v3(0, 0, l.z < 0 ? -1 : 1); }
                 const Vec n = qrot(o->q, nl);   /* outward */
+                const double v0 = vdot(vadd(b->v, vcross(b->w, r)), n);
                 const double ln = solve_pos(b, NULL, r, v3(0, 0, 0), vscale(n, -1), d, o->soft, h, -1);
                 W->touch[i] += fabs(ln) / (h * h);
-                static_friction(b, corner(i, k), n, ln, o->mu);
-                if (nr < ROOM_CONTACTS) { rb[nr] = i; rk[nr] = k; rl[nr] = ln; rn[nr] = n; rmu[nr] = o->mu; nr++; }
+                sl = fmax(sl, d); rs = vadd(rs, corner(i, k)); ns = vadd(ns, n); n0++;
+                if (nr < ROOM_CONTACTS) { rb[nr] = i; rk[nr] = k; rl[nr] = ln; rn[nr] = n; rmu[nr] = o->mu; rv0[nr] = v0; nr++; }
             }
+            if (n0) { const double nl = vlen(ns); if (nl > 1e-9) static_friction(b, vscale(rs, 1.0 / n0), vscale(ns, 1 / nl), sl, o->mu); }
         }
     }
     /* the legs against each other: each leg body is a capsule along its long axis (thighs and shins: y, feet: z), a
@@ -376,18 +385,19 @@ static BHD void substep(World *W) {
         Quat dq = qmul(b->q, qconj(b->qprev)); Vec w = vscale(v3(dq.x, dq.y, dq.z), 2 / h);
         b->w = dq.w >= 0 ? w : vscale(w, -1);
     }
-    /* contact velocities: no bounce, dynamic friction up to mu * normal impulse */
+    /* contact velocities: no bounce (a corner that came in leaves with no normal speed: the push out of the surface
+     * would otherwise throw it back up, feet hopping on slopes), dynamic friction up to mu * normal impulse */
     for (int c = 0; c < nc; c++) {
         Body *b = W->b + cb[c]; Vec r = qrot(b->q, corner(cb[c], ck[c]));
         Vec vp = vadd(b->v, vcross(b->w, r));
-        if (vp.y < 0) vel_impulse(b, r, v3(0, 1, 0), -vp.y);
+        if (vp.y < 0 || cv0[c] < 0) vel_impulse(b, r, v3(0, 1, 0), -vp.y);
         vp = vadd(b->v, vcross(b->w, r)); Vec vt = v3(vp.x, 0, vp.z); double s = vlen(vt);
         if (s > 1e-9) { double dv = fmin(s, W->mu * fabs(cl[c]) / h); vel_impulse(b, r, vscale(vt, 1 / s), -dv); }
     }
     for (int c = 0; c < nr; c++) {   /* the room's contacts, the same along each contact's own normal */
         Body *b = W->b + rb[c]; const Vec r = qrot(b->q, corner(rb[c], rk[c])), n = rn[c];
         Vec vp = vadd(b->v, vcross(b->w, r)); double vn = vdot(vp, n);
-        if (vn < 0) vel_impulse(b, r, n, -vn);
+        if (vn < 0 || rv0[c] < 0) vel_impulse(b, r, n, -vn);
         vp = vadd(b->v, vcross(b->w, r)); vn = vdot(vp, n); const Vec vt = vsub(vp, vscale(n, vn)); const double s = vlen(vt);
         if (s > 1e-9) { const double dv = fmin(s, rmu[c] * fabs(rl[c]) / h); vel_impulse(b, r, vscale(vt, 1 / s), -dv); }
     }
