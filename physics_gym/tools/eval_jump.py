@@ -1,7 +1,7 @@
 """eval_jump.py: a jump tracker (task getup_imitate over a jump course bank, env.c course mode) with no hand-up.
     python3 tools/eval_jump.py PREFIX COURSES.json [N]
 Each of N environments plays one episode (8 s) from a random moment of its room's clip. Of those that start on the
-takeoff platform, counts the ones that get across and stand on the landing platform (pelvis over it, feet on it), per
+takeoff platform (and of those with at least 0.5 s of run-up there: a full jump), counts the ones that get across and stand on the landing platform (pelvis over it, upright, for a second), per
 clip; and how many drop into the gap (start over)."""
 import sys, os, json, struct, ctypes, numpy as np, torch
 B = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'); sys.path.insert(0, os.path.join(B, 'gpu')); import nanotss_torch as nt, gpu_env as ge
@@ -23,6 +23,8 @@ room = [L.pool_room(pool.p, e) for e in range(n)]; buf = np.zeros(3)
 def pelvis(e): L.pool_pelvis(pool.p, e, buf.ctypes.data_as(ctypes.c_void_p)); return buf.copy()
 start_a = [on_box(doc["rooms"][room[e]]["boxes"][0], pelvis(e)) for e in range(n)]
 landed = np.zeros(n, bool); dropped = np.zeros(n, bool); alive = np.ones(n, bool); state = m.zero_state(n)
+left_a = np.full(n, -1)   # the step her pelvis first leaves the takeoff platform
+on_b = np.zeros(n, int)   # consecutive steps standing on the landing platform (30: a second, landed)
 with torch.no_grad():
     for t in range(240):
         ob = pool.obs(); on = ((ob - mean) / sd).clamp(-5, 5)
@@ -32,9 +34,15 @@ with torch.no_grad():
             if not alive[e]: continue
             if done[e]: dropped[e] |= bool(r["fell"][e]); alive[e] = False; continue
             p = pelvis(e); R = doc["rooms"][room[e]]
-            if on_box(R["boxes"][1], p) and p[1] - R["height"] > 0.6: landed[e] = True
+            if left_a[e] < 0 and not on_box(R["boxes"][0], p): left_a[e] = t
+            on_b[e] = on_b[e] + 1 if on_box(R["boxes"][1], p) and p[1] - R["height"] > 0.6 else 0
+            if on_b[e] >= 30: landed[e] = True
 print(f"{pre}: {n} episodes; ended early (dropped or drifted off the clip) {int(dropped.sum())}")
 for k, c in enumerate(clips):
     idx = [e for e in range(n) if room[e] % len(clips) == k and start_a[e]]
     print(f"  {c:10s} gap {doc['rooms'][k]['gap']:.2f} m: started on the takeoff platform {len(idx)}, landed and stood on the far one {int(sum(landed[e] for e in idx))}")
 idx = [e for e in range(n) if start_a[e]]; print(f"  all: {int(sum(landed[e] for e in idx))} of {len(idx)}")
+full = [e for e in range(n) if start_a[e] and (left_a[e] < 0 or left_a[e] >= 15)]   # at least 0.5 s of run-up on the takeoff platform: the takeoff is hers
+print(f"  full jumps (0.5 s or more of run-up before leaving the takeoff platform): {int(sum(landed[e] for e in full))} of {len(full)}")
+for k, c in enumerate(clips):
+    f = [e for e in full if room[e] % len(clips) == k]; print(f"    {c:10s} {int(sum(landed[e] for e in f))} of {len(f)}")

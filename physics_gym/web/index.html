@@ -436,7 +436,7 @@ const SKILLS = {
 // ground), set down where she stands and turned to her heading, from the frame of its run-up nearest her pose; the clip
 // then plays on as the reference she follows (actions round its pose, as the get-up tracker). Once she has landed and
 // the clip is done, the next jump. Dropping into a gap, or falling over, starts the course again.
-const JUMP = { clips: 'jump_clips.json', bank: 'jump_bank.json', order: ['fjump1', 'run_leap2', 'fjump2', 'run_jump2', 'run_leap1', 'run_jump1'], height: 0.58, actMul: 2.5 };
+const JUMP = { clips: 'jump_clips.json', bank: 'jump_bank.json', order: ['fjump2', 'fjump1', 'run_leap2', 'run_leap1'], height: 0.58, actMul: 2.5 };
 let jumpClips = null, jumpBank = null, jump = null;   // jump: { n, clip, t0, start, T: { yaw, x, z }, landed }
 // Getting up (TASK_GETUP) is not a button: it takes over when she falls, or when Stand up is pressed while she
 // crawls, and hands back to Balance once she stands calmly.

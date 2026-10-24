@@ -160,6 +160,7 @@ BHD void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
         if (course(E)) E->rc = cfg->style[E->W.room % cfg->nstyle];   /* the clip its room was built round */
         const Clip *c = E->rc; const double T = (c->frames - 1) / c->fps;
         E->t0 = cfg->fixed_start ? 0 : env_rand(&E->rng) * T * (cfg->nstyle > 0 ? 0.85 : 1);
+        if (course(E) && !cfg->fixed_start) E->t0 *= 0.7 / 0.85;   /* a course: mostly from the run-up, so the takeoff gets practised (not only the landing) */
         E->clip_shift = v3(0, 0, 0);
         Quat rel[NB], rel2[NB], wq[NB]; Vec root, root2; const double dt = 1.0 / CTRL_HZ;
         ref_at(E, E->t0, rel, wq, &root); ref_at(E, E->t0 + dt, rel2, wq, &root2);
@@ -706,12 +707,15 @@ static BHD double env_end(Env *E, double act2) {
     if (floor_task(E)) return floor_reward(E, act2);
     if (E->cfg.task == TASK_GOTO) return goto_reward(E, act2);
     int fell = clip_set(E) ? 0 : fallen(W);   /* (a get-up's reference lies on the floor: only drifting off it ends one) */
-    if (course(E) && fmin(world_lowest(W, L_FOOT), world_lowest(W, R_FOOT)) < E->clip_shift.y - 0.25) fell = 1;   /* down in the gap: start over */
+    if (course(E)) {   /* down in the gap, or lying on a platform (a landing that crumples): start over, as the viewer does */
+        const Vec P = W->b[PELVIS].x; const double sp = support_y(W->room, P.x, P.z, P.y);
+        if (fmin(world_lowest(W, L_FOOT), world_lowest(W, R_FOOT)) < E->clip_shift.y - 0.25 || (P.y - sp < 0.4 && W->b[HEAD].x.y - sp < 0.7)) fell = 1;
+    }
     if (E->cfg.task == TASK_IMITATE) {
         ref_at(E, env_phase(E), E->ref, E->ref_world, &E->ref_root);
         Vec er = vsub(W->b[PELVIS].x, E->ref_root);
         const int fh = E->cfg.free_heading;
-        if (!fh && vlen(er) > 0.6) fell = 1;   /* drifted off the reference: end the episode */
+        if (!fh && vlen(er) > (course(E) ? 1.0 : 0.6)) fell = 1;   /* drifted off the reference: end the episode (a course allows a short or long jump that still lands) */
         if (fell || E->step >= E->cfg.steps) E->done = 1;
         if (fell) return 0;
         /* pose: body world rotations; velocity: body angular velocity against the reference's */
