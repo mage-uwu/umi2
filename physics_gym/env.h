@@ -83,7 +83,8 @@ typedef struct {
                           * (the CMU get-ups): each episode imitates one, from a random point, once through and then holding
                           * its last frame, with no phase input and the floor tasks' heading frame and hinge limits, so the
                           * policy reads from her body where in the motion she is (and TASK_GETUP can carry on from it) */
-    double style_start;  /* TASK_GETUP: share of episodes starting in a random frame of a style clip */
+    double style_start;  /* TASK_GETUP: share of episodes starting in a random frame of a style clip. TASK_IMITATE over a clip set:
+                          * share starting from a real fall, the nearest clip frame taking over (env.c matched_start) */
     int free_heading;    /* TASK_IMITATE: imitate the clip's style, not its path: posture, limbs and speed in her own heading frame;
                           * only a fall ends the episode (not drifting off the clip's line), so she learns to recover */
     double goal_tops;    /* TASK_GOTO: share of goals put on top of a room box (a stair landing, platform, foam, stone; at most

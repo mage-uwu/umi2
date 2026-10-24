@@ -56,6 +56,7 @@ BHD void crawl_pose(Quat *rel, Quat *root_q) {
 
 static BHD void goto_reset(Env *E);
 static BHD int nav_on(const Env *E);
+static BHD void matched_start(Env *E);
 static BHD Vec nav_waypoint(const Env *E, double *len);
 static BHD Vec hinge_axis(int h) { return h == 1 ? v3(1, 0, 0) : h == 2 ? v3(0, 1, 0) : v3(0, 0, 1); }
 
@@ -148,6 +149,7 @@ BHD void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
     for (int k = 0; k < 2; k++) { E->foot_on[k] = 1; E->foot_vy[k] = 0; }
     E->next_push = 0.5 + env_rand(&E->rng) * 2 * cfg->push_every;
     E->rc = cfg->clip;
+    if (cfg->task == TASK_IMITATE && cfg->nstyle > 0 && cfg->style_start > 0 && env_rand(&E->rng) < cfg->style_start) { matched_start(E); return; }
     if (cfg->task == TASK_IMITATE) {
         if (cfg->nstyle > 0) E->rc = cfg->style[(int)(env_rand(&E->rng) * cfg->nstyle) % cfg->nstyle];   /* a clip of the set */
         const Clip *c = E->rc; const double T = (c->frames - 1) / c->fps;
@@ -319,6 +321,49 @@ static BHD double style_reward(Env *E) {
     if (!E->style_has_prev) best *= 2;
     memcpy(E->style_prev, cur, sizeof cur); E->style_has_prev = 1;
     return b_exp(-best / NJ);
+}
+/* TASK_IMITATE over a clip set, a share (style_start) of its episodes: a real fall first (limp, shoved, settling where
+ * she lands; or on all fours), then the clip frame nearest her pose (pose_features, all frames of the set) is where the
+ * reference picks up. She is turned about the vertical to the frame's heading (the floor does not mind) and the clip
+ * is shifted under her, so the tracking reward and the drift limit apply as from a clip's own frame; she learns to
+ * join a get-up from wherever a fall left her (the viewer does the same matching when she falls). */
+static BHD double floor_yaw(Quat q) { const Vec f = vadd(qrot(q, v3(0, 0, 1)), qrot(q, v3(0, 1, 0))); return b_atan2(f.x, f.z); }
+static BHD void matched_start(Env *E) {
+    World *W = &E->W; Quat rel[NB], rq;
+    const int fall = env_rand(&E->rng) < 0.6;
+    crawl_pose(rel, &rq); if (fall) stand_pose(rel), rq = QID;
+    for (int i = 1; i < NB; i++) {
+        const double nz = env_randn(&E->rng), ny = env_randn(&E->rng), nx = env_randn(&E->rng); Vec n = v3(nx, ny, nz);
+        if (BODY_DEFS[i].hinge) n = vscale(hinge_axis(BODY_DEFS[i].hinge), n.x);
+        rel[i] = qmul(rel[i], qexp(vscale(n, 0.15)));
+    }
+    rq = qmul(qexp(v3(0, env_rand(&E->rng) * 2 * M_PI, 0)), rq);
+    world_pose(W, v3(0, 1, 0), rq, rel, v3(0, 0, 0)); for (int i = 0; i < NB; i++) W->target[i] = rel[i];
+    settle_to_ground(W);
+    if (fall) {
+        const double a = env_rand(&E->rng) * 2 * M_PI, sp = 1 + 2 * env_rand(&E->rng);
+        for (int i = 0; i < NB; i++) W->b[i].v = vscale(v3(b_cos(a), 0, b_sin(a)), sp * (W->b[i].x.y / 1.2));
+        W->kp_scale = 0.03; for (int s = 0; s < 75; s++) world_step(W); W->kp_scale = 1;
+    } else for (int s = 0; s < 10; s++) world_step(W);
+    /* the nearest frame of the set */
+    Quat wq[NB]; for (int i = 0; i < NB; i++) wq[i] = W->b[i].q;
+    float cur[STYLE_FEAT]; pose_features(wq, cur);
+    const Clip *bc = E->cfg.style[0]; int bt = 0; double best = 1e30;
+    for (int k = 0; k < E->cfg.nstyle; k++) for (int i = 0; i < style_n; i++) if (style_clips[i].c == E->cfg.style[k]) {
+        const StyleClip *sc = style_clips + i;
+        for (int t = 0; t < sc->n - 1; t++) { const double d = feat_dist(cur, sc->f + (size_t)t * STYLE_FEAT); if (d < best) { best = d; bc = sc->c; bt = t; } }
+    }
+    E->rc = bc; E->t0 = bt / bc->fps;
+    /* her turned to the frame's heading, about her pelvis; the clip shifted under her */
+    Vec root; Quat rw[NB]; mref_sample(bc, E->t0, &root, rw, NULL);
+    const Quat turn = qexp(v3(0, floor_yaw(rw[PELVIS]) - floor_yaw(W->b[PELVIS].q), 0)); const Vec p0 = W->b[PELVIS].x;
+    for (int i = 0; i < NB; i++) {
+        Body *b = W->b + i; b->x = vadd(p0, qrot(turn, vsub(b->x, p0))); b->q = qnorm(qmul(turn, b->q)); b->v = qrot(turn, b->v); b->w = qrot(turn, b->w);
+        b->xprev = b->x; b->qprev = b->q;
+    }
+    E->clip_shift = v3(p0.x - root.x, 0, p0.z - root.z); W->t = 0;
+    ref_at(E, E->t0, E->ref, E->ref_world, &E->ref_root);
+    for (int i = 0; i < NB; i++) W->target[i] = E->ref[i];
 }
 static BHD double pose_err(const World *W, const Quat *ref) {
     double e2 = 0; for (int i = 1; i < NB; i++) { Quat rel = qmul(qconj(W->b[BODY_DEFS[i].parent].q), W->b[i].q); Vec e = qlog(qmul(rel, qconj(ref[i]))); e2 += vdot(e, e); }

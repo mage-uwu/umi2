@@ -23,6 +23,7 @@ CASES = {
     "bank": dict(task="goto", room=os.path.join(ge.BODY, "rooms_bank.json")),
     "nav": dict(task="goto", goal_tops=0.5, room=os.path.join(ge.BODY, "rooms_nav.json")),   # the slope gym and stage 1 together, with the path helper (python3 room.py --stage 2 ...; gpu/pod_unified.sh merges them)   # per-world rooms (python3 room.py --bank 32 --out rooms_bank.json)   # go-to with both hands always trying to close (the grip constraint exercised)
     "getup_imitate": dict(task="getup_imitate", style=f"{D}/cmu_ref.bin:getup_back1,getup_back2,getup_face1,getup_face2,getup_side1,getup_side2", assist=0.3),
+    "getup_track": dict(task="getup_imitate", style=f"{D}/cmu_ref.bin:getup_back1,getup_back2,getup_face1,getup_face2,getup_side1,getup_side2", style_start=0.5, assist=0.3),   # half from real falls, the nearest frame taking over
     "getup": dict(task="getup", style=f"{D}/cmu_ref.bin:getup_back1,getup_back2,getup_face1,getup_face2,getup_side1,getup_side2", style_start=0.3),
 }
 
