@@ -120,6 +120,12 @@ const char *tss_set_room_bank(int r, const double *v, int n, int nb) {
 }
 const char *tss_set_room(const double *v, int n) { return tss_set_room_bank(0, v, n, n ? 1 : 0); }
 /* the hand-up assist, from the next step on: in the TaskCfg new episodes copy, and in every running environment */
+__global__ void k_fall(int n) { const int i = blockIdx.x * blockDim.x + threadIdx.x; if (i < n) fall_make(i); }
+const char *tss_fall_bank(void) {   /* the matched starts' falls, as env_fall_bank builds them (once) */
+    int n; cudaMemcpyFromSymbol(&n, fall_n, sizeof n); if (n) return NULL;
+    k_fall<<<GRID(FALL_N)>>>(FALL_N); n = FALL_N; cudaMemcpyToSymbol(fall_n, &n, sizeof n);
+    cudaError_t r = cudaDeviceSynchronize(); return r == cudaSuccess ? NULL : cudaGetErrorString(r);
+}
 __global__ void k_set_assist(Env *envs, int n, double a) { const int e = blockIdx.x * blockDim.x + threadIdx.x; if (e < n) envs[e].cfg.assist = a; }
 void tss_cfg_set_assist(void *cfg, void *envs, int n, double a) {
     cudaMemcpy((char *)cfg + offsetof(TaskCfg, assist), &a, sizeof a, cudaMemcpyHostToDevice);

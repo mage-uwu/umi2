@@ -105,7 +105,7 @@ def cuda_lib():
         L.tss_set_style.argtypes = [vp, vp, vp, i]
         L.tss_reset.argtypes = [vp, vp, i, vp, vp, vp]; L.tss_obs.argtypes = [vp, i, vp, vp]
         L.tss_set_room.restype = ctypes.c_char_p; L.tss_set_room.argtypes = [vp, i]
-        L.tss_set_room_bank.restype = ctypes.c_char_p; L.tss_set_room_bank.argtypes = [i, vp, i, i]
+        L.tss_fall_bank.restype = ctypes.c_char_p; L.tss_set_room_bank.restype = ctypes.c_char_p; L.tss_set_room_bank.argtypes = [i, vp, i, i]
         L.tss_step.argtypes = [vp, i, vp, vp, vp, vp, vp, vp, vp]; L.tss_urand.argtypes = [vp, i, i, vp, vp]
         err = L.tss_init()
         if err: raise RuntimeError(err.decode())
@@ -167,6 +167,9 @@ class GpuPool(_Pool):
             arr = lambda xs, ct: (ct * len(xs))(*xs)
             err = L.tss_set_style(arr([b.data_ptr() for b in style_bufs], ctypes.c_void_p), arr([cl[nm]["frames"] for nm in t["style"]], ctypes.c_int),
                                   arr([f.data_ptr() for f in feats], ctypes.c_void_p), len(style_bufs))
+            if err: raise RuntimeError(err.decode())
+        if task == "getup_imitate" and t["style_start"] > 0:   # the matched starts' falls (env.c fall_make)
+            err = L.tss_fall_bank()
             if err: raise RuntimeError(err.decode())
         self.cfg = torch.empty(L.tss_cfg_size(), dtype=torch.uint8, device=self.dev)
         sp = (ctypes.c_void_p * 8)(*[b.data_ptr() for b in style_bufs])

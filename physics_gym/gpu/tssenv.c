@@ -63,6 +63,7 @@ Pool *pool_new(int n, const char *task, const char *mref, const char *style, dou
             const Clip *cl = mref_find(&P->SM, tok); if (!cl) { fprintf(stderr, "no clip %s\n", tok); return NULL; }
             env_style_prepare(cl); tc->style[tc->nstyle++] = cl; }
         tc->clip = tc->style[0];
+        if (tc->style_start > 0) env_fall_bank();
     } else if (strcmp(task, "balance")) {
         if (mref_load(mref, &P->M) || !(tc->clip = mref_find(&P->M, task))) { fprintf(stderr, "no clip %s in %s\n", task, mref); return NULL; }
         tc->task = TASK_IMITATE; tc->init_noise = 0;

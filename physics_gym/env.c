@@ -333,23 +333,51 @@ static BHD double match_dist(const float *a, const float *b, double ha, double h
     return d + 20 * (ha - hb) * (ha - hb);   /* 0.5 m of height: about as far as 1.2 rad over the joints */
 }
 static BHD double floor_yaw(Quat q) { const Vec f = vadd(qrot(q, v3(0, 0, 1)), qrot(q, v3(0, 1, 0))); return b_atan2(f.x, f.z); }
-static BHD void matched_start(Env *E) {
-    World *W = &E->W; Quat rel[NB], rq;
-    const int fall = env_rand(&E->rng) < 0.6;
+/* Where a fall leaves her: on all fours with noise and settled, or limp from standing, shoved, and settled where she lands. */
+static BHD void limp_fall(World *W, uint64_t *rng, int steps) {
+    Quat rel[NB], rq; const int fall = env_rand(rng) < 0.6;
     crawl_pose(rel, &rq); if (fall) stand_pose(rel), rq = QID;
     for (int i = 1; i < NB; i++) {
-        const double nz = env_randn(&E->rng), ny = env_randn(&E->rng), nx = env_randn(&E->rng); Vec n = v3(nx, ny, nz);
+        const double nz = env_randn(rng), ny = env_randn(rng), nx = env_randn(rng); Vec n = v3(nx, ny, nz);
         if (BODY_DEFS[i].hinge) n = vscale(hinge_axis(BODY_DEFS[i].hinge), n.x);
         rel[i] = qmul(rel[i], qexp(vscale(n, 0.15)));
     }
-    rq = qmul(qexp(v3(0, env_rand(&E->rng) * 2 * M_PI, 0)), rq);
+    rq = qmul(qexp(v3(0, env_rand(rng) * 2 * M_PI, 0)), rq);
     world_pose(W, v3(0, 1, 0), rq, rel, v3(0, 0, 0)); for (int i = 0; i < NB; i++) W->target[i] = rel[i];
     settle_to_ground(W);
     if (fall) {
-        const double a = env_rand(&E->rng) * 2 * M_PI, sp = 1 + 2 * env_rand(&E->rng);
+        const double a = env_rand(rng) * 2 * M_PI, sp = 1 + 2 * env_rand(rng);
         for (int i = 0; i < NB; i++) W->b[i].v = vscale(v3(b_cos(a), 0, b_sin(a)), sp * (W->b[i].x.y / 1.2));
-        W->kp_scale = 0.03; for (int s = 0; s < 40; s++) world_step(W); W->kp_scale = 1;   /* (1.3 s: the reset runs inside the batch's step) */
+        W->kp_scale = 0.03; for (int s = 0; s < steps; s++) world_step(W); W->kp_scale = 1;
     } else for (int s = 0; s < 10; s++) world_step(W);
+}
+/* The falls for the matched starts, simulated once (env_fall_bank, tss_fall_bank) rather than in each reset: a reset runs
+ * inside the batch's step, and on the GPU one environment's fall held up the whole step. Pelvis over the origin. */
+#ifdef __CUDACC__
+__device__ FallState fall_bank[FALL_N]; __device__ int fall_n;   /* filled by tssenv_kernels.cu */
+#else
+static FallState fall_bank[FALL_N]; static int fall_n;
+#endif
+BHD void fall_make(int i) {
+    World W; world_init(&W, 45, 20, 1.0 / CTRL_HZ); uint64_t rng = (uint64_t)(i + 1) * 0x9E3779B97F4A7C15ULL + 1;
+    limp_fall(&W, &rng, 75);
+    FallState *f = fall_bank + i; const Vec p0 = W.b[PELVIS].x;
+    for (int k = 0; k < NB; k++) { f->x[k] = v3(W.b[k].x.x - p0.x, W.b[k].x.y, W.b[k].x.z - p0.z); f->q[k] = W.b[k].q; f->v[k] = W.b[k].v; f->w[k] = W.b[k].w; }
+}
+#ifndef __CUDACC__
+void env_fall_bank(void) {
+    if (fall_n) return;
+#pragma omp parallel for schedule(dynamic)
+    for (int i = 0; i < FALL_N; i++) fall_make(i);
+    fall_n = FALL_N;
+}
+#endif
+static BHD void matched_start(Env *E) {
+    World *W = &E->W;
+    if (fall_n) {   /* a fall of the bank (her heading is set below, from the frame matched) */
+        const FallState *f = fall_bank + (int)(env_rand(&E->rng) * fall_n) % fall_n;
+        for (int i = 0; i < NB; i++) { Body *b = W->b + i; b->x = b->xprev = f->x[i]; b->q = b->qprev = f->q[i]; b->v = f->v[i]; b->w = f->w[i]; }
+    } else limp_fall(W, &E->rng, 40);
     /* the nearest frame of the set: joint angles, and (weighted up) the pelvis's tilt and height, since a limp body's
      * straight legs and loose arms are also a standing pose's */
     Quat wq[NB]; for (int i = 0; i < NB; i++) wq[i] = W->b[i].q;

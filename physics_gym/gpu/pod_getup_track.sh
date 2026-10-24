@@ -2,7 +2,8 @@
 # Batch job for a GPU pod (run from a clone of the repo, the file server already started on :8000 over /w/out):
 # the get-up tracker, from wherever a fall leaves her. From the clip-set imitation (data/clean/warm/getup_imit), 40% of the
 # episodes start from a real fall (limp and shoved, or on all fours) with the nearest frame of the six CMU get-ups taking
-# over as the reference (env.c matched_start), half from a random frame of a clip; the hand-up toward the reference
+# over as the reference (env.c matched_start: the falls of a bank simulated once), the rest from a random frame of a
+# clip; the hand-up toward the reference
 # adapting down from 0.3. The viewer does the same matching when she falls and runs this policy along the clip.
 G=/w/repo/physics_gym/gpu; B=/w/repo/physics_gym; O=/w/out; ST=$B/data/cmu_ref.bin:getup_back1,getup_back2,getup_face1,getup_face2,getup_side1,getup_side2
 { nvidia-smi; python3 -c "import torch;print(torch.__version__, torch.cuda.get_device_name(0))"; } > $O/system.txt 2>&1

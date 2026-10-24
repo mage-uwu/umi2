@@ -126,6 +126,10 @@ BHD void crawl_pose(Quat *rel, Quat *root_q);
  * (0.23 Hz) and sideways (0.17 Hz) counterbalanced at the hips and spine, a slow weight shift between the
  * legs (0.07 Hz), breathing in the chest (0.25 Hz) and slow drifts of the head. */
 BHD void sway_pose(Quat *rel, double t, double amp);
+#define FALL_N 1024   /* the matched starts' falls (env.c fall_make), simulated once */
+typedef struct { Vec x[NB], v[NB], w[NB]; Quat q[NB]; } FallState;
+BHD void fall_make(int i);
+void env_fall_bank(void);   /* the CPU build's bank; the GPU's is tss_fall_bank */
 BHD void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed);
 BHD void env_obs(const Env *E, float *obs);
 BHD double env_step(Env *E, const float *act);   /* returns the reward; sets E->done on a fall or at the end */
