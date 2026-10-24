@@ -58,6 +58,7 @@ static BHD void goto_reset(Env *E);
 static BHD int nav_on(const Env *E);
 static BHD void matched_start(Env *E);
 static BHD Vec nav_waypoint(const Env *E, double *len);
+static BHD Vec nav_ahead(const Env *E, int steps, double *len);
 static BHD Vec hinge_axis(int h) { return h == 1 ? v3(1, 0, 0) : h == 2 ? v3(0, 1, 0) : v3(0, 0, 1); }
 
 BHD double env_phase(const Env *E) { return E->cfg.task == TASK_IMITATE || (E->cfg.task == TASK_GOTO && E->cfg.clip) ? E->t0 + E->W.t : 0; }
@@ -261,6 +262,17 @@ BHD void env_obs(const Env *E, float *o) {
         double len; const Vec g = qrot(hi, vsub(nav_waypoint(E, &len), root)); const double r = b_sqrt_h(g.x, g.z), s = r > 2 ? 2 / r : 1;
         o[k++] = g.x * s; o[k++] = g.y; o[k++] = g.z * s; o[k++] = fmin(len, 10);
     } else for (int j = 0; j < OBS_PATH; j++) o[k++] = 0;
+    if (E->cfg.task == TASK_GOTO) {   /* where to step (env.h OBS_LOOK): the path nearer and further on, the ground all round */
+        for (int a = 0; a < 2; a++) {
+            double len; const Vec g = qrot(hi, vsub(nav_ahead(E, a ? 8 : 2, &len), root)); const double r = b_sqrt_h(g.x, g.z), s = r > 3 ? 3 / r : 1;
+            o[k++] = g.x * s; o[k++] = g.y; o[k++] = g.z * s;
+        }
+        const Quat h = qconj(hi); const double foot = fmin(world_lowest(W, L_FOOT), world_lowest(W, R_FOOT));
+        for (int ring = 0; ring < 2; ring++) for (int i = 0; i < 8; i++) {
+            const double a = i * (M_PI / 4), rr = ring ? 0.8 : 0.4; const Vec d = qrot(h, v3(b_sin(a), 0, b_cos(a)));
+            o[k++] = fmax(-1, fmin(1, support_y(W->room, root.x + rr * d.x, root.z + rr * d.z, foot + 0.8) - foot));
+        }
+    } else for (int j = 0; j < OBS_LOOK; j++) o[k++] = 0;
 }
 
 /* Golden thread (0..1): head lifted at least lift_ref above the pelvis, head upright, shoulders level,
@@ -517,12 +529,14 @@ static BHD int nav_from(const Env *E, Vec p) {
 }
 /* about 1 m along the path: four steps down the search's distances from her cell (the goal itself when that close or
  * out of the grid's reach, and the straight line where there is no room); *len: the path still to go (m) */
-static BHD Vec nav_waypoint(const Env *E, double *len) {
+static BHD Vec nav_ahead(const Env *E, int steps, double *len);
+static BHD Vec nav_waypoint(const Env *E, double *len) { return nav_ahead(E, 4, len); }
+static BHD Vec nav_ahead(const Env *E, int steps, double *len) {   /* (steps cells down the path: 4 is nav_waypoint) */
     const Vec p = E->W.b[PELVIS].x; Vec to = vsub(E->goal, p); to.y = 0; const double straight = vlen(to);
     *len = straight; if (!nav_on(E)) return E->goal;
     int w = nav_from(E, p); if (w < 0) return E->goal;
     const int r = E->W.room;
-    for (int s = 0; s < 4 && E->nav_d[w] > 0; s++) {
+    for (int s = 0; s < steps && E->nav_d[w] > 0; s++) {
         const int cx = w % NAV_N, cz = w / NAV_N; int best = w;
         for (int k = 0; k < 8; k++) {
             const int nx = cx + NAV_DX[k], nz = cz + NAV_DZ[k]; if (nx < 0 || nz < 0 || nx >= NAV_N || nz >= NAV_N) continue;
@@ -624,7 +638,15 @@ static BHD double goto_reward(Env *E, double act2) {
     Vec f = qrot(pb->q, v3(0, 0, 1)); f.y = 0; const double fl = vlen(f);
     const double face = d > 0.4 && fl > 1e-9 ? fmax(0, vdot(f, dir) / fl) : 1;
     const double up = fmax(0, qrot(W->b[CHEST].q, v3(0, 1, 0)).y);
-    const double prog = nav_on(E) ? fmax(-0.1, fmin(0.1, E->path_len - len)) : fmax(-0.1, fmin(0.1, E->goal_d - d)); E->goal_d = d; E->path_len = len;   /* distance gained this step (m): 0.03 at 0.9 m/s */
+    /* distance gained this step (m): 0.03 at 0.9 m/s; paid up to 1.2 m/s (0.04), so there is nothing in rushing */
+    const double prog = nav_on(E) ? fmax(-0.1, fmin(0.04, E->path_len - len)) : fmax(-0.1, fmin(0.04, E->goal_d - d)); E->goal_d = d; E->path_len = len;
+    /* care at an edge: heading at more than 0.5 m/s for a drop of over NAV_STEP within half a metre costs the excess speed
+     * squared (a person slows to look, and steps down or turns along it, rather than running off) */
+    double edge = 0; const double hs = vlen(vh);
+    if (hs > 0.5) {
+        const double foot = fmin(world_lowest(W, L_FOOT), world_lowest(W, R_FOOT)), ux = vh.x / hs, uz = vh.z / hs;
+        for (int i = 1; i <= 2; i++) if (foot - support_y(W->room, pb->x.x + 0.25 * i * ux, pb->x.z + 0.25 * i * uz, foot + 0.3) > NAV_STEP) { edge = (hs - 0.5) * (hs - 0.5); break; }
+    }
     /* soft landings: a foot coming down fast (a stamp) costs its speed squared */
     double land = 0; const double wt = W->total_mass * 9.81;
     for (int k = 0; k < 2; k++) {
@@ -634,7 +656,7 @@ static BHD double goto_reward(Env *E, double act2) {
     }
     const double relax = W->strength > 0 ? b_exp(-0.5 * W->metab) : b_exp(-20 * effort(W) / NJ);   /* muscle cost: relaxed is cheap */
     const double task = 0.35 * move + 0.1 * face + 0.1 * up + 0.05 * b_exp(-2 * act2) + 0.15 * relax;
-    double r = (E->cfg.nstyle ? 0.75 * task + 0.25 * style_reward(E) : task) + 6 * prog - 0.05 * land;
+    double r = (E->cfg.nstyle ? 0.75 * task + 0.25 * style_reward(E) : task) + 6 * prog - 0.05 * land - 0.3 * edge;
     if (d < 0.3 && fabs(sp - E->goal.y) < 0.2) { r += 2; E->goals++; goto_goal(E); }
     return r;
 }

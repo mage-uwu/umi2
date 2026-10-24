@@ -57,7 +57,12 @@
 #define OBS_PATH 4                /* TASK_GOTO in a room: the path helper's waypoint, about 1 m along the shortest walkable path
                                    * to the goal (env.c nav_waypoint over the room's nav grid), from her pelvis in the heading frame
                                    * (x, y, z), and the path still to go (m, at most 10) */
-#define OBS_DIM (OBS_BASE + OBS_GOAL + NB + NB - 1 + OBS_GRIP + OBS_PROBE + OBS_PATH)   /* then touch: each body's mean contact force over the step / body
+#define OBS_LOOK 22                /* TASK_GOTO: where to step. The path a little nearer and further on (about 0.5 and 2 m along it:
+                                   * x, y, z from her pelvis in the heading frame), so its turns and its rises and falls show
+                                   * before she is at them; then the ground all round her: 8 directions (heading frame, every
+                                   * 45 deg from straight ahead, turning left) at 0.4 and 0.8 m, from her lowest foot (m, within
+                                   * +-1), so an edge, a drop or a step beside her is felt as well as one ahead */
+#define OBS_DIM (OBS_BASE + OBS_GOAL + NB + NB - 1 + OBS_GRIP + OBS_PROBE + OBS_PATH + OBS_LOOK)   /* then touch: each body's mean contact force over the step / body
                                                        weight; then muscle sense: each joint's activation (drive torque / strength);
                                                        then grip */
 #define CTRL_HZ 30

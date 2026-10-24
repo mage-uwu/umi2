@@ -165,11 +165,12 @@ function navFrom(d, p) {
   }
   return best;
 }
-// [waypoint about 1 m along the shortest walkable path, path to go (m)]: four steps down the distances (env.c nav_waypoint)
-export function navWaypoint(p, goal, d) {
+// [waypoint about 1 m along the shortest walkable path, path to go (m)]: four steps down the distances (env.c nav_waypoint;
+// other step counts: env.c nav_ahead)
+export function navWaypoint(p, goal, d, steps = 4) {
   const straight = Math.hypot(goal[0] - p[0], goal[2] - p[2]); if (!navOn()) return [goal, straight];
   let w = navFrom(d, p); if (w < 0) return [goal, straight];
-  for (let s = 0; s < 4 && d[w] > 0; s++) {
+  for (let s = 0; s < steps && d[w] > 0; s++) {
     const cx = w % NAV_N, cz = Math.floor(w / NAV_N); let best = w;
     for (let k = 0; k < 8; k++) { const nx = cx + NAV_DX[k], nz = cz + NAV_DZ[k]; if (nx < 0 || nz < 0 || nx >= NAV_N || nz >= NAV_N) continue; const n = nz * NAV_N + nx; if (d[n] < d[best] && navLink(w, n)) best = n; }
     if (best === w) break; w = best;
@@ -522,6 +523,14 @@ export function observeGoto(world, phase, goal, floor = false) {   // floor: the
     const [wp, len] = navWaypoint(root, goal, navPath(goal)), g = qrot(hi, vsub(wp, root)), r = Math.hypot(g[0], g[2]), s = r > 2 ? 2 / r : 1;
     o.push(g[0] * s, g[1], g[2] * s, Math.min(len, 10));
   } else o.push(0, 0, 0, 0);
+  if (goal) {   // where to step (env.c OBS_LOOK): the path nearer and further on, then the ground all round her
+    for (const n of [2, 8]) { const [wp] = navWaypoint(root, goal, navPath(goal), n), g = qrot(hi, vsub(wp, root)), r = Math.hypot(g[0], g[2]), s = r > 3 ? 3 / r : 1; o.push(g[0] * s, g[1], g[2] * s); }
+    const h = qconj(hi), foot = Math.min(world.lowest(B.L_FOOT), world.lowest(B.R_FOOT));
+    for (const rr of [0.4, 0.8]) for (let i = 0; i < 8; i++) {
+      const a = i * (Math.PI / 4), d = qrot(h, [Math.sin(a), 0, Math.cos(a)]);
+      o.push(Math.max(-1, Math.min(1, supportY(root[0] + rr * d[0], root[2] + rr * d[2], foot + 0.8) - foot)));
+    }
+  } else for (let j = 0; j < 22; j++) o.push(0);
   return o;
 }
 

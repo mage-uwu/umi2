@@ -118,7 +118,7 @@ def main():
         if len(raw) - o >= 4 * (sum(v.size for v in crit.values()) - CH * (OBS - hobs)):
             crit["W1"][:, :hobs] = take(CH * hobs).reshape(CH, hobs); crit["W1"][:, hobs:] = 0
             for k in ("b1", "W2", "b2", "W3", "b3"): crit[k] = take(crit[k].size).reshape(crit[k].shape)
-        GROUPS = {"goal": (216, 220), "touch": (220, 234), "muscle": (234, 247), "grip": (247, 257), "probe": (257, 273), "path": (273, 277)}   # env.h OBS layout after OBS_BASE
+        GROUPS = {"goal": (216, 220), "touch": (220, 234), "muscle": (234, 247), "grip": (247, 257), "probe": (257, 273), "path": (273, 277), "look": (277, 299)}   # env.h OBS layout after OBS_BASE
         fresh = [GROUPS[g] for g in a.fresh_inputs.split(",") if g]
         for lo, hi in fresh:   # never varied in the prior's training: start them at zero effect, the normaliser at (0, 1)
             ends["Win"][:, lo:hi] = 0; crit["W1"][:, lo:hi] = 0; mean[lo:hi] = 0; sd[lo:hi] = 1
