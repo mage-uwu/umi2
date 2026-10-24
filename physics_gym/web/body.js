@@ -492,11 +492,12 @@ export function fallen(world) {   // heights from the surface under her (env.c f
 // frame (horizontal at most 4 m) and its distance; then each body's touch as a share of her weight.
 export const OBS_GOTO = OBS_DIM + 4 + NB + NB - 1 + 10 + 16 + 4;   // 277: then touch, muscle sense, grip, probes, path
 const PROBE_DIST = [0.3, 0.6, 0.9, 1.2, 0.6, 0.6], PROBE_ANG = [0, 0, 0, 0, 0.5, -0.5];   // env.c's ground probes (m, rad)
-export function observeGoto(world, phase, goal) {
-  const o = observe(world, phase, false), root = world.b[0].x, wt = world.totalMass * G_ACC;
+export function observeGoto(world, phase, goal, floor = false) {   // floor: the floor tasks' heading (getting up: forward is where her head points when face down)
+  const o = observe(world, phase, floor), root = world.b[0].x, wt = world.totalMass * G_ACC;
   o[1] = root[1] - Math.min(world.lowest(B.L_FOOT), world.lowest(B.R_FOOT));
   o[NB * 15] = world.touch[B.L_FOOT] > 0.02 * wt ? 1 : 0; o[NB * 15 + 1] = world.touch[B.R_FOOT] > 0.02 * wt ? 1 : 0;
-  const pz = qrot(world.b[0].q, [0, 0, 1]), hi = qexp([0, -Math.atan2(pz[0], pz[2]), 0]);
+  let pz = qrot(world.b[0].q, [0, 0, 1]); if (floor) pz = vadd(pz, qrot(world.b[0].q, [0, 1, 0]));
+  const hi = qexp([0, -Math.atan2(pz[0], pz[2]), 0]);
   if (goal) { const g = qrot(hi, vsub(goal, root)), r = Math.sqrt(g[0] * g[0] + g[2] * g[2]), s = r > 4 ? 4 / r : 1; o.push(g[0] * s, g[1], g[2] * s, Math.min(r, 4)); }
   else o.push(0, 0, 0, 0);   // no goal (the gym's other tasks: imitation): the goal inputs are zero, as in env.c
   for (let i = 0; i < NB; i++) o.push(Math.min(3, world.touch[i] / wt));

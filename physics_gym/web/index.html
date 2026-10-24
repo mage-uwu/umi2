@@ -96,7 +96,7 @@ button:disabled { opacity: .45; cursor: default; }
       <button data-push="front">Front</button><button data-push="back">Back</button>
       <button id="reset">Reset</button>
       <span class="label" style="margin-left:8px">Click</span>
-      <button id="c-push" aria-pressed="true" title="A click pushes her from that side">Push</button><button id="c-grab" aria-pressed="false" title="Press on a body part and drag it">Grab</button><button id="c-goal" aria-pressed="false" title="Click a surface to put the goal there (the Go to skill walks to it)">Goal</button>
+      <button id="c-push" aria-pressed="true" title="A click pushes her from that side">Push</button><button id="c-grab" aria-pressed="false" title="Press on a body part and drag it">Grab</button><button id="c-goal" aria-pressed="false" title="Click a surface to put the goal there (the Go to skill walks to it)">Goal</button><button id="c-roam" aria-pressed="false" title="Go to: a new goal each time she gets there, anywhere she can walk to (ramps, stairs, landings), found by the path helper">Roam</button>
     </div>
     <div class="group secondary" role="group" aria-label="View">
       <span class="label">View</span>
@@ -142,7 +142,7 @@ button:disabled { opacity: .45; cursor: default; }
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm';
-import { World, setRoom, supportY, setHandUp, observeGoto, BODY_DEFS, B, standPose, swayPose, crawlPose, applyAction, observe, fallen, loadPolicy, loadTssPolicy, loadClips, poseFromClip, setAssist, math, CTRL_HZ } from './body.js';
+import { World, setRoom, supportY, setHandUp, observeGoto, navField, navGrid, NAV_N, NAV_CELL, NAV_HALF, BODY_DEFS, B, standPose, swayPose, crawlPose, applyAction, observe, fallen, loadPolicy, loadTssPolicy, loadClips, poseFromClip, setAssist, math, CTRL_HZ } from './body.js';
 import { createShaderView } from './shader-view.js';
 
 const status = document.getElementById('status');
@@ -188,11 +188,17 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', paintTiles
 // CUDA build collide with) and drawn here box for box, so what she touches is exactly what is drawn. With a
 // room the floor is one fixed tiled square over the room instead of the disc that follows her.
 const roomGroup = new THREE.Group(); scene.add(roomGroup);
-let roomDoc = null;
-try { const r = await fetch('room.json'); if (r.ok) roomDoc = await r.json(); } catch (e) { roomDoc = null; }
-if (roomDoc) {
+// Two rooms: the gym (stage 1: climbing wall, parkour, stairs, slopes, tunnels) and the slope gym (stage 2: ramps,
+// stair pyramids, a ridge, a hill, uneven tiles, a jump terrace, walls in the way); the Room button goes through them
+// and the open floor.
+const ROOMS = [{ name: 'Slope gym', file: 'room_slope.json' }, { name: 'Gym', file: 'room.json' }];
+for (const R of ROOMS) { try { const r = await fetch(R.file); if (r.ok) R.doc = await r.json(); } catch (e) { R.doc = null; } }
+let roomIdx = ROOMS.findIndex(R => R.doc), roomDoc = roomIdx >= 0 ? ROOMS[roomIdx].doc : null;
+const edgeMat = new THREE.LineBasicMaterial({ color: 0x2a2e4a, transparent: true, opacity: .35 });
+function buildRoom() {
+  for (const m of [...roomGroup.children]) { m.geometry.dispose(); m.material.dispose(); roomGroup.remove(m); }
+  if (!roomDoc) return;
   setRoom(roomDoc.boxes);
-  const edgeMat = new THREE.LineBasicMaterial({ color: 0x2a2e4a, transparent: true, opacity: .35 });
   for (const b of roomDoc.boxes) {
     const see = b.kind === 'outer' ? .28 : b.kind === 'tunnel' ? .8 : 1;   // see-through outer walls and tunnels keep her in view
     const mat = new THREE.MeshStandardMaterial({ color: new THREE.Color(b.color), roughness: b.kind === 'foam' ? 1 : .75, transparent: see < 1, opacity: see, depthWrite: see === 1 });
@@ -207,6 +213,7 @@ if (roomDoc) {
   tiles.repeat.set((x1 - x0) / (2 * TILE), (z1 - z0) / (2 * TILE)); tiles.offset.set(0, 0);
   Object.assign(sun.shadow.camera, { left: -3, right: 3, top: 3, bottom: -3, far: 12 }); sun.shadow.mapSize.set(2048, 2048);
 }
+buildRoom();
 // In the learned-shader view she is not in the 3D scene, so she casts no real shadow there: a soft contact
 // shadow under her instead.
 const blob = (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d');
@@ -493,7 +500,7 @@ async function getUp(why) {
   try { getupPolicy ||= await loadTssPolicy(GETUP.file); } catch { getupPolicy = null; }
   if (!getupPolicy) return false;
   getupPolicy.reset(); mode = 'getup'; clip = null; ref = standPose(); getupSince = world.t; calmSince = -1; fallenAt = -1;
-  world.limitK = 0; world.strength = 0;   // getting up is a body/ skill (legacy): played without the joint ranges and muscle limits
+  if (GETUP.gym) { world.limitK = 5000; world.strength = 1; } else { world.limitK = 0; world.strength = 0; }   // getting up is a body/ skill (legacy): played without the joint ranges and muscle limits
   setStatus(why); emit('getup', {}); return true;
 }
 // ---------- face: VTuber-style gaze, blinking and mouth ----------
@@ -547,8 +554,9 @@ function control() {
   if (goTo) setHandUp(world, fallenAt < 0 ? SKILLS[skill].assist || 0 : 0);   // go-to's hand-up (env.c), while a policy still trains with one
   else if (clip) setAssist(world, clip, world.t, fallenAt < 0 ? SKILLS[skill].assist || 0 : 0);
   const gym = mode === 'skill' && SKILLS[skill].gym;
-  if (fallenAt < 0 && pol) applyAction(world, ref, pol.act(goTo ? observeGoto(world, phase, goalOr()) : gym ? observeGoto(world, phase, null) : observe(world, phase, floor)), floor ? GETUP.actMul : 1);
-  if (goTo) goalReached();
+  const obs = goTo ? observeGoto(world, phase, goalOr()) : gym ? observeGoto(world, phase, null) : mode === 'getup' && GETUP.gym ? observeGoto(world, 0, null, true) : observe(world, phase, floor);
+  if (fallenAt < 0 && pol) applyAction(world, ref, pol.act(obs), floor ? GETUP.actMul : 1);
+  if (goTo) { goalReached(); if (roam && reachedAt >= 0 && world.t - reachedAt > 0.8) roamGoal(); }
   easeGrab(); aimLimb(); prev = snapshot(); world.step();
   hist.push({ t: world.t, s: snapshot() }); if (hist.length > 12) hist.shift();
   if (clip) ref = clip.at(world.t).rel;
@@ -655,13 +663,20 @@ document.getElementById('more-toggle').onclick = e => {   // phones: open or clo
   const open = document.querySelector('.app').classList.toggle('more-open'); e.currentTarget.setAttribute('aria-expanded', String(open));
   e.currentTarget.setAttribute('aria-pressed', String(open));
 };
-// Room off: the open floor, nothing drawn and nothing simulated but the ground (setRoom([])); on: room.json again
+// Room off: the open floor, nothing drawn and nothing simulated but the ground (setRoom([])); on: the chosen room
 let roomOn = !!roomDoc;
 function setRoomOn(on) {
   roomOn = !!on && !!roomDoc; setRoom(roomOn ? roomDoc.boxes : []); roomGroup.visible = roomOn;
-  document.getElementById('v-room').setAttribute('aria-pressed', String(roomOn)); return roomOn;
+  const b = document.getElementById('v-room'); b.setAttribute('aria-pressed', String(roomOn)); b.textContent = roomOn ? ROOMS[roomIdx].name : 'No room';
+  return roomOn;
 }
-document.getElementById('v-room').onclick = () => setRoomOn(!roomOn);
+// the Room button: each room in turn, then the open floor, then the first room again (she starts over in the new one)
+document.getElementById('v-room').onclick = () => {
+  if (!roomOn) { roomIdx = ROOMS.findIndex(R => R.doc); }
+  else { let k = roomIdx + 1; while (k < ROOMS.length && !ROOMS[k].doc) k++; if (k >= ROOMS.length) { setRoomOn(false); if (world) reset(); return; } roomIdx = k; }
+  roomDoc = ROOMS[roomIdx].doc; buildRoom(); goal = null; goalMark.visible = false; setRoomOn(true); if (world) reset();
+};
+setRoomOn(roomOn);
 if (!roomDoc) document.getElementById('v-room').hidden = true;
 // Zoom: the + and - buttons or keys, Ctrl + scroll, a trackpad pinch or two fingers. Closer in, the view centres
 // more and more on her head (follow). The learned shader zooms its drawing, up to 4x.
@@ -868,6 +883,23 @@ function goalReached() {
   const p = world.b[0].x, d = Math.hypot(goal[0] - p[0], goal[2] - p[2]);
   if (d < 0.3 && Math.abs(supportY(p[0], p[2], p[1]) - goal[1]) < 0.2) { reachedAt = world.t; setStatus(`Reached the goal in ${world.t.toFixed(1)} s.`); emit('reached', { goal: goal.slice(), t: world.t }); }
 }
+// Roam: a goal 2 to 8 m of walking away, half the time up on something (a ramp, a landing, a step), drawn from the cells
+// the path helper reaches from where she stands; the next one a moment after she gets there.
+let roam = false;
+function roamGoal() {
+  const p = world.b[0].x, d = navField([p[0], 0, p[2]]), G = navGrid(), up = Math.random() < 0.5, pick = [];
+  for (let c = 0; c < NAV_N * NAV_N; c++) if (d[c] >= 8 && d[c] <= 32 && G[c] < 0.9 && (G[c] > 0.05) === up) pick.push(c);
+  if (!pick.length) for (let c = 0; c < NAV_N * NAV_N; c++) if (d[c] >= 8 && d[c] <= 32 && G[c] < 0.9) pick.push(c);
+  if (!pick.length) return;
+  const c = pick[Math.floor(Math.random() * pick.length)];
+  setGoal([-NAV_HALF + (c % NAV_N + 0.5) * NAV_CELL, G[c], -NAV_HALF + (Math.floor(c / NAV_N) + 0.5) * NAV_CELL]);
+}
+function setRoam(on) {
+  roam = !!on; document.getElementById('c-roam').setAttribute('aria-pressed', String(roam));
+  if (roam && skill !== 'goto') useSkill('goto');
+  if (roam && world && (!goal || reachedAt >= 0)) roamGoal();
+}
+document.getElementById('c-roam').onclick = () => setRoam(!roam);
 const _goalRay = new THREE.Raycaster();
 document.getElementById('stage').addEventListener('pointerdown', e => {
   if (clickMode !== 'goal' || e.button !== 0) return;
