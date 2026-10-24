@@ -526,7 +526,7 @@ export function fallen(world) {   // heights from the surface under her (env.c f
 // frame (horizontal at most 4 m) and its distance; then each body's touch as a share of her weight.
 export const OBS_GOTO = OBS_DIM + 4 + NB + NB - 1 + 10 + 16 + 4;   // 277: then touch, muscle sense, grip, probes, path
 const PROBE_DIST = [0.3, 0.6, 0.9, 1.2, 0.6, 0.6], PROBE_ANG = [0, 0, 0, 0, 0.5, -0.5];   // env.c's ground probes (m, rad)
-export function observeGoto(world, phase, goal, floor = false, aim = goal) {   // floor: the floor tasks' heading (getting up: forward is where her head points when face down); aim: what the goal inputs point at (the goal itself unless the viewer steers by a point along the path), the path inputs always toward goal
+export function observeGoto(world, phase, goal, floor = false, aim = goal, ground = false) {   // floor: the floor tasks' heading (getting up: forward is where her head points when face down); aim: what the goal inputs point at (the goal itself unless the viewer steers by a point along the path), the path inputs always toward goal; ground: the look inputs' ground ring without a goal (env.c course mode: a jump course)
   const o = observe(world, phase, floor), root = world.b[0].x, wt = world.totalMass * G_ACC;
   o[1] = root[1] - Math.min(world.lowest(B.L_FOOT), world.lowest(B.R_FOOT));
   o[NB * 15] = world.touch[B.L_FOOT] > 0.02 * wt ? 1 : 0; o[NB * 15 + 1] = world.touch[B.R_FOOT] > 0.02 * wt ? 1 : 0;
@@ -556,8 +556,9 @@ export function observeGoto(world, phase, goal, floor = false, aim = goal) {   /
     const [wp, len] = navWaypoint(root, goal, navPath(goal)), g = qrot(hi, vsub(wp, root)), r = Math.hypot(g[0], g[2]), s = r > 2 ? 2 / r : 1;
     o.push(g[0] * s, g[1], g[2] * s, Math.min(len, 10));
   } else o.push(0, 0, 0, 0);
-  if (goal) {   // where to step (env.c OBS_LOOK): the path nearer and further on, then the ground all round her
-    for (const n of [2, 8]) { const [wp] = navWaypoint(root, goal, navPath(goal), n), g = qrot(hi, vsub(wp, root)), r = Math.hypot(g[0], g[2]), s = r > 3 ? 3 / r : 1; o.push(g[0] * s, g[1], g[2] * s); }
+  if (goal || ground) {   // where to step (env.c OBS_LOOK): the path nearer and further on, then the ground all round her
+    if (!goal) o.push(0, 0, 0, 0, 0, 0);
+    else for (const n of [2, 8]) { const [wp] = navWaypoint(root, goal, navPath(goal), n), g = qrot(hi, vsub(wp, root)), r = Math.hypot(g[0], g[2]), s = r > 3 ? 3 / r : 1; o.push(g[0] * s, g[1], g[2] * s); }
     const h = qconj(hi), foot = Math.min(world.lowest(B.L_FOOT), world.lowest(B.R_FOOT));
     for (const rr of [0.4, 0.8]) for (let i = 0; i < 8; i++) {
       const a = i * (Math.PI / 4), d = qrot(h, [Math.sin(a), 0, Math.cos(a)]);

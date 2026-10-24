@@ -66,6 +66,10 @@ BHD double env_phase(const Env *E) { return E->cfg.task == TASK_IMITATE || (E->c
 /* Reference at clip time t: joint rotations, body world rotations and root, the root carried across loops. */
 /* TASK_IMITATE over a clip set (cfg.style): see env.h */
 static BHD int clip_set(const Env *E) { return E->cfg.task == TASK_IMITATE && E->cfg.nstyle > 0; }
+/* a clip set played in a room is a course (tools/jump_course.mjs): room r is built round clip r % nstyle in that clip's
+ * own frame, platforms where its feet come down and a gap where they are off the ground; dropping below the platform
+ * tops ends the episode (she starts over) */
+static BHD int course(const Env *E) { return clip_set(E) && room_size(E->W.room) > 0; }
 static BHD void ref_at(const Env *E, double t, Quat *rel, Quat *world, Vec *root) {
     const Clip *c = E->rc; const double T = (c->frames - 1) / c->fps;
     if (clip_set(E)) {   /* once through, then its last frame held (standing, at the end of a get-up) */
@@ -153,12 +157,14 @@ BHD void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
     if (cfg->task == TASK_IMITATE && cfg->nstyle > 0 && cfg->style_start > 0 && env_rand(&E->rng) < cfg->style_start) { matched_start(E); return; }
     if (cfg->task == TASK_IMITATE) {
         if (cfg->nstyle > 0) E->rc = cfg->style[(int)(env_rand(&E->rng) * cfg->nstyle) % cfg->nstyle];   /* a clip of the set */
+        if (course(E)) E->rc = cfg->style[E->W.room % cfg->nstyle];   /* the clip its room was built round */
         const Clip *c = E->rc; const double T = (c->frames - 1) / c->fps;
         E->t0 = cfg->fixed_start ? 0 : env_rand(&E->rng) * T * (cfg->nstyle > 0 ? 0.85 : 1);
         E->clip_shift = v3(0, 0, 0);
         Quat rel[NB], rel2[NB], wq[NB]; Vec root, root2; const double dt = 1.0 / CTRL_HZ;
         ref_at(E, E->t0, rel, wq, &root); ref_at(E, E->t0 + dt, rel2, wq, &root2);
         E->clip_shift = v3(-root.x, 0, -root.z);   /* the reference starts above the origin */
+        if (course(E)) E->clip_shift = v3(-c->root[0].x, support_y(E->W.room, 0, 0, 5), -c->root[0].z);   /* the clip's frame 0 over the origin, on the platform */
         root = vadd(root, E->clip_shift); root2 = vadd(root2, E->clip_shift);
         /* body velocities by finite difference of the reference pose */
         World W2; world_init(&W2, 45, 20, dt);
@@ -168,8 +174,8 @@ BHD void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
             Body *b = E->W.b + i; b->v = vscale(vsub(W2.b[i].x, b->x), 1 / dt);
             Quat dq = qmul(W2.b[i].q, qconj(b->q)); b->w = vscale(qlog(dq), 1 / dt);
         }
-        /* keep the feet out of the ground */
-        double lo = 1e9; for (int i = 0; i < NB; i++) { double y = world_lowest(&E->W, i); if (y < lo) lo = y; }
+        /* keep the feet out of the ground (in a course, out of whatever is under each body) */
+        double lo = 1e9; for (int i = 0; i < NB; i++) { const Body *b = E->W.b + i; double y = world_lowest(&E->W, i) - (course(E) ? support_y(E->W.room, b->x.x, b->x.z, b->x.y + 0.5) : 0); if (y < lo) lo = y; }
         if (lo < 0) for (int i = 0; i < NB; i++) E->W.b[i].x.y -= lo;
         for (int i = 0; i < NB; i++) E->W.b[i].xprev = E->W.b[i].x;
         ref_at(E, E->t0, E->ref, E->ref_world, &E->ref_root);
@@ -262,8 +268,9 @@ BHD void env_obs(const Env *E, float *o) {
         double len; const Vec g = qrot(hi, vsub(nav_waypoint(E, &len), root)); const double r = b_sqrt_h(g.x, g.z), s = r > 2 ? 2 / r : 1;
         o[k++] = g.x * s; o[k++] = g.y; o[k++] = g.z * s; o[k++] = fmin(len, 10);
     } else for (int j = 0; j < OBS_PATH; j++) o[k++] = 0;
-    if (E->cfg.task == TASK_GOTO) {   /* where to step (env.h OBS_LOOK): the path nearer and further on, the ground all round */
-        for (int a = 0; a < 2; a++) {
+    if (E->cfg.task == TASK_GOTO || course(E)) {   /* where to step (env.h OBS_LOOK): the path nearer and further on, the ground all round */
+        if (E->cfg.task != TASK_GOTO) for (int j = 0; j < 6; j++) o[k++] = 0;   /* (a course has no path: its ground only) */
+        else for (int a = 0; a < 2; a++) {
             double len; const Vec g = qrot(hi, vsub(nav_ahead(E, a ? 8 : 2, &len), root)); const double r = b_sqrt_h(g.x, g.z), s = r > 3 ? 3 / r : 1;
             o[k++] = g.x * s; o[k++] = g.y; o[k++] = g.z * s;
         }
@@ -699,6 +706,7 @@ static BHD double env_end(Env *E, double act2) {
     if (floor_task(E)) return floor_reward(E, act2);
     if (E->cfg.task == TASK_GOTO) return goto_reward(E, act2);
     int fell = clip_set(E) ? 0 : fallen(W);   /* (a get-up's reference lies on the floor: only drifting off it ends one) */
+    if (course(E) && fmin(world_lowest(W, L_FOOT), world_lowest(W, R_FOOT)) < E->clip_shift.y - 0.25) fell = 1;   /* down in the gap: start over */
     if (E->cfg.task == TASK_IMITATE) {
         ref_at(E, env_phase(E), E->ref, E->ref_world, &E->ref_root);
         Vec er = vsub(W->b[PELVIS].x, E->ref_root);
