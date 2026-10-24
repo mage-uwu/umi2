@@ -407,7 +407,7 @@ const SKILLS = {
   // armTone: shoulder and elbow muscle tone (relaxed arms hang looser)
   // legacy: trained in body/, before the mocap joint ranges, muscle limits and grip: played with those off, as trained (static
   // friction stays on: with the contact fix they stand and get up with it, and without it they slid down the ramps)
-  balance: { label: 'Balance', file: 'balance.json', sway: 0.012, armTone: 0.4, legacy: true },
+  balance: { label: 'Balance', file: 'balance_tss.json', gym: true },   // the gym's physics (pod_contact.sh: pushes to 60 N)
   // assist: the pelvis support spring the controller was trained with (1 = full); 0 once it walks unaided
   walk: { label: 'Walk', file: 'walk_tss.json', clip: 'walk', legacy: true },
   // gym: trained in physics_gym on the GPU (env.c's full observation: touch, muscle sense, grip) under the CMU joint
@@ -565,7 +565,8 @@ function control() {
         setStatus(goal ? 'Going to the goal.' : ''); emit('stood', {});
       } else {
       mode = 'skill'; skill = 'balance'; policy = policies.balance; policy?.reset(); ref = standPose(); upSince = world.t;
-      for (const i of [B.L_UARM, B.L_FARM, B.R_UARM, B.R_FARM]) world.tone[i] = SKILLS.balance.armTone;
+      for (const i of [B.L_UARM, B.L_FARM, B.R_UARM, B.R_FARM]) world.tone[i] = SKILLS.balance.armTone || 1;
+      if (!SKILLS.balance.legacy) { world.limitK = 5000; world.strength = 1; }   // back to the gym's physics
       setPressed('[data-skill]', document.querySelector('[data-skill="balance"]')); setStatus(''); document.getElementById('standup').hidden = true; emit('stood', {});
       }
     } else if (world.t - getupSince > 12) { reset(); setStatus(''); }
