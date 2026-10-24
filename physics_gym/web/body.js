@@ -123,7 +123,7 @@ export function supportY(x, z, ytop) { let best = 0; for (const o of ROOM) { con
 export class World {
   constructor(totalMass = 45, substeps = 20, dt = 1 / 30) {
     this.totalMass = totalMass; this.substeps = substeps; this.h = dt / substeps; this.mu = 0.9; this.iters = 4; this.limitK = 5000;   // limitK: joint ligaments (body.c World.limit_k); 0 = no limits
-    this.strength = 1; this.mtau = BODY_DEFS.map(() => 0); this.act = BODY_DEFS.map(() => 0); this.metab = 0;   // muscles (body.c World.strength, mtau, act, metab)
+    this.stick = true; this.strength = 1; this.mtau = BODY_DEFS.map(() => 0); this.act = BODY_DEFS.map(() => 0); this.metab = 0;   // muscles (body.c World.strength, mtau, act, metab)
     this.gripMax = GRIP_MAX; this.gripCmd = [0, 0]; this.gripBox = [-1, -1]; this.gripAt = [null, null]; this.gripForce = [0, 0];   // grip (body.c World.grip_*)
     this.kpScale = 1; this.kdScale = 1; this.t = 0;
     this.tone = BODY_DEFS.map(() => 1);   // per-joint muscle tone (body.c tone)
@@ -159,7 +159,9 @@ export class World {
   genW(b, r, n) { const rn = vcross(r, n); return b.invMass + vdot(rn, this.invI(b, rn)); }
   // static friction at the position level (body.c static_friction): a resting contact's slide along the surface this
   // substep is undone by moving the body, when holding it takes no more than mu times the normal correction ln
+  // (stick = false: the friction before it, for the skills trained without it)
   staticFriction(b, rl, n, ln, mu) {
+    if (!this.stick) return;
     let dp = vsub(vadd(b.x, qrot(b.q, rl)), vadd(b.xprev, qrot(b.qprev, rl))); dp = vsub(dp, vscale(n, vdot(dp, n)));
     const lt = vlen(dp); if (lt < 1e-12) return;
     const w = this.genW(b, qrot(b.q, rl), vscale(dp, 1 / lt)); if (w <= 0 || lt / w > mu * Math.abs(ln)) return;

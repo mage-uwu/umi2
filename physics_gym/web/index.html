@@ -27,9 +27,10 @@ header { display: flex; align-items: baseline; justify-content: space-between; g
 h1 { margin: 0; font-family: var(--display); font-size: clamp(1.25rem, 3.5vw, 1.7rem); text-wrap: balance; }
 .hint { color: var(--muted); font-size: .85rem; max-width: 62ch; }
 #stage { position: relative; min-height: 0; touch-action: none; cursor: crosshair; overflow: hidden; }
-#view, #art { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#view, #art, #occ { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 #art { transform-origin: 50% 50%; }
-#view[hidden], #art[hidden] { display: none; }
+#view[hidden], #art[hidden], #occ[hidden] { display: none; }
+#occ { pointer-events: none; }
 #status { position: absolute; inset: auto 0 12px; text-align: center; color: var(--muted); font-size: .8rem; font-family: var(--mono); }
 #status.alert { color: var(--alert); }
 footer { display: flex; align-items: center; gap: 12px 18px; flex-wrap: wrap; padding-block: 10px 14px;
@@ -79,6 +80,7 @@ button:disabled { opacity: .45; cursor: default; }
   <div id="stage" tabindex="0" aria-label="Live physics view; click to push her">
     <canvas id="view"></canvas>
     <canvas id="art" hidden></canvas>
+    <canvas id="occ" hidden></canvas>
     <div id="status">loading model and controller…</div>
   </div>
   <footer>
@@ -403,7 +405,7 @@ const boxes = BODY_DEFS.map(d => {
 const SKILLS = {
   // sway: relaxed postural sway (rad at the ankles), counterbalanced at the hips and spine
   // armTone: shoulder and elbow muscle tone (relaxed arms hang looser)
-  // legacy: trained in body/, before the mocap joint ranges, muscle limits and grip: played with those off, as trained
+  // legacy: trained in body/, before the mocap joint ranges, muscle limits, grip and static friction: played with those off, as trained
   balance: { label: 'Balance', file: 'balance.json', sway: 0.012, armTone: 0.4, legacy: true },
   // assist: the pelvis support spring the controller was trained with (1 = full); 0 once it walks unaided
   walk: { label: 'Walk', file: 'walk_tss.json', clip: 'walk', legacy: true },
@@ -452,7 +454,7 @@ function reset() {
   springSettle = 2;
   focus.set(0, 0.85, 0);
   world = new World(45, 20, 1 / CTRL_HZ); letGo = null; steadyAt = null; reachedAt = -1;
-  if (SKILLS[skill].legacy) { world.limitK = 0; world.strength = 0; }   // body/ skills: no joint ranges or muscle limits, as they were trained
+  if (SKILLS[skill].legacy) { world.limitK = 0; world.strength = 0; world.stick = false; }   // body/ skills: no joint ranges or muscle limits, as they were trained
   if (SKILLS[skill].armTone) for (const i of [B.L_UARM, B.L_FARM, B.R_UARM, B.R_FARM]) world.tone[i] = SKILLS[skill].armTone;
   mode = 'skill'; clip = SKILLS[skill].clip && clips ? clips[SKILLS[skill].clip] : null;   // getting up drops the clip
   if (clip) ref = poseFromClip(world, clip, 0).rel;
@@ -490,7 +492,7 @@ async function getUp(why) {
   try { getupPolicy ||= await loadTssPolicy(GETUP.file); } catch { getupPolicy = null; }
   if (!getupPolicy) return false;
   getupPolicy.reset(); mode = 'getup'; clip = null; ref = standPose(); getupSince = world.t; calmSince = -1; fallenAt = -1;
-  world.limitK = 0; world.strength = 0;   // getting up is a body/ skill (legacy): played without the joint ranges and muscle limits
+  world.limitK = 0; world.strength = 0; world.stick = false;   // getting up is a body/ skill (legacy): played without the joint ranges and muscle limits
   setStatus(why); emit('getup', {}); return true;
 }
 // ---------- face: VTuber-style gaze, blinking and mouth ----------
@@ -558,7 +560,7 @@ function control() {
     if (calmSince >= 0 && world.t - calmSince > 1.5) {
       if (SKILLS[skill].goTo) {   // up again: carry on to the goal, on the walk cycle again
         mode = 'skill'; policy = policies[skill]; policy?.reset(); clip = clips[SKILLS[skill].clip]; ref = clip.at(world.t).rel; upSince = world.t;
-        if (!SKILLS[skill].legacy) { world.limitK = 5000; world.strength = 1; }   // back to the gym's physics
+        if (!SKILLS[skill].legacy) { world.limitK = 5000; world.strength = 1; world.stick = true; }   // back to the gym's physics
         setStatus(goal ? 'Going to the goal.' : ''); emit('stood', {});
       } else {
       mode = 'skill'; skill = 'balance'; policy = policies.balance; policy?.reset(); ref = standPose(); upSince = world.t;
@@ -622,6 +624,7 @@ function step(now) {
       art.syncCamera(camera, st.clientWidth, st.clientHeight);
       blob.visible = true; blob.position.set(pelvisAt.x, 0.0015, pelvisAt.z);
       renderer.render(scene, camera);
+      drawOccluders();
     }
   } else {
     blob.visible = false;
@@ -692,6 +695,42 @@ function follow(px, dt) {
   }
   sun.position.set(focus.x + 1, 3, focus.z + 2); sun.target.position.copy(focus);
 }
+// What stands in front of her. The learned shader's drawing is a layer over the 3D canvas, so on its own she would
+// show through every box between her and the camera. A third canvas over the drawing redraws the room and the goal
+// marker where they are nearer than she is, and only over her: her body (the 3D model, near enough the pose she was
+// drawn in) goes into the depth and stencil buffers only, then the room is drawn where the stencil is set and the
+// depth test passes. (Outside her silhouette the overlay stays empty, so see-through walls aren't tinted twice.)
+const occCanvas = document.getElementById('occ');
+let occR = null, occScene = null, occSun = null;
+const depthOnly = new THREE.MeshBasicMaterial({ colorWrite: false, stencilWrite: true, stencilRef: 1, stencilFunc: THREE.AlwaysStencilFunc, stencilZPass: THREE.ReplaceStencilOp });
+const STENCIL = ['stencilWrite', 'stencilRef', 'stencilFunc', 'stencilFail', 'stencilZFail', 'stencilZPass', 'stencilWriteMask'];
+function drawOccluders() {
+  if (!vrm || !(roomOn || goalMark.visible)) { occCanvas.hidden = true; return; }
+  if (!occR) {
+    occR = new THREE.WebGLRenderer({ canvas: occCanvas, antialias: true, alpha: true, stencil: true });
+    occR.setClearColor(0x000000, 0); occR.outputColorSpace = THREE.SRGBColorSpace; occR.autoClear = false;
+    occScene = new THREE.Scene(); occSun = new THREE.DirectionalLight(0xffffff, 2.2);
+    occScene.add(new THREE.AmbientLight(0xffffff, 1.2), occSun, occSun.target);
+  }
+  occCanvas.hidden = false;
+  const st = document.getElementById('stage'), pr = renderer.getPixelRatio();
+  if (occR.getPixelRatio() !== pr) occR.setPixelRatio(pr);
+  if (occCanvas.width !== Math.round(st.clientWidth * pr) || occCanvas.height !== Math.round(st.clientHeight * pr)) occR.setSize(st.clientWidth, st.clientHeight, false);
+  occSun.position.copy(sun.position); occSun.target.position.copy(sun.target.position);
+  const homes = [vrm.scene, roomGroup, goalMark].map(o => [o, o.parent]);
+  occR.clear();
+  occScene.add(vrm.scene); occScene.overrideMaterial = depthOnly;   // her depth, no colour
+  occR.render(occScene, camera);
+  occScene.remove(vrm.scene); occScene.overrideMaterial = null;
+  occScene.add(roomGroup, goalMark);   // the room against it, inside her silhouette (the materials' stencil test for this pass only)
+  const mats = new Set();
+  for (const g of [roomGroup, goalMark]) g.traverse(o => { if (o.material) [].concat(o.material).forEach(m => mats.add(m)); });
+  const saved = [...mats].map(m => [m, STENCIL.map(k => m[k])]);
+  for (const m of mats) Object.assign(m, { stencilWrite: true, stencilRef: 1, stencilFunc: THREE.EqualStencilFunc, stencilFail: THREE.KeepStencilOp, stencilZFail: THREE.KeepStencilOp, stencilZPass: THREE.KeepStencilOp, stencilWriteMask: 0 });
+  occR.render(occScene, camera);
+  for (const [m, v] of saved) STENCIL.forEach((k, i) => { m[k] = v[i]; });
+  for (const [o, home] of homes) home ? home.add(o) : o.removeFromParent();
+}
 function resize() {
   const st = document.getElementById('stage'), w = st.clientWidth, h = st.clientHeight;   // the 3D canvas is hidden in art mode
   if (!w || !h) return;
@@ -717,7 +756,7 @@ function setLook(next) {
   setPressed('#v-art, #v-model, #v-boxes', document.getElementById({ art: 'v-art', model: 'v-model', boxes: 'v-boxes' }[next]));
   if (vrm) { vrm.scene.visible = next !== 'boxes'; (next === 'art' && art ? art.scene : scene).add(vrm.scene); }
   boxes.forEach(m => m.visible = next === 'boxes');
-  artCanvas.hidden = next !== 'art' || !art; canvas.hidden = !artCanvas.hidden && !art?.syncCamera;   // WebGPU: the floor shows beneath the drawing
+  artCanvas.hidden = next !== 'art' || !art; if (artCanvas.hidden) occCanvas.hidden = true; canvas.hidden = !artCanvas.hidden && !art?.syncCamera;   // WebGPU: the floor shows beneath the drawing
   document.getElementById('r-look').textContent = next === 'art' ? (art ? art.engine : 'loading the learned shader…') : next === 'boxes' ? 'physics bodies' : '3D render';
 }
 let artCpu = /cpu/.test(location.hash);
@@ -733,6 +772,7 @@ async function useArt() {
       art.syncCamera(camera, st.clientWidth, st.clientHeight);
       blob.visible = true; blob.position.set(pelvisAt.x, 0.0015, pelvisAt.z);
       renderer.render(scene, camera);
+      drawOccluders();
     };
     // a WebGPU device that fails to start falls back to the CPU shader (on a fresh canvas: the old one holds a WebGPU context)
     artLoad ||= createShaderView({ THREE, vrm, canvas: artCanvas, detail, transparent: true, onPaint }).catch(e => {
