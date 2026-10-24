@@ -710,7 +710,15 @@ function setLook(next) {
 async function useArt() {
   setLook('art');
   if (!art) {
-    artLoad ||= createShaderView({ THREE, vrm, canvas: artCanvas, detail: 'crisp', transparent: true });
+    // The nanotss shader on the CPU (WebAssembly workers, any browser); #crisp for the WebGPU network.
+    const detail = /crisp/.test(location.hash) ? 'crisp' : 'cpu';
+    artLoad ||= createShaderView({ THREE, vrm, canvas: artCanvas, detail, transparent: true, onPaint: () => {
+      if (look !== 'art' || !art) return;
+      const st = document.getElementById('stage');
+      art.syncCamera(camera, st.clientWidth, st.clientHeight);
+      blob.visible = true; blob.position.set(pelvisAt.x, 0.0015, pelvisAt.z);
+      renderer.render(scene, camera);
+    } });
     try { art = await artLoad; } catch (e) { console.error(e); setStatus(`The learned shader could not start: ${e.message}`, true); artLoad = null; setLook('model'); return; }
     if (look === 'art') setLook('art');
   }

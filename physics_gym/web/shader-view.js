@@ -11,29 +11,31 @@
 //   art.engine                           // e.g. 'WebGPU f16 · crisp' or 'WebGL · fast'
 //   transparent: true (WebGPU) draws only her; art.syncCamera(camera, w, h) lines a scene up beneath it
 //
-// Detail: 'smooth' (sharp, fine-tuned against flicker; WebGPU), 'sharp' (WebGPU), 'fast' (half resolution;
-// the WebGL engine runs this one whatever is asked).
+// Detail: 'cpu' (the nanotss shader: ternary stencil and FFF blocks, trained on the CPU, run on the CPU in WebAssembly
+// workers by the shader page's nts.js; any browser, no WebGPU needed), 'crisp', 'smooth' (sharp, fine-tuned against
+// flicker; WebGPU), 'sharp' (WebGPU), 'fast' (half resolution; the WebGL engine runs this one whatever is asked).
 
 // The shaders trained on 360 x 640 frames. On WebGPU the frame is larger at the same scale (pixels per metre; the
 // shader page's choice), so outstretched arms and a crawl stay in it: the field of view grows with the frame,
 // and the network only runs inside the crop box around her, so standing costs what it did.
 const TRAIN_W = 360, TRAIN_H = 640, FOV = 30, GREEN = 0x00b140;
 const CROP_PAD = 32;   // past her silhouette: the drawing inside matches computing the whole frame
-const DIRS = { fast: 'fast/', sharp: 'sharp/', smooth: 'equi/', crisp: 'crisp/' };
+const DIRS = { fast: 'fast/', sharp: 'sharp/', smooth: 'equi/', crisp: 'crisp/', cpu: 'nts/' };
 
-export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', webgl = false, transparent = false }) {
+export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', webgl = false, transparent = false, onPaint = null }) {
   let gpuAdapter = null;
-  if (navigator.gpu && !webgl) {
+  const CPU = detail === 'cpu';
+  if (navigator.gpu && !webgl && !CPU) {
     try { gpuAdapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' }); } catch { gpuAdapter = null; }
   }
-  let DETAIL = gpuAdapter ? detail : 'fast';
-  const [NW, NH] = gpuAdapter ? [720, 800] : [TRAIN_W, TRAIN_H];
+  let DETAIL = CPU ? 'cpu' : gpuAdapter ? detail : 'fast';
+  const [NW, NH] = gpuAdapter || CPU ? [720, 800] : [TRAIN_W, TRAIN_H];
   const VIEW_FOV = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(FOV / 2)) * NH / TRAIN_H));
   const dir = () => DIRS[DETAIL];
   let GBW = NW, GBH = NH;
-  const glCanvas = gpuAdapter ? document.createElement('canvas') : canvas;
+  const glCanvas = gpuAdapter || CPU ? document.createElement('canvas') : canvas;   // CPU: the G-buffer offscreen, the stage a 2D canvas
   // (the WebGPU path's G-buffer canvas is copied right after it's drawn, so it keeps no preserved buffer)
-  const renderer = new THREE.WebGLRenderer({ canvas: glCanvas, antialias: !!gpuAdapter, alpha: false, powerPreference: 'high-performance' });
+  const renderer = new THREE.WebGLRenderer({ canvas: glCanvas, antialias: !!gpuAdapter || CPU, alpha: false, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   const gl = renderer.getContext();
@@ -118,7 +120,7 @@ export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', w
       void main() { gl_FragColor = vec4(fract(vUv0), part, 1.0); }`,
   });
   const rt = (type, samples) => new THREE.WebGLRenderTarget(NW, NH, { type, samples, depthBuffer: true, minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter });
-  const gColor = gpuAdapter ? null : rt(THREE.HalfFloatType, 4), gND = gpuAdapter ? null : rt(THREE.HalfFloatType, 4), gUv = gpuAdapter ? null : rt(THREE.FloatType, 0);
+  const gColor = gpuAdapter || CPU ? null : rt(THREE.HalfFloatType, 4), gND = gpuAdapter || CPU ? null : rt(THREE.HalfFloatType, 4), gUv = gpuAdapter || CPU ? null : rt(THREE.FloatType, 0);
   const normalMat = new THREE.ShaderMaterial({
     vertexShader: gbufVert, side: THREE.DoubleSide,
     fragmentShader: `varying vec3 vNormal; varying vec2 vUv0; varying float vDepth;
@@ -211,7 +213,7 @@ export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', w
     if (topDown) [y0, y1] = [y1, y0];
     // How far her silhouette reaches past the bones (the shader page measured top 52, sides 37, bottom 24
     // pixels standing; on the floor hair and skirt spread, so a little more here), plus the decoder's reach.
-    let b = gpuAdapter ? [px(x0) - 60 - CROP_PAD, py(y0) - 80 - CROP_PAD, px(x1) + 60 + CROP_PAD, py(y1) + 48 + CROP_PAD]
+    let b = gpuAdapter || CPU ? [px(x0) - 60 - CROP_PAD, py(y0) - 80 - CROP_PAD, px(x1) + 60 + CROP_PAD, py(y1) + 48 + CROP_PAD]
       : [px(x0) - 0.12 * NH - 64, py(y0) - 0.12 * NH - 64, px(x1) + 0.12 * NH + 64, py(y1) + 0.12 * NH + 64];
     if (!b.every(Number.isFinite)) { lastCrop = null; return [0, 0, NW, NH]; }   // a degenerate projection: the whole frame
     const now = b;
@@ -222,6 +224,75 @@ export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', w
       Math.min(NW, Math.ceil(b[2] / snap) * snap), Math.min(NH, Math.ceil(b[3] / snap) * snap)];
   }
   const css = n => new THREE.Color().setStyle(getComputedStyle(document.documentElement).getPropertyValue(n).trim(), THREE.LinearSRGBColorSpace);
+
+  // zoom about a world point (the WebGPU and CPU paths): the view [zoom, shift x, shift y] that keeps it put
+  let lastView = [1, 0, 0];
+  function viewAbout(zoom, about) {
+    let fx = 0.5, fy = 0.5;
+    if (about) {
+      const W = canvas.clientWidth || 1, H = canvas.clientHeight || 1, sc = Math.min(W / NW, H / NH), bw = NW * sc / W, bh = NH * sc / H;
+      const p = about.clone().project(camera), k = Math.min(1, Math.max(0, (zoom - 1) / 1.5));
+      fx = 0.5 + k * ((1 - bw) / 2 + (p.x * 0.5 + 0.5) * bw - 0.5); fy = 0.5 + k * ((1 - bh) / 2 + (0.5 - p.y * 0.5) * bh - 0.5);
+    }
+    return lastView = [zoom, fx * (1 - zoom), fy * (1 - zoom)];
+  }
+  function syncCamera(cam, w, h) {
+    const s = Math.min(w / NW, h / NH), [z, vx, vy] = lastView;
+    cam.position.copy(camera.position); cam.quaternion.copy(camera.quaternion);
+    cam.fov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(VIEW_FOV / 2)) * h / (NH * s)));
+    cam.aspect = w / h; cam.setViewOffset(w, h, -vx / z * w, -vy / z * h, w / z, h / z); cam.updateMatrixWorld();
+  }
+
+  // ---------- CPU path (the shader page's nts.js: the nanotss shader in WebAssembly workers) ----------
+  // The five G-buffer tiles are read back from the offscreen canvas; the network's drawing (NW x NH, straight
+  // alpha) is painted onto the stage with the view's zoom and shift (the shader page's drawCpu and paintCpu).
+  if (CPU) {
+    const { createCpuShader } = await import('./nts.js');
+    const cpu = await createCpuShader({ base: DIRS.cpu, maxPixels: NW * NH });
+    renderer.setPixelRatio(1);
+    renderer.setSize(NW * 5, NH, false);
+    assignParts(cpu.parts);
+    const netCanvas = document.createElement('canvas'); netCanvas.width = NW; netCanvas.height = NH;
+    const netCtx = netCanvas.getContext('2d'), ctx2d = canvas.getContext('2d');
+    const hex = c => `rgb(${Math.round(c.r * 255)}, ${Math.round(c.g * 255)}, ${Math.round(c.b * 255)})`;
+    function paint() {
+      const W = Math.round(canvas.clientWidth * Math.min(devicePixelRatio || 1, 2)), H = Math.round(canvas.clientHeight * Math.min(devicePixelRatio || 1, 2));
+      if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
+      if (transparent) ctx2d.clearRect(0, 0, W, H);
+      else {
+        const grad = ctx2d.createLinearGradient(0, 0, 0, H);
+        grad.addColorStop(0, hex(css('--stage-top'))); grad.addColorStop(1, hex(css('--stage-bottom')));
+        ctx2d.fillStyle = grad; ctx2d.fillRect(0, 0, W, H);
+      }
+      const [z, vx, vy] = lastView, s = Math.min(W / NW, H / NH), bw = NW * s / W, bh = NH * s / H;
+      ctx2d.imageSmoothingEnabled = true;
+      ctx2d.drawImage(netCanvas, (vx + z * (1 - bw) / 2) * W, (vy + z * (1 - bh) / 2) * H, z * bw * W, z * bh * H);
+    }
+    return {
+      engine: `CPU WebAssembly ${cpu.relaxed ? 'relaxed ' : ''}SIMD ${cpu.kernel} x ${cpu.threads} · nanotss`,
+      zoomInPass: true, scene,
+      get busy() { return cpu.busy; },
+      get ms() { return cpu.ms; },
+      syncCamera,
+      frame({ target: t, yaw, pitch, zoom = 1, about = null }) {
+        if (cpu.busy) return false;
+        placeCamera(t, yaw, pitch);
+        viewAbout(zoom, about);
+        const crop = cropBox(true);
+        renderGBufferTiles(crop);
+        const [x0, y0, x1, y1] = crop, w = x1 - x0, h = y1 - y0, n = w * h * 4;
+        const tiles = new Uint8Array(5 * n);
+        for (let k = 0; k < 5; k++) gl.readPixels(k * GBW + x0, GBH - y1, w, h, gl.RGBA, gl.UNSIGNED_BYTE, tiles.subarray(k * n, (k + 1) * n));
+        cpu.frame({ tiles, w, h, pitch: THREE.MathUtils.degToRad(pitch) }).then(rgba => {
+          netCtx.clearRect(0, 0, NW, NH);
+          netCtx.putImageData(new ImageData(rgba, w, h), x0, y0);
+          paint();
+          onPaint?.();   // the drawing arrives a frame or more later: the caller matches its floor to it then
+        });
+        return false;
+      },
+    };
+  }
 
   // ---------- WebGPU path (gpu.js) ----------
   let gpu = null, parts = [];
@@ -236,7 +307,6 @@ export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', w
     renderer.setPixelRatio(1);
     renderer.setSize(GBW * 5, GBH, false);
     assignParts(parts);
-    let lastView = [1, 0, 0];
     // Half-precision maths only if it draws her as full precision does (the shader page's self-check): one
     // frame each, mean difference on her under 0.004.
     if (gpu.mathModes?.length > 1) {
@@ -262,24 +332,13 @@ export async function createShaderView({ THREE, vrm, canvas, detail = 'crisp', w
       // The shader's camera as seen on a canvas of css size w x h under the last frame's view (zoom and shift):
       // same position and direction, the field of view of the whole canvas (the drawing is fitted inside it),
       // and the zoomed part picked out with a view offset, so a scene rendered with it lines up beneath.
-      syncCamera(cam, w, h) {
-        const s = Math.min(w / NW, h / NH), [z, vx, vy] = lastView;
-        cam.position.copy(camera.position); cam.quaternion.copy(camera.quaternion);
-        cam.fov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(VIEW_FOV / 2)) * h / (NH * s)));
-        cam.aspect = w / h; cam.setViewOffset(w, h, -vx / z * w, -vy / z * h, w / z, h / z); cam.updateMatrixWorld();
-      },
+      syncCamera,
       // zoom magnifies about `about` (a world point; the centre when absent), as far as the zoom goes past 1.5x
       // (so close-ups centre on, say, her head)
       frame({ target: t, yaw, pitch, zoom = 1, about = null }) {
         if (gpu.busy) return false;
         placeCamera(t, yaw, pitch);
-        let fx = 0.5, fy = 0.5;
-        if (about) {
-          const W = canvas.clientWidth || 1, H = canvas.clientHeight || 1, sc = Math.min(W / NW, H / NH), bw = NW * sc / W, bh = NH * sc / H;
-          const p = about.clone().project(camera), k = Math.min(1, Math.max(0, (zoom - 1) / 1.5));
-          fx = 0.5 + k * ((1 - bw) / 2 + (p.x * 0.5 + 0.5) * bw - 0.5); fy = 0.5 + k * ((1 - bh) / 2 + (0.5 - p.y * 0.5) * bh - 0.5);
-        }
-        const view = lastView = [zoom, fx * (1 - zoom), fy * (1 - zoom)];   // the point (fx, fy) stays put
+        const view = viewAbout(zoom, about);   // the point `about` stays put
         const crop = cropBox(true);
         renderGBufferTiles(crop);
         const W = Math.round(canvas.clientWidth * Math.min(devicePixelRatio || 1, 2)), H = Math.round(canvas.clientHeight * Math.min(devicePixelRatio || 1, 2));
