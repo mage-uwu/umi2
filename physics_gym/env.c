@@ -62,8 +62,13 @@ static BHD Vec hinge_axis(int h) { return h == 1 ? v3(1, 0, 0) : h == 2 ? v3(0, 
 BHD double env_phase(const Env *E) { return E->cfg.task == TASK_IMITATE || (E->cfg.task == TASK_GOTO && E->cfg.clip) ? E->t0 + E->W.t : 0; }
 
 /* Reference at clip time t: joint rotations, body world rotations and root, the root carried across loops. */
+/* TASK_IMITATE over a clip set (cfg.style): see env.h */
+static BHD int clip_set(const Env *E) { return E->cfg.task == TASK_IMITATE && E->cfg.nstyle > 0; }
 static BHD void ref_at(const Env *E, double t, Quat *rel, Quat *world, Vec *root) {
-    const Clip *c = E->cfg.clip; const double T = (c->frames - 1) / c->fps;
+    const Clip *c = E->rc; const double T = (c->frames - 1) / c->fps;
+    if (clip_set(E)) {   /* once through, then its last frame held (standing, at the end of a get-up) */
+        mref_sample(c, fmin(fmax(t, 0), T * (1 - 1e-9)), root, world, rel); *root = vadd(*root, E->clip_shift); return;
+    }
     mref_sample(c, t, root, world, rel);
     double cycles = floor(t / T); Vec loop = vsub(c->root[c->frames - 1], c->root[0]); loop.y = 0;
     *root = vadd(vadd(*root, vscale(loop, cycles)), E->clip_shift);
@@ -142,9 +147,11 @@ BHD void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
     E->head_v = v3(0, 0, 0); E->style_has_prev = 0; E->path_len = 0;
     for (int k = 0; k < 2; k++) { E->foot_on[k] = 1; E->foot_vy[k] = 0; }
     E->next_push = 0.5 + env_rand(&E->rng) * 2 * cfg->push_every;
+    E->rc = cfg->clip;
     if (cfg->task == TASK_IMITATE) {
-        const Clip *c = cfg->clip; const double T = (c->frames - 1) / c->fps;
-        E->t0 = cfg->fixed_start ? 0 : env_rand(&E->rng) * T;
+        if (cfg->nstyle > 0) E->rc = cfg->style[(int)(env_rand(&E->rng) * cfg->nstyle) % cfg->nstyle];   /* a clip of the set */
+        const Clip *c = E->rc; const double T = (c->frames - 1) / c->fps;
+        E->t0 = cfg->fixed_start ? 0 : env_rand(&E->rng) * T * (cfg->nstyle > 0 ? 0.85 : 1);
         E->clip_shift = v3(0, 0, 0);
         Quat rel[NB], rel2[NB], wq[NB]; Vec root, root2; const double dt = 1.0 / CTRL_HZ;
         ref_at(E, E->t0, rel, wq, &root); ref_at(E, E->t0 + dt, rel2, wq, &root2);
@@ -207,7 +214,7 @@ static BHD Quat hinge_limit(int i, Quat q) {
 static BHD double b_sqrt_h(double x, double z) { return sqrt(x * x + z * z); }
 static BCONST double PROBE_DIST[6] = {0.3, 0.6, 0.9, 1.2, 0.6, 0.6}, PROBE_ANG[6] = {0, 0, 0, 0, 0.5, -0.5};   /* the ground probes (m, rad) */
 BHD void env_obs(const Env *E, float *o) {
-    const World *W = &E->W; Quat hi = heading_inv(W, floor_task(E)); Vec root = W->b[PELVIS].x; int k = 0;
+    const World *W = &E->W; Quat hi = heading_inv(W, floor_task(E) || clip_set(E)); Vec root = W->b[PELVIS].x; int k = 0;
     for (int i = 0; i < NB; i++) {
         const Body *b = W->b + i; Vec p = qrot(hi, vsub(b->x, root));
         if (i == 0) p.y = root.y - fmin(world_lowest(W, L_FOOT), world_lowest(W, R_FOOT));   /* the pelvis: its height above her lowest foot corner */
@@ -222,7 +229,7 @@ BHD void env_obs(const Env *E, float *o) {
     Vec cv, c = world_com(W, &cv); Vec d = qrot(hi, vsub(c, root));
     o[k++] = d.x; o[k++] = d.z;
     double ph = 0;
-    if (E->cfg.task == TASK_IMITATE || (E->cfg.task == TASK_GOTO && E->cfg.clip)) { const Clip *cl = E->cfg.clip; ph = 2 * M_PI * env_phase(E) / ((cl->frames - 1) / cl->fps); }
+    if ((E->cfg.task == TASK_IMITATE && !clip_set(E)) || (E->cfg.task == TASK_GOTO && E->cfg.clip)) { const Clip *cl = E->cfg.clip; ph = 2 * M_PI * env_phase(E) / ((cl->frames - 1) / cl->fps); }
     o[k++] = b_sin(ph); o[k++] = b_cos(ph);
     if (E->cfg.task == TASK_GOTO) {   /* the goal from her pelvis, heading frame; far goals at 4 m in their direction */
         const Vec g = qrot(hi, vsub(E->goal, root)); const double r = b_sqrt_h(g.x, g.z), s = r > 4 ? 4 / r : 1;
@@ -563,7 +570,7 @@ static BHD double env_begin(Env *E, const float *a) {
         if (d->hinge) { r = vscale(hinge_axis(d->hinge), f[k++]); }
         else { r = v3(f[k], f[k + 1], f[k + 2]); k += 3; }
         W->target[i] = qmul(E->ref[i], qexp(vscale(r, ACT_SCALES[i] * (E->cfg.act_mul > 0 ? E->cfg.act_mul : 1))));
-        if (d->hinge && floor_task(E)) W->target[i] = hinge_limit(i, W->target[i]);
+        if (d->hinge && (floor_task(E) || clip_set(E))) W->target[i] = hinge_limit(i, W->target[i]);
     }
     for (int j = 0; j < ACT_DIM; j++) { double dd = a[j] - E->prev_act[j]; act2 += dd * dd; E->prev_act[j] = a[j]; }
     W->grip_cmd[0] = a[ACT_JOINT]; W->grip_cmd[1] = a[ACT_JOINT + 1];   /* grip: the raw command (opening a hand is not low-passed) */
@@ -589,7 +596,7 @@ static BHD double env_end(Env *E, double act2) {
     E->step++;
     if (floor_task(E)) return floor_reward(E, act2);
     if (E->cfg.task == TASK_GOTO) return goto_reward(E, act2);
-    int fell = fallen(W);
+    int fell = clip_set(E) ? 0 : fallen(W);   /* (a get-up's reference lies on the floor: only drifting off it ends one) */
     if (E->cfg.task == TASK_IMITATE) {
         ref_at(E, env_phase(E), E->ref, E->ref_world, &E->ref_root);
         Vec er = vsub(W->b[PELVIS].x, E->ref_root);

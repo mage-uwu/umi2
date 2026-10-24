@@ -79,7 +79,10 @@ typedef struct {
                           * toward the reference root position and rotation; 0 for the final skill.
                           * TASK_GETUP: a spring toward standing height above where her pelvis is, upright */
     double act_mul;      /* joint ranges times this (0 = 1) */
-    const Clip *style[8]; int nstyle;   /* floor tasks: motion style prior (env_style_prepare each first) */
+    const Clip *style[8]; int nstyle;   /* floor tasks: motion style prior (env_style_prepare each first). TASK_IMITATE: the clip set
+                          * (the CMU get-ups): each episode imitates one, from a random point, once through and then holding
+                          * its last frame, with no phase input and the floor tasks' heading frame and hinge limits, so the
+                          * policy reads from her body where in the motion she is (and TASK_GETUP can carry on from it) */
     double style_start;  /* TASK_GETUP: share of episodes starting in a random frame of a style clip */
     int free_heading;    /* TASK_IMITATE: imitate the clip's style, not its path: posture, limbs and speed in her own heading frame;
                           * only a fall ends the episode (not drifting off the clip's line), so she learns to recover */
@@ -107,6 +110,7 @@ typedef struct {
     double goal_d;         /* TASK_GOTO: her horizontal distance to the goal at the last step */
     double path_len;       /* TASK_GOTO in a room: the path to go at the last step (m) */
     int foot_on[2]; double foot_vy[2];   /* each foot on the ground at the last step, and its vertical speed then (landings) */
+    const Clip *rc;      /* TASK_IMITATE: this episode's reference clip (cfg.clip, or one of a clip set) */
     unsigned char nav_d[NAV_N * NAV_N];  /* TASK_GOTO in a room: steps from each nav cell to the goal's (255: no way there) */
     unsigned short nav_q[NAV_N * NAV_N]; /* the search's queue */
 } Env;
