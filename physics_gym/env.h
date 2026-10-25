@@ -117,6 +117,8 @@ typedef struct {
     double path_len;       /* TASK_GOTO in a room: the path to go at the last step (m) */
     int foot_on[2]; double foot_vy[2];   /* each foot on the ground at the last step, and its vertical speed then (landings) */
     const Clip *rc;      /* TASK_IMITATE: this episode's reference clip (cfg.clip, or one of a clip set) */
+    int landed;          /* a jump course: 0 until her first foot comes down on the landing platform (1 then, or from the start
+                          * when she did not start on the takeoff platform) */
     unsigned char nav_d[NAV_N * NAV_N];  /* TASK_GOTO in a room: steps from each nav cell to the goal's (255: no way there) */
     unsigned short nav_q[NAV_N * NAV_N]; /* the search's queue */
 } Env;

@@ -34,15 +34,15 @@ const box = (a, b, h, w, ext0, ext1, feature) => {   // a box from a to b (horiz
 const rooms = [];
 for (let r = 0; r < +nRooms; r++) {
   const k = r % courses.length, C = courses[k], h = 0.3 + 0.7 * Math.floor(r / courses.length) / Math.max(1, Math.floor((+nRooms - 1) / courses.length));
-  const { off, on } = C.best, M = 0.12;   // the gap's edges M clear of the takeoff and landing feet
+  const { off, on } = C.best, M = 0.12, ML = +(process.env.LAND || M);   // the gap's edges M clear of the takeoff foot and ML of the landing feet (LAND: more room to land)
   const dir = { x: on.x - off.x, z: on.z - off.z }, L = Math.hypot(dir.x, dir.z) || 1e-6, u = { x: dir.x / L, z: dir.z / L };
   // both along the flight's line (a standing jump's start is at its takeoff: no direction of its own), the takeoff
   // platform back past the clip's start, the landing one on past its end
   const along = q => (q.x - off.x) * u.x + (q.z - off.z) * u.z, back = Math.max(0, -along(C.start)) + 1.2, past = Math.max(0, along(C.tail) - L) + 1.5;
-  const e0 = { x: off.x + u.x * M, z: off.z + u.z * M }, e1 = { x: on.x - u.x * M, z: on.z - u.z * M };
+  const e0 = { x: off.x + u.x * M, z: off.z + u.z * M }, e1 = { x: on.x - u.x * ML, z: on.z - u.z * ML };
   const A = box({ x: e0.x - u.x * back, z: e0.z - u.z * back }, e0, h, 1.2, 0, 0, 'takeoff');
   const Bx = box(e1, { x: e1.x + u.x * past, z: e1.z + u.z * past }, h, 1.2, 0, 0, 'landing');
-  rooms.push({ name: `jump_${C.name}_${h.toFixed(2)}`, clip: C.name, height: h, gap: Math.max(0, L - 2 * M), bounds: [-8, 8, -8, 8], boxes: [A, Bx] });
+  rooms.push({ name: `jump_${C.name}_${h.toFixed(2)}`, clip: C.name, height: h, gap: Math.max(0, L - M - ML), bounds: [-8, 8, -8, 8], boxes: [A, Bx] });
 }
 writeFileSync(out, JSON.stringify({ version: 2, clips: list, rooms }, null, 0));
 for (const C of courses) console.log(`${C.name}: ${C.T.toFixed(1)} s, ground ${C.g.toFixed(3)}, flight frames ${C.best?.f}-${C.best?.e}, takeoff to landing ${C.best?.d.toFixed(2)} m (gap ${Math.max(0, C.best?.d - 0.24).toFixed(2)} m)`);

@@ -70,6 +70,12 @@ static BHD int clip_set(const Env *E) { return E->cfg.task == TASK_IMITATE && E-
  * own frame, platforms where its feet come down and a gap where they are off the ground; dropping below the platform
  * tops ends the episode (she starts over) */
 static BHD int course(const Env *E) { return clip_set(E) && room_size(E->W.room) > 0; }
+/* over a box's top (horizontally inside it; `back` m short of its near end counts too): how far onto it from that
+ * near end along its length (m, negative short of it), or 0 when not over it */
+static BHD double over_box(const RoomBox *o, Vec p, double back) {
+    const Vec l = qrot(qconj(o->q), vsub(p, o->c));
+    return fabs(l.x) < o->h.x && l.z > -o->h.z - back && l.z < o->h.z ? l.z + o->h.z + 1e-9 : 0;
+}
 static BHD void ref_at(const Env *E, double t, Quat *rel, Quat *world, Vec *root) {
     const Clip *c = E->rc; const double T = (c->frames - 1) / c->fps;
     if (clip_set(E)) {   /* once through, then its last frame held (standing, at the end of a get-up) */
@@ -181,6 +187,7 @@ BHD void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
         for (int i = 0; i < NB; i++) E->W.b[i].xprev = E->W.b[i].x;
         ref_at(E, E->t0, E->ref, E->ref_world, &E->ref_root);
         for (int i = 0; i < NB; i++) E->W.target[i] = E->ref[i];
+        if (course(E)) E->landed = !over_box(room_at(E->W.room, 0), E->W.b[PELVIS].x, 0);   /* a landing to come only when she starts on the takeoff platform */
         return;
     }
     if (cfg->task == TASK_CRAWL || cfg->task == TASK_GETUP) { floor_reset(E); return; }
@@ -745,7 +752,12 @@ static BHD double env_end(Env *E, double act2) {
             ce = vscale(v3(vh.x - vr.x, 0, vh.z - vr.z), 0.3);   /* 0.3 s of the velocity error, as a distance */
         }
         double track = 0.5 * b_exp(-2 * pose / NJ) + 0.1 * b_exp(-0.1 * vel / NJ) + 0.2 * b_exp(-10 * ee) + 0.2 * b_exp(-10 * vdot(ce, ce));
-        return 0.75 * track + 0.25 * golden_thread(E, qrot(E->ref_world[PELVIS], fx[HEAD]).y);
+        double stick = 0;   /* a jump course: her first foot down on the landing platform pays for how far onto it (to 0.3 m) */
+        if (course(E) && !E->landed) for (int k = 0; k < 2; k++) {
+            const int fi = k ? R_FOOT : L_FOOT; const double on = over_box(room_at(W->room, 1), W->b[fi].x, 0);
+            if (on > 0 && world_lowest(W, fi) < E->clip_shift.y + 0.03) { E->landed = 1; stick = 3 * fmin(on, 0.3) / 0.3; break; }
+        }
+        return 0.75 * track + 0.25 * golden_thread(E, qrot(E->ref_world[PELVIS], fx[HEAD]).y) + stick;
     }
     if (fell || E->step >= E->cfg.steps) E->done = 1;
     if (fell) return 0;
