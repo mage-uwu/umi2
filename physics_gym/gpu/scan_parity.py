@@ -67,3 +67,8 @@ def stream(fused, steps=16):
     return torch.stack(outs, 1), st
 oa, sa = stream(False); of, sf = stream(True)
 print(f"stream inference, 16 steps: output max diff {diff(oa, of)[0]:.2e}, state max diff {max(diff(a, b)[0] for a, b in zip(sa['h'], sf['h'])):.2e}")
+# where the fused forward + backward spends its time: the scan kernels against the PyTorch ops around them
+if os.environ.get("SCAN_PROF"):
+    run(True)
+    with torch.profiler.profile(activities=[torch.profiler.ProfilerActivity.CPU, torch.profiler.ProfilerActivity.CUDA]) as prof: run(True)
+    print(prof.key_averages().table(sort_by="self_cuda_time_total", row_limit=25))
