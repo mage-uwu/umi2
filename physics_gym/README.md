@@ -3,6 +3,15 @@
 A fork of `body/`: the same 14-body XPBD character, its tasks, controllers, CPU/GPU trainers and viewer, in a
 room with things to climb, crawl through and fall onto.
 
+## The physics world as one file
+
+`physics_world.c` is the world alone (the character, joints, muscles, contacts, rooms, terrain queries, nav grid) in a
+single standalone C file, generated from bmath.h, body.h, joint_limits.h, muscle.h, body.c and room.c by
+`python3 tools/amalgamate_world.py` (run it again after changing those). The same code, so the same bits:
+
+    cc -O2 -ffp-contract=off -c physics_world.c                                    # as a library
+    cc -O2 -ffp-contract=off -DPHYSICS_WORLD_DEMO -o world physics_world.c -lm && ./world [room.json]   # a demo
+
 ## Stage 0: the room
 
 `room.py` writes `room.json` (and the viewer's copy, `web/room.json`). Every feature is expanded into
