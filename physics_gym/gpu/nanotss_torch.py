@@ -401,9 +401,11 @@ class TSS:
         lib = scan_lib() if x.is_cuda and self.fused else None
         if lib is not None:   # the time loop below as one kernel (tss_scan.cu); the routing credit's sampling after it
             hc = h if h.is_contiguous() else h.contiguous()
-            ct = lambda a: a.contiguous().float()
+            # the contiguous copies held here until the launch: a temporary freed as soon as its pointer is taken lets
+            # the next one reuse its memory, and two inputs would then read the same buffer
+            keep = [a.contiguous().float() for a in (dt, Bt, Ct, V, Z, s_lin, bias, ea)]
             err = lib.tss_scan_fwd(B, L, T, D, N, n, pv, float(cap), int(train), int(train and hprev.dtype == torch.bfloat16),
-                                   _p(hc), _p(ct(dt)), _p(ct(Bt)), _p(ct(Ct)), _p(ct(V)), _p(ct(Z)), _p(ct(s_lin)), _p(ct(bias)), _p(ct(ea)),
+                                   _p(hc), *[_p(a) for a in keep],
                                    _p(node_t), _p(s_t), _p(dec_t), _p(R_t), _p(rs), _p(hprev if train else None),
                                    _p(anode if train else None), _p(as_t if train else None), _p(aR_t if train else None),
                                    ctypes.c_void_p(torch.cuda.current_stream(dev).cuda_stream))
@@ -597,9 +599,8 @@ class TSS:
         lib = scan_lib() if g.is_cuda and self.fused else None
         if lib is not None:   # the reverse-time loop below as one kernel (tss_scan.cu)
             dVp = torch.empty(B, L, T, pv, device=dev)
-            ct = lambda a: a.contiguous()
-            err = lib.tss_scan_bwd(B, L, T, D, N, n, pv, int(hprev.dtype == torch.bfloat16), _p(ct(node)), _p(ct(hprev)), _p(ct(dec_t)),
-                                   _p(ct(dR.float())), _p(ct(Bt)), _p(ct(Ct)), _p(ct(V)), _p(ct(dt)), _p(ct(eaN)),
+            keep = [a.contiguous() for a in (node, hprev, dec_t, dR.float(), Bt, Ct, V, dt, eaN)]   # (held until the launch, as above)
+            err = lib.tss_scan_bwd(B, L, T, D, N, n, pv, int(hprev.dtype == torch.bfloat16), *[_p(a) for a in keep],
                                    _p(dBt), _p(dCt), _p(dVp), _p(ddt), _p(GA), ctypes.c_void_p(torch.cuda.current_stream(dev).cuda_stream))
             if err: raise RuntimeError(err.decode())
             dV = dVp.sum(2)

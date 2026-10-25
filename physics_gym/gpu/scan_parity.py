@@ -59,3 +59,11 @@ for f in nt.FIELDS:
 print(f"carried state: max diff {max(diff(a, b)[0] for a, b in zip(A[4]['h'], Fz[4]['h'])):.2e}; visited rows equal: {bool((A[6] == Fz[6]).all())}")
 ts = [run(True)[5] for _ in range(3)]; tl = [run(False)[5] for _ in range(2)]
 print(f"forward + backward: PyTorch loop {min(tl):.3f} s, fused {min(ts):.3f} s ({min(tl) / min(ts):.1f}x)")
+# inference as the rollouts run it: one step at a time with the state carried (stream=True, no tape)
+def stream(fused, steps=16):
+    m.fused = fused; st = {k: [v.clone() for v in vs] for k, vs in st0.items()}; outs = []
+    with torch.no_grad():
+        for t in range(steps): outs.append(m.forward(x[:, t:t + 1], state=st, stream=True)[:, 0])
+    return torch.stack(outs, 1), st
+oa, sa = stream(False); of, sf = stream(True)
+print(f"stream inference, 16 steps: output max diff {diff(oa, of)[0]:.2e}, state max diff {max(diff(a, b)[0] for a, b in zip(sa['h'], sf['h'])):.2e}")
