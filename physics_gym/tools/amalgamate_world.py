@@ -21,8 +21,9 @@ HEAD = '''/* physics_world.c: the physics gym in one file: the world, the tasks 
  * under XPBD (Mueller et al. 2020): ball joints with the motion capture's joint ranges as ligaments, a muscle at every
  * joint driving it toward a target rotation within its strength and how fast its torque can rise, gravity, floor and
  * room contacts with static and Coulomb friction, the legs colliding with each other, hand grips on holds and ledges,
- * rooms of static boxes (room.json, from room.py; banks of them) with a nav grid for path finding; 8 worlds stepped at
- * once in vector lanes (body_x8.c). The same arithmetic as the GPU build and body.js (fdlibm's sin, cos, exp, log,
+ * rooms of static boxes (room.json, from room.py; banks of them) with a nav grid for path finding. (body_x8.c, the
+ * body/ solver for 8 worlds in vector lanes, is here but not used: it lacks the room contacts, static friction, muscles
+ * and grips, so world_step_x8 runs body.c's solver world by world.) The same arithmetic as the GPU build and body.js (fdlibm's sin, cos, exp, log,
  * atan2, below), so with contraction off it gives the same bits.
  * The tasks (env.c): balance, imitation of a clip, crawl, get up, walking to goals over a room bank (the path helper,
  * the look inputs), tracking a clip set (get-ups from real falls; jump courses in a room), with their observations
