@@ -10,6 +10,10 @@
  * the language model's own. Win / Wo / bo / log_std are trained with Adam; a small MLP critic estimates values.
  *
  *   ./ppo_tss --task walk --assist 0.3 --seconds 600 --out walk     (writes walk.tss and walk.head)
+ *   ./ppo_tss --task goto --mref data/clean/cmu_gait.bin --room rooms_nav.json --load data/clean/warm/aware --assist 0.05 --assist-auto
+ *   ./ppo_tss --task getup_imitate --style data/cmu_jump.bin:fjump1,fjump2 --room data/jump_bank_standing.json --load data/clean/warm/jump_stick --eval 64
+ * Tasks: balance | crawl | getup | goto | getup_imitate | a clip name of --mref (imitation), as gpu/ppo_gpu.py's; --room a room
+ * bank (or one room.json); --eval N runs a policy instead of training it. Heads with fewer inputs (older policies) are widened.
  */
 #include "env.h"
 #include <stdio.h>
@@ -156,6 +160,26 @@ static void gen_snapshot(const Cfg *c, const Gen *g, real *hs, real *hh) {
     memcpy(hh, g->hist, (size_t)c->n_layer * (c->K > 1 ? c->K - 1 : 1) * c->d * sizeof(real));
 }
 
+/* a saved head (save_head, or ppo_gpu.py's): an older one, with fewer inputs (the newer come last) or outputs, is
+ * widened with zero weights, so the policy acts as it did; the critic too when it was saved; 0 when read */
+static int load_head(const char *path, Ends *E, float *mean, float *sd, int d, Critic *C, int *had_critic) {
+    FILE *f = fopen(path, "rb"); char mg[4]; int dims[3]; *had_critic = 0; if (!f) return 1;
+    if (fread(mg, 1, 4, f) != 4 || memcmp(mg, "TSPH", 4) || fread(dims, sizeof dims, 1, f) != 1 || dims[0] != d || dims[1] > OBS_DIM || dims[2] > ACT_DIM) { fclose(f); return 1; }
+    const int ho = dims[1], ha = dims[2]; real *tmp = malloc(sizeof(real) * (size_t)CH * ho); int ok = 1;
+    memset(E->all, 0, E->size * sizeof(real));
+    ok &= fread(tmp, sizeof(real), (size_t)d * ho, f) == (size_t)d * ho;
+    for (int i = 0; i < d; i++) memcpy(E->Win + (size_t)i * OBS_DIM, tmp + (size_t)i * ho, sizeof(real) * ho);
+    ok &= fread(E->bin, sizeof(real), d, f) == (size_t)d; ok &= fread(E->Wo, sizeof(real), (size_t)ha * d, f) == (size_t)ha * d;
+    ok &= fread(E->bo, sizeof(real), ha, f) == (size_t)ha; ok &= fread(E->log_std, sizeof(real), ha, f) == (size_t)ha;
+    for (int i = 0; i < OBS_DIM; i++) { mean[i] = 0; sd[i] = 1; }
+    ok &= fread(mean, 4, ho, f) == (size_t)ho; ok &= fread(sd, 4, ho, f) == (size_t)ho;
+    if (ok && fread(tmp, sizeof(real), (size_t)CH * ho, f) == (size_t)CH * ho) {   /* the critic, when saved with it */
+        memset(C->W1, 0, sizeof(real) * (size_t)CH * OBS_DIM);
+        for (int i = 0; i < CH; i++) memcpy(C->W1 + (size_t)i * OBS_DIM, tmp + (size_t)i * ho, sizeof(real) * ho);
+        const size_t rest = C->size - (size_t)CH * OBS_DIM; *had_critic = fread(C->b1, sizeof(real), rest, f) == rest;
+    }
+    free(tmp); fclose(f); return !ok;
+}
 static int save_head(const char *path, const Ends *E, const float *mean, const float *sd, int d, const Critic *C) {
     FILE *f = fopen(path, "wb"); if (!f) return 1;
     fwrite("TSPH", 1, 4, f); int dims[3] = {d, OBS_DIM, ACT_DIM}; fwrite(dims, sizeof dims, 1, f);
@@ -166,7 +190,7 @@ int main(int argc, char **argv) {
     const char *load_from = NULL, *out = "tsspolicy", *task = "balance", *mref = "data/motions_ref.bin";
     double seconds = 600, lr = 3e-4, hlr = 3e-4, vlr = 1e-3, gamma = 0.95, lam = 0.95, clipr = 0.2, ent = 0, log_std0 = -1.6;
     int threads = 4, nenv = 64, hor = 64, epochs = 4, mb = 4, seed = 0, d = 64, depth = 4, trees = 4;
-    TaskCfg tc = {.push_every = 2, .steps = 300, .init_noise = 0.05}; int steps_set = 0; const char *style_arg = NULL;
+    TaskCfg tc = {.push_every = 2, .steps = 300, .init_noise = 0.05}; int steps_set = 0, assist_auto = 0, eval_n = 0; const char *style_arg = NULL, *room = NULL;
     for (int i = 1; i < argc; i++) {
         const char *a = argv[i], *v = i + 1 < argc ? argv[i + 1] : NULL;
 #define OPT(nm, dst, conv) if (!strcmp(a, nm) && v) { dst = conv(v); i++; continue; }
@@ -175,20 +199,35 @@ int main(int argc, char **argv) {
         OPT("--log-std", log_std0, atof) OPT("--threads", threads, atoi) OPT("--envs", nenv, atoi) OPT("--horizon", hor, atoi)
         OPT("--epochs", epochs, atoi) OPT("--minibatches", mb, atoi) OPT("--seed", seed, atoi) OPT("--width", d, atoi) OPT("--depth", depth, atoi) OPT("--trees", trees, atoi)
         OPT("--push", tc.push_max, atof) OPT("--act-mul", tc.act_mul, atof) OPT("--style", style_arg, (const char *)) OPT("--style-start", tc.style_start, atof) if (!strcmp(a, "--steps") && v) { tc.steps = atoi(v); steps_set = 1; i++; continue; } OPT("--assist", tc.assist, atof) OPT("--sway", tc.sway, atof) OPT("--arm-tone", tc.arm_tone, atof)
+        OPT("--room", room, (const char *)) OPT("--goal-tops", tc.goal_tops, atof) OPT("--goal-cone", tc.goal_cone, atof) OPT("--free-heading", tc.free_heading, atoi) OPT("--eval", eval_n, atoi)
+        if (!strcmp(a, "--assist-auto")) { assist_auto = 1; continue; }
 #undef OPT
         fprintf(stderr, "unknown argument %s\n", a); return 2;
     }
-    Motions M;
+    /* the task, as gpu/tssenv.c pool_new and gpu_env.py set it up (the same flags give the same tasks) */
+    static Motions M, SM;
+    if (style_arg) {   /* --style file.bin:clip1,clip2,...: a motion style prior, or (getup_imitate) the clip set to track */
+        char buf[1024]; snprintf(buf, sizeof buf, "%s", style_arg); char *colon = strchr(buf, ':'); if (!colon) { fprintf(stderr, "--style file:clips\n"); return 2; }
+        *colon = 0; if (mref_load(buf, &SM)) { fprintf(stderr, "cannot load %s\n", buf); return 1; }
+        for (char *tok = strtok(colon + 1, ","); tok && tc.nstyle < 8; tok = strtok(NULL, ",")) {
+            const Clip *cl = mref_find(&SM, tok); if (!cl) { fprintf(stderr, "no clip %s\n", tok); return 1; }
+            env_style_prepare(cl); tc.style[tc.nstyle++] = cl; }
+    }
     if (!strcmp(task, "crawl") || !strcmp(task, "getup")) {   /* the floor tasks: no clip, wider joint ranges */
         tc.task = !strcmp(task, "crawl") ? TASK_CRAWL : TASK_GETUP; if (!tc.act_mul) tc.act_mul = 2.5; if (!steps_set) tc.steps = tc.task == TASK_CRAWL ? 300 : 240;
-        if (style_arg) {   /* --style file.bin:clip1,clip2,...: motion style prior */
-            static Motions SM; char buf[1024]; snprintf(buf, sizeof buf, "%s", style_arg); char *colon = strchr(buf, ':'); if (!colon) { fprintf(stderr, "--style file:clips\n"); return 2; }
-            *colon = 0; if (mref_load(buf, &SM)) { fprintf(stderr, "cannot load %s\n", buf); return 1; }
-            for (char *tok = strtok(colon + 1, ","); tok && tc.nstyle < 8; tok = strtok(NULL, ",")) {
-                const Clip *cl = mref_find(&SM, tok); if (!cl) { fprintf(stderr, "no clip %s\n", tok); return 1; }
-                env_style_prepare(cl); tc.style[tc.nstyle++] = cl; }
-        }
-    } else if (strcmp(task, "balance")) { if (mref_load(mref, &M) || !(tc.clip = mref_find(&M, task))) { fprintf(stderr, "no clip %s in %s\n", task, mref); return 1; } tc.task = TASK_IMITATE; tc.init_noise = 0; }
+    } else if (!strcmp(task, "goto")) {   /* walking to goals: the walk clip's cycle is the phase input and the gait prior */
+        tc.task = TASK_GOTO; if (!steps_set) tc.steps = 600;
+        if (mref_load(mref, &M) || !(tc.clip = mref_find(&M, "walk"))) { fprintf(stderr, "no clip walk in %s\n", mref); return 1; }
+        if (!tc.nstyle) { env_style_prepare(tc.clip); tc.style[tc.nstyle++] = tc.clip; }
+    } else if (!strcmp(task, "getup_imitate")) {   /* tracking a clip set (get-ups; in a room, a jump course: env.c course mode) */
+        if (!tc.nstyle) { fprintf(stderr, "getup_imitate: --style file:clips\n"); return 2; }
+        tc.task = TASK_IMITATE; tc.init_noise = 0; if (!tc.act_mul) tc.act_mul = 2.5; if (!steps_set) tc.steps = 240; tc.clip = tc.style[0];
+        if (tc.style_start > 0) env_fall_bank();   /* the matched starts' falls */
+    } else if (strcmp(task, "balance")) {   /* imitation of one clip */
+        if (mref_load(mref, &M) || !(tc.clip = mref_find(&M, task))) { fprintf(stderr, "no clip %s in %s\n", task, mref); return 1; }
+        tc.task = TASK_IMITATE; tc.init_noise = 0; tc.nstyle = 0;
+    }
+    if (room && *room) { const int nr = room_load_bank(room); if (nr < 0) { fprintf(stderr, "cannot read %s\n", room); return 1; } }
     /* the language model's defaults: pure SSM-tree + FFF, per-tree keys/queries, QK-norm, Muon; no rotary
      * (positions would differ between rollout and training chunks) */
     ssm_groups = trees; ssm_qknorm = 1; ssm_rope = 0; n_loops = 1;
@@ -209,14 +248,39 @@ int main(int argc, char **argv) {
     float mean[OBS_DIM], sd[OBS_DIM]; for (int i = 0; i < OBS_DIM; i++) { mean[i] = 0; sd[i] = 1; }
     double *osum = calloc(OBS_DIM, sizeof(double)), *osq = calloc(OBS_DIM, sizeof(double)), on = 0;
     if (load_from) {
-        char p2[1024]; snprintf(p2, sizeof p2, "%s.head", load_from); FILE *f = fopen(p2, "rb"); char mg[4]; int dims[3];
-        if (!f || fread(mg, 1, 4, f) != 4 || memcmp(mg, "TSPH", 4) || fread(dims, sizeof dims, 1, f) != 1 || dims[0] != d || dims[1] != OBS_DIM || dims[2] != ACT_DIM
-            || fread(EN.all, sizeof(real), EN.size, f) != EN.size || fread(mean, 4, OBS_DIM, f) != OBS_DIM || fread(sd, 4, OBS_DIM, f) != OBS_DIM) { fprintf(stderr, "cannot load %s\n", p2); return 1; }
-        if (fread(C.all, sizeof(real), C.size, f) != C.size) critic_init(&C, seed + 5);   /* the critic, when saved with it */
-        fclose(f);
+        char p2[1024]; snprintf(p2, sizeof p2, "%s.head", load_from); int had_critic;
+        if (load_head(p2, &EN, mean, sd, d, &C, &had_critic)) { fprintf(stderr, "cannot load %s\n", p2); return 1; }
+        if (!had_critic) critic_init(&C, seed + 5);
         /* the loaded statistics count as a prior worth 1000 samples, so normalisation does not jump */
         on = 1000; for (int i = 0; i < OBS_DIM; i++) { osum[i] = mean[i] * on; osq[i] = ((double)sd[i] * sd[i] + (double)mean[i] * mean[i]) * on; }
         for (int k = 0; k < ACT_DIM; k++) EN.log_std[k] = (real)log_std0;
+    }
+    if (eval_n > 0) {   /* --eval N: N episodes of the loaded policy with its mean actions (no hand-up unless --assist), then a summary */
+        if (!load_from) { fprintf(stderr, "--eval needs --load\n"); return 2; }
+        Env *EV = calloc(eval_n, sizeof(Env)); Gen **G = calloc(eval_n, sizeof(Gen *)); double *ret = calloc(eval_n, sizeof(double)); int *len = calloc(eval_n, sizeof(int)), *fell = calloc(eval_n, sizeof(int)), *goals = calloc(eval_n, sizeof(int));
+        for (int e = 0; e < eval_n; e++) { env_reset(&EV[e], &tc, (uint64_t)seed * 7919 + 12345 + e * 1000003ULL); G[e] = gen_new(c); }
+        const double te = wall();
+#pragma omp parallel for num_threads(threads) schedule(dynamic)
+        for (int g0 = 0; g0 < eval_n; g0 += 8) {
+            const int gn = eval_n - g0 < 8 ? eval_n - g0 : 8; float o[OBS_DIM], on_[OBS_DIM], a[8][ACT_DIM]; const float *ap[8]; Env *ep[8]; double rw[8]; real mu[ACT_DIM]; int live[8], alive = gn;
+            for (int j = 0; j < gn; j++) { ap[j] = a[j]; ep[j] = &EV[g0 + j]; live[j] = 1; }
+            while (alive) {
+                for (int j = 0; j < gn; j++) {
+                    if (!live[j]) { memset(a[j], 0, sizeof a[j]); continue; }
+                    env_obs(ep[j], o); for (int i = 0; i < OBS_DIM; i++) { float zz = (o[i] - mean[i]) / sd[i]; on_[i] = zz > 5 ? 5 : zz < -5 ? -5 : zz; }
+                    policy_step(m, &EN, G[g0 + j], on_, mu); for (int k = 0; k < ACT_DIM; k++) a[j][k] = mu[k] > 1 ? 1 : mu[k] < -1 ? -1 : (float)mu[k];
+                }
+                env_step_many(ep, ap, rw, gn);
+                for (int j = 0; j < gn; j++) if (live[j]) {
+                    const int e = g0 + j; ret[e] += rw[j];
+                    if (EV[e].done) { live[j] = 0; alive--; len[e] = EV[e].step; fell[e] = EV[e].step < EV[e].cfg.steps; goals[e] = EV[e].goals; }
+                }
+            }
+        }
+        double rs = 0, ls = 0; int fs = 0; long gs = 0; for (int e = 0; e < eval_n; e++) { rs += ret[e]; ls += len[e]; fs += fell[e]; gs += goals[e]; }
+        printf("{\"event\":\"eval\",\"task\":\"%s\",\"policy\":\"%s\",\"episodes\":%d,\"episode_return\":%.1f,\"episode_s\":%.2f,\"ended_early\":%d,\"goals_reached\":%ld,\"assist\":%.3f,\"seconds\":%.1f}\n",
+               task, load_from, eval_n, rs / eval_n, ls / eval_n / CTRL_HZ, fs, gs, tc.assist, wall() - te);
+        return 0;
     }
     /* rollout state */
     const size_t S_all = (size_t)(c->n_layer / 2) * c->T * NODES(c) * c->n * c->p, HH_all = (size_t)c->n_layer * (c->K - 1) * d;
@@ -230,7 +294,8 @@ int main(int argc, char **argv) {
     Batch B = {.ends = &EN, .eg = EG, .hor = hor, .O = O, .A = A, .LP = LP, .ADV = ADV, .H0 = H0, .HH0 = HH0, .S_all = S_all, .HH_all = HH_all,
                .hscratch = malloc(sizeof(real) * threads * S_all), .hhscratch = malloc(sizeof(real) * threads * HH_all), .clip = clipr, .ent = ent};
     seq_hook = ppo_seq; seq_hook_user = &B;
-    uint64_t erng = (uint64_t)seed * 7919 + 1; long episodes = 0; double ep_ret_sum = 0, ep_len_sum = 0; int ep_count = 0;
+    uint64_t erng = (uint64_t)seed * 7919 + 1; long episodes = 0, ep_goals = 0; double ep_ret_sum = 0, ep_len_sum = 0; int ep_count = 0;
+    double cur_assist = tc.assist, best_assist = 1e9;   /* --assist-auto: the hand-up now, and the lowest a checkpoint was saved at */
     double *ep_ret = calloc(nenv, sizeof(double));
     for (int e = 0; e < nenv; e++) { env_reset(&ENV[e], &tc, erng + e * 1000003ULL); gen[e] = gen_new(c); episodes++; }
     size_t z[N_FIELDS]; sizes(c, z); size_t core = 0; for (int f = 0; f < N_FIELDS; f++) core += z[f]; core -= (size_t)c->vocab * d;
@@ -275,8 +340,8 @@ int main(int argc, char **argv) {
                     if (ENV[e].done) {
                         long ep_id;
 #pragma omp critical
-                        { ep_ret_sum += ep_ret[e]; ep_len_sum += ENV[e].step; ep_count++; ep_id = ++episodes; }
-                        ep_ret[e] = 0; env_reset(&ENV[e], &tc, erng + (uint64_t)ep_id * 7777 + e); gen_reset(c, gen[e]);
+                        { ep_ret_sum += ep_ret[e]; ep_len_sum += ENV[e].step; ep_count++; ep_goals += ENV[e].goals; ep_id = ++episodes; }
+                        ep_ret[e] = 0; env_reset(&ENV[e], &tc, erng + (uint64_t)ep_id * 7777 + e); ENV[e].cfg.assist = cur_assist; gen_reset(c, gen[e]);
                     }
                 }
             }
@@ -348,14 +413,21 @@ int main(int argc, char **argv) {
         const double rew = ep_count ? ep_ret_sum / ep_count : 0, len = ep_count ? ep_len_sum / ep_count / CTRL_HZ : 0;
         double sgm = 0; for (int k = 0; k < ACT_DIM; k++) sgm += exp(EN.log_std[k]) / ACT_DIM;
         if (it % 5 == 1 || wall() - t0 >= seconds) {
-            printf("{\"event\":\"iter\",\"iter\":%ld,\"seconds\":%.0f,\"steps\":%ld,\"episode_return\":%.1f,\"episode_s\":%.2f,\"episodes\":%d,\"clip_frac\":%.3f,\"value_loss\":%.3f,\"std\":%.3f,\"lp_gap\":%.2e,\"rollout_share\":%.2f,\"critic_share\":%.2f}\n",
-                   it, wall() - t0, steps_total, rew, len, ep_count, (double)B.clipped / ((double)epochs * nenv * hor), vloss / ((double)epochs * nenv * hor), sgm, B.lpn ? B.lpdiff / B.lpn : 0, t_roll / (wall() - t0), t_crit / (wall() - t0));
+            printf("{\"event\":\"iter\",\"iter\":%ld,\"seconds\":%.0f,\"steps\":%ld,\"episode_return\":%.1f,\"episode_s\":%.2f,\"episodes\":%d,\"goals_reached\":%ld,\"clip_frac\":%.3f,\"value_loss\":%.3f,\"std\":%.3f,\"lp_gap\":%.2e,\"rollout_share\":%.2f,\"critic_share\":%.2f}\n",
+                   it, wall() - t0, steps_total, rew, len, ep_count, ep_goals, (double)B.clipped / ((double)epochs * nenv * hor), vloss / ((double)epochs * nenv * hor), sgm, B.lpn ? B.lpdiff / B.lpn : 0, t_roll / (wall() - t0), t_crit / (wall() - t0));
             fflush(stdout);
-            if (ep_count >= 8 && rew > best) {
-                best = rew; char p1[1024], p2[1024]; snprintf(p1, sizeof p1, "%s.tss", out); snprintf(p2, sizeof p2, "%s.head", out);
+            /* the checkpoint: the best return (with --assist-auto, at the lowest hand-up reached) */
+            if (ep_count >= 8 && (assist_auto ? cur_assist < best_assist - 1e-9 || (fabs(cur_assist - best_assist) < 1e-9 && rew > best) : rew > best)) {
+                best = rew; best_assist = cur_assist; char p1[1024], p2[1024]; snprintf(p1, sizeof p1, "%s.tss", out); snprintf(p2, sizeof p2, "%s.head", out);
                 save(m, p1); save_head(p2, &EN, mean, sd, d, &C);
             }
-            ep_ret_sum = ep_len_sum = 0; ep_count = 0;
+            if (assist_auto) {   /* as ppo_gpu.py: down 15% (at least 0.005) while episodes last over 60% of their length, up 0.02 (to --assist) under 30% */
+                const double frac = ep_count ? len * CTRL_HZ / tc.steps : 0, down = cur_assist - fmax(0.005, 0.15 * cur_assist);
+                const double nw = frac > 0.6 ? (down > 0.004 ? down : 0) : frac < 0.3 ? fmin(tc.assist, cur_assist + 0.02) : cur_assist;
+                if (nw != cur_assist) { cur_assist = nw; for (int e = 0; e < nenv; e++) ENV[e].cfg.assist = cur_assist; }
+                printf("{\"event\":\"assist\",\"iter\":%ld,\"survival\":%.2f,\"assist\":%.3f,\"checkpoint_assist\":%.3f}\n", it, frac, cur_assist, best_assist); fflush(stdout);
+            }
+            ep_ret_sum = ep_len_sum = 0; ep_count = 0; ep_goals = 0;
         }
     }
     printf("{\"event\":\"done\",\"iterations\":%ld,\"steps\":%ld,\"best_episode_return\":%.1f}\n", it, steps_total, best);

@@ -166,6 +166,7 @@ int room_set(const double *boxes, int n);    /* n boxes of ROOM_REC doubles, as 
 int room_set_bank(int room, const double *boxes, int n);   /* room `room` of the bank (rooms 0..room-1 set first) */
 int room_count(void);
 int room_load(const char *path);             /* room.json (room.c); returns the box count or -1 */
+int room_load_bank(const char *path);        /* a room bank, or one room.json, as rooms 0, 1, ... (room.c); returns the room count or -1 */
 #endif
 
 #endif
