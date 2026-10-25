@@ -222,6 +222,7 @@ def scan_lib():
                 vp, i_, f_ = ctypes.c_void_p, ctypes.c_int, ctypes.c_float
                 L.tss_scan_fwd.argtypes = [i_] * 7 + [f_, i_, i_] + [vp] * 19
                 L.tss_scan_bwd.argtypes = [i_] * 8 + [vp] * 15
+                L.tss_scan_fits.argtypes = [i_] * 3; L.tss_scan_fits.restype = i_
                 _SCAN = L
             except Exception as e:
                 print(f"tss_scan unavailable ({e}): the PyTorch loop", flush=True)
@@ -399,6 +400,7 @@ class TSS:
         bi = torch.arange(B, device=dev)[:, None]; trN = torch.arange(T, device=dev) * N
         cap = c.dec_cap
         lib = scan_lib() if x.is_cuda and self.fused else None
+        if lib is not None and not lib.tss_scan_fits(D, n, pv): lib = None   # a shape the kernels do not take
         if lib is not None:   # the time loop below as one kernel (tss_scan.cu); the routing credit's sampling after it
             hc = h if h.is_contiguous() else h.contiguous()
             # the contiguous copies held here until the launch: a temporary freed as soon as its pointer is taken lets
@@ -597,6 +599,7 @@ class TSS:
         ddt = torch.zeros(B, L, T, device=dev); GA = torch.zeros(B, L, T, D1, device=dev)
         bi = torch.arange(B, device=dev)[:, None]
         lib = scan_lib() if g.is_cuda and self.fused else None
+        if lib is not None and not lib.tss_scan_fits(D, n, pv): lib = None
         if lib is not None:   # the reverse-time loop below as one kernel (tss_scan.cu)
             dVp = torch.empty(B, L, T, pv, device=dev)
             keep = [a.contiguous() for a in (node, hprev, dec_t, dR.float(), Bt, Ct, V, dt, eaN)]   # (held until the launch, as above)

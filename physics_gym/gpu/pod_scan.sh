@@ -8,6 +8,7 @@ cd $G && gcc -O3 -march=native -fopenmp -ffp-contract=off -shared -fPIC -o libts
 python3 -c "import gpu_env; gpu_env.cuda_lib(); print('cuda environments built'); gpu_env.build_cu('tss_scan.cu', 'libtss_scan.so'); print('tss_scan built')" >> $O/build.log 2>&1
 python3 scan_parity.py $B/data/clean/warm/jump_stick.tss 256 64 > $O/scan_parity.txt 2>&1
 python3 scan_parity.py $B/data/clean/warm/aware.tss 128 64 >> $O/scan_parity.txt 2>&1
+SCAN_PROF=1 python3 scan_parity.py $B/data/clean/warm/jump_stick.tss 1024 64 >> $O/scan_parity.txt 2>&1
 python3 ppo_gpu.py --task getup_imitate --style $ST --room $RB --load $B/data/clean/warm/jump_stick --envs 4096 --seconds 150 --out $O/fused > $O/fused.log 2>&1
 echo "fused, 4096 envs: $(grep '"iter"' $O/fused.log | tail -1 | grep -o '"iter": [0-9]*\|"steps_per_s": [0-9]*\|"rollout_share": [0-9.]*\|"train_share": [0-9.]*\|"episode_return": [0-9.]*' | tr '\n' ' ') $(grep -m1 -i 'error\|Traceback' $O/fused.log)" > $O/bench.txt
 echo done > $O/DONE
