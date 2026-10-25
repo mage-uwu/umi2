@@ -60,6 +60,7 @@ def main():
     ap = argparse.ArgumentParser()
     A = ap.add_argument
     A("--out", default="tsspolicy"); A("--load"); A("--task", default="balance"); A("--mref", default=os.path.join(HERE, "../data/motions_ref.bin"))
+    A("--profile", type=int, default=0, help="profile this iteration (rollout and update) with torch.profiler: the table to <out>.prof.txt")
     A("--seconds", type=float, default=600); A("--lr", type=float, default=3e-4); A("--head-lr", type=float, default=3e-4); A("--vlr", type=float, default=1e-3)
     A("--clip", type=float, default=0.2); A("--log-std", type=float, default=-1.6); A("--threads", type=int, default=0); A("--envs", type=int, default=64)
     A("--horizon", type=int, default=64); A("--epochs", type=int, default=4); A("--minibatches", type=int, default=4); A("--seed", type=int, default=0)
@@ -166,6 +167,10 @@ def main():
     sync = (lambda: torch.cuda.synchronize(dev)) if dev.type == "cuda" else (lambda: None)
     while time.time() - t0 < a.seconds:
         it += 1
+        prof = None
+        if a.profile and it == a.profile:
+            sync(); prof = torch.profiler.profile(activities=[torch.profiler.ProfilerActivity.CPU] + ([torch.profiler.ProfilerActivity.CUDA] if dev.type == "cuda" else []))
+            prof.__enter__(); rf = torch.profiler.record_function("rollout"); rf.__enter__()
         H0 = {k: [v.clone() for v in vs] for k, vs in state.items()}
         tr0 = time.time()
         with torch.no_grad():
@@ -204,6 +209,7 @@ def main():
             am = ADV.mean(); asd = torch.sqrt(torch.clamp((ADV ** 2).mean() - am * am, min=1e-8))
             ADV = (ADV - am) / asd
         # update: minibatches of whole chunks, cut into segments at episode ends
+        if prof is not None: sync(); rf.__exit__(None, None, None); rf = torch.profiler.record_function("update"); rf.__enter__()
         trn0 = time.time()
         DONE_np = DONE.cpu().numpy()
         order = list(range(nenv)); clipped = torch.zeros((), device=dev, dtype=torch.long); lpdiff = torch.zeros((), device=dev, dtype=torch.float64); lpn = 0
@@ -250,6 +256,17 @@ def main():
                 (0.5 * (dv * dv).sum()).backward(); vloss = vloss + (dv.detach().double() ** 2).sum()
                 cstep += 1; adam_dict(CR, Cm, Cv, a.vlr, 1.0 / ((e1 - e0) * hor), cstep)
         sync(); t_train += time.time() - trn0
+        if prof is not None:   # where the time goes: per operator, and how many GPU kernels each phase launched
+            rf.__exit__(None, None, None); prof.__exit__(None, None, None); ka = prof.key_averages()
+            with open(a.out + ".prof.txt", "w") as f:
+                for col in ("self_cuda_time_total", "self_cpu_time_total"):
+                    try: f.write(ka.table(sort_by=col, row_limit=30) + "\n\n")
+                    except Exception as e: f.write(f"({col}: {e})\n")
+                ev = prof.events(); kern = [e for e in ev if getattr(e, "device_type", None) == torch.autograd.DeviceType.CUDA]
+                f.write(f"GPU kernels in the profiled iteration: {len(kern)}; their total time {sum(getattr(e, "device_time", getattr(e, "cuda_time", 0)) for e in kern) / 1e6:.2f} s\n")
+                for ph in ("rollout", "update"):
+                    r = [e for e in ev if e.name == ph]
+                    if r: f.write(f"{ph}: {r[0].cpu_time_total / 1e6:.2f} s wall (CPU side)\n")
         if on > 10:
             mu_ = osum / on; var = osq / on - mu_ * mu_; mean = mu_.float(); sd = torch.sqrt(torch.clamp(var, min=1e-2)).float()
         if it % 5 == 1 or time.time() - t0 >= a.seconds:
