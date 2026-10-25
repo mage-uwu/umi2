@@ -433,10 +433,11 @@ const SKILLS = {
 };
 // Jump (gpu/pod_jump.sh): she follows CMU jumps (data/cmu_jump.bin) from platform to platform. Each jump brings its own
 // takeoff and landing platforms (data/jump_bank.json, as she trained on them: the gap where the clip's feet are off the
-// ground), set down where she stands and turned to her heading, from the frame of its run-up nearest her pose; the clip
+// ground), set down where she stands and turned the way her feet point, from the frame of its run-up nearest her pose; the clip
 // then plays on as the reference she follows (actions round its pose, as the get-up tracker). Once she has landed and
 // the clip is done, the next jump. Dropping into a gap, or falling over, starts the course again.
-const JUMP = { clips: 'jump_clips.json', bank: 'jump_bank.json', order: ['fjump2', 'fjump1', 'run_leap2', 'run_leap1'], height: 0.58, actMul: 2.5 };
+const JUMP = { clips: 'jump_clips.json', bank: 'jump_bank.json', order: ['fjump2', 'fjump1'],   // the standing jumps (the running ones are beyond her strength so far)
+  height: 0.58, actMul: 2.5 };
 let jumpClips = null, jumpBank = null, jump = null;   // jump: { n, clip, t0, start, T: { yaw, x, z }, landed }
 // Getting up (TASK_GETUP) is not a button: it takes over when she falls, or when Stand up is pressed while she
 // crawls, and hands back to Balance once she stands calmly.
@@ -576,7 +577,8 @@ document.getElementById('f-mouth').onclick = () => setMouth(!face.mouthTarget);
 addEventListener('keydown', e => { if (e.target.closest?.('input, textarea') || e.ctrlKey || e.metaKey || e.altKey) return; if (e.key === 'b') blink(); if (e.key === 'm') setMouth(!face.mouthTarget); });
 
 // ---------- jump courses ----------
-const yawOf = q => { const f = math.qrot(q, [0, 0, 1]); return Math.atan2(f[0], f[2]); };
+const feetYaw = qs => { const f = math.vadd(math.qrot(qs[B.L_FOOT], [0, 0, 1]), math.qrot(qs[B.R_FOOT], [0, 0, 1])); return Math.atan2(f[0], f[2]); };   // where her feet point (a landing can leave the pelvis twisted)
+const jumpTmp = new World(45, 20, 1 / CTRL_HZ);
 const jumpXf = (T, p) => [p[0] * Math.cos(T.yaw) + p[2] * Math.sin(T.yaw) + T.x, p[1], -p[0] * Math.sin(T.yaw) + p[2] * Math.cos(T.yaw) + T.z];
 function jumpBoxes(name, T) {   // the clip's two platforms (its room of the bank nearest JUMP.height), placed by T
   const R = jumpBank.rooms.filter(r => r.clip === name).reduce((a, b) => Math.abs(b.height - JUMP.height) < Math.abs(a.height - JUMP.height) ? b : a);
@@ -590,7 +592,8 @@ function jumpCourse(boxes) {   // the room: the platforms so far (the last few) 
 function jumpNext(n, first) {   // the n-th jump of the course, from where she is now (first: posed at its start)
   const c = jumpClips[JUMP.order[n % JUMP.order.length]]; const r0 = (c.shift = [0, 0, 0], c.at(0).root); c.shift = [-r0[0], 0, -r0[2]];
   const t0 = first ? 0 : nearestFrame(world, [c], 0.4)[1], a = c.at(t0), p = world.b[0].x;
-  const T = first ? { yaw: 0, x: 0, z: 0 } : { yaw: yawOf(world.b[0].q) - yawOf(a.rel[0]), x: 0, z: 0 };
+  jumpTmp.pose(a.root, a.rel[0], a.rel);   // the clip's feet at that frame: the jump goes the way her feet point
+  const T = first ? { yaw: 0, x: 0, z: 0 } : { yaw: feetYaw(world.b.map(b => b.q)) - feetYaw(jumpTmp.b.map(b => b.q)), x: 0, z: 0 };
   if (!first) { const q = jumpXf(T, a.root); T.x = p[0] - q[0]; T.z = p[2] - q[2]; }
   const keep = first ? [] : roomDoc.boxes.slice(-2);
   jumpCourse([...keep, ...jumpBoxes(c.name, T)]);
