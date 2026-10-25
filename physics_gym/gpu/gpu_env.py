@@ -71,7 +71,7 @@ def task_setup(task, mref, style, assist, push, act_mul, steps, style_start, swa
     return t
 
 
-def _build_cuda(out):
+def _build_cuda(out, src="tssenv_kernels.cu"):
     """nvcc from PATH, or the CUDA 13 compiler wheels (nvidia-cuda-nvcc, -crt, -nvvm, -runtime) fetched with pip."""
     nvcc = "nvcc"
     if subprocess.run(["which", "nvcc"], capture_output=True).returncode:
@@ -88,7 +88,12 @@ def _build_cuda(out):
         inc = []
     cap = torch.cuda.get_device_capability(); arch = f"sm_{cap[0]}{cap[1]}"
     subprocess.check_call([nvcc, "-O3", "--fmad=false", "--expt-relaxed-constexpr", "-arch=" + arch, "-shared", "-Xcompiler", "-fPIC", *inc,
-                           "-o", out, os.path.join(HERE, "tssenv_kernels.cu")])
+                           "-o", out, os.path.join(HERE, src)])
+
+
+def build_cu(src, out):
+    """another CUDA source of this directory (tss_scan.cu) as a shared library, the same compiler and flags"""
+    tmp = out + f".{os.getpid()}"; _build_cuda(tmp, src); os.replace(tmp, out)
 
 
 _cuda = None

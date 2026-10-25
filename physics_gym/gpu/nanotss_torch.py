@@ -205,6 +205,32 @@ class _Draws:
         return self.u.gather(1, flat).view(idx.shape)
 
 
+# ----------------------------------------------------------------------------------------------- fused scan (tss_scan.cu)
+_SCAN = None
+def scan_lib():
+    """libtss_scan.so (built from tss_scan.cu when missing or older): the SSM-tree recurrence as two fused kernels.
+    None on a CPU, when TSS_FUSED=0, or when it cannot be built (the PyTorch loop runs instead)."""
+    global _SCAN
+    if _SCAN is None:
+        _SCAN = False
+        if os.environ.get("TSS_FUSED", "1") != "0" and torch.cuda.is_available():
+            try:
+                import gpu_env
+                here = os.path.dirname(os.path.abspath(__file__)); src, out = os.path.join(here, "tss_scan.cu"), os.path.join(here, "libtss_scan.so")
+                if not os.path.exists(out) or os.path.getmtime(out) < os.path.getmtime(src): gpu_env.build_cu("tss_scan.cu", out)
+                L = ctypes.CDLL(out); L.tss_scan_fwd.restype = ctypes.c_char_p; L.tss_scan_bwd.restype = ctypes.c_char_p
+                vp, i_, f_ = ctypes.c_void_p, ctypes.c_int, ctypes.c_float
+                L.tss_scan_fwd.argtypes = [i_] * 7 + [f_, i_, i_] + [vp] * 19
+                L.tss_scan_bwd.argtypes = [i_] * 8 + [vp] * 15
+                _SCAN = L
+            except Exception as e:
+                print(f"tss_scan unavailable ({e}): the PyTorch loop", flush=True)
+    return _SCAN or None
+
+
+def _p(t): return ctypes.c_void_p(t.data_ptr()) if t is not None else ctypes.c_void_p(0)
+
+
 # ----------------------------------------------------------------------------------------------- C-compatible init
 class _CRand:
     def __init__(self, s): self.s = s & 0xFFFFFFFFFFFFFFFF
@@ -251,6 +277,7 @@ class TSS:
         if bf16_tape is None:   # the C build keeps the state tape in bf16 where its AVX-512 kernels run (k->ok, p = 16)
             bf16_tape = c.d % 64 == 0 and c.group % 64 == 0 and c.p == 16
         self.c, self.device, self.bf16_tape = c, torch.device(device), bf16_tape
+        self.fused = True   # the recurrence through tss_scan.cu where it is available (scan_lib)
         if P is None:
             P = params_init(c, (seed * 7919 + 88172645463325252) & 0xFFFFFFFFFFFFFFFF)
         self.P = {f: torch.as_tensor(np.asarray(P[f], np.float32)).to(self.device).contiguous() for f in FIELDS}
@@ -371,7 +398,31 @@ class TSS:
             sidx = (torch.arange(T, device=dev)[:, None] * D + torch.arange(D, device=dev)[None, :])   # [T, D]
         bi = torch.arange(B, device=dev)[:, None]; trN = torch.arange(T, device=dev) * N
         cap = c.dec_cap
-        for t in range(L):
+        lib = scan_lib() if x.is_cuda and self.fused else None
+        if lib is not None:   # the time loop below as one kernel (tss_scan.cu); the routing credit's sampling after it
+            hc = h if h.is_contiguous() else h.contiguous()
+            ct = lambda a: a.contiguous().float()
+            err = lib.tss_scan_fwd(B, L, T, D, N, n, pv, float(cap), int(train), int(train and hprev.dtype == torch.bfloat16),
+                                   _p(hc), _p(ct(dt)), _p(ct(Bt)), _p(ct(Ct)), _p(ct(V)), _p(ct(Z)), _p(ct(s_lin)), _p(ct(bias)), _p(ct(ea)),
+                                   _p(node_t), _p(s_t), _p(dec_t), _p(R_t), _p(rs), _p(hprev if train else None),
+                                   _p(anode if train else None), _p(as_t if train else None), _p(aR_t if train else None),
+                                   ctypes.c_void_p(torch.cuda.current_stream(dev).cuda_stream))
+            if err: raise RuntimeError(err.decode())
+            if hc is not h: h.copy_(hc)
+            if train and D > 0:
+                st = s_t[..., :D]
+                sg = sigm(st.abs() / F32(c.temp)); w = sg * (1 - sg)
+                tot = torch.zeros(B, L, T, device=dev)
+                for kk in range(D): tot = tot + w[..., kk]
+                if c.walks <= 0:
+                    bw = torch.ones_like(w)
+                else:
+                    q = torch.where(tot[..., None] > 0, (F32(c.walks) * w / tot[..., None]).clamp(max=1), torch.ones_like(w))
+                    tix = torch.arange(L, device=dev)[:, None, None] * (T * D) + sidx[None]
+                    uu = draws.take(tix[None].expand(B, L, T, D))
+                    bw = torch.where(uu < q, 1 / q, torch.zeros_like(q))
+                bw_t = bw
+        for t in (range(L) if lib is None else ()):
             node = torch.zeros(B, T, dtype=torch.long, device=dev)
             dtt, Btt, Ctt, Vt, Zt, sl = dt[:, t], Bt[:, t], Ct[:, t], V[:, t], Z[:, t], s_lin[:, t]
             gB = dtt[..., None] * Btt
@@ -543,7 +594,16 @@ class TSS:
         dBt = torch.zeros(B, L, T, n, device=dev); dCt = torch.zeros_like(dBt); dV = torch.zeros(B, L, pv, device=dev)
         ddt = torch.zeros(B, L, T, device=dev); GA = torch.zeros(B, L, T, D1, device=dev)
         bi = torch.arange(B, device=dev)[:, None]
-        for t in reversed(range(L)):
+        lib = scan_lib() if g.is_cuda and self.fused else None
+        if lib is not None:   # the reverse-time loop below as one kernel (tss_scan.cu)
+            dVp = torch.empty(B, L, T, pv, device=dev)
+            ct = lambda a: a.contiguous()
+            err = lib.tss_scan_bwd(B, L, T, D, N, n, pv, int(hprev.dtype == torch.bfloat16), _p(ct(node)), _p(ct(hprev)), _p(ct(dec_t)),
+                                   _p(ct(dR.float())), _p(ct(Bt)), _p(ct(Ct)), _p(ct(V)), _p(ct(dt)), _p(ct(eaN)),
+                                   _p(dBt), _p(dCt), _p(dVp), _p(ddt), _p(GA), ctypes.c_void_p(torch.cuda.current_stream(dev).cuda_stream))
+            if err: raise RuntimeError(err.decode())
+            dV = dVp.sum(2)
+        for t in (reversed(range(L)) if lib is None else ()):
             rows = node[:, t].reshape(B, -1)
             la = lam[bi, rows].view(B, T, D1, n, pv)
             hp = hprev[:, t].float(); dec = dec_t[:, t]; dRv = dR[:, t]
