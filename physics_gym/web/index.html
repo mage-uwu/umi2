@@ -660,7 +660,8 @@ function parcStep() {   // after each control step: the clip on, or the next one
   const P = world.b[0].x, sp = supportY(P[0], P[2], P[1]), foot = Math.min(world.lowest(B.L_FOOT), world.lowest(B.R_FOOT)), y = a.root[1];
   const down = (foot < parc.lift - 0.25 && P[1] < y - 0.3) || (P[1] - sp < 0.4 && world.b[B.HEAD].x[1] - sp < 0.7 && P[1] < y - 0.25) || math.vlen(math.vsub(P, a.root)) > 1.0;
   if (down) { parcEnd(false, t); return; }
-  if (t > c.T + PARC.hold) {
+  c.endV ??= Math.hypot(c.root[c.frames - 1][0] - c.root[c.frames - 4][0], c.root[c.frames - 1][2] - c.root[c.frames - 4][2]) * c.fps / 3;
+  if (t > c.T + (c.endV < 0.5 ? PARC.hold : 0)) {   // judged as it ends if it ends moving (most PARC clips end at a run), a second later if at rest (tools/eval_course.py)
     parcEnd(Math.hypot(P[0] - a.root[0], P[2] - a.root[2]) < 0.5 && Math.abs(P[1] - a.root[1]) < 0.2, t);
   }
 }
