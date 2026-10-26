@@ -99,6 +99,12 @@ typedef struct {
                           * the top of a room box (ramps too: env.c top_start); 0 = none */
     double goal_cone;    /* TASK_GOTO: goals are drawn within this angle (rad) of her heading; 0 = any direction (a curriculum:
                           * walking to a goal ahead comes before turning toward one) */
+    int chain;           /* a jump course: jumps one after another, as the viewer chains them. Once she has landed on the far
+                          * platform and is steady (the clip over by 0.3 s and her centre of mass under 0.25 m/s, or 2.5 s
+                          * after its end), she is carried back onto the takeoff platform (the tops are level), turned so her
+                          * feet point along the clip's start (the viewer aims each jump by her feet) give or take a random
+                          * chain_yaw, and the clip starts again: every jump after the first starts from a real landing */
+    double chain_yaw;    /* the largest aiming error of a chained jump (rad) */
 } TaskCfg;
 
 typedef struct {
@@ -121,6 +127,7 @@ typedef struct {
     const Clip *rc;      /* TASK_IMITATE: this episode's reference clip (cfg.clip, or one of a clip set) */
     int landed;          /* a jump course: 0 until her first foot comes down on the landing platform (1 then, or from the start
                           * when she did not start on the takeoff platform) */
+    int jumps;           /* a chained jump course: jumps landed this episode (each counted as the next one starts) */
     unsigned char nav_d[NAV_N * NAV_N];  /* TASK_GOTO in a room: steps from each nav cell to the goal's (255: no way there) */
     unsigned short nav_q[NAV_N * NAV_N]; /* the search's queue */
 } Env;

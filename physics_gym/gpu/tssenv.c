@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stddef.h>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -32,8 +33,9 @@ void tss_urand(const uint64_t *seeds, int B, int n, float *out) {
 /* task: balance | crawl | getup | goto | goto_free | getup_imitate | a clip name in mref (imitation). style: "file.bin:clip1,clip2" or NULL.
  * Zero (or negative for steps) means ppo_tss.c's default. */
 Pool *pool_new(int n, const char *task, const char *mref, const char *style, double assist, double push, double act_mul,
-               int steps, double style_start, double sway, double arm_tone, int seed, double goal_cone, double goal_tops, int free_heading) {
-    Pool *P = calloc(1, sizeof(Pool)); TaskCfg *tc = &P->tc;
+               int steps, double style_start, double sway, double arm_tone, int seed, double goal_cone, double goal_tops, int free_heading,
+               int chain, double chain_yaw, int fixed_start) {
+    Pool *P = calloc(1, sizeof(Pool)); TaskCfg *tc = &P->tc; tc->chain = chain; tc->chain_yaw = chain_yaw; tc->fixed_start = fixed_start;
     tc->push_every = 2; tc->steps = 300; tc->init_noise = 0.05;
     tc->goal_cone = goal_cone; tc->goal_tops = goal_tops; tc->free_heading = free_heading; tc->assist = assist; tc->push_max = push; tc->act_mul = act_mul; tc->style_start = style_start; tc->sway = sway; tc->arm_tone = arm_tone;
     if (!strcmp(task, "crawl") || !strcmp(task, "getup")) {
@@ -159,7 +161,8 @@ void pool_drop(Pool *P, int e, int j) {
     world_pose(W, v3(b[0], top + 1.2, b[2]), qexp(v3(1.2, 0.3 + 0.1 * e, 0)), rel, v3(0, 0, 0));
     for (int i = 0; i < NB; i++) W->target[i] = rel[i];
 }
-int pool_room(const Pool *P, int e) { return P->E[e].W.room; }   /* the room of the bank environment e is in */
+int pool_room(const Pool *P, int e) { return P->E[e].W.room; }
+void tss_env_offsets(int *jumps, int *room) { *jumps = (int)offsetof(Env, jumps); *room = (int)(offsetof(Env, W) + offsetof(World, room)); }   /* fields read from a batch of Envs */   /* the room of the bank environment e is in */
 void pool_set_assist(Pool *P, double a) { P->tc.assist = a; for (int e = 0; e < P->n; e++) P->E[e].cfg.assist = a; }   /* the hand-up assist, from the next step on, in every environment */
 void pool_pelvis(const Pool *P, int e, double *out) { const Vec x = P->E[e].W.b[PELVIS].x; out[0] = x.x; out[1] = x.y; out[2] = x.z; }   /* where her pelvis is (world) */
 void pool_mtau(const Pool *P, int e, double *out) { memcpy(out, P->E[e].W.mtau, sizeof(double) * NB); }   /* each joint's muscle torque, last substep (N m) */

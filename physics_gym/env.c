@@ -156,7 +156,7 @@ BHD void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
     if (room_banks() > 1) E->W.room = (int)(((seed * 0xD1B54A32D192ED03ULL) >> 33) % (uint64_t)room_banks());   /* her room of the bank, from the seed (no draw from rng: one room plays as before) */
     if (cfg->arm_tone > 0) for (int i = L_UARM; i <= R_FARM; i++) E->W.tone[i] = cfg->arm_tone;
     for (int k = 0; k < ACT_DIM; k++) E->prev_act[k] = E->filt[k] = 0;
-    E->head_v = v3(0, 0, 0); E->style_has_prev = 0; E->path_len = 0;
+    E->head_v = v3(0, 0, 0); E->style_has_prev = 0; E->path_len = 0; E->jumps = 0;
     for (int k = 0; k < 2; k++) { E->foot_on[k] = 1; E->foot_vy[k] = 0; }
     E->next_push = 0.5 + env_rand(&E->rng) * 2 * cfg->push_every;
     E->rc = cfg->clip;
@@ -436,6 +436,24 @@ static BHD void matched_start(Env *E) {
     E->clip_shift = v3(p0.x - root.x, 0, p0.z - root.z); W->t = 0;
     ref_at(E, E->t0, E->ref, E->ref_world, &E->ref_root);
     for (int i = 0; i < NB; i++) W->target[i] = E->ref[i];
+}
+/* where her feet point (a landing can leave the pelvis twisted): the viewer aims the next jump by it */
+static BHD double feet_yaw(const Quat *q) { const Vec f = vadd(qrot(q[L_FOOT], v3(0, 0, 1)), qrot(q[R_FOOT], v3(0, 0, 1))); return b_atan2(f.x, f.z); }
+/* a jump course, chained (TaskCfg.chain): her carried back to the clip's start on the takeoff platform, turned so her feet point
+ * along the clip's start give or take chain_yaw, the clip from its start */
+static BHD void chain_next(Env *E) {
+    World *W = &E->W; Quat wq[NB], hq[NB]; Vec root; mref_sample(E->rc, 0, &root, wq, NULL);
+    for (int i = 0; i < NB; i++) hq[i] = W->b[i].q;
+    const double err = (2 * env_rand(&E->rng) - 1) * E->cfg.chain_yaw;
+    const Quat turn = qexp(v3(0, feet_yaw(wq) - feet_yaw(hq) + err, 0));
+    const Vec p0 = W->b[PELVIS].x, to = vadd(root, E->clip_shift);
+    for (int i = 0; i < NB; i++) {
+        Body *b = W->b + i; const Vec d = qrot(turn, vsub(b->x, p0));
+        b->x = b->xprev = v3(to.x + d.x, b->x.y, to.z + d.z); b->q = b->qprev = qnorm(qmul(turn, b->q)); b->v = qrot(turn, b->v); b->w = qrot(turn, b->w);
+    }
+    W->grip_box[0] = W->grip_box[1] = -1; E->head_v = W->b[HEAD].v;
+    E->t0 = -W->t; E->landed = !over_box(room_at(W->room, 0), W->b[PELVIS].x, 0); E->jumps++;
+    ref_at(E, 0, E->ref, E->ref_world, &E->ref_root);
 }
 static BHD double pose_err(const World *W, const Quat *ref) {
     double e2 = 0; for (int i = 1; i < NB; i++) { Quat rel = qmul(qconj(W->b[BODY_DEFS[i].parent].q), W->b[i].q); Vec e = qlog(qmul(rel, qconj(ref[i]))); e2 += vdot(e, e); }
@@ -774,7 +792,12 @@ static BHD double env_end(Env *E, double act2) {
             const int fi = k ? R_FOOT : L_FOOT; const double on = over_box(room_at(W->room, 1), W->b[fi].x, 0);
             if (on > 0 && world_lowest(W, fi) < E->clip_shift.y + 0.03) { E->landed = 1; stick = 3 * fmin(on, 0.3) / 0.3; break; }
         }
-        return 0.75 * track + 0.25 * golden_thread(E, qrot(E->ref_world[PELVIS], fx[HEAD]).y) + stick;
+        const double r = 0.75 * track + 0.25 * golden_thread(E, qrot(E->ref_world[PELVIS], fx[HEAD]).y) + stick;
+        if (course(E) && E->cfg.chain && E->landed) {   /* landed and steady: the next jump */
+            const double T = (E->rc->frames - 1) / E->rc->fps, t = env_phase(E); Vec cv; world_com(W, &cv);
+            if (t > T + 0.3 && (vlen(cv) < 0.25 || t > T + 2.5)) chain_next(E);
+        }
+        return r;
     }
     if (fell || E->step >= E->cfg.steps) E->done = 1;
     if (fell) return 0;

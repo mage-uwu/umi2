@@ -85,6 +85,8 @@ def main():
     A("--free-heading", type=int, default=0, help="imitation: imitate the clip's style, not its path (posture, limbs, speed in her own heading frame); only falls end episodes")
     A("--goal-tops", type=float, default=0, help="go-to: share of goals on top of room boxes (terrain); balance: share of episodes starting on top of one (ramps too); 0 = 0.3")
     A("--goal-cone", type=float, default=0, help="go-to: goals within this angle (rad) of her heading; 0 = any")
+    A("--chain", type=int, default=0, help="a jump course: jumps one after another, each from where the last landed (env.h TaskCfg.chain)")
+    A("--chain-yaw", type=float, default=0.25, help="with --chain: the largest aiming error of a chained jump (rad)")
     A("--room", default=os.path.join(HERE, "../room.json"), help="room.json (physics_gym); '' for the empty floor")
     A("--amp", default="", help="file.bin[:clip,...]: motion capture (30 Hz) for a learned style reward (see the top of this file); with goto_free also its start states")
     A("--amp-w", type=float, default=0.7, help="the style reward's weight (it is 0..1 a step)")
@@ -99,7 +101,7 @@ def main():
         f, _, names = a.amp.partition(":")
         amp_feats, amp_starts = ge.amp_reference(f, names.split(",") if names else None, seed=a.seed)
     pool = Pool(a.envs, task=a.task, mref=a.mref, style=a.style, assist=a.assist, push=a.push, act_mul=a.act_mul, steps=a.steps,
-                style_start=a.style_start, sway=a.sway, arm_tone=a.arm_tone, goal_cone=a.goal_cone, goal_tops=a.goal_tops, free_heading=a.free_heading, seed=a.seed, device=dev, room=a.room,
+                style_start=a.style_start, sway=a.sway, arm_tone=a.arm_tone, goal_cone=a.goal_cone, goal_tops=a.goal_tops, free_heading=a.free_heading, chain=a.chain, chain_yaw=a.chain_yaw, seed=a.seed, device=dev, room=a.room,
                 starts=amp_starts if a.task == "goto_free" else None)
     OBS, ACT, HZ = pool.OBS, pool.ACT, pool.HZ
 

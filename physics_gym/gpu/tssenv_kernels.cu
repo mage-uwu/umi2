@@ -73,12 +73,13 @@ void tss_make_clip(void *dst, const char *name, int frames, float fps, void *roo
     cudaMemcpy(dst, &c, sizeof c, cudaMemcpyHostToDevice);
 }
 void tss_make_cfg(void *dst, int task, void *clip, double push_max, double sway, double arm_tone, double push_every, int steps,
-                  double init_noise, int fixed_start, double assist, double act_mul, void *const *style, int nstyle, double style_start, double goal_cone, double goal_tops, int free_heading) {
+                  double init_noise, int fixed_start, double assist, double act_mul, void *const *style, int nstyle, double style_start, double goal_cone, double goal_tops, int free_heading,
+                  int chain, double chain_yaw) {
     TaskCfg t; memset(&t, 0, sizeof t);
     t.task = task; t.clip = (const Clip *)clip; t.push_max = push_max; t.sway = sway; t.arm_tone = arm_tone; t.push_every = push_every;
     t.steps = steps; t.init_noise = init_noise; t.fixed_start = fixed_start; t.assist = assist; t.act_mul = act_mul;
     for (int i = 0; i < nstyle && i < 8; i++) t.style[i] = (const Clip *)style[i];
-    t.nstyle = nstyle; t.style_start = style_start; t.goal_cone = goal_cone; t.goal_tops = goal_tops; t.free_heading = free_heading;
+    t.nstyle = nstyle; t.style_start = style_start; t.goal_cone = goal_cone; t.goal_tops = goal_tops; t.free_heading = free_heading; t.chain = chain; t.chain_yaw = chain_yaw;
     cudaMemcpy(dst, &t, sizeof t, cudaMemcpyHostToDevice);
 }
 /* the style table: clips (device Clip pointers, host-side frame counts) and feature buffers (frames x STYLE_FEAT) */
@@ -132,6 +133,7 @@ const char *tss_set_starts(const void *s, int n) {   /* the start bank (env.h ST
     cudaError_t r = cudaDeviceSynchronize(); return r == cudaSuccess ? NULL : cudaGetErrorString(r);
 }
 int tss_start_size(void) { return (int)sizeof(FallState); }
+void tss_env_offsets(int *jumps, int *room) { *jumps = (int)offsetof(Env, jumps); *room = (int)(offsetof(Env, W) + offsetof(World, room)); }   /* fields read from a batch of Envs */
 __global__ void k_set_assist(Env *envs, int n, double a) { const int e = blockIdx.x * blockDim.x + threadIdx.x; if (e < n) envs[e].cfg.assist = a; }
 void tss_cfg_set_assist(void *cfg, void *envs, int n, double a) {
     cudaMemcpy((char *)cfg + offsetof(TaskCfg, assist), &a, sizeof a, cudaMemcpyHostToDevice);
