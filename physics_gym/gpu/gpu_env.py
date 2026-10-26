@@ -117,8 +117,15 @@ def _build_cuda(out, src="tssenv_kernels.cu"):
     else:
         inc = []
     cap = torch.cuda.get_device_capability(); arch = f"sm_{cap[0]}{cap[1]}"
-    subprocess.check_call([nvcc, "-O3", "--fmad=false", "--expt-relaxed-constexpr", "-arch=" + arch, "-shared", "-Xcompiler", "-fPIC", *inc,
-                           "-o", out, os.path.join(HERE, src)])
+    var = _variant() if src == "tssenv_kernels.cu" else []   # (bench_env.py: TSS_FMAD, TSS_BLOCK)
+    subprocess.check_call([nvcc, "-O3", *([] if "fmad" in var else ["--fmad=false"]), *[f"-DTSS_BLOCK={v[5:]}" for v in var if v.startswith("block")],
+                           "--expt-relaxed-constexpr", "-arch=" + arch, "-shared", "-Xcompiler", "-fPIC", *inc, "-o", out, os.path.join(HERE, src)])
+
+
+def _variant():
+    """A build of the environments other than the default, for timing (gpu/bench_env.py): TSS_FMAD=1 lets nvcc fuse
+    multiply-adds (the default keeps them apart, bit for bit as the CPU build), TSS_BLOCK=n threads per block (64)."""
+    return (["fmad"] if os.environ.get("TSS_FMAD") == "1" else []) + ([f"block{int(os.environ['TSS_BLOCK'])}"] if os.environ.get("TSS_BLOCK") else [])
 
 
 def build_cu(src, out):
@@ -130,7 +137,7 @@ _cuda = None
 def cuda_lib():
     global _cuda
     if _cuda is None:
-        out = os.path.join(HERE, "libtssenv_cuda.so")
+        out = os.path.join(HERE, "libtssenv_cuda" + "".join("_" + v for v in _variant()) + ".so")
         srcs = [os.path.join(HERE, "tssenv_kernels.cu")] + [os.path.join(BODY, f) for f in ("body.c", "body.h", "bmath.h", "joint_limits.h", "env.c", "env.h", "mref.c", "mref.h")]
         if not os.path.exists(out) or os.path.getmtime(out) < max(map(os.path.getmtime, srcs)): _cuda_build_once(out)
         L = ctypes.CDLL(out); vp, i, d = ctypes.c_void_p, ctypes.c_int, ctypes.c_double

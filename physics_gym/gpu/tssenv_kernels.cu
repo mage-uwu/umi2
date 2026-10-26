@@ -58,7 +58,10 @@ __global__ void k_consts(double *o) {
 }
 /* one world_step of env e's world only (no actions, rewards or resets), for comparing the physics alone */
 __global__ void k_world_step(Env *envs, int e) { if (threadIdx.x || blockIdx.x) return; Env E = envs[e]; world_step(&E.W); envs[e] = E; }
-#define GRID(n) (((n) + 63) / 64), 64
+#ifndef TSS_BLOCK
+#define TSS_BLOCK 64   /* threads per block (gpu_env.py builds others for timing: TSS_BLOCK) */
+#endif
+#define GRID(n) (((n) + TSS_BLOCK - 1) / TSS_BLOCK), TSS_BLOCK
 extern "C" {
 int tss_env_size(void) { return (int)sizeof(Env); }
 int tss_clip_size(void) { return (int)sizeof(Clip); }
