@@ -13,8 +13,8 @@ python3 bench_env.py 4096,8192,16384,32768 > $O/bench.jsonl 2>> $O/bench.err
 TSS_FMAD=1 python3 bench_env.py 4096,16384 >> $O/bench.jsonl 2>> $O/bench.err
 TSS_BLOCK=128 python3 bench_env.py 4096,16384 >> $O/bench.jsonl 2>> $O/bench.err
 TSS_BLOCK=32 python3 bench_env.py 4096,16384 >> $O/bench.jsonl 2>> $O/bench.err
-for n in 4096 16384; do
-  python3 ppo_gpu.py --task getup_imitate --style $TR.bin:$CL --room ${TR}_bank.json --load $B/data/clean/warm/parc1 --steps 400 --strength 2 --start0 0.5 \
-      --drift 0.6 --tail 0.1 --assist-pos-only 1 --assist 0.6 --envs $n --seconds 90 --out $O/ppo$n > $O/ppo$n.log 2>&1
-done
+for n in 4096 16384; do for v in "" "TSS_FMAD=1"; do
+  env $v python3 ppo_gpu.py --task getup_imitate --style $TR.bin:$CL --room ${TR}_bank.json --load $B/data/clean/warm/parc1 --steps 400 --strength 2 --start0 0.5 \
+      --drift 0.6 --tail 0.1 --assist-pos-only 1 --assist 0.6 --envs $n --minibatches $((n / 1024)) --seconds 90 --out $O/ppo$n${v:+_fmad} > $O/ppo$n${v:+_fmad}.log 2>&1
+done; done
 echo done > $O/DONE
