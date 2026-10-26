@@ -46,6 +46,18 @@ The flags are `ppo_tss.c`'s flags, plus `--device`, `--gamma`, `--lam` and `--en
 
 ## Scaling
 
-The stack's walk is sequential over time and tree level, so one training pass is roughly a fixed number of small kernels (about 64 × 5 × 2 layers, forward and backward). Its cost barely depends on batch size until the GPU fills. That's the point: run thousands of environments and train each minibatch as one pass, rather than 64 environments on 8 threads as the C trainer does.
+On CPU, PyTorch is slower than the C trainer (about 160 vs 3000 steps/s at 16 environments).
 
-On CPU, PyTorch is slower than the C trainer (about 160 vs 3000 steps/s at 16 environments). The GPU speed has not been measured yet.
+On the GPU, the SSM-tree's walk is sequential over time and tree level. As PyTorch ops that is about sixty small kernels per step, so a minibatch of 1024 sequences × 64 steps launched hundreds of thousands of them, and the GPU spent its time waiting on launches. `tss_scan.cu` runs that recurrence as two fused kernels (forward and backward). There is one thread block per (sequence, tree), the tree's state is held in shared memory, and each thread owns one state element. `nanotss_torch.py` uses them by default on CUDA; `TSS_FUSED=0` brings back the PyTorch loop. They are for training only: the model, the `.tss` files and the CPU / browser forward pass are unchanged.
+
+`scan_parity.py` checks the kernels against the loop on a trained policy: the outputs, every tape field, all gradients, the carried state and the stream (rollout) inference. Routing decisions are identical; gradients agree to about 1e-4 relative (float rounding, since the sums run in a different order).
+
+The jump course on an A40 (`pod_scan.sh`: 4096 environments, horizon 64, 4 epochs × 4 minibatches):
+
+| | steps/s | fwd + bwd, 1024 × 64 sequences |
+|---|---|---|
+| PyTorch loop | 14,786 | 0.92 s |
+| fused, first version | 22,702 | 0.17 s |
+| fused (one exchange per tree level, one reduction per backward step) | 28,651 | 0.11 s |
+
+What is left, per iteration: the physics step kernel (about 3 s, 44% of the time is rollout), the fused forward, and the PyTorch ops around the scan (norms, the FFF layers, the routing credit, the critic, Muon). The physics kernel is deliberately left as it is: it is the C solver compiled for the device, bit-identical to the C and JavaScript runtime the game uses.
