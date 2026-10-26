@@ -633,7 +633,7 @@ function jumpStep() {   // after each control step in jump mode: the clip on, th
 // random from those it trained on and the held-out ones (motions and terrains it never saw), then another. As in training,
 // down in a gap, lying under the clip's pelvis, or 1 m off its path ends one; a second after the clip, done if she is where
 // it ends (tools/eval_course.py: 0.5 m across, 0.2 m in height).
-const PARC = { clips: 'parc_clips.json', bank: 'parc_bank.json', actMul: 2.5, sets: ['train', 'heldout'], hold: 1.0, assist: 0 };   // assist: a hand-up toward the clip's root
+const PARC = { clips: 'parc_clips.json', bank: 'parc_bank.json', actMul: 2.5, sets: ['train', 'heldout'], hold: 1.0, assist: 0.22 };   // assist: a hand-up toward the clip's root (what parc_tss.json, the pilot's stage 1, trained down to; without it she falls)
 let parcClips = null, parcBank = null, parc = null;   // parc: { clip, room, start, lift, n, done, tries }
 function parcNext(k) {   // room k of PARC.sets (a random one if none), she posed at its clip's start
   const rooms = parcBank.rooms.filter(r => PARC.sets.includes(r.set)), R = rooms[k != null ? ((k % rooms.length) + rooms.length) % rooms.length : Math.floor(Math.random() * rooms.length)];
