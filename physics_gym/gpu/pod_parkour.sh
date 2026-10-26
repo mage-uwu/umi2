@@ -19,6 +19,8 @@
 # tools/eval_course.py after each stage, each clip from its start alone at strength x2: the clips trained on, the
 # feasible held-out PARC clips (data/parc_heldout_fit*) and all 64 held out.
 #   SECONDS_T (7200)  FROM (parc1)  ASSIST (0.6)  DECAY (3600)  STAGE2 (5400)  START0 (0.5)  DRIFT (0.6)  OUT (/w/out)
+#   ENVS (4096)  MB (4: minibatches per pass)  FMAD (0; 1: fused multiply-adds in the GPU physics, 13-38% faster, not bit for bit
+#   with the CPU build; parity_env.py runs on the default build either way)
 G=/w/repo/physics_gym/gpu; B=/w/repo/physics_gym; O=${OUT:-/w/out}; mkdir -p $O
 TR=$B/data/parkour_fit; HF=$B/data/parc_heldout_fit; HA=$B/data/parc_heldout
 CL=$(python3 -c "import json; print(','.join(json.load(open('$TR' + '_bank.json'))['clips']))")
@@ -27,15 +29,16 @@ K="--strength 2 --start0 ${START0:-0.5} --drift ${DRIFT:-0.6} --tail 0.1 --assis
 cd $G && gcc -O3 -march=native -fopenmp -ffp-contract=off -shared -fPIC -o libtssenv.so tssenv.c ../env.c ../body.c ../body_x8.c ../mref.c ../room.c -lm > $O/build.log 2>&1
 python3 -c "import gpu_env; gpu_env.cuda_lib(); gpu_env.build_cu('tss_scan.cu', 'libtss_scan.so'); print('built')" >> $O/build.log 2>&1
 python3 parity_env.py --n 64 --steps 300 --cases parkour > $O/parity.txt 2>&1
+[ "${FMAD:-0}" = 1 ] && export TSS_FMAD=1
 ev() { python3 $B/tools/eval_course.py $1 ${TR}_bank.json $TR.bin 384 0 2; python3 $B/tools/eval_course.py $1 ${TR}_bank.json $TR.bin 384 0.2 2 1;
        python3 $B/tools/eval_course.py $1 ${HF}_bank.json $HF.bin 384 0 2; python3 $B/tools/eval_course.py $1 ${HA}_bank.json $HA.bin 384 0 2; }
 python3 ppo_gpu.py --task getup_imitate --style $TR.bin:$CL --room ${TR}_bank.json --load $B/data/clean/warm/${FROM:-parc1} --steps 400 $K \
-    --assist ${ASSIST:-0.6} --assist-auto --envs 4096 --seconds ${SECONDS_T:-7200} --out $O/pk1 > $O/train1.log 2>&1
+    --assist ${ASSIST:-0.6} --assist-auto --envs ${ENVS:-4096} --minibatches ${MB:-4} --seconds ${SECONDS_T:-7200} --out $O/pk1 > $O/train1.log 2>&1
 ev $O/pk1 > $O/eval1.txt 2>&1
 A2=$(grep '"assist"' $O/train1.log | tail -1 | python3 -c "import sys, json; print(max(0.005, json.loads(sys.stdin.read())['checkpoint_assist']))")
 echo "stage 2 from hand-up $A2" >> $O/eval1.txt
 python3 ppo_gpu.py --task getup_imitate --style $TR.bin:$CL --room ${TR}_bank.json --load $O/pk1 --steps 400 $K \
-    --assist $A2 --assist-decay ${DECAY:-3600} --envs 4096 --seconds ${STAGE2:-5400} --out $O/pk > $O/train.log 2>&1
+    --assist $A2 --assist-decay ${DECAY:-3600} --envs ${ENVS:-4096} --minibatches ${MB:-4} --seconds ${STAGE2:-5400} --out $O/pk > $O/train.log 2>&1
 ev $O/pk > $O/eval.txt 2>&1
 for f in pk1 pk; do [ -f $O/$f.tss ] && python3 $B/tools/tss2json.py $O/$f $O/$f.json; done
 echo done > $O/DONE
