@@ -633,7 +633,7 @@ function jumpStep() {   // after each control step in jump mode: the clip on, th
 // random from those it trained on and the held-out ones (motions and terrains it never saw), then another. As in training,
 // down in a gap, lying under the clip's pelvis, or 1 m off its path ends one; a second after the clip, done if she is where
 // it ends (tools/eval_course.py: 0.5 m across, 0.2 m in height).
-const PARC = { clips: 'parc_clips.json', bank: 'parc_bank.json', actMul: 2.5, sets: ['train', 'heldout'], hold: 1.0, assist: 0.22 };   // assist: a hand-up toward the clip's root (what parc_tss.json, the pilot's stage 1, trained down to; without it she falls)
+const PARC = { clips: 'parc_clips.json', bank: 'parc_bank.json', actMul: 2.5, sets: ['train', 'heldout'], hold: 1.0, assist: 0.5 };   // assist: a hand-up toward the clip's root (parc_tss.json, the pilot's stage 1, trained down to 0.22, where 1 clip in 4 passes; at 0.5, 3 in 5; without it she falls)
 let parcClips = null, parcBank = null, parc = null;   // parc: { clip, room, start, lift, n, done, tries }
 function parcNext(k, last = '') {   // room k of PARC.sets (a random one if none), she posed at its clip's start; last: how the one before went
   const rooms = parcBank.rooms.filter(r => PARC.sets.includes(r.set)), R = rooms[k != null ? ((k % rooms.length) + rooms.length) % rooms.length : Math.floor(Math.random() * rooms.length)];
@@ -647,7 +647,7 @@ function parcNext(k, last = '') {   // room k of PARC.sets (a random one if none
   world.target = a.rel.slice(); ref = a.rel; focus.set(a.root[0], a.root[1], a.root[2]); fallenAt = -1; upSince = world.t;
   parc = { clip: c, room: R, start: world.t, lift, n: (parc?.n || 0) + 1, done: parc?.done || 0, tries: (parc?.tries || 0) + 1, tally: parc?.tally || { train: [0, 0], heldout: [0, 0] } };
   policy?.reset(); prev = snapshot(); hist = [{ t: world.t, s: prev }];
-  setStatus(`${last}Now ${R.set === 'heldout' ? 'held-out' : 'trained-on'} clip ${R.clip}: ${R.source.replace(/_aug.*$/, '').replace(/_/g, ' ')}.`);
+  setStatus(`${last}Now ${R.set === 'heldout' ? 'held-out' : 'trained-on'} clip ${R.clip}: ${R.source.replace(/_aug.*$/, '').replace(/_/g, ' ')}${PARC.assist > 0 ? ` (hand-up ${Math.round(PARC.assist * 100)}%)` : ''}.`);
 }
 function parcEnd(ok, t) {   // the clip over (done: where it ends a second after it; or down): tally it, say so, the next one
   const R = parc.room, a = parc.tally[R.set]; a[0] += ok; a[1]++; parc.done += ok;
