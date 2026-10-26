@@ -100,7 +100,8 @@ button:disabled { opacity: .45; cursor: default; }
     </div>
     <div class="group secondary" role="group" aria-label="View">
       <span class="label">View</span>
-      <button id="v-art" aria-pressed="false" title="Drawn by the ANIME NEURAL SHADER's learned shader">Learned shader</button>
+      <button id="v-art" aria-pressed="false" title="Drawn by the Anime Style Shader's style shader: a ternary tree network with node memory, her lines and cel shading learned from anime film (WebGL2)">Learned shader</button>
+      <button id="v-char" title="The character: the magical girl or the bunny girl, each with her own style shader (reloads the page)">Magical Girl</button>
       <button id="v-model" aria-pressed="false">3D</button>
       <button id="v-boxes" aria-pressed="true">Physics</button>
       <button id="v-in" title="Zoom in (+, Ctrl + scroll, pinch)">+</button><button id="v-out" title="Zoom out (-)">&minus;</button>
@@ -144,6 +145,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm';
 import { World, setRoom, supportY, setHandUp, observeGoto, navField, navGrid, navRoute, navAim, NAV_N, NAV_CELL, NAV_HALF, nearestFrame, BODY_DEFS, B, standPose, swayPose, crawlPose, applyAction, observe, fallen, loadPolicy, loadTssPolicy, loadClips, poseFromClip, setAssist, math, CTRL_HZ } from './body.js';
 import { createShaderView } from './shader-view.js';
+import { createStyleView } from './style-view.js';
 
 const status = document.getElementById('status');
 const setStatus = (t, alert = false) => { status.textContent = t; status.classList.toggle('alert', alert); };
@@ -223,6 +225,13 @@ const blob = (() => { const c = document.createElement('canvas'); c.width = c.he
   m.rotation.x = -Math.PI / 2; m.scale.set(1, 1.4, 1); m.visible = false; scene.add(m); return m; })();
 
 // ---------- the model (bytes packed in a PNG, as on the shader page) ----------
+// The characters, each with her own style shader network (the Anime Style Shader page's; #bunny picks the bunny girl):
+// shorts, the colour of the safety shorts its training renders had.
+const CHARS = {
+  girl: { label: 'Magical Girl', model: 'model.vrm.png', style: 'style/girl/', shorts: 0x1c2056 },
+  bunny: { label: 'Bunny', model: 'bunny/model.vrm.png', style: 'style/bunny/', shorts: 0xf4dde3 },
+};
+const CHAR_ID = location.hash.slice(1).split('-').includes('bunny') ? 'bunny' : 'girl', CHAR = CHARS[CHAR_ID];
 async function unpackPng(url) {
   const bmp = await createImageBitmap(await (await fetch(url)).blob(), { colorSpaceConversion: 'none', premultiplyAlpha: 'none' });
   const c = new OffscreenCanvas(bmp.width, bmp.height), ctx = c.getContext('2d'); ctx.drawImage(bmp, 0, 0);
@@ -234,7 +243,7 @@ async function unpackPng(url) {
 let vrm = null;
 async function loadModel() {
   const loader = new GLTFLoader(); loader.register(p => new VRMLoaderPlugin(p));
-  const gltf = await loader.parseAsync(await unpackPng('model.vrm.png'), '');
+  const gltf = await loader.parseAsync(await unpackPng(CHAR.model), '');
   vrm = gltf.userData.vrm; VRMUtils.rotateVRM0(vrm);
   vrm.scene.traverse(o => { o.frustumCulled = false; if (o.isMesh) o.castShadow = true; });
   scene.add(vrm.scene);
@@ -1183,7 +1192,7 @@ document.getElementById('standup').onclick = () => world && mode !== 'getup' && 
 fetch(GETUP.file, { method: 'HEAD' }).then(r => { const b = document.getElementById('standup'); b.disabled = !r.ok; if (!r.ok) b.title = 'Getting up is still training'; }).catch(() => {});
 // Look: the learned shader (art), the plain 3D render (model) or the physics boxes.
 let artCanvas = document.getElementById('art'); const pelvisAt = new THREE.Vector3(0, 0.9, 0);
-let look = 'boxes', art = null, artLoad = null;   // opens on the physics bodies
+let look = location.hash.slice(1).split('-').includes('art') ? 'art' : 'boxes', art = null, artLoad = null;   // opens on the physics bodies (#art: the learned shader; the character chip reloads onto it)
 function setLook(next) {
   look = next;
   setPressed('#v-art, #v-model, #v-boxes', document.getElementById({ art: 'v-art', model: 'v-model', boxes: 'v-boxes' }[next]));
@@ -1193,10 +1202,12 @@ function setLook(next) {
   document.getElementById('r-look').textContent = next === 'art' ? (art ? art.engine : 'loading the learned shader…') : next === 'boxes' ? 'physics bodies' : '3D render';
 }
 let artCpu = /cpu/.test(location.hash);
+const oldShader = /cpu|crisp|oldshader/.test(location.hash);   // #oldshader (#cpu, #crisp): the ANIME NEURAL SHADER page's shader
 async function useArt() {
   setLook('art');
   if (!art) {
-    // The shader page's nanotss shader on the GPU (gpu-nts.js, WebGPU compute; its CPU path, nts.js, where
+    // The Anime Style Shader page's style shader (style-view.js, WebGL2). Where it can't start, the older shader:
+    // the shader page's nanotss shader on the GPU (gpu-nts.js, WebGPU compute; its CPU path, nts.js, where
     // there is no WebGPU). #cpu forces the CPU path, #crisp the older WebGPU network.
     const detail = artCpu ? 'cpu' : /crisp/.test(location.hash) ? 'crisp' : 'auto';
     const onPaint = () => {
@@ -1208,11 +1219,18 @@ async function useArt() {
       drawOccluders();
     };
     // a WebGPU device that fails to start falls back to the CPU shader (on a fresh canvas: the old one holds a WebGPU context)
-    artLoad ||= createShaderView({ THREE, vrm, canvas: artCanvas, detail, transparent: true, onPaint }).catch(e => {
+    const older = () => createShaderView({ THREE, vrm, canvas: artCanvas, detail, transparent: true, onPaint }).catch(e => {
       if (detail === 'cpu') throw e;
       console.warn('WebGPU shader failed, using the CPU shader:', e);
       const fresh = artCanvas.cloneNode(); artCanvas.replaceWith(fresh); artCanvas = fresh;
       return createShaderView({ THREE, vrm, canvas: artCanvas, detail: 'cpu', transparent: true, onPaint });
+    });
+    // (the older shader knows only the magical girl)
+    artLoad ||= oldShader && CHAR_ID === 'girl' ? older() : createStyleView({ THREE, vrm, canvas: artCanvas, base: CHAR.style, shorts: CHAR.shorts }).catch(e => {
+      if (CHAR_ID !== 'girl') throw e;
+      console.warn('The style shader could not start, using the older shader:', e);
+      const fresh = artCanvas.cloneNode(); artCanvas.replaceWith(fresh); artCanvas = fresh;
+      return older();
     });
     try { art = await artLoad; } catch (e) { console.error(e); setStatus(`The learned shader could not start: ${e.message}`, true); artLoad = null; setLook('model'); return; }
     if (look === 'art') setLook('art');
@@ -1236,8 +1254,14 @@ function applyParts() {
 for (const k of Object.keys(parts)) document.getElementById(`p-${k}`).onclick = e => {
   parts[k] = !parts[k]; e.currentTarget.setAttribute('aria-pressed', String(parts[k])); applyParts(); emit('parts', { ...parts });
 };
-let lookChosen = false;   // once the viewer picks a view, start-up no longer switches it
+let lookChosen = look === 'art';   // once the viewer picks a view, start-up no longer switches it (#art picked it)
 document.getElementById('v-art').onclick = () => { lookChosen = true; if (vrm) useArt(); };
+document.getElementById('v-char').textContent = CHAR.label;
+document.getElementById('v-char').onclick = () => {   // the other character: reloads with her model and network, on the learned shader
+  const t = location.hash.slice(1).split('-').filter(x => x && x !== 'bunny' && x !== 'art');
+  if (CHAR_ID === 'girl') t.push('bunny');
+  t.push('art'); location.hash = t.join('-'); location.reload();
+};
 document.getElementById('v-model').onclick = () => { lookChosen = true; setLook('model'); };
 document.getElementById('v-boxes').onclick = () => { lookChosen = true; setLook('boxes'); };
 // Click the stage: push from the clicked side of her (screen left/right of her body, nearer/farther in depth).
