@@ -653,7 +653,7 @@ function parcEnd(ok, t) {   // the clip over (done: where it ends a second after
   const R = parc.room, a = parc.tally[R.set]; a[0] += ok; a[1]++; parc.done += ok;
   const [tr, ho] = [parc.tally.train, parc.tally.heldout];
   emit('parc', { clip: R.clip, set: R.set, source: R.source, done: !!ok, t });
-  parcNext(undefined, `${R.clip}: ${ok ? 'PASS' : 'FAIL'}  (${tr[0] + ho[0]}/${tr[1] + ho[1]} passed)  —  `);
+  parcNext(undefined, `${R.clip}: ${ok ? 'PASS' : 'FAIL'}  (${tr[0] + ho[0]}/${tr[1] + ho[1]} passed)  |  `);
 }
 function parcStep() {   // after each control step: the clip on, or the next one
   const c = parc.clip, t = world.t - parc.start, a = c.at(Math.min(t, c.T * (1 - 1e-9))); ref = a.rel;
