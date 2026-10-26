@@ -1,5 +1,5 @@
 """eval_chain.py: a jump tracker on chained jump courses (env.h TaskCfg.chain), with no hand-up.
-    python3 tools/eval_chain.py PREFIX COURSES.json [N] [seconds] [chain_yaw]
+    python3 tools/eval_chain.py PREFIX COURSES.json [N] [seconds] [chain_yaw] [hand-up]
 Each of N environments plays one episode from the start of its room's clip (as the viewer's first jump does), each jump
 after the first from where the last one landed, aimed by her feet (give or take chain_yaw, 0 by default: the viewer's
 aim). Counts the jumps landed before she drops into a gap or falls, per clip: their mean, the share of episodes reaching
@@ -8,11 +8,11 @@ far platform), so the last one of an episode cut off by its time limit is not co
 import sys, os, json, struct, numpy as np, torch
 B = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'); sys.path.insert(0, os.path.join(B, 'gpu')); import nanotss_torch as nt, gpu_env as ge
 pre, rooms_file = sys.argv[1], sys.argv[2]; n = int(sys.argv[3]) if len(sys.argv) > 3 else 128
-secs = float(sys.argv[4]) if len(sys.argv) > 4 else 30; yaw = float(sys.argv[5]) if len(sys.argv) > 5 else 0.0
+secs = float(sys.argv[4]) if len(sys.argv) > 4 else 30; yaw = float(sys.argv[5]) if len(sys.argv) > 5 else 0.0; hand = float(sys.argv[6]) if len(sys.argv) > 6 else 0.0
 doc = json.load(open(rooms_file)); clips = doc["clips"]; ST = os.path.join(B, "data", "cmu_jump.bin") + ":" + ",".join(clips)
 dev = torch.device("cuda" if torch.cuda.is_available() else "cpu"); Pool = ge.GpuPool if dev.type == "cuda" else ge.CpuPool
 steps = int(secs * 30)
-pool = Pool(n, task="getup_imitate", style=ST, room=rooms_file, seed=17, device=dev, assist=0, steps=steps, chain=1, chain_yaw=yaw, fixed_start=1)
+pool = Pool(n, task="getup_imitate", style=ST, room=rooms_file, seed=17, device=dev, assist=hand, steps=steps, chain=1, chain_yaw=yaw, fixed_start=1)
 m = nt.TSS.load(pre + ".tss", device=dev); d = m.c.d; OBS, ACT = pool.OBS, pool.ACT
 raw = open(pre + ".head", "rb").read(); hd, hobs, hact = struct.unpack("<3i", raw[4:16]); o = 16
 def take(k):
@@ -30,7 +30,7 @@ with torch.no_grad():
         r = pool.step(act)
         dn = r["done"].bool().to(dev) & alive; down |= dn & r["fell"].bool().to(dev); alive &= ~dn
 room = pool.rooms(); clip_of = np.array([clips[r % len(clips)] for r in room])
-print(f"{pre}: {n} episodes of {secs:.0f} s from each clip's start, aiming error up to {yaw} rad: jumps landed {J.mean():.2f} on average "
+print(f"{pre}: {n} episodes of {secs:.0f} s from each clip's start, aiming error up to {yaw} rad, hand-up {hand}: jumps landed {J.mean():.2f} on average "
       f"(reaching 2: {np.mean(J >= 2) * 100:.0f}%, 4: {np.mean(J >= 4) * 100:.0f}%, 6: {np.mean(J >= 6) * 100:.0f}%, 8: {np.mean(J >= 8) * 100:.0f}%); "
       f"ended down {int(down.sum())} of {n}")
 for c in clips:
