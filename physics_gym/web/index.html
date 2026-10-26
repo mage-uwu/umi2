@@ -101,8 +101,8 @@ button:disabled { opacity: .45; cursor: default; }
     <div class="group secondary" role="group" aria-label="View">
       <span class="label">View</span>
       <button id="v-art" aria-pressed="false" title="Drawn by the ANIME NEURAL SHADER's learned shader">Learned shader</button>
-      <button id="v-model" aria-pressed="true">3D</button>
-      <button id="v-boxes" aria-pressed="false">Physics</button>
+      <button id="v-model" aria-pressed="false">3D</button>
+      <button id="v-boxes" aria-pressed="true">Physics</button>
       <button id="v-in" title="Zoom in (+, Ctrl + scroll, pinch)">+</button><button id="v-out" title="Zoom out (-)">&minus;</button>
       <button id="v-reset">Reset view</button>
       <button id="v-room" aria-pressed="true" title="The room's boxes, drawn and simulated; off: the open floor">Room</button>
@@ -1050,7 +1050,7 @@ document.getElementById('standup').onclick = () => world && mode !== 'getup' && 
 fetch(GETUP.file, { method: 'HEAD' }).then(r => { const b = document.getElementById('standup'); b.disabled = !r.ok; if (!r.ok) b.title = 'Getting up is still training'; }).catch(() => {});
 // Look: the learned shader (art), the plain 3D render (model) or the physics boxes.
 let artCanvas = document.getElementById('art'); const pelvisAt = new THREE.Vector3(0, 0.9, 0);
-let look = 'model', art = null, artLoad = null;
+let look = 'boxes', art = null, artLoad = null;   // opens on the physics bodies
 function setLook(next) {
   look = next;
   setPressed('#v-art, #v-model, #v-boxes', document.getElementById({ art: 'v-art', model: 'v-model', boxes: 'v-boxes' }[next]));
@@ -1409,7 +1409,7 @@ try {
   setStatus('loading the model…');
   await loadModel(); applyParts();
   setStatus('loading the learned shader…');
-  if (lookChosen && look === 'art') await useArt(); else setLook(look);   // physics-gym opens on the 3D view, where the room is drawn; the learned shader draws only her
+  if (lookChosen && look === 'art') await useArt(); else setLook(look);   // physics-gym opens on the physics view (look above); the learned shader draws only her
   if (art) setStatus('');
 } catch (e) { console.error(e); setStatus(`Could not start: ${e.message}`, true); }
 </script>
