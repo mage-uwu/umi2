@@ -635,7 +635,7 @@ function jumpStep() {   // after each control step in jump mode: the clip on, th
 // it ends (tools/eval_course.py: 0.5 m across, 0.2 m in height).
 const PARC = { clips: 'parc_clips.json', bank: 'parc_bank.json', actMul: 2.5, sets: ['train', 'heldout'], hold: 1.0, assist: 0.22 };   // assist: a hand-up toward the clip's root (what parc_tss.json, the pilot's stage 1, trained down to; without it she falls)
 let parcClips = null, parcBank = null, parc = null;   // parc: { clip, room, start, lift, n, done, tries }
-function parcNext(k) {   // room k of PARC.sets (a random one if none), she posed at its clip's start
+function parcNext(k, last = '') {   // room k of PARC.sets (a random one if none), she posed at its clip's start; last: how the one before went
   const rooms = parcBank.rooms.filter(r => PARC.sets.includes(r.set)), R = rooms[k != null ? ((k % rooms.length) + rooms.length) % rooms.length : Math.floor(Math.random() * rooms.length)];
   const xs = R.boxes.flatMap(b => [b.c[0] - 3, b.c[0] + 3]), zs = R.boxes.flatMap(b => [b.c[2] - 3, b.c[2] + 3]);
   roomDoc = { name: R.name, boxes: R.boxes, bounds: [Math.min(...xs, -8), Math.max(...xs, 8), Math.min(...zs, -8), Math.max(...zs, 8)] }; buildRoom(); roomOn = true; roomGroup.visible = true;
@@ -645,19 +645,24 @@ function parcNext(k) {   // room k of PARC.sets (a random one if none), she pose
   W2.pose(B1.root, B1.rel[0], B1.rel); world.pose(a.root, a.rel[0], a.rel);
   world.b.forEach((b, i) => { b.v = math.vscale(math.vsub(W2.b[i].x, b.x), CTRL_HZ); b.w = math.vscale(math.qlog(math.qmul(W2.b[i].q, math.qconj(b.q))), CTRL_HZ); b.xprev = b.x; });
   world.target = a.rel.slice(); ref = a.rel; focus.set(a.root[0], a.root[1], a.root[2]); fallenAt = -1; upSince = world.t;
-  parc = { clip: c, room: R, start: world.t, lift, n: (parc?.n || 0) + 1, done: parc?.done || 0, tries: (parc?.tries || 0) + 1 };
+  parc = { clip: c, room: R, start: world.t, lift, n: (parc?.n || 0) + 1, done: parc?.done || 0, tries: (parc?.tries || 0) + 1, tally: parc?.tally || { train: [0, 0], heldout: [0, 0] } };
   policy?.reset(); prev = snapshot(); hist = [{ t: world.t, s: prev }];
-  setStatus(`PARC ${R.set === 'heldout' ? 'held-out' : 'trained-on'} clip ${R.clip}: ${R.source.replace(/_aug.*$/, '').replace(/_/g, ' ')}.`);
+  setStatus(`${last}Now ${R.set === 'heldout' ? 'held-out' : 'trained-on'} clip ${R.clip}: ${R.source.replace(/_aug.*$/, '').replace(/_/g, ' ')}.`);
+}
+function parcEnd(ok, t) {   // the clip over (done: where it ends a second after it; or down): tally it, say so, the next one
+  const R = parc.room, c = parc.clip, a = parc.tally[R.set]; a[0] += ok; a[1]++; parc.done += ok;
+  const [tr, ho] = [parc.tally.train, parc.tally.heldout];
+  emit('parc', { clip: R.clip, set: R.set, source: R.source, done: !!ok, t });
+  parcNext(undefined, `${R.clip} ${ok ? 'done' : `down after ${Math.min(t, c.T).toFixed(1)} s of ${c.T.toFixed(1)}`}. ` +
+    `${tr[0] + ho[0]} of ${tr[1] + ho[1]} done (trained-on ${tr[0]}/${tr[1]}, held-out ${ho[0]}/${ho[1]}). `);
 }
 function parcStep() {   // after each control step: the clip on, or the next one
   const c = parc.clip, t = world.t - parc.start, a = c.at(Math.min(t, c.T * (1 - 1e-9))); ref = a.rel;
   const P = world.b[0].x, sp = supportY(P[0], P[2], P[1]), foot = Math.min(world.lowest(B.L_FOOT), world.lowest(B.R_FOOT)), y = a.root[1];
   const down = (foot < parc.lift - 0.25 && P[1] < y - 0.3) || (P[1] - sp < 0.4 && world.b[B.HEAD].x[1] - sp < 0.7 && P[1] < y - 0.25) || math.vlen(math.vsub(P, a.root)) > 1.0;
-  const R = parc.room;
-  if (down) { emit('parc', { clip: R.clip, set: R.set, source: R.source, done: false, t }); setStatus(`PARC clip ${R.clip}: down after ${t.toFixed(1)} s of ${c.T.toFixed(1)}.`); parcNext(); return; }
+  if (down) { parcEnd(false, t); return; }
   if (t > c.T + PARC.hold) {
-    const ok = Math.hypot(P[0] - a.root[0], P[2] - a.root[2]) < 0.5 && Math.abs(P[1] - a.root[1]) < 0.2; parc.done += ok;
-    emit('parc', { clip: R.clip, set: R.set, source: R.source, done: ok, t }); parcNext();
+    parcEnd(Math.hypot(P[0] - a.root[0], P[2] - a.root[2]) < 0.5 && Math.abs(P[1] - a.root[1]) < 0.2, t);
   }
 }
 // The course is laid out ahead from LEVEL.plan: walks along a platform LEVEL.width wide, and moves whose boxes come from the
@@ -1405,7 +1410,7 @@ window.umiBody = {
 
 requestAnimationFrame(frame);
 try {
-  await useSkill('balance');
+  await useSkill('balance'); setLook(look);   // the default view from the start (the model may be slow, or fail, to load)
   setStatus('loading the model…');
   await loadModel(); applyParts();
   setStatus('loading the learned shader…');
