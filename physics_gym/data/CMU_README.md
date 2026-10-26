@@ -35,3 +35,16 @@ The locomotion reference for the learned style reward (gpu/ppo_gpu.py --amp; tas
 backwards (subjects 2, 7, 8, 9, 35, 69, 77, 78, 83, 91, 104, 105, 141). Stylised walks, props, seats, stairs, uneven
 ground, jumps and two-person trials are left out; frames the capture lost are dropped. Each clip is named
 c<subject>_<trial>. Same terms as above.
+
+# cmu_climb.bin
+
+Climbs for the climbing courses (data/climb_bank.json, tools/climb_course.mjs; gpu/pod_climb.sh), fetched at 30 Hz with
+`tools/cmu_fetch.py` (frame ranges at 30 Hz):
+
+| clip | source | what |
+|---|---|---|
+| c13_35_30, c13_36_60 | subject 13, trials 35 (frames 30-200), 36 (60-240) | climb three steps (0.19, 0.36, 0.56 m) |
+| c40_06_30 | subject 40, trial 06 (30-105) | step up a stepstool (0.19, 0.36 m) |
+| c40_06_930, c40_06_1005 | subject 40, trial 06 (930-1000, 1005-1075) | standing jump over the stool, there and back |
+| c81_14r, c81_15r | subject 81, trials 14 (255-510), 15 (255-507), played backwards | hoisting up a 0.6 m ledge with the hands (the capture: climbing backwards off it) |
+| c88_02_15 | subject 88, trial 02 (15-66) | standing jump up onto a 0.7 m platform |
