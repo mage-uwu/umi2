@@ -428,6 +428,11 @@ const SKILLS = {
   // standing height, upright; shown as "pelvis support"). The unified run's last stage (gpu/pod_unified.sh: the slope gym
   // and stage 1, steering by the path helper, 40 s of chained goals).
   goto: { label: 'Go to', file: 'goto_tss.json', goTo: true, clip: 'cmu_walk', assist: 0.05 },   // data/clean/warm/aware (gpu/pod_aware.sh)
+  // free: go-to with no gait prior (env.c goto_free, gpu/pod_amp.sh): no clip plays and there is no phase; the actions act
+  // around the stand pose (actMul times the joint ranges) and the gait is the controller's own. Motion capture only judged
+  // it in training (a learned discriminator, ppo_gpu.py --amp). Run 1, 25 min from scratch on the open floor: it reaches
+  // goals on its own by a shuffle (feet down and up about 13 times a second), its style reward too weak to shape the gait.
+  free: { label: 'Free gait (run 1)', file: 'free_shuffle_tss.json', goTo: true, actMul: 1.5 },
   // jump: the jump tracker on a course of platforms laid down as she goes (JUMP below)
   jump: { label: 'Jump', file: 'jump_tss.json', jump: true },
 };
@@ -633,7 +638,7 @@ function control() {
   else if (mode === 'getup' && GETUP.assist && !track && !settle) setHandUp(world, GETUP.assist);
   const gym = mode === 'skill' && SKILLS[skill].gym;
   const obs = goTo ? observeGoto(world, phase, goalOr(), false, goal ? navAim(world.b[0].x, goal, STEER.far, STEER.near) : goalOr()) : gym ? observeGoto(world, phase, null) : mode === 'getup' && GETUP.gym ? observeGoto(world, 0, null, true) : observe(world, phase, floor);
-  if (fallenAt < 0 && pol) applyAction(world, ref, pol.act(obs), floor ? GETUP.actMul : 1);
+  if (fallenAt < 0 && pol) applyAction(world, ref, pol.act(obs), floor ? GETUP.actMul : (mode === 'skill' && SKILLS[skill].actMul) || 1);
   if (goTo) { goalReached(); if (roam && reachedAt >= 0 && world.t - reachedAt > 0.8) roamGoal(); }
   easeGrab(); aimLimb(); prev = snapshot(); world.step();
   hist.push({ t: world.t, s: snapshot() }); if (hist.length > 12) hist.shift();
@@ -647,7 +652,7 @@ function control() {
     if (still) { stillAt = world.t; if (calmSince < 0) calmSince = world.t; } else if (world.t - stillAt > 0.4) calmSince = -1;   // (a wobble under 0.4 s doesn't count)
     if (calmSince >= 0 && world.t - calmSince > 1.5) {
       if (SKILLS[skill].goTo) {   // up again: carry on to the goal, on the walk cycle again
-        mode = 'skill'; policy = policies[skill]; policy?.reset(); clip = clips[SKILLS[skill].clip]; ref = clip.at(world.t).rel; upSince = world.t;
+        mode = 'skill'; policy = policies[skill]; policy?.reset(); clip = SKILLS[skill].clip ? clips[SKILLS[skill].clip] : null; ref = clip ? clip.at(world.t).rel : standPose(); upSince = world.t;
         if (!SKILLS[skill].legacy) { world.limitK = 5000; world.strength = 1; }   // back to the gym's physics
         setStatus(goal ? 'Going to the goal.' : ''); emit('stood', {});
       } else {
