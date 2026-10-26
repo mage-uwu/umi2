@@ -23,6 +23,9 @@ export async function createStyleView({ THREE, vrm, canvas, base = 'style/girl/'
   renderer.setPixelRatio(1);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   const gl = renderer.getContext();
+  // a lost context (the GPU reset, or the browser reclaiming memory) makes frame() throw: the page starts again
+  let lost = false;
+  canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); lost = true; });
   const gls = await createGlShader({ THREE, renderer, NW, NH, base, precision: 'half' });
 
   // ---------- scene: the model alone, lit as in the coverage renders ----------
@@ -32,7 +35,9 @@ export async function createStyleView({ THREE, vrm, canvas, base = 'style/girl/'
   sun.position.set(1, 3, 2);
   scene.add(sun);
   const camera = new THREE.PerspectiveCamera(VIEW_FOV, NW / NH, 0.01, 100);
-  vrm.scene.updateMatrixWorld(true);
+  // Measured in her rest pose, whatever pose she is in now (the page poses her again before the next frame): the
+  // framing as the shader page's, and the shorts' heights in the mesh's own rest positions.
+  vrm.humanoid.resetNormalizedPose(); vrm.humanoid.update(); vrm.scene.updateMatrixWorld(true);
   const bones = [];
   vrm.scene.traverse(o => { if (o.isBone) bones.push(o); });
   // Framing: the training distance, from the model's height (the shader page's radius).
@@ -41,7 +46,8 @@ export async function createStyleView({ THREE, vrm, canvas, base = 'style/girl/'
   const targetY = box.getCenter(new THREE.Vector3()).y;
 
   // Safety shorts under the skirt in the colour its training renders had (render-orbit.mjs --shorts-color): the body
-  // drawn again over the hips and upper thighs, colour pass only. Heights from the hips, so they follow her.
+  // drawn again over the hips and upper thighs, colour pass only. Chosen by the vertices' rest positions (the mesh's
+  // own, unskinned: she moves by her bones), so they stay on her thighs however she bends, runs or climbs.
   const shorts = [];
   {
     const bone = n => vrm.humanoid.getNormalizedBoneNode(n);
@@ -55,11 +61,10 @@ export async function createStyleView({ THREE, vrm, canvas, base = 'style/girl/'
       const mat = new THREE.MeshBasicMaterial({ color: shortsColor, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
       mat.onBeforeCompile = sh => {
         const own = ids.map(i => `float(skinIndex.x == ${i}.0) * skinWeight.x + float(skinIndex.y == ${i}.0) * skinWeight.y + float(skinIndex.z == ${i}.0) * skinWeight.z + float(skinIndex.w == ${i}.0) * skinWeight.w`).join(' + ');
-        sh.uniforms.hipY = { value: 0 }; mat.userData.shader = sh;
         sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying float vY;\nvarying float vW;')
           .replace('#include <project_vertex>', `#include <project_vertex>\nvY = (modelMatrix * vec4(position, 1.0)).y;\nvW = ${own};`);
-        sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform float hipY;\nvarying float vY;\nvarying float vW;')
-          .replace('void main() {', `void main() {\n  if (vW < 0.5 || vY - hipY < ${(bottom - hip.y).toFixed(4)} || vY - hipY > ${(top - hip.y).toFixed(4)}) discard;`);
+        sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying float vY;\nvarying float vW;')
+          .replace('void main() {', `void main() {\n  if (vW < 0.5 || vY < ${bottom.toFixed(4)} || vY > ${top.toFixed(4)}) discard;`);
       };
       const s = new THREE.SkinnedMesh(o.geometry, mat);
       s.bind(o.skeleton, o.bindMatrix);
@@ -68,11 +73,7 @@ export async function createStyleView({ THREE, vrm, canvas, base = 'style/girl/'
       shorts.push(s);
     }
   }
-  const hipNow = new THREE.Vector3();
-  const showShorts = on => {
-    vrm.humanoid.getNormalizedBoneNode('hips').getWorldPosition(hipNow);
-    for (const m of shorts) { m.visible = on; const sh = m.material.userData.shader; if (sh) sh.uniforms.hipY.value = hipNow.y; }
-  };
+  const showShorts = on => { for (const m of shorts) m.visible = on; };
 
   // ---------- G-buffer: five tiles in the coverage renders' 8-bit encodings (the shader page's) ----------
   const gbufVert = `#include <common>
@@ -174,12 +175,15 @@ export async function createStyleView({ THREE, vrm, canvas, base = 'style/girl/'
   }
   const art = {
     engine: 'WebGL2 · style shader',
+    style: true,
     scene,
+    renderer,
     zoomInPass: true,   // zoom goes to frame(): the frame box grows, the canvas is not scaled
     syncCamera,
     ms: null,
     get busy() { return busy(); },
     frame({ target: t, yaw, pitch, zoom = 1, about = null }) {
+      if (lost) throw new Error('graphics context lost');
       if (busy()) return false;
       const t0 = performance.now();
       placeCamera(t, yaw, pitch);

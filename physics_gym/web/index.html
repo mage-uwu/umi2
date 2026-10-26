@@ -198,7 +198,7 @@ for (const R of ROOMS) { try { const r = await fetch(R.file); if (r.ok) R.doc = 
 let roomIdx = ROOMS.findIndex(R => R.doc), roomDoc = roomIdx >= 0 ? ROOMS[roomIdx].doc : null;
 const edgeMat = new THREE.LineBasicMaterial({ color: 0x2a2e4a, transparent: true, opacity: .35 });
 function buildRoom() {
-  for (const m of [...roomGroup.children]) { m.geometry.dispose(); m.material.dispose(); roomGroup.remove(m); }
+  for (const m of [...roomGroup.children]) { m.geometry.dispose(); m.material.dispose(); m.children.forEach(e => e.geometry.dispose()); roomGroup.remove(m); }
   if (!roomDoc) return;
   setRoom(roomDoc.boxes);
   for (const b of roomDoc.boxes) {
@@ -497,7 +497,9 @@ function poseAt(t) {
 // rate. After she is teleported (reset, skill change) they settle in place instead of whipping.
 let springT = 0, springSettle = 0;
 function springs(t) {
-  if (springSettle > 0) { const { Q, X } = poseAt(t); poseModel(Q, X[0]); vrm.springBoneManager?.reset(); vrm.update(0); springT = t; springSettle--; return; }
+  // settling, or a new world (a PARC clip, the Level's place: its clock starts again at 0): posed where she is now,
+  // hair and cloth at rest (else she stayed posed as she was until the new clock passed the old one)
+  if (springSettle > 0 || t < springT) { const { Q, X } = poseAt(t); poseModel(Q, X[0]); vrm.springBoneManager?.reset(); vrm.update(0); springT = t; springSettle = Math.max(0, springSettle - 1); return; }
   const span = t - springT; if (span <= 0) return;
   const n = Math.min(24, Math.max(1, Math.ceil(span * 60 - 1e-6)));
   for (let k = 1; k <= n; k++) { const { Q, X } = poseAt(springT + span * k / n); poseModel(Q, X[0]); vrm.update(span / n); }
@@ -1048,7 +1050,15 @@ function step(now) {
     // matched to the shader's (redrawn only with a new drawing, so the two stay in step).
     let drew = false;
     try { drew = art.frame({ target: pelvisAt, yaw: view.yaw, pitch: view.pitch, zoom, about: headAt }); }
-    catch (e) {   // a WebGPU device that starts but cannot take the G-buffer: the CPU shader instead
+    catch (e) {   // the style shader failing (or its context lost): once more on a fresh canvas, then the older shader
+      if (art.style) {
+        console.error('style shader frame failed:', e);
+        styleFails++;
+        const fresh = artCanvas.cloneNode(); artCanvas.replaceWith(fresh); artCanvas = fresh;
+        art = null; artLoad = null; useArt();
+        return;
+      }
+      // a WebGPU device that starts but cannot take the G-buffer: the CPU shader instead
       if (artCpu) throw e;
       console.warn('WebGPU shader frame failed, using the CPU shader:', e);
       const fresh = artCanvas.cloneNode(); artCanvas.replaceWith(fresh); artCanvas = fresh;
@@ -1145,7 +1155,15 @@ function follow(px, dt) {
 const occCanvas = document.getElementById('occ');
 let occR = null, occScene = null, occSun = null;
 const depthOnly = new THREE.MeshBasicMaterial({ colorWrite: false, stencilWrite: true, stencilRef: 1, stencilFunc: THREE.AlwaysStencilFunc, stencilZPass: THREE.ReplaceStencilOp });
-const STENCIL = ['stencilWrite', 'stencilRef', 'stencilFunc', 'stencilFail', 'stencilZFail', 'stencilZPass', 'stencilWriteMask'];
+const occMats = new WeakMap();   // a material's copy for the overlay: only where her stencil is set (gone with the original)
+function occMat(m) {
+  let c = occMats.get(m);
+  if (!c) {
+    c = m.clone(); occMats.set(m, c); m.addEventListener('dispose', () => c.dispose());
+    Object.assign(c, { stencilWrite: true, stencilRef: 1, stencilFunc: THREE.EqualStencilFunc, stencilFail: THREE.KeepStencilOp, stencilZFail: THREE.KeepStencilOp, stencilZPass: THREE.KeepStencilOp, stencilWriteMask: 0 });
+  }
+  return c;
+}
 function drawOccluders() {
   if (!vrm || !(roomOn || goalMark.visible)) { occCanvas.hidden = true; return; }
   if (!occR) {
@@ -1165,12 +1183,12 @@ function drawOccluders() {
   occR.render(occScene, camera);
   occScene.remove(vrm.scene); occScene.overrideMaterial = null;
   occScene.add(roomGroup, goalMark);   // the room against it, inside her silhouette (the materials' stencil test for this pass only)
-  const mats = new Set();
-  for (const g of [roomGroup, goalMark]) g.traverse(o => { if (o.material) [].concat(o.material).forEach(m => mats.add(m)); });
-  const saved = [...mats].map(m => [m, STENCIL.map(k => m[k])]);
-  for (const m of mats) Object.assign(m, { stencilWrite: true, stencilRef: 1, stencilFunc: THREE.EqualStencilFunc, stencilFail: THREE.KeepStencilOp, stencilZFail: THREE.KeepStencilOp, stencilZPass: THREE.KeepStencilOp, stencilWriteMask: 0 });
+  // (drawn with copies of their materials: a lit material's light uniforms are shared between renderers, and this
+  // one's lights cast no shadows, so with the room's own materials the 3D view, back from the learned shader, failed)
+  const swapped = [];
+  for (const g of [roomGroup, goalMark]) g.traverse(o => { if (o.material) { swapped.push([o, o.material]); o.material = Array.isArray(o.material) ? o.material.map(occMat) : occMat(o.material); } });
   occR.render(occScene, camera);
-  for (const [m, v] of saved) STENCIL.forEach((k, i) => { m[k] = v[i]; });
+  for (const [o, m] of swapped) o.material = m;
   for (const [o, home] of homes) home ? home.add(o) : o.removeFromParent();
 }
 function resize() {
@@ -1196,13 +1214,25 @@ let look = location.hash.slice(1).split('-').includes('art') ? 'art' : 'boxes', 
 function setLook(next) {
   look = next;
   setPressed('#v-art, #v-model, #v-boxes', document.getElementById({ art: 'v-art', model: 'v-model', boxes: 'v-boxes' }[next]));
-  if (vrm) { vrm.scene.visible = next !== 'boxes'; (next === 'art' && art ? art.scene : scene).add(vrm.scene); }
+  if (vrm) {
+    vrm.scene.visible = next !== 'boxes';
+    const home = next === 'art' && art ? art.scene : scene;
+    // into the other scene (another renderer, other lights): her materials' light uniforms are shared, and a renderer
+    // sets them only when it first sets a material up, so the one she moves to forgets hers (else the 3D render, back
+    // from the learned shader, read shadows that aren't there)
+    if (vrm.scene.parent !== home) {
+      home.add(vrm.scene);
+      const r = home === scene ? renderer : art.renderer;
+      if (r) vrm.scene.traverse(o => { if (o.material) [].concat(o.material).forEach(m => r.properties.remove(m)); });
+    }
+  }
   boxes.forEach(m => m.visible = next === 'boxes');
   artCanvas.hidden = next !== 'art' || !art; if (artCanvas.hidden) occCanvas.hidden = true; canvas.hidden = !artCanvas.hidden && !art?.syncCamera;   // WebGPU: the floor shows beneath the drawing
   document.getElementById('r-look').textContent = next === 'art' ? (art ? art.engine : 'loading the learned shader…') : next === 'boxes' ? 'physics bodies' : '3D render';
 }
 let artCpu = /cpu/.test(location.hash);
 const oldShader = /cpu|crisp|oldshader/.test(location.hash);   // #oldshader (#cpu, #crisp): the ANIME NEURAL SHADER page's shader
+let styleFails = 0;   // frames the style shader failed (each starts it again on a fresh canvas; after two, the older shader)
 async function useArt() {
   setLook('art');
   if (!art) {
@@ -1226,7 +1256,8 @@ async function useArt() {
       return createShaderView({ THREE, vrm, canvas: artCanvas, detail: 'cpu', transparent: true, onPaint });
     });
     // (the older shader knows only the magical girl)
-    artLoad ||= oldShader && CHAR_ID === 'girl' ? older() : createStyleView({ THREE, vrm, canvas: artCanvas, base: CHAR.style, shorts: CHAR.shorts }).catch(e => {
+    if (styleFails >= 2 && CHAR_ID !== 'girl') { setStatus('The learned shader stopped working on this device; showing the 3D render.', true); setLook('model'); return; }
+    artLoad ||= (oldShader || styleFails >= 2) && CHAR_ID === 'girl' ? older() : createStyleView({ THREE, vrm, canvas: artCanvas, base: CHAR.style, shorts: CHAR.shorts }).catch(e => {
       if (CHAR_ID !== 'girl') throw e;
       console.warn('The style shader could not start, using the older shader:', e);
       const fresh = artCanvas.cloneNode(); artCanvas.replaceWith(fresh); artCanvas = fresh;
