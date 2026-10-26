@@ -29,7 +29,7 @@ void tss_urand(const uint64_t *seeds, int B, int n, float *out) {
     }
 }
 
-/* task: balance | crawl | getup | a clip name in mref (imitation). style: "file.bin:clip1,clip2" or NULL.
+/* task: balance | crawl | getup | goto | goto_free | getup_imitate | a clip name in mref (imitation). style: "file.bin:clip1,clip2" or NULL.
  * Zero (or negative for steps) means ppo_tss.c's default. */
 Pool *pool_new(int n, const char *task, const char *mref, const char *style, double assist, double push, double act_mul,
                int steps, double style_start, double sway, double arm_tone, int seed, double goal_cone, double goal_tops, int free_heading) {
@@ -55,6 +55,8 @@ Pool *pool_new(int n, const char *task, const char *mref, const char *style, dou
                 const Clip *cl = mref_find(&P->SM, tok); if (!cl) { fprintf(stderr, "no clip %s\n", tok); return NULL; }
                 env_style_prepare(cl); tc->style[tc->nstyle++] = cl; }
         } else { env_style_prepare(tc->clip); tc->style[tc->nstyle++] = tc->clip; }
+    } else if (!strcmp(task, "goto_free")) {   /* go-to with no gait prior (env.h): the motion capture judges, it does not lead */
+        tc->task = TASK_GOTO; tc->steps = 600; if (!tc->act_mul) tc->act_mul = 1.5;
     } else if (!strcmp(task, "getup_imitate")) {   /* imitation over a clip set (env.h TaskCfg.style): the get-up clips in style */
         tc->task = TASK_IMITATE; tc->init_noise = 0; if (!tc->act_mul) tc->act_mul = 2.5; tc->steps = 240;
         char buf[1024]; snprintf(buf, sizeof buf, "%s", style ? style : ""); char *colon = strchr(buf, ':'); if (!colon) { fprintf(stderr, "getup_imitate: --style file:clips\n"); return NULL; }
@@ -76,6 +78,39 @@ Pool *pool_new(int n, const char *task, const char *mref, const char *style, dou
 }
 
 int pool_steps(const Pool *P) { return P->tc.steps; }
+void pool_set_starts(const void *s, int n) { env_set_starts((const FallState *)s, n); }   /* before pool_new: the start bank (env.h START_N) */
+int tss_start_size(void) { return (int)sizeof(FallState); }
+
+/* A clip of motion capture (world rotations frames x NB x 4 and root frames x 3, at CTRL_HZ) as the discriminator sees it:
+ * for each frame but the first and last, the body block of the observation (env_body_feats) with velocities by central
+ * difference; and (starts, if not NULL) the same moments as start states, pelvis over the origin. Returns the rows
+ * written (frames - 2). */
+int amp_clip(const float *root, const float *q, int frames, float *feat, void *starts) {
+    if (frames < 3) return 0;
+    const double dt = 1.0 / CTRL_HZ;
+#pragma omp parallel for schedule(static)
+    for (int f = 1; f < frames - 1; f++) {
+        World W[3];
+        for (int k = 0; k < 3; k++) {
+            const int fr = f - 1 + k; Quat wq[NB], rel[NB];
+            for (int i = 0; i < NB; i++) { const float *v = q + ((size_t)fr * NB + i) * 4; Quat x = {v[0], v[1], v[2], v[3]}; wq[i] = qnorm(x); }
+            rel[0] = wq[0]; for (int i = 1; i < NB; i++) rel[i] = qmul(qconj(wq[BODY_DEFS[i].parent]), wq[i]);
+            world_init(W + k, 45, 20, dt);
+            world_pose(W + k, v3(root[fr * 3], root[fr * 3 + 1], root[fr * 3 + 2]), rel[0], rel, v3(0, 0, 0));
+        }
+        World *M = W + 1;
+        for (int i = 0; i < NB; i++) {
+            Body *b = M->b + i; b->v = vscale(vsub(W[2].b[i].x, W[0].b[i].x), 0.5 / dt);
+            b->w = vscale(qlog(qmul(W[2].b[i].q, qconj(W[0].b[i].q))), 0.5 / dt);
+        }
+        env_body_feats(M, 0, feat + (size_t)(f - 1) * AMP_FEAT);
+        if (starts) {
+            FallState *s = (FallState *)starts + (f - 1); const Vec p0 = M->b[PELVIS].x;
+            for (int i = 0; i < NB; i++) { const Body *b = M->b + i; s->x[i] = v3(b->x.x - p0.x, b->x.y, b->x.z - p0.z); s->q[i] = b->q; s->v[i] = b->v; s->w[i] = b->w; }
+        }
+    }
+    return frames - 2;
+}
 
 void pool_obs(const Pool *P, float *out) {
 #pragma omp parallel for schedule(static)

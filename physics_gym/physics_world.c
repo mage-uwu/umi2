@@ -1384,7 +1384,9 @@ BHD void mref_sample(const Clip *c, double t, Vec *root, Quat *world, Quat *rel)
  *                 World.metab, activation squared summed over joints) is the effort term. The main pay is the distance gained toward
  *                 it each step. The walk clip's pose at the current phase is the reference the actions act around (a gait
  *                 prior, with no root tracking). Starts on a free spot of floor, mid-stride in a random frame of the walk clip
- *                 (70%) or standing.
+ *                 (70%) or standing. Without a clip (task goto_free) there is no gait prior: the actions act around the
+ *                 stand pose, there is no phase input, and the gait is the controller's own; the motion capture only seeds
+ *                 the starts (START_N) and, in training, judges the style (gpu/ppo_gpu.py --amp).
  *
  * Terrain is felt, not seen: the observation has no map or height scan. Each body reports its contact force over the
  * last control step (touch, from the physics' contact solve), the pelvis height is measured from her lowest foot
@@ -1490,6 +1492,16 @@ BHD void crawl_pose(Quat *rel, Quat *root_q);
 BHD void sway_pose(Quat *rel, double t, double amp);
 #define FALL_N 1024   /* the matched starts' falls (env.c fall_make), simulated once */
 typedef struct { Vec x[NB], v[NB], w[NB]; Quat q[NB]; } FallState;
+/* TASK_GOTO without a clip (the gait the controller's own, its style from a learned motion discriminator: gpu/ppo_gpu.py
+ * --amp): 80% of episodes start in a moment of the motion capture, its pose and velocities (reference state
+ * initialisation), turned to a random heading; the bank (pelvis over the origin) is filled from outside */
+#define START_N 4096
+void env_set_starts(const FallState *s, int n);   /* the CPU build's bank; the GPU's is tss_set_starts */
+/* What the motion discriminator sees of a moment: the bodies' block of the observation (OBS_BASE's first NB x 15:
+ * positions from the pelvis, axes, velocities, in the heading frame; the pelvis's height above her lowest foot), the
+ * same numbers for her in the physics and for a frame of motion capture. */
+#define AMP_FEAT (NB * 15)
+BHD void env_body_feats(const World *W, int floor, float *o);
 BHD void fall_make(int i);
 void env_fall_bank(void);   /* the CPU build's bank; the GPU's is tss_fall_bank */
 BHD void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed);
@@ -1737,8 +1749,8 @@ static BHD Quat hinge_limit(int i, Quat q) {
 
 static BHD double b_sqrt_h(double x, double z) { return sqrt(x * x + z * z); }
 static BCONST double PROBE_DIST[6] = {0.3, 0.6, 0.9, 1.2, 0.6, 0.6}, PROBE_ANG[6] = {0, 0, 0, 0, 0.5, -0.5};   /* the ground probes (m, rad) */
-BHD void env_obs(const Env *E, float *o) {
-    const World *W = &E->W; Quat hi = heading_inv(W, floor_task(E) || clip_set(E)); Vec root = W->b[PELVIS].x; int k = 0;
+BHD void env_body_feats(const World *W, int floor, float *o) {
+    const Quat hi = heading_inv(W, floor); const Vec root = W->b[PELVIS].x; int k = 0;
     for (int i = 0; i < NB; i++) {
         const Body *b = W->b + i; Vec p = qrot(hi, vsub(b->x, root));
         if (i == 0) p.y = root.y - fmin(world_lowest(W, L_FOOT), world_lowest(W, R_FOOT));   /* the pelvis: its height above her lowest foot corner */
@@ -1748,6 +1760,10 @@ BHD void env_obs(const Env *E, float *o) {
         o[k++] = ux.x; o[k++] = ux.y; o[k++] = ux.z; o[k++] = uy.x; o[k++] = uy.y; o[k++] = uy.z;
         o[k++] = v.x; o[k++] = v.y; o[k++] = v.z; o[k++] = w.x * .2; o[k++] = w.y * .2; o[k++] = w.z * .2;
     }
+}
+BHD void env_obs(const Env *E, float *o) {
+    const World *W = &E->W; Quat hi = heading_inv(W, floor_task(E) || clip_set(E)); Vec root = W->b[PELVIS].x; int k = AMP_FEAT;
+    env_body_feats(W, floor_task(E) || clip_set(E), o);
     const double wt = W->total_mass * 9.81;   /* foot contact from touch: more than 2% of her weight on the foot */
     o[k++] = W->touch[L_FOOT] > 0.02 * wt; o[k++] = W->touch[R_FOOT] > 0.02 * wt;
     Vec cv, c = world_com(W, &cv); Vec d = qrot(hi, vsub(c, root));
@@ -1905,6 +1921,12 @@ void env_fall_bank(void) {
     for (int i = 0; i < FALL_N; i++) fall_make(i);
     fall_n = FALL_N;
 }
+#endif
+#ifdef __CUDACC__
+__device__ FallState start_bank[START_N]; __device__ int start_n;   /* filled by tssenv_kernels.cu tss_set_starts */
+#else
+static FallState start_bank[START_N]; static int start_n;
+void env_set_starts(const FallState *s, int n) { if (n > START_N) n = START_N; memcpy(start_bank, s, sizeof(FallState) * n); start_n = n; }
 #endif
 static BHD void matched_start(Env *E) {
     World *W = &E->W;
@@ -2131,6 +2153,13 @@ static BHD void goto_reset(Env *E) {
             const Quat dq = qmul(W2.b[i].q, qconj(b->q)); b->w = vscale(qlog(dq), 1 / dt);
         }
         for (int i = 0; i < NB; i++) E->W.target[i] = i ? r1[i] : QID;
+    } else if (!E->cfg.clip && start_n && env_rand(&E->rng) < 0.8) {   /* no clip (env.h START_N): a moment of the motion capture */
+        const FallState *s = start_bank + (int)(env_rand(&E->rng) * start_n) % start_n;
+        for (int i = 0; i < NB; i++) {
+            Body *b = E->W.b + i; b->x = vadd(v3(x, 0, z), qrot(qy, s->x[i])); b->q = b->qprev = qnorm(qmul(qy, s->q[i]));
+            b->v = qrot(qy, s->v[i]); b->w = qrot(qy, s->w[i]);
+        }
+        for (int i = 1; i < NB; i++) E->W.target[i] = qmul(qconj(E->W.b[BODY_DEFS[i].parent].q), E->W.b[i].q);   /* holding the pose it is in */
     } else {   /* standing, the stand pose with a little noise */
         Quat rel[NB];
         for (int i = 0; i < NB; i++) {

@@ -126,6 +126,12 @@ const char *tss_fall_bank(void) {   /* the matched starts' falls, as env_fall_ba
     k_fall<<<GRID(FALL_N)>>>(FALL_N); n = FALL_N; cudaMemcpyToSymbol(fall_n, &n, sizeof n);
     cudaError_t r = cudaDeviceSynchronize(); return r == cudaSuccess ? NULL : cudaGetErrorString(r);
 }
+const char *tss_set_starts(const void *s, int n) {   /* the start bank (env.h START_N), FallState records from the host */
+    if (n > START_N) n = START_N;
+    cudaMemcpyToSymbol(start_bank, s, sizeof(FallState) * n); cudaMemcpyToSymbol(start_n, &n, sizeof n);
+    cudaError_t r = cudaDeviceSynchronize(); return r == cudaSuccess ? NULL : cudaGetErrorString(r);
+}
+int tss_start_size(void) { return (int)sizeof(FallState); }
 __global__ void k_set_assist(Env *envs, int n, double a) { const int e = blockIdx.x * blockDim.x + threadIdx.x; if (e < n) envs[e].cfg.assist = a; }
 void tss_cfg_set_assist(void *cfg, void *envs, int n, double a) {
     cudaMemcpy((char *)cfg + offsetof(TaskCfg, assist), &a, sizeof a, cudaMemcpyHostToDevice);

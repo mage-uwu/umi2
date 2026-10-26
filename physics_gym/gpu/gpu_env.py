@@ -62,6 +62,8 @@ def task_setup(task, mref, style, assist, push, act_mul, steps, style_start, swa
         t["task"] = TASKS["goto"]; t["clip"] = "walk"; t["clip_file"] = mref; t["steps"] = 600
         if style: f, names = style.split(":", 1); t["style_file"] = f; t["style"] = names.split(",")[:8]
         else: t["style_file"] = mref; t["style"] = ["walk"]
+    elif task == "goto_free":   # go-to with no gait prior (env.h): actions around the stand pose, no phase, no style clips
+        t["task"] = TASKS["goto"]; t["steps"] = 600; t["act_mul"] = act_mul or 1.5
     elif task == "getup_imitate":   # imitation over a clip set (env.h TaskCfg.style): the get-up clips given as --style
         f, names = style.split(":", 1); t["style_file"] = f; t["style"] = names.split(",")[:8]
         t["task"] = TASKS["imitate"]; t["clip"] = t["style"][0]; t["clip_file"] = f; t["init_noise"] = 0.0; t["act_mul"] = act_mul or 2.5; t["steps"] = 240
@@ -69,6 +71,31 @@ def task_setup(task, mref, style, assist, push, act_mul, steps, style_start, swa
         t["task"] = TASKS["imitate"]; t["clip"] = task; t["init_noise"] = 0.0; t["clip_file"] = mref
     if steps > 0: t["steps"] = steps
     return t
+
+
+def cpu_lib():
+    """libtssenv.so (the CPU build), built when missing"""
+    path = os.path.join(HERE, "libtssenv.so")
+    if not os.path.exists(path):
+        subprocess.check_call(f"cd {HERE} && gcc -O3 -march=native -fopenmp -ffp-contract=off -shared -fPIC -o libtssenv.so tssenv.c ../env.c ../body.c ../body_x8.c ../mref.c ../room.c -lm", shell=True)
+    return ctypes.CDLL(path)
+
+
+def amp_reference(path, names=None, starts=4096, seed=0):
+    """Motion capture as the discriminator sees it (tssenv.c amp_clip): per clip, float32 [frames - 2, AMP_FEAT] (the body
+    block of the observation, env.h AMP_FEAT); and `starts` of those moments, drawn at random, as start states for
+    goto_free (env.h START_N): uint8 [starts, sizeof FallState]. The clips must be at the control rate (30 Hz)."""
+    L = cpu_lib(); L.amp_clip.argtypes = [ctypes.c_void_p] * 2 + [ctypes.c_int] + [ctypes.c_void_p] * 2; size = L.tss_start_size()
+    clips = load_mref(path); names = names or list(clips); feats, st = [], []
+    for nm in names:
+        c = clips[nm]; F = c["frames"]
+        assert abs(c["fps"] - 30) < 1e-3, f"{nm}: {c['fps']} Hz, not the control rate"
+        root = np.ascontiguousarray(c["root"], np.float32); q = np.ascontiguousarray(c["q"], np.float32)
+        f = np.zeros((F - 2, 14 * 15), np.float32); s_ = np.zeros((F - 2, size), np.uint8)
+        L.amp_clip(root.ctypes.data_as(ctypes.c_void_p), q.ctypes.data_as(ctypes.c_void_p), F, f.ctypes.data_as(ctypes.c_void_p), s_.ctypes.data_as(ctypes.c_void_p))
+        feats.append(f); st.append(s_)
+    st = np.concatenate(st); pick = np.random.default_rng(seed).choice(len(st), min(starts, len(st)), replace=False)
+    return feats, np.ascontiguousarray(st[pick])
 
 
 def _build_cuda(out, src="tssenv_kernels.cu"):
@@ -145,8 +172,12 @@ class _Pool:
 
 class GpuPool(_Pool):
     def __init__(self, n, task="balance", mref=os.path.join(BODY, "data/motions_ref.bin"), style="", assist=0, push=0, act_mul=0, steps=0,
-                 style_start=0, sway=0, arm_tone=0, goal_cone=0, goal_tops=0, free_heading=0, seed=0, device="cuda", room=None):
+                 style_start=0, sway=0, arm_tone=0, goal_cone=0, goal_tops=0, free_heading=0, seed=0, device="cuda", room=None, starts=None):
         self.L = L = cuda_lib(); self.dev = torch.device(device); self._init_common(n, seed)
+        if starts is not None and len(starts):   # the start bank (env.h START_N), before the first resets
+            L.tss_set_starts.restype = ctypes.c_char_p; L.tss_set_starts.argtypes = [ctypes.c_void_p, ctypes.c_int]
+            assert starts.shape[1] == L.tss_start_size(); err = L.tss_set_starts(starts.ctypes.data_as(ctypes.c_void_p), len(starts))
+            if err: raise RuntimeError(err.decode())
         rooms = load_rooms(room); self.room = rooms[0]; self.nrooms = len(rooms) if len(rooms[0]) else 0   # one bank per process, as in body.c
         for r, rb in enumerate(rooms):
             rb = np.ascontiguousarray(rb); err = L.tss_set_room_bank(r, rb.ctypes.data_as(ctypes.c_void_p), len(rb), self.nrooms)
@@ -222,11 +253,11 @@ class GpuPool(_Pool):
 
 class CpuPool(_Pool):
     def __init__(self, n, task="balance", mref=os.path.join(BODY, "data/motions_ref.bin"), style="", assist=0, push=0, act_mul=0, steps=0,
-                 style_start=0, sway=0, arm_tone=0, goal_cone=0, goal_tops=0, free_heading=0, seed=0, device="cpu", room=None):
-        path = os.path.join(HERE, "libtssenv.so")
-        if not os.path.exists(path):
-            subprocess.check_call(f"cd {HERE} && gcc -O3 -march=native -fopenmp -ffp-contract=off -shared -fPIC -o libtssenv.so tssenv.c ../env.c ../body.c ../body_x8.c ../mref.c ../room.c -lm", shell=True)
-        self.L = L = ctypes.CDLL(path); self._init_common(n, seed); self.dev = torch.device(device)
+                 style_start=0, sway=0, arm_tone=0, goal_cone=0, goal_tops=0, free_heading=0, seed=0, device="cpu", room=None, starts=None):
+        self.L = L = cpu_lib(); self._init_common(n, seed); self.dev = torch.device(device)
+        if starts is not None and len(starts):   # the start bank (env.h START_N), before pool_new's resets
+            L.pool_set_starts.argtypes = [ctypes.c_void_p, ctypes.c_int]; assert starts.shape[1] == L.tss_start_size()
+            L.pool_set_starts(starts.ctypes.data_as(ctypes.c_void_p), len(starts))
         L.pool_new.restype = ctypes.c_void_p
         L.pool_new.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p] + [ctypes.c_double] * 3 + [ctypes.c_int] + [ctypes.c_double] * 3 + [ctypes.c_int, ctypes.c_double, ctypes.c_double, ctypes.c_int]
         L.pool_obs.argtypes = [ctypes.c_void_p] * 2; L.pool_step.argtypes = [ctypes.c_void_p] * 8; L.pool_steps.argtypes = [ctypes.c_void_p]

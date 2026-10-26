@@ -26,3 +26,12 @@ Jumps for the jump courses (data/jump_bank.json, tools/jump_course.mjs; gpu/pod_
 | run_jump1, run_jump2, run_jump3 | subject 75, trials 02, 10, 01 | run up and jump with both feet (2.0, 1.5 m; run_jump3 unused) |
 | box_jump | subject 75, trial 12 | jump up onto a box (unused: no box under it yet) |
 | run1, run2 | subject 35, trial 17; subject 16, trial 35 | run/jog (unused) |
+
+# cmu_loco.bin
+
+The locomotion reference for the learned style reward (gpu/ppo_gpu.py --amp; task goto_free), written by
+`tools/amp_set.py` from the 30 Hz CMU library (data/clean/cmu30_library, tools/cmu_library.py --fps 30): 39 clips,
+6215 frames (3.5 min) of plain walking, running and jogging, starting and stopping, turning, walking sideways and
+backwards (subjects 2, 7, 8, 9, 35, 69, 77, 78, 83, 91, 104, 105, 141). Stylised walks, props, seats, stairs, uneven
+ground, jumps and two-person trials are left out; frames the capture lost are dropped. Each clip is named
+c<subject>_<trial>. Same terms as above.

@@ -29,7 +29,9 @@
  *                 World.metab, activation squared summed over joints) is the effort term. The main pay is the distance gained toward
  *                 it each step. The walk clip's pose at the current phase is the reference the actions act around (a gait
  *                 prior, with no root tracking). Starts on a free spot of floor, mid-stride in a random frame of the walk clip
- *                 (70%) or standing.
+ *                 (70%) or standing. Without a clip (task goto_free) there is no gait prior: the actions act around the
+ *                 stand pose, there is no phase input, and the gait is the controller's own; the motion capture only seeds
+ *                 the starts (START_N) and, in training, judges the style (gpu/ppo_gpu.py --amp).
  *
  * Terrain is felt, not seen: the observation has no map or height scan. Each body reports its contact force over the
  * last control step (touch, from the physics' contact solve), the pelvis height is measured from her lowest foot
@@ -135,6 +137,16 @@ BHD void crawl_pose(Quat *rel, Quat *root_q);
 BHD void sway_pose(Quat *rel, double t, double amp);
 #define FALL_N 1024   /* the matched starts' falls (env.c fall_make), simulated once */
 typedef struct { Vec x[NB], v[NB], w[NB]; Quat q[NB]; } FallState;
+/* TASK_GOTO without a clip (the gait the controller's own, its style from a learned motion discriminator: gpu/ppo_gpu.py
+ * --amp): 80% of episodes start in a moment of the motion capture, its pose and velocities (reference state
+ * initialisation), turned to a random heading; the bank (pelvis over the origin) is filled from outside */
+#define START_N 4096
+void env_set_starts(const FallState *s, int n);   /* the CPU build's bank; the GPU's is tss_set_starts */
+/* What the motion discriminator sees of a moment: the bodies' block of the observation (OBS_BASE's first NB x 15:
+ * positions from the pelvis, axes, velocities, in the heading frame; the pelvis's height above her lowest foot), the
+ * same numbers for her in the physics and for a frame of motion capture. */
+#define AMP_FEAT (NB * 15)
+BHD void env_body_feats(const World *W, int floor, float *o);
 BHD void fall_make(int i);
 void env_fall_bank(void);   /* the CPU build's bank; the GPU's is tss_fall_bank */
 BHD void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed);

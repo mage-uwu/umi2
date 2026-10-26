@@ -15,6 +15,14 @@ on a CPU) the environments run in libtssenv.so instead.
     python3 ppo_gpu.py --task getup --load getup ...        (continue from a policy, as ppo_tss.c --load)
 
 Rollout action noise comes from torch's generator, so runs are not step-for-step identical to the C trainer.
+
+--amp file.bin[:clip,...] adds a learned style reward (adversarial motion priors, Peng et al. 2021): a discriminator
+learns to tell transitions of her motion (the body block of the observation at one control step and the next,
+env.h AMP_FEAT) from the same transitions in motion capture, and every step pays max(0, 1 - (D - 1)^2 / 4) times
+--amp-w on top of the task's reward. With task goto_free the clips only judge and seed the starts: nothing plays them,
+and the gait is the controller's own. The discriminator is training only (saved as <out>.amp.pt to continue from).
+
+    python3 ppo_gpu.py --task goto_free --amp ../data/cmu_loco.bin --room '' --envs 4096 --seconds 7200 --out free_walk
 """
 import argparse, json, math, os, struct, sys, time
 import numpy as np, torch
@@ -78,12 +86,21 @@ def main():
     A("--goal-tops", type=float, default=0, help="go-to: share of goals on top of room boxes (terrain); balance: share of episodes starting on top of one (ramps too); 0 = 0.3")
     A("--goal-cone", type=float, default=0, help="go-to: goals within this angle (rad) of her heading; 0 = any")
     A("--room", default=os.path.join(HERE, "../room.json"), help="room.json (physics_gym); '' for the empty floor")
+    A("--amp", default="", help="file.bin[:clip,...]: motion capture (30 Hz) for a learned style reward (see the top of this file); with goto_free also its start states")
+    A("--amp-w", type=float, default=0.7, help="the style reward's weight (it is 0..1 a step)")
+    A("--amp-lr", type=float, default=1e-4); A("--amp-gp", type=float, default=5.0, help="gradient penalty on the motion capture")
+    A("--amp-steps", type=int, default=16, help="discriminator updates per iteration"); A("--amp-batch", type=int, default=4096)
     a = ap.parse_args()
     if a.threads: os.environ["OMP_NUM_THREADS"] = str(a.threads)
     dev = torch.device(a.device)
     Pool = ge.GpuPool if dev.type == "cuda" and not a.cpu_physics else ge.CpuPool
+    amp_feats = amp_starts = None
+    if a.amp:
+        f, _, names = a.amp.partition(":")
+        amp_feats, amp_starts = ge.amp_reference(f, names.split(",") if names else None, seed=a.seed)
     pool = Pool(a.envs, task=a.task, mref=a.mref, style=a.style, assist=a.assist, push=a.push, act_mul=a.act_mul, steps=a.steps,
-                style_start=a.style_start, sway=a.sway, arm_tone=a.arm_tone, goal_cone=a.goal_cone, goal_tops=a.goal_tops, free_heading=a.free_heading, seed=a.seed, device=dev, room=a.room)
+                style_start=a.style_start, sway=a.sway, arm_tone=a.arm_tone, goal_cone=a.goal_cone, goal_tops=a.goal_tops, free_heading=a.free_heading, seed=a.seed, device=dev, room=a.room,
+                starts=amp_starts if a.task == "goto_free" else None)
     OBS, ACT, HZ = pool.OBS, pool.ACT, pool.HZ
 
     # the stack
@@ -148,6 +165,26 @@ def main():
             for k in P:
                 if P[k].grad is not None: nt.adam_(P[k].data, P[k].grad, M[k], V[k], lr, .9, .999, 1e-8, 0, F32(scale), c1, c2); P[k].grad = None
 
+    amp = None
+    if a.amp:   # the discriminator: an MLP on (features now, features a step on), normalised by the motion capture's statistics
+        AF_ = 14 * 15
+        real = torch.cat([torch.cat([torch.tensor(x[:-1]), torch.tensor(x[1:])], 1) for x in amp_feats if len(x) > 1]).to(dev)
+        amu, asd = real.mean(0), real.std(0).clamp(min=1e-2)
+        torch.manual_seed(a.seed + 11)
+        D = torch.nn.Sequential(torch.nn.Linear(2 * AF_, 512), torch.nn.ReLU(), torch.nn.Linear(512, 256), torch.nn.ReLU(), torch.nn.Linear(256, 1)).to(dev)
+        dopt = torch.optim.AdamW(D.parameters(), lr=a.amp_lr, betas=(0.9, 0.999), weight_decay=1e-4)
+        if a.load and os.path.exists(a.load + ".amp.pt"):
+            ck = torch.load(a.load + ".amp.pt", map_location=dev); D.load_state_dict(ck["D"]); dopt.load_state_dict(ck["opt"])
+            print(json.dumps({"event": "load", "discriminator": a.load + ".amp.pt"}), flush=True)
+        replay = torch.zeros(262144, 2 * AF_, device=dev); replay_n = 0
+        amp = dict(real=real, mu=amu, sd=asd)
+        print(json.dumps({"event": "amp", "clips": len(amp_feats), "transitions": int(len(real)), "starts": int(len(amp_starts)) if a.task == "goto_free" else 0}), flush=True)
+    disc = lambda x: D(((x - amp["mu"]) / amp["sd"]).clamp(-5, 5)).squeeze(-1)
+
+    def save_ckpt():
+        m.save(a.out + ".tss"); save_head(a.out + ".head", EN, mean, sd, d, OBS, ACT, CR)
+        if amp is not None: torch.save({"D": D.state_dict(), "opt": dopt.state_dict(), "mu": amp["mu"], "sd": amp["sd"]}, a.out + ".amp.pt")
+
     nenv, hor = a.envs, a.horizon
     n_params = sum(v.numel() for f, v in m.P.items() if f != "embed")
     print(json.dumps({"event": "config", "task": a.task, "model": "nanotss byte stack (ssm-tree + fff, ternary STE) on " + str(dev),
@@ -158,6 +195,9 @@ def main():
     O = torch.zeros(nenv, hor + 1, OBS, device=dev); Araw = torch.zeros(nenv, hor, ACT, device=dev); LP = torch.zeros(nenv, hor, device=dev, dtype=torch.float64)
     VAL = torch.zeros(nenv, hor + 1, device=dev); R = torch.zeros(nenv, hor, device=dev); VTERM = torch.zeros(nenv, hor, device=dev)
     DONE = torch.zeros(nenv, hor, dtype=torch.bool, device=dev); FELL = torch.zeros(nenv, hor, dtype=torch.bool, device=dev)
+    if amp is not None:   # her features each step (raw), and the ones reached at a time-limit end
+        AFS = torch.zeros(nenv, hor + 1, 14 * 15, device=dev); AFT = torch.zeros(nenv, hor, 14 * 15, device=dev)
+    amp_log = {}
     gen = torch.Generator(device=dev); gen.manual_seed(a.seed * 7919 + 1)
     erng = XorShift(a.seed * 7919 + 1)
     hstep = cstep = 0; t0 = time.time(); best = -1e30; it = 0; steps_total = 0; t_roll = 0.0; t_train = 0.0
@@ -175,7 +215,8 @@ def main():
         tr0 = time.time()
         with torch.no_grad():
             for t in range(hor + 1):
-                ot = norm_obs(pool.obs()); O[:, t] = ot
+                oraw = pool.obs(); ot = norm_obs(oraw); O[:, t] = ot
+                if amp is not None: AFS[:, t] = oraw[:, :14 * 15]
                 VAL[:, t] = critic(ot)
                 if t == hor: break
                 x0 = ot @ EN["Win"].T + EN["bin"]
@@ -187,6 +228,7 @@ def main():
                 r = pool.step(Araw[:, t].clamp(-1, 1))
                 done, fell = r["done"].bool(), r["fell"].bool()
                 R[:, t] = r["rew"]; DONE[:, t] = done; FELL[:, t] = fell
+                if amp is not None: AFT[:, t] = r["tobs"][:, :14 * 15]
                 VTERM[:, t] = torch.where(done & ~fell, critic(norm_obs(r["tobs"])), torch.zeros_like(VTERM[:, t]))
                 ep_ret_sum += r["ep_ret"].double().sum(); ep_len_sum += r["ep_len"].double().sum(); ep_cnt += done.long().sum()
                 keep = (~done).float()
@@ -195,6 +237,25 @@ def main():
             sync()
         t_roll += time.time() - tr0
         steps_total += nenv * hor; goals_it = int((R > 1.9).sum())   # go-to: arrival bonuses (+2 on a step reward below 1) this iteration
+        if amp is not None:   # the style reward for each step's transition (none for a fall's), then the discriminator's update
+            nxt = torch.where(DONE[..., None], AFT, AFS[:, 1:]); fake = torch.cat([AFS[:, :hor], nxt], -1)[~FELL]
+            with torch.no_grad():
+                dz = torch.zeros(nenv, hor, device=dev); dz[~FELL] = disc(fake)
+                rs = torch.where(FELL, torch.zeros_like(dz), (1 - 0.25 * (dz - 1) ** 2).clamp(min=0))
+                R += a.amp_w * rs
+            k = min(len(fake), 65536); ins = fake[torch.randint(len(fake), (k,), device=dev)]
+            at = replay_n % len(replay); idx = (torch.arange(k, device=dev) + at) % len(replay); replay[idx] = ins; replay_n += k
+            dr = df = gp_ = 0.0; B = a.amp_batch
+            for _ in range(a.amp_steps):
+                fb = torch.cat([fake[torch.randint(len(fake), (B // 2,), device=dev)], replay[torch.randint(min(replay_n, len(replay)), (B - B // 2,), device=dev)]])
+                rb = amp["real"][torch.randint(len(amp["real"]), (B,), device=dev)].clone().requires_grad_(True)
+                yr = D(((rb - amp["mu"]) / amp["sd"]).clamp(-5, 5)).squeeze(-1); yf = disc(fb)
+                g, = torch.autograd.grad(yr.sum(), rb, create_graph=True)
+                gp = (g * amp["sd"]).pow(2).sum(-1).mean()   # (the gradient in the normalised inputs)
+                loss = (yr - 1).pow(2).mean() + (yf + 1).pow(2).mean() + a.amp_gp * gp + 0.05 * D[-1].weight.pow(2).sum()
+                dopt.zero_grad(); loss.backward(); dopt.step()
+                dr += float(yr.mean()) / a.amp_steps; df += float(yf.mean()) / a.amp_steps; gp_ += float(gp) / a.amp_steps
+            amp_log = {"style": round(float(rs[~FELL].mean()), 3), "d_real": round(dr, 2), "d_fake": round(df, 2), "gp": round(gp_, 3)}
         raw = O[:, 0:hor:4].double() * sd.double() + mean.double()
         osum += raw.sum((0, 1)); osq += (raw * raw).sum((0, 1)); on += raw.shape[0] * raw.shape[1]
         # GAE (a fall is terminal, the time limit bootstraps)
@@ -275,22 +336,22 @@ def main():
             print(json.dumps({"event": "iter", "iter": it, "seconds": round(el), "steps": steps_total, "episode_return": round(rw, 1), "episode_s": round(ln, 2),
                               "episodes": cnt, "goals_reached": goals_it, "clip_frac": round(int(clipped) / (a.epochs * nenv * hor), 3), "value_loss": round(float(vloss) / (a.epochs * nenv * hor), 3),
                               "std": round(float(torch.exp(EN["log_std"]).mean()), 3), "lp_gap": float(f"{float(lpdiff) / max(lpn, 1):.2e}"),
-                              "rollout_share": round(t_roll / el, 2), "train_share": round(t_train / el, 2), "steps_per_s": round(steps_total / el)}), flush=True)
+                              "rollout_share": round(t_roll / el, 2), "train_share": round(t_train / el, 2), "steps_per_s": round(steps_total / el), **amp_log}), flush=True)
             if a.assist_decay > 0:   # the checkpoint: the lowest assist reached, the best return there
                 if cnt >= 8 and (cur_assist < best_assist - 1e-9 or (abs(cur_assist - best_assist) < 1e-9 and rw > best)):
-                    best_assist, best = cur_assist, rw; m.save(a.out + ".tss"); save_head(a.out + ".head", EN, mean, sd, d, OBS, ACT, CR)
+                    best_assist, best = cur_assist, rw; save_ckpt()
                 new = a.assist * max(0.0, 1 - el / a.assist_decay); new = new if new > 0.004 else 0.0
                 if new != cur_assist: cur_assist = new; pool.set_assist(cur_assist)
                 print(json.dumps({"event": "assist", "iter": it, "assist": round(cur_assist, 3), "checkpoint_assist": round(best_assist, 3)}), flush=True)
             elif a.assist_auto:   # the checkpoint: the lowest assist reached, the best return there
                 if cnt >= 8 and (cur_assist < best_assist - 1e-9 or (abs(cur_assist - best_assist) < 1e-9 and rw > best)):
-                    best_assist, best = cur_assist, rw; m.save(a.out + ".tss"); save_head(a.out + ".head", EN, mean, sd, d, OBS, ACT, CR)
+                    best_assist, best = cur_assist, rw; save_ckpt()
                 frac = ln * HZ / pool.steps if cnt else 0
                 down = cur_assist - max(0.005, 0.15 * cur_assist); new = (down if down > 0.004 else 0.0) if frac > 0.6 else min(a.assist, cur_assist + 0.02) if frac < 0.3 else cur_assist
                 if new != cur_assist: cur_assist = new; pool.set_assist(cur_assist)
                 print(json.dumps({"event": "assist", "iter": it, "survival": round(frac, 2), "assist": round(cur_assist, 3), "checkpoint_assist": round(best_assist, 3)}), flush=True)
             elif cnt >= 8 and rw > best:
-                best = rw; m.save(a.out + ".tss"); save_head(a.out + ".head", EN, mean, sd, d, OBS, ACT, CR)
+                best = rw; save_ckpt()
             ep_ret_sum.zero_(); ep_len_sum.zero_(); ep_cnt.zero_()
     print(json.dumps({"event": "done", "iterations": it, "steps": steps_total, "best_episode_return": round(best, 1)}), flush=True)
 

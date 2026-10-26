@@ -230,8 +230,8 @@ static BHD Quat hinge_limit(int i, Quat q) {
 
 static BHD double b_sqrt_h(double x, double z) { return sqrt(x * x + z * z); }
 static BCONST double PROBE_DIST[6] = {0.3, 0.6, 0.9, 1.2, 0.6, 0.6}, PROBE_ANG[6] = {0, 0, 0, 0, 0.5, -0.5};   /* the ground probes (m, rad) */
-BHD void env_obs(const Env *E, float *o) {
-    const World *W = &E->W; Quat hi = heading_inv(W, floor_task(E) || clip_set(E)); Vec root = W->b[PELVIS].x; int k = 0;
+BHD void env_body_feats(const World *W, int floor, float *o) {
+    const Quat hi = heading_inv(W, floor); const Vec root = W->b[PELVIS].x; int k = 0;
     for (int i = 0; i < NB; i++) {
         const Body *b = W->b + i; Vec p = qrot(hi, vsub(b->x, root));
         if (i == 0) p.y = root.y - fmin(world_lowest(W, L_FOOT), world_lowest(W, R_FOOT));   /* the pelvis: its height above her lowest foot corner */
@@ -241,6 +241,10 @@ BHD void env_obs(const Env *E, float *o) {
         o[k++] = ux.x; o[k++] = ux.y; o[k++] = ux.z; o[k++] = uy.x; o[k++] = uy.y; o[k++] = uy.z;
         o[k++] = v.x; o[k++] = v.y; o[k++] = v.z; o[k++] = w.x * .2; o[k++] = w.y * .2; o[k++] = w.z * .2;
     }
+}
+BHD void env_obs(const Env *E, float *o) {
+    const World *W = &E->W; Quat hi = heading_inv(W, floor_task(E) || clip_set(E)); Vec root = W->b[PELVIS].x; int k = AMP_FEAT;
+    env_body_feats(W, floor_task(E) || clip_set(E), o);
     const double wt = W->total_mass * 9.81;   /* foot contact from touch: more than 2% of her weight on the foot */
     o[k++] = W->touch[L_FOOT] > 0.02 * wt; o[k++] = W->touch[R_FOOT] > 0.02 * wt;
     Vec cv, c = world_com(W, &cv); Vec d = qrot(hi, vsub(c, root));
@@ -398,6 +402,12 @@ void env_fall_bank(void) {
     for (int i = 0; i < FALL_N; i++) fall_make(i);
     fall_n = FALL_N;
 }
+#endif
+#ifdef __CUDACC__
+__device__ FallState start_bank[START_N]; __device__ int start_n;   /* filled by tssenv_kernels.cu tss_set_starts */
+#else
+static FallState start_bank[START_N]; static int start_n;
+void env_set_starts(const FallState *s, int n) { if (n > START_N) n = START_N; memcpy(start_bank, s, sizeof(FallState) * n); start_n = n; }
 #endif
 static BHD void matched_start(Env *E) {
     World *W = &E->W;
@@ -624,6 +634,13 @@ static BHD void goto_reset(Env *E) {
             const Quat dq = qmul(W2.b[i].q, qconj(b->q)); b->w = vscale(qlog(dq), 1 / dt);
         }
         for (int i = 0; i < NB; i++) E->W.target[i] = i ? r1[i] : QID;
+    } else if (!E->cfg.clip && start_n && env_rand(&E->rng) < 0.8) {   /* no clip (env.h START_N): a moment of the motion capture */
+        const FallState *s = start_bank + (int)(env_rand(&E->rng) * start_n) % start_n;
+        for (int i = 0; i < NB; i++) {
+            Body *b = E->W.b + i; b->x = vadd(v3(x, 0, z), qrot(qy, s->x[i])); b->q = b->qprev = qnorm(qmul(qy, s->q[i]));
+            b->v = qrot(qy, s->v[i]); b->w = qrot(qy, s->w[i]);
+        }
+        for (int i = 1; i < NB; i++) E->W.target[i] = qmul(qconj(E->W.b[BODY_DEFS[i].parent].q), E->W.b[i].q);   /* holding the pose it is in */
     } else {   /* standing, the stand pose with a little noise */
         Quat rel[NB];
         for (int i = 0; i < NB; i++) {
