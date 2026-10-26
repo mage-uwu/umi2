@@ -17,16 +17,19 @@ def take(k):
 Win = torch.zeros(d, OBS); Win[:, :hobs] = take(d * hobs).view(d, hobs); b = take(d); Wo = torch.zeros(ACT, d); Wo[:hact] = take(hact * d).view(hact, d)
 bo = torch.zeros(ACT); bo[:hact] = take(hact); take(hact); mean, sd = torch.zeros(OBS), torch.ones(OBS); mean[:hobs], sd[:hobs] = take(hobs), take(hobs)
 room = pool.rooms(); clip_of = [names[r % len(names)] for r in room]
-goal = {k: clips[k]["root"][-1] - np.array([clips[k]["root"][0][0], 0, clips[k]["root"][0][2]]) for k in names}   # the clip's end, in its room (course: root at frame 0 over the origin)
+goal = {k: clips[k]["root"][-1] - np.array([clips[k]["root"][0][0], 0, clips[k]["root"][0][2]]) for k in names}   # the clip's end, in its room (course: root at frame 0 over the origin,
+lift = np.zeros(n)                                                                                                      # raised by what it starts on: measured from where she is put)
 check = np.array([int(T[k] * 30) + 30 for k in clip_of]); done = np.zeros(n, bool); down = np.zeros(n, bool); alive = np.ones(n, bool); buf = np.zeros(3)
 state = m.zero_state(n)
 with torch.no_grad():
     for t in range(steps):
         ob = pool.obs(); on = ((ob - mean) / sd).clamp(-5, 5)
         x = m.forward((on @ Win.T + b)[:, None], state=state, stream=True)[:, 0]; u, _ = nt.rmsnorm(x, m.P["norm_f"]); act = torch.tanh(bo + u @ Wo.T).clamp(-1, 1)
+        if t == 0:
+            for e in range(n): L.pool_pelvis(pool.p, int(e), buf.ctypes.data_as(ctypes.c_void_p)); lift[e] = buf[1] - clips[clip_of[e]]["root"][0][1]
         for e in np.nonzero(alive & (check == t))[0]:
             L.pool_pelvis(pool.p, int(e), buf.ctypes.data_as(ctypes.c_void_p)); g = goal[clip_of[e]]
-            done[e] = np.hypot(buf[0] - g[0], buf[2] - g[2]) < 0.5 and abs(buf[1] - g[1]) < 0.2
+            done[e] = np.hypot(buf[0] - g[0], buf[2] - g[2]) < 0.5 and abs(buf[1] - lift[e] - g[1]) < 0.2
         r = pool.step(act); dn = r["done"].numpy().astype(bool) & alive; down |= dn & r["fell"].numpy().astype(bool); alive &= ~dn
 print(f"{pre}: {n} episodes from each clip's start, hand-up {hand}: done {int(done.sum())} ({100 * done.mean():.0f}%), ended down {int(down.sum())}")
 for k in names:

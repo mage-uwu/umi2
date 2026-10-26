@@ -8,8 +8,8 @@
 # (DECAY s) and trained on without (STAGE2 s in all), as pod_climb.sh.
 # tools/eval_course.py after each stage, on the clips trained on and on the held-out ones (each from its start, alone; done
 # when she is where the clip ends a second after it).
-#   SECONDS_T (3600)  FROM (jump_stick)  ASSIST (0.3)  DECAY (1200)  STAGE2 (2700)
-G=/w/repo/physics_gym/gpu; B=/w/repo/physics_gym; O=/w/out
+#   SECONDS_T (3600)  FROM (jump_stick)  ASSIST (0.3)  DECAY (1200)  STAGE2 (2700)  OUT (/w/out)
+G=/w/repo/physics_gym/gpu; B=/w/repo/physics_gym; O=${OUT:-/w/out}; mkdir -p $O
 TR=$B/data/parc_train; HO=$B/data/parc_heldout
 CL=$(python3 -c "import json; print(','.join(json.load(open('$TR' + '_bank.json'))['clips']))")
 { nvidia-smi; python3 -c "import torch;print(torch.__version__, torch.cuda.get_device_name(0))"; } > $O/system.txt 2>&1

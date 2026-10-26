@@ -103,7 +103,7 @@ def main():
         rp = np.asarray(md["root_pos"], np.float64)
         hf, use, mn, dx, h0 = terrain(td, rp)
         base = np.nanmin(np.where(use, hf, np.nan))   # the lowest column it passes is the floor
-        root, Q = motion(md); root[:, 1] -= S * (h0 - base) + 0.0   # course mode raises the clip by what it starts on
+        root, Q = motion(md); root[:, 1] -= S * h0   # over the column it starts on: course mode raises the clip by that column's top
         start = root[0].copy()
         bx = boxes_of(hf, use, mn, dx, base, S * np.array([rp[0, 1], 0, rp[0, 0]]))
         if len(bx) > 250: print(f"skip {path}: {len(bx)} boxes"); continue
