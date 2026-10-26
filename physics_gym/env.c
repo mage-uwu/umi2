@@ -750,9 +750,11 @@ static BHD double env_end(Env *E, double act2) {
     if (floor_task(E)) return floor_reward(E, act2);
     if (E->cfg.task == TASK_GOTO) return goto_reward(E, act2);
     int fell = clip_set(E) ? 0 : fallen(W);   /* (a get-up's reference lies on the floor: only drifting off it ends one) */
-    if (course(E)) {   /* down in the gap, or lying on a platform (a landing that crumples): start over, as the viewer does */
+    if (course(E)) {   /* down in the gap, or lying on a platform (a landing that crumples): start over, as the viewer does. Down in
+                        * a gap: her feet under the tops by 0.25 m and her pelvis 0.3 m under the clip's (a clip that goes down
+                        * itself, off a platform or a wall, may take her there) */
         const Vec P = W->b[PELVIS].x; const double sp = support_y(W->room, P.x, P.z, P.y);
-        if (fmin(world_lowest(W, L_FOOT), world_lowest(W, R_FOOT)) < E->clip_shift.y - 0.25 || (P.y - sp < 0.4 && W->b[HEAD].x.y - sp < 0.7)) fell = 1;
+        if ((fmin(world_lowest(W, L_FOOT), world_lowest(W, R_FOOT)) < E->clip_shift.y - 0.25 && P.y < E->ref_root.y - 0.3) || (P.y - sp < 0.4 && W->b[HEAD].x.y - sp < 0.7)) fell = 1;
     }
     if (E->cfg.task == TASK_IMITATE) {
         ref_at(E, env_phase(E), E->ref, E->ref_world, &E->ref_root);
