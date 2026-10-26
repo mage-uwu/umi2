@@ -433,6 +433,8 @@ const SKILLS = {
   // it in training (a learned discriminator, ppo_gpu.py --amp). Run 1, 25 min from scratch on the open floor: it reaches
   // goals on its own by a shuffle (feet down and up about 13 times a second), its style reward too weak to shape the gait.
   free: { label: 'Free gait (run 1)', file: 'free_shuffle_tss.json', goTo: true, actMul: 1.5 },
+  // level: a run-and-jump course cleared with the skills in turn (LEVEL below)
+  level: { label: 'Level', file: 'goto_tss.json', level: true },
   // jump: the jump tracker on a course of platforms laid down as she goes (JUMP below)
   jump: { label: 'Jump', file: 'jump_tss.json', jump: true },
 };
@@ -510,6 +512,7 @@ function reset() {
     world.target = ref.slice();
   }
   if (SKILLS[skill].jump && jumpClips) jumpStart();
+  if (SKILLS[skill].level && levelRes) { levelStart(); return; }
   policy?.reset();
   upSince = world.t; fallenAt = -1; prev = snapshot(); hist = [{ t: world.t, s: prev }]; springT = world.t; emit('reset', { skill });
 }
@@ -619,7 +622,124 @@ function jumpStep() {   // after each control step in jump mode: the clip on, th
   if (foot < JUMP.height - 0.25 || lying) { emit('fall', { upright: world.t - upSince }); setStatus(`Down after ${jump.n} jump${jump.n === 1 ? '' : 's'}: starting over.`); reset(); return; }
   if (t > c.T + 0.3 && (Math.hypot(...world.com().v) < 0.25 || t > c.T + 2.5)) jumpNext(jump.n + 1, false);   // landed and steady: the next jump
 }
+// ---------- Level: a run-and-jump course (Mario or Assassin's Creed style), every skill in turn ----------
+// The course is laid out ahead from LEVEL.plan: walks along a platform LEVEL.width wide, and moves whose boxes come from the
+// rooms their trackers trained in (data/jump_bank_standing.json for the standing jumps, data/climb_bank.json for the climbs),
+// each set where the last one ends (by its clip: the root at its start and end, the way its feet point), the platforms
+// solid down to the floor and the gaps of the jumps open to it. She walks to each move's start with Go to (the hand-up it
+// trains with), waits until she is steady, and the move's tracker plays its clip from there, the course ahead moved onto
+// where she actually stopped (the few cm she is off; the box under her stays). Falling, or dropping into a gap, takes her
+// back to the start of the move (or of the walk) she was on. The flag at the end.
+const LEVEL = { plan: [['walk', 1.6], ['climb', 'c13_35_30'], ['walk', 1.2], ['jump', 'fjump2'], ['walk', 1.0], ['climb', 'c40_06_930'], ['walk', 1.2],
+  ['jump', 'fjump1'], ['walk', 1.0], ['climb', 'c81_14r'], ['walk', 1.6]], width: 1.3, start: [-6.5, 0, 0], yaw: Math.PI / 2,
+  jumpPolicy: 'jump_tss.json', climbPolicy: 'climb_tss.json', climbClips: 'climb_clips.json', climbBank: 'climb_bank.json', actMul: 2.5, walkAssist: 0.05 };
+let level = null, levelRes = null;   // levelRes: policies, clips and banks; level: { segs, at, phase, t0, falls, start, checkpoint }
+async function levelLoad() {
+  if (levelRes) return levelRes;
+  jumpClips ||= await loadClips(JUMP.clips); jumpBank ||= await (await fetch(JUMP.bank)).json();
+  const climbClips = await loadClips(LEVEL.climbClips), climbBank = await (await fetch(LEVEL.climbBank)).json();
+  const jumpPolicy = await loadTssPolicy(LEVEL.jumpPolicy);
+  let climbPolicy = null; try { climbPolicy = await loadTssPolicy(LEVEL.climbPolicy); } catch { climbPolicy = null; }
+  clips ||= { ...await loadClips('motions_ref.json'), ...Object.fromEntries(Object.entries(await loadClips('cmu_gait.json')).map(([k, c]) => ['cmu_' + k, c])) };
+  return (levelRes = { climbClips, climbBank, jumpPolicy, climbPolicy });
+}
+const clipAt = (c, t) => { c.shift = [0, 0, 0]; const r0 = c.at(0).root; c.shift = [-r0[0], 0, -r0[2]]; return c.at(Math.min(Math.max(t, 0), c.T * (1 - 1e-9))); };   // root at its start over the origin
+function clipFeetYaw(c, t) { const a = clipAt(c, t); jumpTmp.pose(a.root, a.rel[0], a.rel); return feetYaw(jumpTmp.b.map(b => b.q)); }
+function levelBox(c, half, yaw, color, feature) { return { kind: 'platform', feature, c, h: half, q: [Math.cos(yaw / 2), 0, Math.sin(yaw / 2), 0], mu: 0.9, soft: 0, grip: 1, color }; }
+function levelBuild() {   // the course from LEVEL.plan: segments { kind, clip, start, end, T, boxes } and their boxes
+  const R = levelRes, segs = [], boxes = []; let C = { x: LEVEL.start[0], y: LEVEL.start[1], z: LEVEL.start[2], yaw: LEVEL.yaw };
+  for (const [kind, arg] of LEVEL.plan) {
+    const seg = { kind, start: { ...C }, boxes: [] }, put = b => { seg.boxes.push(boxes.length); boxes.push(b); };
+    if (kind === 'walk') {
+      const d = arg, ux = Math.sin(C.yaw), uz = Math.cos(C.yaw);
+      if (C.y > 0.01) put(levelBox([C.x + ux * d / 2, C.y / 2, C.z + uz * d / 2], [LEVEL.width / 2, C.y / 2, d / 2 + 0.3], C.yaw, '#c8a27a', 'walk'));
+      C = { ...C, x: C.x + ux * d, z: C.z + uz * d };
+    } else {
+      const c = kind === 'jump' ? jumpClips[arg] : R.climbClips[arg]; seg.clip = c;
+      const T = { yaw: C.yaw - clipFeetYaw(c, 0), x: C.x, z: C.z }, qy = math.qexp([0, T.yaw, 0]); seg.T = T;
+      const room = kind === 'jump' ? jumpBank.rooms.filter(r => r.clip === arg).reduce((a, b) => Math.abs(b.height - C.y) < Math.abs(a.height - C.y) ? b : a)
+        : R.climbBank.rooms.find(r => r.clip === arg);
+      const lift = kind === 'jump' ? C.y - room.height : C.y;
+      const e = clipAt(c, c.T).root, ew = jumpXf(T, e), s0 = clipAt(c, 0).root;
+      if (kind !== 'jump' && C.y > 0.01) {   // the floor the climb starts from, at the level she is on
+        const mid = jumpXf(T, [e[0] / 2, 0, e[2] / 2]), len = Math.hypot(e[0], e[2]) + 1.2;
+        put(levelBox([mid[0], C.y / 2, mid[2]], [LEVEL.width / 2, C.y / 2, len / 2], C.yaw, '#c8a27a', 'floor'));
+      }
+      for (const b of room.boxes) { const w = jumpXf(T, b.c), h = b.h.slice(); let cy = w[1] + lift, hy = h[1];
+        if (cy - hy > 0.01) { hy = (cy + hy) / 2; cy = hy; }   // solid down to the floor
+        put({ ...b, c: [w[0], cy, w[2]], h: [h[0], hy, h[2]], q: math.qmul(qy, b.q) }); }
+      // where it ends: the clip's end, on whatever of its boxes is under it
+      let top = kind === 'jump' ? C.y : C.y;
+      if (kind !== 'jump') for (const b of room.boxes) { const l = math.qrot(math.qconj(b.q), math.vsub([e[0], b.c[1], e[2]], b.c)); if (Math.abs(l[0]) < b.h[0] && Math.abs(l[2]) < b.h[2]) top = Math.max(top, C.y + b.c[1] + b.h[1]); }
+      C = { x: ew[0], y: top, z: ew[2], yaw: C.yaw + clipFeetYaw(c, c.T) - clipFeetYaw(c, 0) };
+      seg.top = top - (kind === 'jump' ? 0 : 0); seg.base = seg.start.y; void s0;
+    }
+    seg.end = { ...C }; segs.push(seg);
+  }
+  return { segs, boxes };
+}
+function levelRoom() {   // the course as the room (physics and drawing)
+  const xs = level.boxes.flatMap(b => [b.c[0] - 3, b.c[0] + 3]), zs = level.boxes.flatMap(b => [b.c[2] - 3, b.c[2] + 3]);
+  roomDoc = { name: 'Level', boxes: level.boxes, bounds: [Math.min(...xs, -8), Math.max(...xs, 8), Math.min(...zs, -8), Math.max(...zs, 8)] }; buildRoom(); roomOn = true; roomGroup.visible = true;
+}
+function levelPlace(P) {   // her standing at P (feet on the surface there), facing P.yaw, the walk policy's start
+  world = new World(45, 20, 1 / CTRL_HZ); world.limitK = 5000; world.strength = 1;
+  ref = standPose(); world.pose([P.x, 1, P.z], math.qexp([0, P.yaw, 0]), ref);
+  let lo = 1e9; for (let i = 0; i < BODY_DEFS.length; i++) lo = Math.min(lo, world.lowest(i));
+  const sy = supportY(P.x, P.z, P.y + 0.3); for (const b of world.b) { b.x = [b.x[0], b.x[1] - lo + sy, b.x[2]]; b.xprev = b.x; }
+  world.target = ref.slice(); focus.set(P.x, 0.85 + sy, P.z); fallenAt = -1; upSince = world.t;
+}
+async function levelStart() {
+  await levelLoad(); const L = levelBuild(); level = { ...L, at: 0, phase: 'walk', t0: 0, falls: 0, spent: 0 };
+  levelRoom(); levelCheckpoint(0);
+  const f = level.segs[level.segs.length - 1].end; goalMark.position.set(f.x, f.y, f.z); goalMark.visible = true;
+}
+function levelCheckpoint(at) {   // back to the start of segment `at` (the walk before a move: the move's own start)
+  if (world && level.phase !== 'done' && level.placed) level.spent += world.t;   // (each start again is a new world: the clock carries on)
+  level.at = at; const s = level.segs[at]; level.phase = 'walk'; levelPlace(s.start); level.placed = true;
+  policies.level?.reset(); levelRes.jumpPolicy.reset(); levelRes.climbPolicy?.reset(); prev = snapshot(); hist = [{ t: world.t, s: prev }];
+  setStatus(`Level: ${s.kind === 'walk' ? 'walking on' : s.kind + ' ' + s.clip.name}.`);
+}
+function levelBeginMove() {   // the move's tracker from its clip's start, the course ahead onto where she stands
+  const s = level.segs[level.at], p = world.b[0].x, dx = p[0] - s.start.x, dz = p[2] - s.start.z;
+  const under = level.boxes.findIndex(b => { const l = math.qrot(math.qconj(b.q), math.vsub(p, b.c)); return Math.abs(l[0]) < b.h[0] && Math.abs(l[2]) < b.h[2] && b.c[1] + b.h[1] < p[1]; });
+  for (let k = level.at; k < level.segs.length; k++) {
+    const g = level.segs[k]; for (const P of [g.start, g.end]) { P.x += dx; P.z += dz; } if (g.T) { g.T.x += dx; g.T.z += dz; }
+    for (const i of g.boxes) if (i !== under) level.boxes[i] = { ...level.boxes[i], c: [level.boxes[i].c[0] + dx, level.boxes[i].c[1], level.boxes[i].c[2] + dz] };
+  }
+  levelRoom(); const f = level.segs[level.segs.length - 1].end; goalMark.position.set(f.x, f.y, f.z);
+  level.phase = 'move'; level.t0 = world.t; (s.kind === 'jump' ? levelRes.jumpPolicy : levelRes.climbPolicy)?.reset();
+  ref = clipAt(s.clip, 0).rel; setStatus(`Level: ${s.kind === 'jump' ? 'jumping' : 'climbing'} (${s.clip.name}).`);
+}
+function levelControl() {
+  const L = level; if (!L) return world.step();
+  const s = L.segs[L.at], p = world.b[0].x; world.assist = 0;
+  if (L.phase === 'walk') {   // Go to the move's start (or the flag), as the Go to skill does
+    const next = L.segs[L.at + 1], g = s.kind === 'walk' ? (next ? next.start : s.end) : s.start, goalP = [g.x, g.y, g.z], wc = clips.cmu_walk;
+    setHandUp(world, LEVEL.walkAssist);
+    const obs = observeGoto(world, 2 * Math.PI * world.t / wc.T, goalP, false, navAim(p, goalP, STEER.far, STEER.near));
+    applyAction(world, wc.at(world.t).rel, policies.level.act(obs), 1); prev = snapshot(); world.step();
+    const d = Math.hypot(g.x - p[0], g.z - p[2]);
+    if (d < 0.25 && Math.hypot(...world.com().v) < 0.3) {
+      if (s.kind === 'walk') { if (!next) { setStatus(`Level cleared in ${(L.spent + world.t).toFixed(1)} s, ${L.falls} fall${L.falls === 1 ? '' : 's'}.`); emit('cleared', { t: L.spent + world.t, falls: L.falls }); L.phase = 'done'; }
+        else { L.at++; levelBeginMove(); } }
+      else levelBeginMove();
+    }
+  } else if (L.phase === 'move') {   // the tracker on its clip
+    const pol = s.kind === 'jump' ? levelRes.jumpPolicy : levelRes.climbPolicy;
+    if (pol) applyAction(world, ref, pol.act(observeGoto(world, 0, null, true, null, true)), LEVEL.actMul);
+    prev = snapshot(); world.step();
+    const t = world.t - L.t0; ref = clipAt(s.clip, t).rel;
+    if (t > s.clip.T + 0.3 && (Math.hypot(...world.com().v) < 0.25 || t > s.clip.T + 2.5)) { L.at++; L.phase = 'walk'; policies.level.reset(); setStatus('Level: walking on.'); }
+  } else { applyAction(world, standPose(), new Array(33).fill(0), 1); prev = snapshot(); world.step(); }   // done: standing at the flag
+  hist.push({ t: world.t, s: snapshot() }); if (hist.length > 12) hist.shift();
+  // down, or dropped below the surface she set out from: back to the checkpoint
+  const base = Math.min(s.start.y, s.end?.y ?? s.start.y), foot = Math.min(world.lowest(B.L_FOOT), world.lowest(B.R_FOOT));
+  if (L.phase !== 'done' && (fallen(world) || foot < base - 0.25)) { L.falls++; emit('fall', { at: L.at }); levelCheckpoint(s.kind === 'walk' || L.phase === 'walk' ? L.at : L.at); }
+  emit('step', { t: world.t });
+}
 function control() {
+  if (mode === 'skill' && SKILLS[skill].level) return levelControl();
   if (mode === 'skill' && SKILLS[skill].jump) {   // the jump tracker (gpu/pod_jump.sh): the clip's pose plus its actions
     if (!jump) return world.step();
     applyAction(world, ref, policy.act(observeGoto(world, 0, null, true, null, true)), JUMP.actMul); prev = snapshot(); world.step();
@@ -1138,6 +1258,8 @@ async function useSkill(name) {
   if (s.clip || s.phaseClip) clips ||= { ...await loadClips('motions_ref.json'),   // Bandai Namco clips (development), and the CMU gait cycles as cmu_walk, cmu_run
     ...Object.fromEntries(Object.entries(await loadClips('cmu_gait.json')).map(([k, c]) => ['cmu_' + k, c])) };
   if (s.jump) { jumpClips ||= await loadClips(JUMP.clips); jumpBank ||= await (await fetch(JUMP.bank)).json(); }
+  if (s.level) await levelLoad();
+  else if (SKILLS[skill]?.level) { level = null; roomDoc = ROOMS[roomIdx]?.doc || null; buildRoom(); setRoomOn(!!roomDoc); goalMark.visible = false; }   // leaving the level: the room as it was
   else if (SKILLS[skill]?.jump) { jump = null; roomDoc = ROOMS[roomIdx]?.doc || null; buildRoom(); setRoomOn(!!roomDoc); }   // leaving the jump course: the room as it was
   clip = s.clip ? clips[s.clip] : null;
   skill = name; policy = policies[name];
@@ -1171,6 +1293,7 @@ for (const [k, s] of Object.entries(SKILLS)) {
 // window.umiBody.goal([x, y?, z])              put the goal marker there (y: the surface under it if left out); goal() returns it
 // window.umiBody.view({ yaw, pitch, dist })   the camera around her (degrees, metres); returns the settings
 // window.umiBody.place([x, y, z], yaw?)        start her again at a point of the room (feet at y), facing yaw (radians from +z)
+// window.umiBody.level()                      the Level's progress { at, of, kind, phase, falls, t }; levelPlan(plan?, height?) its moves (and the height it starts at)
 window.umiBody = {
   get skills() { return Object.keys(SKILLS); },
   get room() { return roomDoc; },
@@ -1187,6 +1310,8 @@ window.umiBody = {
   grab(name, target) { const i = BODY_DEFS.findIndex(d => d.name === name || d.bone === name); if (i < 0 || !world) return false; if (world.grab?.body !== i) grabStart(i, world.b[i].x.slice()); world.grab.goal = target.slice(); return true; },   // held at its centre
   release: () => grabEnd(),
   play: useSkill, push: (...a) => world && push(...a), reset: () => world && reset(), standUp: () => world && getUp('Getting up.'),
+  level: () => level && { at: level.at, of: level.segs.length, kind: level.segs[level.at]?.kind, phase: level.phase, falls: level.falls, t: level.spent + world.t },   // the Level's progress
+  levelPlan(plan, height) { if (plan) LEVEL.plan = plan; if (height != null) LEVEL.start = [LEVEL.start[0], +height, LEVEL.start[2]]; return LEVEL.plan.map(m => m.slice()); },   // the Level's moves ([['walk', m] | ['jump', clip] | ['climb', clip], ...]); takes effect when it starts again
   on(ev, fn) { (listeners[ev] ||= []).push(fn); return () => { listeners[ev] = listeners[ev].filter(f => f !== fn); }; },
   state: () => world && { t: world.t, upright: world.t - upSince, fallen: fallenAt >= 0, getup: mode !== 'getup' ? null : settle ? 'settling' : track ? `tracking ${track.clip.name}` : 'hand-up',
     bodies: world.b.map((b, i) => ({ name: BODY_DEFS[i].name, bone: BODY_DEFS[i].bone, x: b.x.slice(), q: b.q.slice() })) },
