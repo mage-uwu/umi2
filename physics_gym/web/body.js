@@ -231,7 +231,7 @@ export class World {
     // toward a target, its force capped: { body, r, target: [x, y, z], k, c, max }, or null
     this.grab = null;
     // training aid (body.c): pelvis held to assistX / assistQ by compliant constraints, strength assist 0..1
-    this.assist = 0; this.assistX = [0, 0, 0]; this.assistV = [0, 0, 0]; this.assistQ = QID;
+    this.assist = 0; this.assistX = [0, 0, 0]; this.assistV = [0, 0, 0]; this.assistQ = QID; this.assistPosOnly = false;   // (body.c assist_pos_only: along the path only)
     const fsum = BODY_DEFS.reduce((s, d) => s + d.mass_frac, 0);
     this.b = BODY_DEFS.map(d => {
       const m = totalMass * d.mass_frac / fsum, X = 2 * d.half[0], Y = 2 * d.half[1], Z = 2 * d.half[2];
@@ -334,7 +334,7 @@ export class World {
       const p = this.b[0], D = vsub(p.x, this.assistX), C = vlen(D);
       if (C > 1e-12) this.solvePos(p, null, [0, 0, 0], [0, 0, 0], vscale(D, 1 / C), C, 1 / (this.assist * ASSIST_K));
       const e = qlog(qmul(p.q, qconj(this.assistQ))), th = vlen(e);
-      if (th > 1e-12) { const n = vscale(e, 1 / th), w = vdot(n, this.invI(p, n)), at = 1 / (this.assist * ASSIST_KR * h * h); this.rotateBy(p, this.invI(p, vscale(n, -th / (w + at)))); }
+      if (th > 1e-12 && !this.assistPosOnly) { const n = vscale(e, 1 / th), w = vdot(n, this.invI(p, n)), at = 1 / (this.assist * ASSIST_KR * h * h); this.rotateBy(p, this.invI(p, vscale(n, -th / (w + at)))); }
     }
     for (let k = 0; k < 2; k++) if (this.gripBox[k] >= 0) {   // grip: the hand held to its point, at most gripMax; lost past 2 GRIP_REACH
       const bi = k ? B.R_FARM : B.L_FARM, b = this.b[bi], r = qrot(b.q, handLocal(k)), D = vsub(vadd(b.x, r), this.gripAt[k]), C = vlen(D);
@@ -410,7 +410,7 @@ export class World {
       vp = vadd(b.v, vcross(b.w, r)); vn = vdot(vp, n); const vt = vsub(vp, vscale(n, vn)), s = vlen(vt);
       if (s > 1e-9) this.velImpulse(b, r, vscale(vt, 1 / s), -Math.min(s, mu * Math.abs(ln) / h));
     }
-    if (this.assist > 0) { const p = this.b[0], f = Math.min(1, h * this.assist * 20); p.v = vadd(p.v, vscale(vsub(this.assistV, p.v), f)); p.w = vscale(p.w, 1 - f); }
+    if (this.assist > 0) { const p = this.b[0], f = Math.min(1, h * this.assist * 20); p.v = vadd(p.v, vscale(vsub(this.assistV, p.v), f)); if (!this.assistPosOnly) p.w = vscale(p.w, 1 - f); }
     for (let i = 1; i < NB; i++) {
       const d = BODY_DEFS[i], c = this.b[i], p = this.b[d.parent];
       const dw = vsub(c.w, p.w), m = vlen(dw); if (m < 1e-12) continue;

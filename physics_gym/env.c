@@ -736,7 +736,7 @@ static BHD double env_begin(Env *E, const float *a) {
     if (E->cfg.task == TASK_IMITATE && E->cfg.assist > 0 && !E->cfg.free_heading) {   /* training wheels toward the reference root */
         Quat rr[NB], rw[NB]; Vec r2;
         ref_at(E, env_phase(E) + 1.0 / CTRL_HZ, rr, rw, &r2);
-        W->assist = E->cfg.assist; W->assist_x = r2; W->assist_q = rw[PELVIS];   /* where the reference is at the end of this step */
+        W->assist = E->cfg.assist; W->assist_x = r2; W->assist_q = rw[PELVIS]; W->assist_pos_only = E->cfg.assist_pos_only;   /* where the reference is at the end of this step */
         W->assist_v = vscale(vsub(r2, E->ref_root), CTRL_HZ);
     } else if ((E->cfg.task == TASK_GETUP || E->cfg.task == TASK_GOTO || E->cfg.task == TASK_IMITATE) && E->cfg.assist > 0) {   /* a hand up: toward standing height above the surface under her, upright */
         Vec px = W->b[PELVIS].x, f = qrot(W->b[PELVIS].q, v3(0, 0, 1)); f = vadd(f, qrot(W->b[PELVIS].q, v3(0, 1, 0)));
@@ -763,6 +763,8 @@ static BHD double env_end(Env *E, double act2) {
         Vec er = vsub(W->b[PELVIS].x, E->ref_root);
         const int fh = E->cfg.free_heading;
         if (!fh && vlen(er) > (E->cfg.drift > 0 ? E->cfg.drift : course(E) ? 1.0 : 0.6)) fell = 1;   /* drifted off the reference: end the episode (a course allows a short or long jump that still lands) */
+        if (!fell && course(E) && E->cfg.tail > 0 && !E->cfg.chain && env_phase(E) > (E->rc->frames - 1) / E->rc->fps + E->cfg.tail)
+            E->cfg.steps = E->step;   /* the clip is over: this episode's time limit (its own copy of the config), not a fall */
         if (fell || E->step >= E->cfg.steps) E->done = 1;
         if (fell) return 0;
         /* pose: body world rotations; velocity: body angular velocity against the reference's */

@@ -328,7 +328,7 @@ static BHD void substep(World *W) {
         Body *p = W->b + PELVIS; Vec D = vsub(p->x, W->assist_x); double C = vlen(D);
         if (C > 1e-12) solve_pos(p, NULL, v3(0, 0, 0), v3(0, 0, 0), vscale(D, 1 / C), C, 1 / (W->assist * ASSIST_K), h, -1);
         Vec e = qlog_fast(qmul(p->q, qconj(W->assist_q))); double th = vlen(e);
-        if (th > 1e-12) { Vec n = vscale(e, 1 / th); double w = vdot(n, inv_I(p, n)), at = 1 / (W->assist * ASSIST_KR * h * h);
+        if (th > 1e-12 && !W->assist_pos_only) { Vec n = vscale(e, 1 / th); double w = vdot(n, inv_I(p, n)), at = 1 / (W->assist * ASSIST_KR * h * h);
             rotate_by(p, inv_I(p, vscale(n, -th / (w + at)))); }
     }
     for (int k = 0; k < 2; k++) if (W->grip_box[k] >= 0) {   /* grip: the hand held to its point, at most grip_max; lost past 2 GRIP_REACH */
@@ -427,7 +427,7 @@ static BHD void substep(World *W) {
     }
     if (W->assist > 0) {   /* pelvis support damping, implicit */
         Body *p = W->b + PELVIS; double f = fmin(1, h * W->assist * 20);
-        p->v = vadd(p->v, vscale(vsub(W->assist_v, p->v), f)); p->w = vscale(p->w, 1 - f);
+        p->v = vadd(p->v, vscale(vsub(W->assist_v, p->v), f)); if (!W->assist_pos_only) p->w = vscale(p->w, 1 - f);
     }
     /* joint damping, implicit: remove a fraction min(1, h kd w_eff) of the relative angular velocity */
     for (int i = 1; i < NB; i++) {

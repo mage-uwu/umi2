@@ -87,6 +87,10 @@ typedef struct {
     double start0;       /* TASK_IMITATE course: this share of episodes from the clip's start (the rest as before) */
     double drift;        /* TASK_IMITATE: how far (m) her pelvis may drift from the reference before the episode ends
                           * (0 = 1.0 on a course, 0.6 otherwise) */
+    int assist_pos_only; /* TASK_IMITATE: the hand-up along the reference path only, not holding the pelvis's rotation
+                          * (a tracker trained with that leaned on it for balance: none of it without) */
+    double tail;         /* TASK_IMITATE course: the episode ends this long (s) after the clip does, as a time limit (not a fall);
+                          * 0 = it holds the clip's last frame to `steps` (most PARC clips end at a run: no one stops dead) */
     double assist;       /* TASK_IMITATE training aid: strength (0..1) of a spring-damper pulling the pelvis
                           * toward the reference root position and rotation; 0 for the final skill.
                           * TASK_GETUP: a spring toward standing height above where her pelvis is, upright */

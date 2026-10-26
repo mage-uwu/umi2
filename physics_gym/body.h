@@ -59,6 +59,7 @@ typedef struct {
     /* training aid: a compliant constraint holding the pelvis to (assist_x, assist_q) with strength assist in
      * 0..1 (stiffness assist*ASSIST_K, assist*ASSIST_KR), damped toward the velocity assist_v */
     double assist; Vec assist_x, assist_v; Quat assist_q;
+    int assist_pos_only;   /* the hand-up only along the path: no rotation constraint or spin damping (she keeps herself upright) */
     double touch[NB];   /* contact force on each body, mean over the last world_step (N): floor and room contacts */
     double limit_k;     /* joint ligaments (physics_gym): stiffness (N m / rad) holding each joint inside its range from
                          * the motion capture (joint_limits.h); 0 = no limits, as in body/ */

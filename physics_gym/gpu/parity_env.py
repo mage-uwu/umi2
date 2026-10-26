@@ -25,7 +25,7 @@ CASES = {
     "getup_imitate": dict(task="getup_imitate", style=f"{D}/cmu_ref.bin:getup_back1,getup_back2,getup_face1,getup_face2,getup_side1,getup_side2", assist=0.3),
     "jump": dict(task="getup_imitate", style=f"{D}/cmu_jump.bin:run_leap1,run_leap2,fjump1,fjump2,run_jump1,run_jump2", assist=0.3, room=f"{D}/jump_bank.json"),   # a jump course (env.c course mode)
     "parkour": dict(task="getup_imitate", style=f"{D}/parkour_fit.bin:" + ",".join(__import__("json").load(open(f"{D}/parkour_fit_bank.json"))["clips"]), assist=0.2,
-                    room=f"{D}/parkour_fit_bank.json", strength=2, start0=0.5, drift=0.6),   # PARC and CMU climbs at athlete strength (pod_parkour.sh)
+                    room=f"{D}/parkour_fit_bank.json", strength=2, start0=0.5, drift=0.6, tail=0.1, assist_pos_only=1),   # PARC and CMU climbs at athlete strength (pod_parkour.sh)
     "getup_track": dict(task="getup_imitate", style=f"{D}/cmu_ref.bin:getup_back1,getup_back2,getup_face1,getup_face2,getup_side1,getup_side2", style_start=0.5, assist=0.3),   # half from real falls, the nearest frame taking over
     "getup": dict(task="getup", style=f"{D}/cmu_ref.bin:getup_back1,getup_back2,getup_face1,getup_face2,getup_side1,getup_side2", style_start=0.3),
 }

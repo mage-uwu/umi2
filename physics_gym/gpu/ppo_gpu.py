@@ -89,6 +89,8 @@ def main():
     A("--chain-yaw", type=float, default=0.25, help="with --chain: the largest aiming error of a chained jump (rad)")
     A("--strength", type=float, default=0, help="her muscles' strength and speed times this (env.h TaskCfg.strength; 0 = 1): 2 for parkour, an athlete")
     A("--start0", type=float, default=0, help="a course: this share of episodes from the clip's start, as eval_course.py judges it (TaskCfg.start0)")
+    A("--assist-pos-only", type=int, default=0, help="1: the hand-up only along the reference path, not holding the pelvis's rotation (TaskCfg.assist_pos_only): she must balance herself")
+    A("--tail", type=float, default=0, help="a course: end each episode this long (s) after its clip, as a time limit (TaskCfg.tail; 0 = hold the last frame to --steps); --assist-auto then goes by the share of episodes that end without a fall")
     A("--drift", type=float, default=0, help="how far (m) the pelvis may drift from the reference before the episode ends (TaskCfg.drift; 0 = 1.0 on a course)")
     A("--room", default=os.path.join(HERE, "../room.json"), help="room.json (physics_gym); '' for the empty floor")
     A("--amp", default="", help="file.bin[:clip,...]: motion capture (30 Hz) for a learned style reward (see the top of this file); with goto_free also its start states")
@@ -104,7 +106,7 @@ def main():
         f, _, names = a.amp.partition(":")
         amp_feats, amp_starts = ge.amp_reference(f, names.split(",") if names else None, seed=a.seed)
     pool = Pool(a.envs, task=a.task, mref=a.mref, style=a.style, assist=a.assist, push=a.push, act_mul=a.act_mul, steps=a.steps,
-                style_start=a.style_start, sway=a.sway, arm_tone=a.arm_tone, goal_cone=a.goal_cone, goal_tops=a.goal_tops, free_heading=a.free_heading, chain=a.chain, chain_yaw=a.chain_yaw, seed=a.seed, device=dev, room=a.room, strength=a.strength, start0=a.start0, drift=a.drift,
+                style_start=a.style_start, sway=a.sway, arm_tone=a.arm_tone, goal_cone=a.goal_cone, goal_tops=a.goal_tops, free_heading=a.free_heading, chain=a.chain, chain_yaw=a.chain_yaw, seed=a.seed, device=dev, room=a.room, strength=a.strength, start0=a.start0, drift=a.drift, tail=a.tail, assist_pos_only=a.assist_pos_only,
                 starts=amp_starts if a.task == "goto_free" else None)
     OBS, ACT, HZ = pool.OBS, pool.ACT, pool.HZ
 
@@ -207,7 +209,7 @@ def main():
     erng = XorShift(a.seed * 7919 + 1)
     hstep = cstep = 0; t0 = time.time(); best = -1e30; it = 0; steps_total = 0; t_roll = 0.0; t_train = 0.0
     cur_assist = a.assist; best_assist = 1e9
-    ep_ret_sum = torch.zeros((), device=dev, dtype=torch.float64); ep_len_sum = torch.zeros_like(ep_ret_sum); ep_cnt = torch.zeros((), device=dev, dtype=torch.long)
+    ep_ret_sum = torch.zeros((), device=dev, dtype=torch.float64); ep_len_sum = torch.zeros_like(ep_ret_sum); ep_cnt = torch.zeros((), device=dev, dtype=torch.long); ep_fell = torch.zeros_like(ep_cnt)
     norm_obs = lambda x: ((x - mean) / sd).clamp(-5, 5)
     sync = (lambda: torch.cuda.synchronize(dev)) if dev.type == "cuda" else (lambda: None)
     while time.time() - t0 < a.seconds:
@@ -235,7 +237,7 @@ def main():
                 R[:, t] = r["rew"]; DONE[:, t] = done; FELL[:, t] = fell
                 if amp is not None: AFT[:, t] = r["tobs"][:, :14 * 15]
                 VTERM[:, t] = torch.where(done & ~fell, critic(norm_obs(r["tobs"])), torch.zeros_like(VTERM[:, t]))
-                ep_ret_sum += r["ep_ret"].double().sum(); ep_len_sum += r["ep_len"].double().sum(); ep_cnt += done.long().sum()
+                ep_ret_sum += r["ep_ret"].double().sum(); ep_len_sum += r["ep_len"].double().sum(); ep_cnt += done.long().sum(); ep_fell += (done & fell).long().sum()
                 keep = (~done).float()
                 for v in state["h"]: v.mul_(keep.view(-1, 1, 1, 1))
                 for v in state["hist"]: v.mul_(keep.view(-1, 1, 1))
@@ -351,13 +353,13 @@ def main():
             elif a.assist_auto:   # the checkpoint: the lowest assist reached, the best return there
                 if cnt >= 8 and (cur_assist < best_assist - 1e-9 or (abs(cur_assist - best_assist) < 1e-9 and rw > best)):
                     best_assist, best = cur_assist, rw; save_ckpt()
-                frac = ln * HZ / pool.steps if cnt else 0
+                frac = (1 - int(ep_fell) / cnt if a.tail > 0 else ln * HZ / pool.steps) if cnt else 0   # with --tail: the clips finished
                 down = cur_assist - max(0.005, 0.15 * cur_assist); new = (down if down > 0.004 else 0.0) if frac > 0.6 else min(a.assist, cur_assist + 0.02) if frac < 0.3 else cur_assist
                 if new != cur_assist: cur_assist = new; pool.set_assist(cur_assist)
                 print(json.dumps({"event": "assist", "iter": it, "survival": round(frac, 2), "assist": round(cur_assist, 3), "checkpoint_assist": round(best_assist, 3)}), flush=True)
             elif cnt >= 8 and rw > best:
                 best = rw; save_ckpt()
-            ep_ret_sum.zero_(); ep_len_sum.zero_(); ep_cnt.zero_()
+            ep_ret_sum.zero_(); ep_len_sum.zero_(); ep_cnt.zero_(); ep_fell.zero_()
     print(json.dumps({"event": "done", "iterations": it, "steps": steps_total, "best_episode_return": round(best, 1)}), flush=True)
 
 

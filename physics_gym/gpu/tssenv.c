@@ -34,9 +34,9 @@ void tss_urand(const uint64_t *seeds, int B, int n, float *out) {
  * Zero (or negative for steps) means ppo_tss.c's default. */
 Pool *pool_new(int n, const char *task, const char *mref, const char *style, double assist, double push, double act_mul,
                int steps, double style_start, double sway, double arm_tone, int seed, double goal_cone, double goal_tops, int free_heading,
-               int chain, double chain_yaw, int fixed_start, double strength, double start0, double drift) {
+               int chain, double chain_yaw, int fixed_start, double strength, double start0, double drift, double tail, int assist_pos_only) {
     Pool *P = calloc(1, sizeof(Pool)); TaskCfg *tc = &P->tc; tc->chain = chain; tc->chain_yaw = chain_yaw; tc->fixed_start = fixed_start;
-    tc->strength = strength; tc->start0 = start0; tc->drift = drift;
+    tc->strength = strength; tc->start0 = start0; tc->drift = drift; tc->tail = tail; tc->assist_pos_only = assist_pos_only;
     tc->push_every = 2; tc->steps = 300; tc->init_noise = 0.05;
     tc->goal_cone = goal_cone; tc->goal_tops = goal_tops; tc->free_heading = free_heading; tc->assist = assist; tc->push_max = push; tc->act_mul = act_mul; tc->style_start = style_start; tc->sway = sway; tc->arm_tone = arm_tone;
     if (!strcmp(task, "crawl") || !strcmp(task, "getup")) {
