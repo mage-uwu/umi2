@@ -59,15 +59,15 @@ def task_setup(task, mref, style, assist, push, act_mul, steps, style_start, swa
     if task in ("crawl", "getup"):
         t["task"] = TASKS[task]; t["act_mul"] = act_mul or 2.5; t["steps"] = 300 if task == "crawl" else 240
         if style:
-            f, names = style.split(":", 1); t["style_file"] = f; t["style"] = names.split(",")[:8]
+            f, names = style.split(":", 1); t["style_file"] = f; t["style"] = names.split(",")[:64]
     elif task == "goto":   # physics_gym: the walk clip's cycle is the phase input; walking poses are the style
         t["task"] = TASKS["goto"]; t["clip"] = "walk"; t["clip_file"] = mref; t["steps"] = 600
-        if style: f, names = style.split(":", 1); t["style_file"] = f; t["style"] = names.split(",")[:8]
+        if style: f, names = style.split(":", 1); t["style_file"] = f; t["style"] = names.split(",")[:64]
         else: t["style_file"] = mref; t["style"] = ["walk"]
     elif task == "goto_free":   # go-to with no gait prior (env.h): actions around the stand pose, no phase, no style clips
         t["task"] = TASKS["goto"]; t["steps"] = 600; t["act_mul"] = act_mul or 1.5
     elif task == "getup_imitate":   # imitation over a clip set (env.h TaskCfg.style): the get-up clips given as --style
-        f, names = style.split(":", 1); t["style_file"] = f; t["style"] = names.split(",")[:8]
+        f, names = style.split(":", 1); t["style_file"] = f; t["style"] = names.split(",")[:64]
         t["task"] = TASKS["imitate"]; t["clip"] = t["style"][0]; t["clip_file"] = f; t["init_noise"] = 0.0; t["act_mul"] = act_mul or 2.5; t["steps"] = 240
     elif task != "balance":
         t["task"] = TASKS["imitate"]; t["clip"] = task; t["init_noise"] = 0.0; t["clip_file"] = mref
@@ -214,7 +214,7 @@ class GpuPool(_Pool):
             err = L.tss_fall_bank()
             if err: raise RuntimeError(err.decode())
         self.cfg = torch.empty(L.tss_cfg_size(), dtype=torch.uint8, device=self.dev)
-        sp = (ctypes.c_void_p * 8)(*[b.data_ptr() for b in style_bufs])
+        sp = (ctypes.c_void_p * 64)(*[b.data_ptr() for b in style_bufs])
         L.tss_make_cfg(_ptr(self.cfg), t["task"], ctypes.c_void_p(clip.data_ptr() if clip is not None else 0), t["push_max"], t["sway"], t["arm_tone"],
                        t["push_every"], t["steps"], t["init_noise"], t["fixed_start"], t["assist"], t["act_mul"], sp, len(style_bufs), t["style_start"], t["goal_cone"], t["goal_tops"], t["free_heading"],
                        t["chain"], t["chain_yaw"])

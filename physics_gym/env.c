@@ -313,9 +313,9 @@ static BHD double effort(const World *W) {
 /* ---------- motion style prior ---------- */
 typedef struct { const Clip *c; float *f; int n; } StyleClip;
 #ifdef __CUDACC__
-__device__ StyleClip style_clips[16]; __device__ int style_n;   /* filled by tssenv_cuda.cu */
+__device__ StyleClip style_clips[MAX_STYLE]; __device__ int style_n;   /* filled by tssenv_cuda.cu */
 #else
-static StyleClip style_clips[16]; static int style_n;
+static StyleClip style_clips[MAX_STYLE]; static int style_n;
 #endif
 static BHD void pose_features(const Quat *wq, float *f) {   /* joint rotations (child in parent), gravity in the pelvis frame */
     int k = 0;
@@ -325,6 +325,7 @@ static BHD void pose_features(const Quat *wq, float *f) {   /* joint rotations (
 #ifndef __CUDACC__
 void env_style_prepare(const Clip *c) {
     for (int i = 0; i < style_n; i++) if (style_clips[i].c == c) return;
+    if (style_n >= MAX_STYLE) return;
     StyleClip *s = style_clips + style_n++; s->c = c; s->n = c->frames; s->f = malloc(sizeof(float) * STYLE_FEAT * c->frames);
     for (int t = 0; t < c->frames; t++) pose_features(c->q + (size_t)t * NB, s->f + (size_t)t * STYLE_FEAT);
 }

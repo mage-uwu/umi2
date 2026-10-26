@@ -408,7 +408,7 @@ BHD double world_lowest(const World *W, int body);   /* lowest corner height of 
  * phase). One room for all worlds; empty by default, which leaves the solver exactly as body/ had it. */
 typedef struct { Vec c, h; Quat q; double mu, soft, rad; int grip; } RoomBox;
 #define ROOM_MAX 256
-#define ROOM_BANK 32        /* rooms held at once (procedural variants): each world collides with its own, World.room */
+#define ROOM_BANK 64        /* rooms held at once (procedural variants): each world collides with its own, World.room */
 #define ROOM_REC 13         /* doubles per box as room_set takes them: c (3), h (3), q (w x y z), mu, soft, grip */
 enum { GRIP_NONE, GRIP_LEDGE, GRIP_HOLD };   /* a box's grip label: nothing; its top edges (if its top faces up); all of it */
 #define GRIP_REACH 0.06     /* m: how close a hand must be to close on a hold */
@@ -1426,6 +1426,7 @@ BHD void mref_sample(const Clip *c, double t, Vec *root, Quat *world, Quat *rel)
 #define ACT_FILTER 0.35
 #define STYLE_FEAT (4 * (NB - 1) + 3)   /* pose features: joint rotations, gravity in the pelvis frame */   /* each control step the joint command moves this share of the way to the new action */
 enum { TASK_BALANCE, TASK_IMITATE, TASK_CRAWL, TASK_GETUP, TASK_GOTO };
+#define MAX_STYLE 64   /* style clips, or the clips of a clip set (a course bank: one per room), at most */
 
 typedef struct {
     int task;
@@ -1441,7 +1442,7 @@ typedef struct {
                           * toward the reference root position and rotation; 0 for the final skill.
                           * TASK_GETUP: a spring toward standing height above where her pelvis is, upright */
     double act_mul;      /* joint ranges times this (0 = 1) */
-    const Clip *style[8]; int nstyle;   /* floor tasks: motion style prior (env_style_prepare each first). TASK_IMITATE: the clip set
+    const Clip *style[MAX_STYLE]; int nstyle;   /* floor tasks: motion style prior (env_style_prepare each first). TASK_IMITATE: the clip set
                           * (the CMU get-ups): each episode imitates one, from a random point, once through and then holding
                           * its last frame, with no phase input and the floor tasks' heading frame and hinge limits, so the
                           * policy reads from her body where in the motion she is (and TASK_GETUP can carry on from it) */
@@ -1839,9 +1840,9 @@ static BHD double effort(const World *W) {
 /* ---------- motion style prior ---------- */
 typedef struct { const Clip *c; float *f; int n; } StyleClip;
 #ifdef __CUDACC__
-__device__ StyleClip style_clips[16]; __device__ int style_n;   /* filled by tssenv_cuda.cu */
+__device__ StyleClip style_clips[MAX_STYLE]; __device__ int style_n;   /* filled by tssenv_cuda.cu */
 #else
-static StyleClip style_clips[16]; static int style_n;
+static StyleClip style_clips[MAX_STYLE]; static int style_n;
 #endif
 static BHD void pose_features(const Quat *wq, float *f) {   /* joint rotations (child in parent), gravity in the pelvis frame */
     int k = 0;
@@ -1851,6 +1852,7 @@ static BHD void pose_features(const Quat *wq, float *f) {   /* joint rotations (
 #ifndef __CUDACC__
 void env_style_prepare(const Clip *c) {
     for (int i = 0; i < style_n; i++) if (style_clips[i].c == c) return;
+    if (style_n >= MAX_STYLE) return;
     StyleClip *s = style_clips + style_n++; s->c = c; s->n = c->frames; s->f = malloc(sizeof(float) * STYLE_FEAT * c->frames);
     for (int t = 0; t < c->frames; t++) pose_features(c->q + (size_t)t * NB, s->f + (size_t)t * STYLE_FEAT);
 }
@@ -6218,7 +6220,7 @@ PPO_MAIN(int argc, char **argv) {
     if (style_arg) {   /* --style file.bin:clip1,clip2,...: a motion style prior, or (getup_imitate) the clip set to track */
         char buf[1024]; snprintf(buf, sizeof buf, "%s", style_arg); char *colon = strchr(buf, ':'); if (!colon) { fprintf(stderr, "--style file:clips\n"); return 2; }
         *colon = 0; if (mref_load(buf, &SM)) { fprintf(stderr, "cannot load %s\n", buf); return 1; }
-        for (char *tok = strtok(colon + 1, ","); tok && tc.nstyle < 8; tok = strtok(NULL, ",")) {
+        for (char *tok = strtok(colon + 1, ","); tok && tc.nstyle < MAX_STYLE; tok = strtok(NULL, ",")) {
             const Clip *cl = mref_find(&SM, tok); if (!cl) { fprintf(stderr, "no clip %s\n", tok); return 1; }
             env_style_prepare(cl); tc.style[tc.nstyle++] = cl; }
     }

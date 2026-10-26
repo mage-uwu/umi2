@@ -78,14 +78,14 @@ void tss_make_cfg(void *dst, int task, void *clip, double push_max, double sway,
     TaskCfg t; memset(&t, 0, sizeof t);
     t.task = task; t.clip = (const Clip *)clip; t.push_max = push_max; t.sway = sway; t.arm_tone = arm_tone; t.push_every = push_every;
     t.steps = steps; t.init_noise = init_noise; t.fixed_start = fixed_start; t.assist = assist; t.act_mul = act_mul;
-    for (int i = 0; i < nstyle && i < 8; i++) t.style[i] = (const Clip *)style[i];
+    for (int i = 0; i < nstyle && i < MAX_STYLE; i++) t.style[i] = (const Clip *)style[i];
     t.nstyle = nstyle; t.style_start = style_start; t.goal_cone = goal_cone; t.goal_tops = goal_tops; t.free_heading = free_heading; t.chain = chain; t.chain_yaw = chain_yaw;
     cudaMemcpy(dst, &t, sizeof t, cudaMemcpyHostToDevice);
 }
 /* the style table: clips (device Clip pointers, host-side frame counts) and feature buffers (frames x STYLE_FEAT) */
 const char *tss_set_style(void *const *clips, const int *frames, void *const *feat, int n) {
-    StyleClip t[16]; memset(t, 0, sizeof t);
-    for (int i = 0; i < n && i < 16; i++) {
+    static StyleClip t[MAX_STYLE]; memset(t, 0, sizeof t);
+    for (int i = 0; i < n && i < MAX_STYLE; i++) {
         k_style_feat<<<GRID(frames[i])>>>((const Clip *)clips[i], (float *)feat[i]);
         t[i].c = (const Clip *)clips[i]; t[i].f = (float *)feat[i]; t[i].n = frames[i];
     }

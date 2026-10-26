@@ -71,6 +71,7 @@
 #define ACT_FILTER 0.35
 #define STYLE_FEAT (4 * (NB - 1) + 3)   /* pose features: joint rotations, gravity in the pelvis frame */   /* each control step the joint command moves this share of the way to the new action */
 enum { TASK_BALANCE, TASK_IMITATE, TASK_CRAWL, TASK_GETUP, TASK_GOTO };
+#define MAX_STYLE 64   /* style clips, or the clips of a clip set (a course bank: one per room), at most */
 
 typedef struct {
     int task;
@@ -86,7 +87,7 @@ typedef struct {
                           * toward the reference root position and rotation; 0 for the final skill.
                           * TASK_GETUP: a spring toward standing height above where her pelvis is, upright */
     double act_mul;      /* joint ranges times this (0 = 1) */
-    const Clip *style[8]; int nstyle;   /* floor tasks: motion style prior (env_style_prepare each first). TASK_IMITATE: the clip set
+    const Clip *style[MAX_STYLE]; int nstyle;   /* floor tasks: motion style prior (env_style_prepare each first). TASK_IMITATE: the clip set
                           * (the CMU get-ups): each episode imitates one, from a random point, once through and then holding
                           * its last frame, with no phase input and the floor tasks' heading frame and hinge limits, so the
                           * policy reads from her body where in the motion she is (and TASK_GETUP can carry on from it) */

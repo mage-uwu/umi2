@@ -209,7 +209,7 @@ int main(int argc, char **argv) {
     if (style_arg) {   /* --style file.bin:clip1,clip2,...: a motion style prior, or (getup_imitate) the clip set to track */
         char buf[1024]; snprintf(buf, sizeof buf, "%s", style_arg); char *colon = strchr(buf, ':'); if (!colon) { fprintf(stderr, "--style file:clips\n"); return 2; }
         *colon = 0; if (mref_load(buf, &SM)) { fprintf(stderr, "cannot load %s\n", buf); return 1; }
-        for (char *tok = strtok(colon + 1, ","); tok && tc.nstyle < 8; tok = strtok(NULL, ",")) {
+        for (char *tok = strtok(colon + 1, ","); tok && tc.nstyle < MAX_STYLE; tok = strtok(NULL, ",")) {
             const Clip *cl = mref_find(&SM, tok); if (!cl) { fprintf(stderr, "no clip %s\n", tok); return 1; }
             env_style_prepare(cl); tc.style[tc.nstyle++] = cl; }
     }

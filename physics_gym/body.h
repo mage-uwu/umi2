@@ -130,7 +130,7 @@ BHD double world_lowest(const World *W, int body);   /* lowest corner height of 
  * phase). One room for all worlds; empty by default, which leaves the solver exactly as body/ had it. */
 typedef struct { Vec c, h; Quat q; double mu, soft, rad; int grip; } RoomBox;
 #define ROOM_MAX 256
-#define ROOM_BANK 32        /* rooms held at once (procedural variants): each world collides with its own, World.room */
+#define ROOM_BANK 64        /* rooms held at once (procedural variants): each world collides with its own, World.room */
 #define ROOM_REC 13         /* doubles per box as room_set takes them: c (3), h (3), q (w x y z), mu, soft, grip */
 enum { GRIP_NONE, GRIP_LEDGE, GRIP_HOLD };   /* a box's grip label: nothing; its top edges (if its top faces up); all of it */
 #define GRIP_REACH 0.06     /* m: how close a hand must be to close on a hold */
