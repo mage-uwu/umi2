@@ -630,10 +630,11 @@ function jumpStep() {   // after each control step in jump mode: the clip on, th
 // trains with), waits until she is steady, and the move's tracker plays its clip from there, the course ahead moved onto
 // where she actually stopped (the few cm she is off; the box under her stays). Falling, or dropping into a gap, takes her
 // back to the start of the move (or of the walk) she was on. The flag at the end.
-const LEVEL = { plan: [['walk', 1.6], ['jump', 'fjump2'], ['jump', 'fjump1'], ['walk', 1.0], ['jump', 'fjump2'], ['jump', 'fjump1'], ['walk', 1.6]],
-  width: 1.3, start: [-6.5, 0.58, 0], yaw: Math.PI / 2,   // (the climbs join the course once their tracker is trained: gpu/pod_climb.sh)
+const LEVEL = { plan: [['walk', 1.2], ['climb', 'c13_35_30'], ['walk', 1.2], ['jump', 'fjump2'], ['jump', 'fjump1'], ['walk', 1.0], ['climb', 'c40_06_930'],
+    ['walk', 1.0], ['climb', 'c81_14r'], ['walk', 1.6]],   // up three steps, two gaps, over a stool, up a 0.6 m ledge, the flag
+  width: 1.3, start: [-6.5, 0, 0], yaw: Math.PI / 2,
   jumpPolicy: 'jump_chain_tss.json', climbPolicy: 'climb_tss.json', climbClips: 'climb_clips.json', climbBank: 'climb_bank.json', actMul: 2.5, walkAssist: 0.05,
-  moveAssist: 0, ready: 0.6 };   // ready: seconds the move's first frame is held before it plays (she arrives from a walk); moveAssist: a hand-up during the moves (what their trackers last trained with; 0 once they need none)
+  moveAssist: { jump: 0, climb: 0.3 }, ready: 0.6 };   // ready: seconds the move's first frame is held before it plays (she arrives from a walk); moveAssist: per kind of move, a hand-up toward the clip's root (env.c TASK_IMITATE assist: what their trackers trained with; 0 once they need none)
 let level = null, levelRes = null;   // levelRes: policies, clips and banks; level: { segs, at, phase, t0, falls, start, checkpoint }
 async function levelLoad() {
   if (levelRes) return levelRes;
@@ -672,7 +673,9 @@ function levelBuild() {   // the course from LEVEL.plan: segments { kind, clip, 
       // where it ends: the clip's end, on whatever of its boxes is under it
       let top = kind === 'jump' ? C.y : C.y;
       if (kind !== 'jump') for (const b of room.boxes) { const l = math.qrot(math.qconj(b.q), math.vsub([e[0], b.c[1], e[2]], b.c)); if (Math.abs(l[0]) < b.h[0] && Math.abs(l[2]) < b.h[2]) top = Math.max(top, C.y + b.c[1] + b.h[1]); }
-      C = { x: ew[0], y: top, z: ew[2], yaw: C.yaw + clipFeetYaw(c, c.T) - clipFeetYaw(c, 0) };
+      // on the way her feet point after a jump (the next one chains from there); after a climb, the way it went (a climb may end
+      // turned round, on top facing back: the course goes on over the top, and she turns there as she walks on)
+      C = { x: ew[0], y: top, z: ew[2], yaw: C.yaw + (kind === 'jump' ? clipFeetYaw(c, c.T) : Math.atan2(e[0], e[2])) - clipFeetYaw(c, 0) };
       seg.top = top - (kind === 'jump' ? 0 : 0); seg.base = seg.start.y; void s0;
     }
     seg.end = { ...C }; segs.push(seg);
@@ -719,6 +722,10 @@ function levelBeginMove() {   // the move's tracker from its clip's start, the c
   level.phase = 'move'; level.t0 = world.t; (s.kind === 'jump' ? levelRes.jumpPolicy : levelRes.climbPolicy)?.reset();
   ref = clipAt(s.clip, 0).rel; setStatus(`Level: ${s.kind === 'jump' ? 'jumping' : 'climbing'} (${s.clip.name}).`);
 }
+function levelRefRoot(s, t) {   // a move's clip root at time t (its first frame before 0) in the course: placed by s.T, on the surface it starts from
+  const a = clipAt(s.clip, t), p = jumpXf(s.T, a.root);
+  return { x: [p[0], p[1] + s.start.y, p[2]], q: math.qmul(math.qexp([0, s.T.yaw, 0]), a.world[0]) };
+}
 function levelControl() {
   const L = level; if (!L) return world.step();
   const s = L.segs[L.at], p = world.b[0].x; world.assist = 0;
@@ -735,7 +742,11 @@ function levelControl() {
     }
   } else if (L.phase === 'move') {   // the tracker on its clip
     const pol = s.kind === 'jump' ? levelRes.jumpPolicy : levelRes.climbPolicy;
-    if (LEVEL.moveAssist > 0) setHandUp(world, LEVEL.moveAssist);
+    const ma = typeof LEVEL.moveAssist === 'number' ? LEVEL.moveAssist : LEVEL.moveAssist[s.kind] || 0;
+    if (ma > 0) {   // toward where the clip's root is at the end of this step, in the course
+      const tc = world.t - L.t0 - LEVEL.ready, A = levelRefRoot(s, tc), Bn = levelRefRoot(s, tc + 1 / CTRL_HZ);
+      world.assist = ma; world.assistX = Bn.x; world.assistQ = Bn.q; world.assistV = math.vscale(math.vsub(Bn.x, A.x), CTRL_HZ);
+    }
     if (pol) applyAction(world, ref, pol.act(observeGoto(world, 0, null, true, null, true)), LEVEL.actMul);
     prev = snapshot(); world.step();
     const t = world.t - L.t0 - LEVEL.ready; ref = clipAt(s.clip, t).rel;   // (its first frame held while she steadies into it)
@@ -746,9 +757,11 @@ function levelControl() {
   } else { applyAction(world, standPose(), new Array(33).fill(0), 1); prev = snapshot(); world.step(); }   // done: standing at the flag
   hist.push({ t: world.t, s: snapshot() }); if (hist.length > 12) hist.shift();
   // down, or dropped below the surface she set out from: back to the checkpoint
-  // (in a move, as its tracker trained: down in a gap, or lying; a landing's crouch, hands down, is not down)
+  // (in a move, as its tracker trained, env.c course mode: down in a gap, or lying under the clip's pelvis; a landing's crouch,
+  // hands down, is not down, nor a hoist or a vault low over a box)
   const base = Math.min(s.start.y, s.end?.y ?? s.start.y), foot = Math.min(world.lowest(B.L_FOOT), world.lowest(B.R_FOOT));
-  const P = world.b[0].x, sp = supportY(P[0], P[2], P[1]), lying = P[1] - sp < 0.4 && world.b[B.HEAD].x[1] - sp < 0.7;
+  const P = world.b[0].x, sp = supportY(P[0], P[2], P[1]);
+  const lying = P[1] - sp < 0.4 && world.b[B.HEAD].x[1] - sp < 0.7 && (L.phase !== 'move' || P[1] < levelRefRoot(s, world.t - L.t0 - LEVEL.ready).x[1] - 0.25);
   const down = L.phase === 'move' ? lying : fallen(world);
   if (L.phase !== 'done' && (down || foot < base - 0.25)) {
     L.falls++; emit('fall', { at: L.at, kind: s.kind, phase: L.phase, why: down ? 'fell' : 'dropped', t: world.t - (L.phase === 'move' ? L.t0 : 0) }); levelCheckpoint(L.at);
@@ -1327,7 +1340,7 @@ window.umiBody = {
   grab(name, target) { const i = BODY_DEFS.findIndex(d => d.name === name || d.bone === name); if (i < 0 || !world) return false; if (world.grab?.body !== i) grabStart(i, world.b[i].x.slice()); world.grab.goal = target.slice(); return true; },   // held at its centre
   release: () => grabEnd(),
   play: useSkill, push: (...a) => world && push(...a), reset: () => world && reset(), standUp: () => world && getUp('Getting up.'),
-  level: () => level && { at: level.at, of: level.segs.length, kind: level.segs[level.at]?.kind, phase: level.phase, falls: level.falls, t: level.spent + world.t },   // the Level's progress
+  level: () => level && { at: level.at, of: level.segs.length, kind: level.segs[level.at]?.kind, phase: level.phase, falls: level.falls, t: level.spent + world.t, start: { ...level.segs[level.at]?.start } },   // the Level's progress (start: where the segment she is on starts)
   levelSet(o = {}) { Object.assign(LEVEL, o); if (o.jumpPolicy || o.climbPolicy) levelRes = null; return { ...LEVEL }; },   // the Level's settings (LEVEL)
   levelPlan(plan, height) { if (plan) LEVEL.plan = plan; if (height != null) LEVEL.start = [LEVEL.start[0], +height, LEVEL.start[2]]; return LEVEL.plan.map(m => m.slice()); },   // the Level's moves ([['walk', m] | ['jump', clip] | ['climb', clip], ...]); takes effect when it starts again
   on(ev, fn) { (listeners[ev] ||= []).push(fn); return () => { listeners[ev] = listeners[ev].filter(f => f !== fn); }; },
