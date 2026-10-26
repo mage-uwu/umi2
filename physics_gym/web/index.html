@@ -437,6 +437,8 @@ const SKILLS = {
   level: { label: 'Level', file: 'goto_tss.json', level: true },
   // jump: the jump tracker on a course of platforms laid down as she goes (JUMP below)
   jump: { label: 'Jump', file: 'jump_chain_tss.json', jump: true },   // data/clean/warm/chain (gpu/pod_chain.sh: jumps one after another)
+  // parc: the PARC tracker on PARC's parkour clips, each on its own terrain (PARC below)
+  parc: { label: 'PARC', file: 'parc_tss.json', parc: true },   // gpu/pod_parc.sh
 };
 // Jump (gpu/pod_jump.sh): she follows CMU jumps (data/cmu_jump.bin) from platform to platform. Each jump brings its own
 // takeoff and landing platforms (data/jump_bank.json, as she trained on them: the gap where the clip's feet are off the
@@ -512,6 +514,7 @@ function reset() {
     world.target = ref.slice();
   }
   if (SKILLS[skill].jump && jumpClips) jumpStart();
+  if (SKILLS[skill].parc && parcClips) { parc = null; parcNext(); }
   if (SKILLS[skill].level && levelRes) { levelStart(); return; }
   policy?.reset();
   upSince = world.t; fallenAt = -1; prev = snapshot(); hist = [{ t: world.t, s: prev }]; springT = world.t; emit('reset', { skill });
@@ -623,6 +626,40 @@ function jumpStep() {   // after each control step in jump mode: the clip on, th
   if (t > c.T + 0.3 && (Math.hypot(...world.com().v) < 0.25 || t > c.T + 2.5)) jumpNext(jump.n + 1, false);   // landed and steady: the next jump
 }
 // ---------- Level: a run-and-jump course (Mario or Assassin's Creed style), every skill in turn ----------
+// ---------- PARC parkour ----------
+// PARC (gpu/pod_parc.sh): she tracks parkour clips from PARC (Xu, Shi, Yin, Peng, SIGGRAPH 2025: wall climbs, vaults,
+// platforms, runs over broken ground; data/parc_*, tools/parc_to_ref.py), each on the terrain it was made for, as she trained
+// (env.c course mode: the clip's start over the origin, raised onto what is under it, moving as the clip does). A clip at
+// random from those it trained on and the held-out ones (motions and terrains it never saw), then another. As in training,
+// down in a gap, lying under the clip's pelvis, or 1 m off its path ends one; a second after the clip, done if she is where
+// it ends (tools/eval_course.py: 0.5 m across, 0.2 m in height).
+const PARC = { clips: 'parc_clips.json', bank: 'parc_bank.json', actMul: 2.5, sets: ['train', 'heldout'], hold: 1.0, assist: 0 };   // assist: a hand-up toward the clip's root
+let parcClips = null, parcBank = null, parc = null;   // parc: { clip, room, start, lift, n, done, tries }
+function parcNext(k) {   // room k of PARC.sets (a random one if none), she posed at its clip's start
+  const rooms = parcBank.rooms.filter(r => PARC.sets.includes(r.set)), R = rooms[k != null ? ((k % rooms.length) + rooms.length) % rooms.length : Math.floor(Math.random() * rooms.length)];
+  const xs = R.boxes.flatMap(b => [b.c[0] - 3, b.c[0] + 3]), zs = R.boxes.flatMap(b => [b.c[2] - 3, b.c[2] + 3]);
+  roomDoc = { name: R.name, boxes: R.boxes, bounds: [Math.min(...xs, -8), Math.max(...xs, 8), Math.min(...zs, -8), Math.max(...zs, 8)] }; buildRoom(); roomOn = true; roomGroup.visible = true;
+  const c = parcClips[R.clip]; c.shift = [0, 0, 0]; const r0 = c.at(0).root, lift = supportY(0, 0, 5); c.shift = [-r0[0], lift, -r0[2]];
+  const a = c.at(0), B1 = c.at(1 / CTRL_HZ), W2 = new World(45, 20, 1 / CTRL_HZ);
+  world = new World(45, 20, 1 / CTRL_HZ); world.limitK = 5000; world.strength = 1;
+  W2.pose(B1.root, B1.rel[0], B1.rel); world.pose(a.root, a.rel[0], a.rel);
+  world.b.forEach((b, i) => { b.v = math.vscale(math.vsub(W2.b[i].x, b.x), CTRL_HZ); b.w = math.vscale(math.qlog(math.qmul(W2.b[i].q, math.qconj(b.q))), CTRL_HZ); b.xprev = b.x; });
+  world.target = a.rel.slice(); ref = a.rel; focus.set(a.root[0], a.root[1], a.root[2]); fallenAt = -1; upSince = world.t;
+  parc = { clip: c, room: R, start: world.t, lift, n: (parc?.n || 0) + 1, done: parc?.done || 0, tries: (parc?.tries || 0) + 1 };
+  policy?.reset(); prev = snapshot(); hist = [{ t: world.t, s: prev }];
+  setStatus(`PARC ${R.set === 'heldout' ? 'held-out' : 'trained-on'} clip ${R.clip}: ${R.source.replace(/_aug.*$/, '').replace(/_/g, ' ')}.`);
+}
+function parcStep() {   // after each control step: the clip on, or the next one
+  const c = parc.clip, t = world.t - parc.start, a = c.at(Math.min(t, c.T * (1 - 1e-9))); ref = a.rel;
+  const P = world.b[0].x, sp = supportY(P[0], P[2], P[1]), foot = Math.min(world.lowest(B.L_FOOT), world.lowest(B.R_FOOT)), y = a.root[1];
+  const down = (foot < parc.lift - 0.25 && P[1] < y - 0.3) || (P[1] - sp < 0.4 && world.b[B.HEAD].x[1] - sp < 0.7 && P[1] < y - 0.25) || math.vlen(math.vsub(P, a.root)) > 1.0;
+  const R = parc.room;
+  if (down) { emit('parc', { clip: R.clip, set: R.set, source: R.source, done: false, t }); setStatus(`PARC clip ${R.clip}: down after ${t.toFixed(1)} s of ${c.T.toFixed(1)}.`); parcNext(); return; }
+  if (t > c.T + PARC.hold) {
+    const ok = Math.hypot(P[0] - a.root[0], P[2] - a.root[2]) < 0.5 && Math.abs(P[1] - a.root[1]) < 0.2; parc.done += ok;
+    emit('parc', { clip: R.clip, set: R.set, source: R.source, done: ok, t }); parcNext();
+  }
+}
 // The course is laid out ahead from LEVEL.plan: walks along a platform LEVEL.width wide, and moves whose boxes come from the
 // rooms their trackers trained in (data/jump_bank_standing.json for the standing jumps, data/climb_bank.json for the climbs),
 // each set where the last one ends (by its clip: the root at its start and end, the way its feet point), the platforms
@@ -770,6 +807,17 @@ function levelControl() {
 }
 function control() {
   if (mode === 'skill' && SKILLS[skill].level) return levelControl();
+  if (mode === 'skill' && SKILLS[skill].parc) {   // the PARC tracker: the clip's pose plus its actions
+    if (!parc) return world.step();
+    world.assist = 0;
+    if (PARC.assist > 0) {   // toward the clip's root at the end of this step (its last frame once it is done, as env.c holds it)
+      const c = parc.clip, t = world.t - parc.start, at = u => c.at(Math.min(u, c.T * (1 - 1e-9))), A = at(t), Bn = at(t + 1 / CTRL_HZ);
+      world.assist = PARC.assist; world.assistX = Bn.root; world.assistQ = Bn.world[0]; world.assistV = math.vscale(math.vsub(Bn.root, A.root), CTRL_HZ);
+    }
+    applyAction(world, ref, policy.act(observeGoto(world, 0, null, true, null, true)), PARC.actMul); prev = snapshot(); world.step();
+    hist.push({ t: world.t, s: snapshot() }); if (hist.length > 12) hist.shift();
+    parcStep(); emit('step', { t: world.t }); return;
+  }
   if (mode === 'skill' && SKILLS[skill].jump) {   // the jump tracker (gpu/pod_jump.sh): the clip's pose plus its actions
     if (!jump) return world.step();
     applyAction(world, ref, policy.act(observeGoto(world, 0, null, true, null, true)), JUMP.actMul); prev = snapshot(); world.step();
@@ -1288,8 +1336,10 @@ async function useSkill(name) {
   if (s.clip || s.phaseClip) clips ||= { ...await loadClips('motions_ref.json'),   // Bandai Namco clips (development), and the CMU gait cycles as cmu_walk, cmu_run
     ...Object.fromEntries(Object.entries(await loadClips('cmu_gait.json')).map(([k, c]) => ['cmu_' + k, c])) };
   if (s.jump) { jumpClips ||= await loadClips(JUMP.clips); jumpBank ||= await (await fetch(JUMP.bank)).json(); }
+  if (s.parc) { parcClips ||= await loadClips(PARC.clips); parcBank ||= await (await fetch(PARC.bank)).json(); }
   if (s.level) await levelLoad();
   else if (SKILLS[skill]?.level) { level = null; roomDoc = ROOMS[roomIdx]?.doc || null; buildRoom(); setRoomOn(!!roomDoc); goalMark.visible = false; }   // leaving the level: the room as it was
+  else if (SKILLS[skill]?.parc && !s.parc) { parc = null; roomDoc = ROOMS[roomIdx]?.doc || null; buildRoom(); setRoomOn(!!roomDoc); }   // leaving PARC: the room as it was
   else if (SKILLS[skill]?.jump) { jump = null; roomDoc = ROOMS[roomIdx]?.doc || null; buildRoom(); setRoomOn(!!roomDoc); }   // leaving the jump course: the room as it was
   clip = s.clip ? clips[s.clip] : null;
   skill = name; policy = policies[name];
@@ -1341,6 +1391,7 @@ window.umiBody = {
   release: () => grabEnd(),
   play: useSkill, push: (...a) => world && push(...a), reset: () => world && reset(), standUp: () => world && getUp('Getting up.'),
   level: () => level && { at: level.at, of: level.segs.length, kind: level.segs[level.at]?.kind, phase: level.phase, falls: level.falls, t: level.spent + world.t, start: { ...level.segs[level.at]?.start } },   // the Level's progress (start: where the segment she is on starts)
+  parc: (k, set = {}) => { Object.assign(PARC, set); if (k !== undefined && parcBank && SKILLS[skill]?.parc) parcNext(k); return parc && { clip: parc.room.clip, set: parc.room.set, source: parc.room.source, t: world.t - parc.start, T: parc.clip.T, done: parc.done, tries: parc.tries }; },   // the PARC skill: start room k of PARC.sets (null: a random one), settings (PARC); what she is on
   levelSet(o = {}) { Object.assign(LEVEL, o); if (o.jumpPolicy || o.climbPolicy) levelRes = null; return { ...LEVEL }; },   // the Level's settings (LEVEL)
   levelPlan(plan, height) { if (plan) LEVEL.plan = plan; if (height != null) LEVEL.start = [LEVEL.start[0], +height, LEVEL.start[2]]; return LEVEL.plan.map(m => m.slice()); },   // the Level's moves ([['walk', m] | ['jump', clip] | ['climb', clip], ...]); takes effect when it starts again
   on(ev, fn) { (listeners[ev] ||= []).push(fn); return () => { listeners[ev] = listeners[ev].filter(f => f !== fn); }; },
