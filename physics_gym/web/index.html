@@ -650,11 +650,10 @@ function parcNext(k, last = '') {   // room k of PARC.sets (a random one if none
   setStatus(`${last}Now ${R.set === 'heldout' ? 'held-out' : 'trained-on'} clip ${R.clip}: ${R.source.replace(/_aug.*$/, '').replace(/_/g, ' ')}.`);
 }
 function parcEnd(ok, t) {   // the clip over (done: where it ends a second after it; or down): tally it, say so, the next one
-  const R = parc.room, c = parc.clip, a = parc.tally[R.set]; a[0] += ok; a[1]++; parc.done += ok;
+  const R = parc.room, a = parc.tally[R.set]; a[0] += ok; a[1]++; parc.done += ok;
   const [tr, ho] = [parc.tally.train, parc.tally.heldout];
   emit('parc', { clip: R.clip, set: R.set, source: R.source, done: !!ok, t });
-  parcNext(undefined, `${R.clip} ${ok ? 'done' : `down after ${Math.min(t, c.T).toFixed(1)} s of ${c.T.toFixed(1)}`}. ` +
-    `${tr[0] + ho[0]} of ${tr[1] + ho[1]} done (trained-on ${tr[0]}/${tr[1]}, held-out ${ho[0]}/${ho[1]}). `);
+  parcNext(undefined, `${R.clip}: ${ok ? 'PASS' : 'FAIL'}  (${tr[0] + ho[0]}/${tr[1] + ho[1]} passed)  —  `);
 }
 function parcStep() {   // after each control step: the clip on, or the next one
   const c = parc.clip, t = world.t - parc.start, a = c.at(Math.min(t, c.T * (1 - 1e-9))); ref = a.rel;
