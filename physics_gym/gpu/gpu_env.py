@@ -118,14 +118,16 @@ def _build_cuda(out, src="tssenv_kernels.cu"):
         inc = []
     cap = torch.cuda.get_device_capability(); arch = f"sm_{cap[0]}{cap[1]}"
     var = _variant() if src == "tssenv_kernels.cu" else []   # (bench_env.py: TSS_FMAD, TSS_BLOCK)
-    subprocess.check_call([nvcc, "-O3", *([] if "fmad" in var else ["--fmad=false"]), *[f"-DTSS_BLOCK={v[5:]}" for v in var if v.startswith("block")],
+    subprocess.check_call([nvcc, "-O3", *([] if "fmad" in var else ["--fmad=false"]), *[f"-DTSS_BLOCK={v[5:]}" for v in var if v.startswith("block")], *(["-DTSS_INPLACE"] if "inplace" in var else []),
                            "--expt-relaxed-constexpr", "-arch=" + arch, "-shared", "-Xcompiler", "-fPIC", *inc, "-o", out, os.path.join(HERE, src)])
 
 
 def _variant():
     """A build of the environments other than the default, for timing (gpu/bench_env.py): TSS_FMAD=1 lets nvcc fuse
-    multiply-adds (the default keeps them apart, bit for bit as the CPU build), TSS_BLOCK=n threads per block (64)."""
-    return (["fmad"] if os.environ.get("TSS_FMAD") == "1" else []) + ([f"block{int(os.environ['TSS_BLOCK'])}"] if os.environ.get("TSS_BLOCK") else [])
+    multiply-adds (the default keeps them apart, bit for bit as the CPU build), TSS_BLOCK=n threads per block (64),
+    TSS_INPLACE=1 steps each Env where it is in the array rather than in a per-thread copy."""
+    return (["fmad"] if os.environ.get("TSS_FMAD") == "1" else []) + ([f"block{int(os.environ['TSS_BLOCK'])}"] if os.environ.get("TSS_BLOCK") else []) + \
+        (["inplace"] if os.environ.get("TSS_INPLACE") == "1" else [])
 
 
 def build_cu(src, out):

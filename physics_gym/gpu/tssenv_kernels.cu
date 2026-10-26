@@ -22,16 +22,22 @@ __global__ void k_reset(Env *envs, const TaskCfg *cfg, int n, const uint64_t *se
 }
 __global__ void k_obs(const Env *envs, int n, float *out) {
     const int e = blockIdx.x * blockDim.x + threadIdx.x; if (e >= n) return;
-    Env E = envs[e]; env_obs(&E, out + (size_t)e * OBS_DIM);
+    env_obs(envs + e, out + (size_t)e * OBS_DIM);   /* (read where it is: a copy of the whole Env, 18 KB, cost more than the reads) */
 }
 /* env_step for every environment; on a time-limit end also the observation reached (for bootstrapping) */
 __global__ void k_step(Env *envs, int n, const float *act, float *rew, int *done, int *fell, int *steps, float *term_obs) {
     const int e = blockIdx.x * blockDim.x + threadIdx.x; if (e >= n) return;
+#ifdef TSS_INPLACE   /* stepped where it is in the array (gpu_env.py TSS_INPLACE=1, for timing), not in a per-thread copy */
+    Env &E = envs[e];
+#else
     Env E = envs[e];
+#endif
     rew[e] = (float)env_step(&E, act + (size_t)e * ACT_DIM);
     done[e] = E.done; fell[e] = E.done && E.step < E.cfg.steps; steps[e] = E.step;
     if (E.done && !fell[e]) env_obs(&E, term_obs + (size_t)e * OBS_DIM);
+#ifndef TSS_INPLACE
     envs[e] = E;
+#endif
 }
 /* env_style_prepare's features, frame by frame */
 __global__ void k_style_feat(const Clip *c, float *f) {
