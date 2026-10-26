@@ -50,12 +50,13 @@ def load_rooms(path):
     return [_boxes(r["boxes"]) for r in doc["rooms"]] if "rooms" in doc else [_boxes(doc["boxes"])]
 
 
-def task_setup(task, mref, style, assist, push, act_mul, steps, style_start, sway, arm_tone, goal_cone=0.0, goal_tops=0.0, free_heading=0, chain=0, chain_yaw=0.0, fixed_start=0):
+def task_setup(task, mref, style, assist, push, act_mul, steps, style_start, sway, arm_tone, goal_cone=0.0, goal_tops=0.0, free_heading=0, chain=0, chain_yaw=0.0, fixed_start=0,
+               strength=0.0, start0=0.0, drift=0.0):
     """tssenv.c pool_new / ppo_tss.c: the TaskCfg values and the clips they name."""
     t = dict(task=0, clip=None, push_max=push, sway=sway, arm_tone=arm_tone, push_every=2.0, steps=300, init_noise=0.05,
              fixed_start=0, assist=assist, act_mul=act_mul, style=[], style_start=style_start, style_file=None, goal_cone=goal_cone, goal_tops=goal_tops, free_heading=free_heading,
              chain=chain, chain_yaw=chain_yaw)
-    t["fixed_start"] = fixed_start
+    t["fixed_start"] = fixed_start; t["strength"] = strength; t["start0"] = start0; t["drift"] = drift
     if task in ("crawl", "getup"):
         t["task"] = TASKS[task]; t["act_mul"] = act_mul or 2.5; t["steps"] = 300 if task == "crawl" else 240
         if style:
@@ -135,7 +136,7 @@ def cuda_lib():
         L = ctypes.CDLL(out); vp, i, d = ctypes.c_void_p, ctypes.c_int, ctypes.c_double
         L.tss_init.restype = ctypes.c_char_p; L.tss_error.restype = ctypes.c_char_p; L.tss_set_style.restype = ctypes.c_char_p
         L.tss_make_clip.argtypes = [vp, ctypes.c_char_p, i, ctypes.c_float, vp, vp]
-        L.tss_make_cfg.argtypes = [vp, i, vp, d, d, d, d, i, d, i, d, d, vp, i, d, d, d, i, i, d]
+        L.tss_make_cfg.argtypes = [vp, i, vp, d, d, d, d, i, d, i, d, d, vp, i, d, d, d, i, i, d, d, d, d]
         L.tss_set_style.argtypes = [vp, vp, vp, i]
         L.tss_reset.argtypes = [vp, vp, i, vp, vp, vp]; L.tss_obs.argtypes = [vp, i, vp, vp]
         L.tss_set_room.restype = ctypes.c_char_p; L.tss_set_room.argtypes = [vp, i]
@@ -178,7 +179,8 @@ def _offsets(L):
 
 class GpuPool(_Pool):
     def __init__(self, n, task="balance", mref=os.path.join(BODY, "data/motions_ref.bin"), style="", assist=0, push=0, act_mul=0, steps=0,
-                 style_start=0, sway=0, arm_tone=0, goal_cone=0, goal_tops=0, free_heading=0, chain=0, chain_yaw=0.0, fixed_start=0, seed=0, device="cuda", room=None, starts=None):
+                 style_start=0, sway=0, arm_tone=0, goal_cone=0, goal_tops=0, free_heading=0, chain=0, chain_yaw=0.0, fixed_start=0, seed=0, device="cuda", room=None, starts=None,
+                 strength=0.0, start0=0.0, drift=0.0):
         self.L = L = cuda_lib(); self.dev = torch.device(device); self._init_common(n, seed)
         if starts is not None and len(starts):   # the start bank (env.h START_N), before the first resets
             L.tss_set_starts.restype = ctypes.c_char_p; L.tss_set_starts.argtypes = [ctypes.c_void_p, ctypes.c_int]
@@ -190,7 +192,7 @@ class GpuPool(_Pool):
             if err: break
         if err: raise RuntimeError(err.decode())
         self.OBS, self.ACT, self.HZ, self.FEAT = _dims(L)
-        t = task_setup(task, mref, style, assist, push, act_mul, steps, style_start, sway, arm_tone, goal_cone, goal_tops, free_heading, chain, chain_yaw, fixed_start); self.steps = t["steps"]
+        t = task_setup(task, mref, style, assist, push, act_mul, steps, style_start, sway, arm_tone, goal_cone, goal_tops, free_heading, chain, chain_yaw, fixed_start, strength, start0, drift); self.steps = t["steps"]
         self._keep = []
         def dclip(c, name):
             root = torch.tensor(c["root"], device=self.dev); q = torch.tensor(c["q"], device=self.dev)
@@ -217,7 +219,7 @@ class GpuPool(_Pool):
         sp = (ctypes.c_void_p * 64)(*[b.data_ptr() for b in style_bufs])
         L.tss_make_cfg(_ptr(self.cfg), t["task"], ctypes.c_void_p(clip.data_ptr() if clip is not None else 0), t["push_max"], t["sway"], t["arm_tone"],
                        t["push_every"], t["steps"], t["init_noise"], t["fixed_start"], t["assist"], t["act_mul"], sp, len(style_bufs), t["style_start"], t["goal_cone"], t["goal_tops"], t["free_heading"],
-                       t["chain"], t["chain_yaw"])
+                       t["chain"], t["chain_yaw"], t["strength"], t["start0"], t["drift"])
         self.envs = torch.empty(n * L.tss_env_size(), dtype=torch.uint8, device=self.dev)
         self.ar = torch.arange(n, device=self.dev, dtype=torch.int64)
         self.ep = torch.tensor(self.episodes, device=self.dev, dtype=torch.int64)
@@ -269,13 +271,14 @@ class GpuPool(_Pool):
 
 class CpuPool(_Pool):
     def __init__(self, n, task="balance", mref=os.path.join(BODY, "data/motions_ref.bin"), style="", assist=0, push=0, act_mul=0, steps=0,
-                 style_start=0, sway=0, arm_tone=0, goal_cone=0, goal_tops=0, free_heading=0, chain=0, chain_yaw=0.0, fixed_start=0, seed=0, device="cpu", room=None, starts=None):
+                 style_start=0, sway=0, arm_tone=0, goal_cone=0, goal_tops=0, free_heading=0, chain=0, chain_yaw=0.0, fixed_start=0, seed=0, device="cpu", room=None, starts=None,
+                 strength=0.0, start0=0.0, drift=0.0):
         self.L = L = cpu_lib(); self._init_common(n, seed); self.dev = torch.device(device)
         if starts is not None and len(starts):   # the start bank (env.h START_N), before pool_new's resets
             L.pool_set_starts.argtypes = [ctypes.c_void_p, ctypes.c_int]; assert starts.shape[1] == L.tss_start_size()
             L.pool_set_starts(starts.ctypes.data_as(ctypes.c_void_p), len(starts))
         L.pool_new.restype = ctypes.c_void_p
-        L.pool_new.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p] + [ctypes.c_double] * 3 + [ctypes.c_int] + [ctypes.c_double] * 3 + [ctypes.c_int, ctypes.c_double, ctypes.c_double, ctypes.c_int, ctypes.c_int, ctypes.c_double, ctypes.c_int]
+        L.pool_new.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p] + [ctypes.c_double] * 3 + [ctypes.c_int] + [ctypes.c_double] * 3 + [ctypes.c_int, ctypes.c_double, ctypes.c_double, ctypes.c_int, ctypes.c_int, ctypes.c_double, ctypes.c_int] + [ctypes.c_double] * 3
         L.pool_obs.argtypes = [ctypes.c_void_p] * 2; L.pool_step.argtypes = [ctypes.c_void_p] * 8; L.pool_steps.argtypes = [ctypes.c_void_p]
         o, a, h = ctypes.c_int(), ctypes.c_int(), ctypes.c_int(); L.tss_dims(ctypes.byref(o), ctypes.byref(a), ctypes.byref(h)); self.OBS, self.ACT, self.HZ = o.value, a.value, h.value
         rooms = load_rooms(room); self.room = rooms[0]; self.nrooms = len(rooms) if len(rooms[0]) else 0
@@ -284,7 +287,7 @@ class CpuPool(_Pool):
             rb = np.ascontiguousarray(rb)
             if (L.room_set(rb.ctypes.data_as(ctypes.c_void_p), len(rb)) if r == 0 else L.room_set_bank(r, rb.ctypes.data_as(ctypes.c_void_p), len(rb))) < 0:
                 raise RuntimeError("room_set failed")
-        self.p = L.pool_new(n, task.encode(), mref.encode(), style.encode(), assist, push, act_mul, steps, style_start, sway, arm_tone, seed, goal_cone, goal_tops, free_heading, chain, chain_yaw, fixed_start)
+        self.p = L.pool_new(n, task.encode(), mref.encode(), style.encode(), assist, push, act_mul, steps, style_start, sway, arm_tone, seed, goal_cone, goal_tops, free_heading, chain, chain_yaw, fixed_start, strength, start0, drift)
         if not self.p: raise RuntimeError("pool_new failed")
         self.steps = L.pool_steps(self.p)
         self.b = dict(rew=np.zeros(n, np.float32), done=np.zeros(n, np.int32), fell=np.zeros(n, np.int32), tobs=np.zeros((n, self.OBS), np.float32),

@@ -83,6 +83,10 @@ typedef struct {
     int steps;           /* episode length in control steps */
     double init_noise;   /* random joint rotation at reset (rad) */
     int fixed_start;     /* TASK_IMITATE: start at phase 0 instead of a random phase */
+    double strength;     /* her muscles' strength and speed times this (0 = 1; World.strength): an athlete for parkour */
+    double start0;       /* TASK_IMITATE course: this share of episodes from the clip's start (the rest as before) */
+    double drift;        /* TASK_IMITATE: how far (m) her pelvis may drift from the reference before the episode ends
+                          * (0 = 1.0 on a course, 0.6 otherwise) */
     double assist;       /* TASK_IMITATE training aid: strength (0..1) of a spring-damper pulling the pelvis
                           * toward the reference root position and rotation; 0 for the final skill.
                           * TASK_GETUP: a spring toward standing height above where her pelvis is, upright */

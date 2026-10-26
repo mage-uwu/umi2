@@ -306,7 +306,7 @@ export class World {
     if (this.push.left > 0) this.push.left -= h;
     // muscles (body.c): each joint's drive may add up to budget (torque times h^2) this substep: its strength, or its last
     // torque plus what its slew allows, whichever is less, over all solver iterations together; -1: unlimited
-    const budget = BODY_DEFS.map((_, i) => this.strength > 0 ? Math.min(MUSCLE_MAX[i] * this.strength, this.mtau[i] + MUSCLE_SLEW[i] * h) * h * h : -1), used = BODY_DEFS.map(() => 0);
+    const budget = BODY_DEFS.map((_, i) => this.strength > 0 ? Math.min(MUSCLE_MAX[i] * this.strength, this.mtau[i] + MUSCLE_SLEW[i] * this.strength * h) * h * h : -1), used = BODY_DEFS.map(() => 0);
     for (let it = 0; it < this.iters; it++) for (let i = 1; i < NB; i++) {
       const d = BODY_DEFS[i], c = this.b[i], p = this.b[d.parent], pd = BODY_DEFS[d.parent];
       const rc = qrot(c.q, vsub(d.anchor, d.center)), rp = qrot(p.q, vsub(d.anchor, pd.center));

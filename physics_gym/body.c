@@ -295,7 +295,7 @@ static BHD void substep(World *W) {
     /* muscles: each joint's drive may add up to budget (torque times h^2) this substep, its strength or its last torque
      * plus what its slew allows, whichever is less (all solver iterations together); budget < 0: unlimited */
     double budget[NB], used[NB];
-    for (int i = 0; i < NB; i++) { used[i] = 0; budget[i] = W->strength > 0 ? fmin(MUSCLE_MAX[i] * W->strength, W->mtau[i] + MUSCLE_SLEW[i] * h) * h * h : -1; }
+    for (int i = 0; i < NB; i++) { used[i] = 0; budget[i] = W->strength > 0 ? fmin(MUSCLE_MAX[i] * W->strength, W->mtau[i] + MUSCLE_SLEW[i] * W->strength * h) * h * h : -1; }   /* (stronger is faster too) */
     /* joints: attachment, then hinge alignment, then drive (iterated) */
     for (int it = 0; it < W->iters; it++)
     for (int i = 1; i < NB; i++) {

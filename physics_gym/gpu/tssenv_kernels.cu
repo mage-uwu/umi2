@@ -74,8 +74,8 @@ void tss_make_clip(void *dst, const char *name, int frames, float fps, void *roo
 }
 void tss_make_cfg(void *dst, int task, void *clip, double push_max, double sway, double arm_tone, double push_every, int steps,
                   double init_noise, int fixed_start, double assist, double act_mul, void *const *style, int nstyle, double style_start, double goal_cone, double goal_tops, int free_heading,
-                  int chain, double chain_yaw) {
-    TaskCfg t; memset(&t, 0, sizeof t);
+                  int chain, double chain_yaw, double strength, double start0, double drift) {
+    TaskCfg t; memset(&t, 0, sizeof t); t.strength = strength; t.start0 = start0; t.drift = drift;
     t.task = task; t.clip = (const Clip *)clip; t.push_max = push_max; t.sway = sway; t.arm_tone = arm_tone; t.push_every = push_every;
     t.steps = steps; t.init_noise = init_noise; t.fixed_start = fixed_start; t.assist = assist; t.act_mul = act_mul;
     for (int i = 0; i < nstyle && i < MAX_STYLE; i++) t.style[i] = (const Clip *)style[i];

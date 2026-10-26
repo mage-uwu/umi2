@@ -1,14 +1,15 @@
 """eval_course.py: a tracker on a course bank (env.c course mode: climbing, jumping over), with no hand-up.
-    python3 tools/eval_course.py PREFIX COURSES.json CLIPS.bin [N] [hand-up]
+    python3 tools/eval_course.py PREFIX COURSES.json CLIPS.bin [N] [hand-up] [strength]
 Each of N environments plays its room's clip once from its start. It counts as done when, a second after the clip ends,
 she is still up and her pelvis is within 0.5 m (across) and 0.2 m (in height) of where the clip's ends: on top of the
 box, or past the obstacle. Per clip, and how many episodes ended down."""
 import sys, os, json, ctypes, struct, numpy as np, torch
 B = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'); sys.path.insert(0, os.path.join(B, 'gpu')); import nanotss_torch as nt, gpu_env as ge
 pre, rooms_file, clip_file = sys.argv[1], sys.argv[2], sys.argv[3]; n = int(sys.argv[4]) if len(sys.argv) > 4 else 192; hand = float(sys.argv[5]) if len(sys.argv) > 5 else 0.0
+strength = float(sys.argv[6]) if len(sys.argv) > 6 else 0.0   # her muscles times this (TaskCfg.strength; 0 = 1)
 doc = json.load(open(rooms_file)); names = doc["clips"]; clips = ge.load_mref(clip_file)
 T = {k: (clips[k]["frames"] - 1) / clips[k]["fps"] for k in names}; steps = int(max(T.values()) * 30) + 40
-pool = ge.CpuPool(n, task="getup_imitate", style=clip_file + ":" + ",".join(names), room=rooms_file, seed=23, device="cpu", assist=hand, steps=steps, fixed_start=1)
+pool = ge.CpuPool(n, task="getup_imitate", style=clip_file + ":" + ",".join(names), room=rooms_file, seed=23, device="cpu", assist=hand, steps=steps, fixed_start=1, strength=strength)
 L = pool.L; L.pool_pelvis.argtypes = [ctypes.c_void_p, ctypes.c_int, ctypes.c_void_p]
 m = nt.TSS.load(pre + ".tss", device="cpu"); d = m.c.d; OBS, ACT = pool.OBS, pool.ACT
 raw = open(pre + ".head", "rb").read(); hd, hobs, hact = struct.unpack("<3i", raw[4:16]); o = 16
@@ -31,7 +32,7 @@ with torch.no_grad():
             L.pool_pelvis(pool.p, int(e), buf.ctypes.data_as(ctypes.c_void_p)); g = goal[clip_of[e]]
             done[e] = np.hypot(buf[0] - g[0], buf[2] - g[2]) < 0.5 and abs(buf[1] - lift[e] - g[1]) < 0.2
         r = pool.step(act); dn = r["done"].numpy().astype(bool) & alive; down |= dn & r["fell"].numpy().astype(bool); alive &= ~dn
-print(f"{pre}: {n} episodes from each clip's start, hand-up {hand}: done {int(done.sum())} ({100 * done.mean():.0f}%), ended down {int(down.sum())}")
+print(f"{pre}: {n} episodes from each clip's start, hand-up {hand}{f', strength x{strength:g}' if strength else ''}: done {int(done.sum())} ({100 * done.mean():.0f}%), ended down {int(down.sum())}")
 for k in names:
     s = np.array([c == k for c in clip_of])
     if s.any(): print(f"  {k}: {int(done[s].sum())} of {int(s.sum())} done, {int(down[s].sum())} down")

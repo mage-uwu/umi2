@@ -16,10 +16,14 @@ it was made for: a 2.5D heightfield of 0.4 m cells (hf[i, j] the top of the colu
   The terrain: the columns within 1.6 m of the root's path, each a box from the floor (the lowest of them at 0) to its top,
   equal neighbours merged into rectangles, in the clip's own frame (its root at frame 0 over the origin).
 The files are pickles: they are read with an unpickler that builds numpy arrays and plain containers only.
+  Hands on a ledge: her forearm box carries the hand and her arms are not PARC's, so their joint angles put her forearm
+  into the top of a wall where their palm rests on it. While PARC labels a hand in contact, the clip's root is raised by
+  how far her forearm would be in (tools/feasibility.py's forward kinematics), eased in and out over about 0.3 s.
 Writes an MREF file of the clips (named p<n>) and a room bank of the same order (env.c course mode: room r for clip r).
 """
-import io, json, pickle, struct, sys
+import io, json, os, pickle, struct, sys
 import numpy as np
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import feasibility as fz
 
 S = 0.915 / 0.881   # her pelvis height from the sole over the AMP humanoid's
 PARENT = [-1, 0, 1, 1, 3, 4, 1, 6, 7, 0, 9, 10, 0, 12, 13]   # pelvis, torso, head, r_uarm, r_larm, r_hand, l_uarm, l_larm, l_hand, r_thigh, r_shin, r_foot, l_thigh, l_shin, l_foot
@@ -94,6 +98,18 @@ def boxes_of(hf, use, mn, dx, base, start):   # merged columns, in her axes and 
     return out
 
 
+def hands_on_top(root, Q, boxes, lab):   # the root raised while a hand is on a surface, by how far her forearm would be in it
+    r = root.astype(float) - [root[0, 0], 0, root[0, 2]]; lift = fz.top_under(boxes, np.zeros(1), np.zeros(1))[0]; r[:, 1] += lift
+    _, K = fz.fk(r, Q); pen = np.zeros(len(r))
+    for bit, i in ((4, fz.L_FARM), (8, fz.R_FARM)):
+        on = (lab & bit) > 0; low = K[:, i, :, 1].min(-1); c = K[:, i].mean(1)
+        top = fz.top_under(boxes, c[:, 0], c[:, 2], low.max() + 0.5); pen = np.maximum(pen, np.where(on, np.maximum(0, top - low), 0))
+    if not pen.any(): return root
+    k = 4; wide = np.array([pen[max(0, f - k):f + k + 1].max() for f in range(len(pen))])   # held 4 frames either side, then eased
+    w = np.exp(-0.5 * (np.arange(-9, 10) / 4.0) ** 2); w /= w.sum(); off = np.convolve(np.pad(wide, 9, mode='edge'), w, 'valid')
+    out = root.copy(); out[:, 1] += np.maximum(off, pen).astype(out.dtype); return out
+
+
 def main():
     out, bank_out, files = sys.argv[1], sys.argv[2], sys.argv[3:]
     clips, rooms = [], []
@@ -108,9 +124,10 @@ def main():
         bx = boxes_of(hf, use, mn, dx, base, S * np.array([rp[0, 1], 0, rp[0, 0]]))
         if len(bx) > 250: print(f"skip {path}: {len(bx)} boxes"); continue
         name = f"p{len(clips)}"
-        clips.append((name, root.astype(np.float32), Q.astype(np.float32)))
         bc = np.asarray(md["body_contacts"]) > 0.5   # their labels: l_foot, r_foot, l_hand, r_hand as bits 0..3 per frame
         lab = (bc[:, 14] * 1 + bc[:, 11] * 2 + bc[:, 8] * 4 + bc[:, 5] * 8).astype(int).tolist()
+        root = hands_on_top(root, Q, bx, np.array(lab))
+        clips.append((name, root.astype(np.float32), Q.astype(np.float32)))
         rooms.append({"name": f"parc_{name}", "clip": name, "source": path.split("__")[-1], "bounds": [-8, 8, -8, 8], "boxes": bx, "contacts": lab})
         print(f"{name}: {path.split('__')[-1]}: {len(root)} frames, {len(bx)} boxes, start {S * (h0 - base):.2f} m up, rise {root[-1, 1] - root[0, 1]:+.2f} m, travel {np.hypot(*(root[-1, [0, 2]] - root[0, [0, 2]])):.1f} m")
     with open(out, "wb") as f:

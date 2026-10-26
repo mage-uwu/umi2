@@ -152,7 +152,7 @@ static BHD void top_start(Env *E) {
 }
 BHD void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
     E->cfg = *cfg; E->rng = seed * 0x9E3779B97F4A7C15ULL + 1; E->step = 0; E->done = 0; E->t0 = 0;
-    world_init(&E->W, 45, 20, 1.0 / CTRL_HZ);
+    world_init(&E->W, 45, 20, 1.0 / CTRL_HZ); if (cfg->strength > 0) E->W.strength = cfg->strength;
     if (room_banks() > 1) E->W.room = (int)(((seed * 0xD1B54A32D192ED03ULL) >> 33) % (uint64_t)room_banks());   /* her room of the bank, from the seed (no draw from rng: one room plays as before) */
     if (cfg->arm_tone > 0) for (int i = L_UARM; i <= R_FARM; i++) E->W.tone[i] = cfg->arm_tone;
     for (int k = 0; k < ACT_DIM; k++) E->prev_act[k] = E->filt[k] = 0;
@@ -167,6 +167,7 @@ BHD void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
         const Clip *c = E->rc; const double T = (c->frames - 1) / c->fps;
         E->t0 = cfg->fixed_start ? 0 : env_rand(&E->rng) * T * (cfg->nstyle > 0 ? 0.85 : 1);
         if (course(E) && !cfg->fixed_start) E->t0 *= 0.7 / 0.85;   /* a course: mostly from the run-up, so the takeoff gets practised (not only the landing) */
+        if (course(E) && !cfg->fixed_start && cfg->start0 > 0 && env_rand(&E->rng) < cfg->start0) E->t0 = 0;   /* the whole clip from its start, as it is judged */
         E->clip_shift = v3(0, 0, 0);
         Quat rel[NB], rel2[NB], wq[NB]; Vec root, root2; const double dt = 1.0 / CTRL_HZ;
         ref_at(E, E->t0, rel, wq, &root); ref_at(E, E->t0 + dt, rel2, wq, &root2);
@@ -761,7 +762,7 @@ static BHD double env_end(Env *E, double act2) {
         ref_at(E, env_phase(E), E->ref, E->ref_world, &E->ref_root);
         Vec er = vsub(W->b[PELVIS].x, E->ref_root);
         const int fh = E->cfg.free_heading;
-        if (!fh && vlen(er) > (course(E) ? 1.0 : 0.6)) fell = 1;   /* drifted off the reference: end the episode (a course allows a short or long jump that still lands) */
+        if (!fh && vlen(er) > (E->cfg.drift > 0 ? E->cfg.drift : course(E) ? 1.0 : 0.6)) fell = 1;   /* drifted off the reference: end the episode (a course allows a short or long jump that still lands) */
         if (fell || E->step >= E->cfg.steps) E->done = 1;
         if (fell) return 0;
         /* pose: body world rotations; velocity: body angular velocity against the reference's */
