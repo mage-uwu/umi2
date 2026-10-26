@@ -3,7 +3,8 @@
     python3 eval_free.py PREFIX [N] [seconds] [assist]
 
 N episodes on the open floor (goals 1 to 6 m away, any direction; no starts from motion capture: she begins standing).
-Reports falls and how long she stayed up, goals reached, her speed while going, and (with PREFIX.amp.pt) the style
+Reports falls and how long she stayed up, goals reached, her speed while going, how often her feet touch down or lift
+(about 4 changes a second walking; a shuffle many more), and (with PREFIX.amp.pt) the style
 reward the discriminator gives her moving, against what it gives the motion capture.
 """
 import sys, os, struct, numpy as np, torch
@@ -30,7 +31,7 @@ if os.path.exists(pre + ".amp.pt"):
     D.load_state_dict(ck["D"]); dmu, dsd = ck["mu"].to(dev), ck["sd"].to(dev)
     style = lambda x: (1 - 0.25 * (D(((x - dmu) / dsd).clamp(-5, 5)).squeeze(-1) - 1) ** 2).clamp(min=0)
 state = m.zero_state(n); alive = torch.ones(n, dtype=torch.bool, device=dev); up = torch.zeros(n, device=dev)
-goals = 0; falls = 0; speeds = []; styles = []; prev = None
+goals = 0; falls = 0; speeds = []; styles = []; prev = None; feet = None; switches = 0.0; up_steps = 0.0
 with torch.no_grad():
     for t in range(steps):
         ob = pool.obs(); on = ((ob - mean) / sd).clamp(-5, 5)
@@ -38,12 +39,16 @@ with torch.no_grad():
         f = ob[:, :14 * 15]
         if D is not None and prev is not None and alive.any(): styles.append(style(torch.cat([prev, f], -1))[alive].mean().item())
         prev = f
+        ft = ob[:, 210:212]   # the foot contact flags: how often they change is the step rate (a shuffle changes them fast)
+        if feet is not None: switches += float(((ft != feet).float().sum(1) * alive.float()).sum()); up_steps += float(alive.float().sum())
+        feet = ft
         going = alive & (ob[:, 219] > 0.6)   # goal over 0.6 m away
         if going.any(): speeds += ob[going][:, [9, 11]].norm(dim=1).tolist()
         r = pool.step(act); goals += int(((r["rew"] > 1.9) & alive).sum())
         dn = r["done"].bool() & alive; falls += int((dn & r["fell"].bool()).sum()); up += alive.float() / 30; alive &= ~dn
 print(f"{pre}: {n} episodes of {secs:.0f} s, hand-up {assist}: falls {falls} ({100 * falls / n:.0f}%), up {up.mean():.1f} s on average; "
-      f"goals {goals} ({goals / n:.2f} each); speed while going {np.mean(speeds):.2f} m/s (90th pct {np.percentile(speeds, 90):.2f})")
+      f"goals {goals} ({goals / n:.2f} each); speed while going {np.mean(speeds):.2f} m/s (90th pct {np.percentile(speeds, 90):.2f}); "
+      f"foot contact changes {30 * switches / max(up_steps, 1):.1f} a second (a person walking: about 4)")
 if D is not None:
     real = torch.cat([torch.cat([torch.tensor(x[:-1]), torch.tensor(x[1:])], 1) for x in ge.amp_reference(os.path.join(HERE, "../data/cmu_loco.bin"), starts=1)[0]]).to(dev)
     print(f"style reward: hers {np.mean(styles):.3f}, the motion capture's {style(real).mean().item():.3f}")
