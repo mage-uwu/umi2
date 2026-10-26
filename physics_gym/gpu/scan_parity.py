@@ -42,21 +42,24 @@ def diff(a, b, mask=None):
     d = (a - b).abs()
     if mask is not None: d = d[mask]
     return float(d.max()) if d.numel() else 0.0, float(a.abs().max()) if a.numel() else 0.0
+def vdiff(a, b):   # over the valid steps only ([B, L, ...]): the fused kernels stop at each sequence's length, the loop runs on
+    return diff(a, b, valid[(...,) + (None,) * (a.dim() - 2)].expand_as(a))
 print(f"{path}: B {B}, L {L}, trees {c.T}, depth {c.D}, n {c.n}, p {c.p}")
-print(f"output: max diff {diff(A[0], Fz[0])[0]:.2e} (of values to {diff(A[0], Fz[0])[1]:.2f})")
-print(f"input gradient: max diff {diff(A[2], Fz[2])[0]:.2e} (of {diff(A[2], Fz[2])[1]:.2e})")
+print(f"output (valid steps): max diff {vdiff(A[0], Fz[0])[0]:.2e} (of values to {vdiff(A[0], Fz[0])[1]:.2f})")
+print(f"input gradient (valid steps): max diff {vdiff(A[2], Fz[2])[0]:.2e} (of {vdiff(A[2], Fz[2])[1]:.2e})")
 for l, (ta, tf) in enumerate(zip(A[1]["layers"], Fz[1]["layers"])):
     if ta.get("kind") != "ssm": continue
     vm = valid[:, :, None, None]
     flips = float(((ta["node"] != tf["node"]) & vm).float().sum() / (vm.float().sum() * ta["node"].shape[2] * ta["node"].shape[3]))
     line = [f"layer {l}: path rows differing {flips:.2e}"]
     for k in ("s", "dec", "R", "rs", "hprev", "as_", "aR", "bw"):
-        if k in ta and ta[k] is not None: line.append(f"{k} {diff(ta[k], tf[k])[0]:.1e}")
+        if k in ta and ta[k] is not None: line.append(f"{k} {vdiff(ta[k], tf[k])[0]:.1e}")
     print("  " + ", ".join(line))
 for f in nt.FIELDS:
     dmax, scale = diff(A[3][f], Fz[3][f])
     if scale > 0: print(f"  grad {f:8s} max diff {dmax:.2e} of {scale:.2e} ({dmax / scale:.1e} relative)")
-print(f"carried state: max diff {max(diff(a, b)[0] for a, b in zip(A[4]['h'], Fz[4]['h'])):.2e}; visited rows equal: {bool((A[6] == Fz[6]).all())}")
+full = lens == L   # (the carried state: the sequences that run the whole window; shorter ones stop at their length fused)
+print(f"carried state (full-length sequences): max diff {max(diff(a[full], b[full])[0] for a, b in zip(A[4]['h'], Fz[4]['h'])):.2e}; visited rows equal: {bool((A[6] == Fz[6]).all())}")
 ts = [run(True)[5] for _ in range(3)]; tl = [run(False)[5] for _ in range(2)]
 print(f"forward + backward: PyTorch loop {min(tl):.3f} s, fused {min(ts):.3f} s ({min(tl) / min(ts):.1f}x)")
 # inference as the rollouts run it: one step at a time with the state carried (stream=True, no tape)

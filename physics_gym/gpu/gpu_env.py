@@ -118,6 +118,7 @@ def _build_cuda(out, src="tssenv_kernels.cu"):
         inc = []
     cap = torch.cuda.get_device_capability(); arch = f"sm_{cap[0]}{cap[1]}"
     var = _variant() if src == "tssenv_kernels.cu" else []   # (bench_env.py: TSS_FMAD, TSS_BLOCK)
+    if src == "tss_scan.cu" and os.environ.get("TSS_SCAN_REGS"): inc = inc + [f"-maxrregcount={int(os.environ['TSS_SCAN_REGS'])}"]   # registers per thread at most (scan timing)
     subprocess.check_call([nvcc, "-O3", *([] if "fmad" in var else ["--fmad=false"]), *[f"-DTSS_BLOCK={v[5:]}" for v in var if v.startswith("block")], *(["-DTSS_INPLACE"] if "inplace" in var else []),
                            "--expt-relaxed-constexpr", "-arch=" + arch, "-shared", "-Xcompiler", "-fPIC", *inc, "-o", out, os.path.join(HERE, src)])
 

@@ -216,12 +216,13 @@ def scan_lib():
         if os.environ.get("TSS_FUSED", "1") != "0" and torch.cuda.is_available():
             try:
                 import gpu_env
-                here = os.path.dirname(os.path.abspath(__file__)); src, out = os.path.join(here, "tss_scan.cu"), os.path.join(here, "libtss_scan.so")
+                here = os.path.dirname(os.path.abspath(__file__)); rg = os.environ.get("TSS_SCAN_REGS")   # (a register cap, for timing)
+                src, out = os.path.join(here, "tss_scan.cu"), os.path.join(here, f"libtss_scan{'_r' + rg if rg else ''}.so")
                 if not os.path.exists(out) or os.path.getmtime(out) < os.path.getmtime(src): gpu_env.build_cu("tss_scan.cu", out)
                 L = ctypes.CDLL(out); L.tss_scan_fwd.restype = ctypes.c_char_p; L.tss_scan_bwd.restype = ctypes.c_char_p
                 vp, i_, f_ = ctypes.c_void_p, ctypes.c_int, ctypes.c_float
-                L.tss_scan_fwd.argtypes = [i_] * 7 + [f_, i_, i_] + [vp] * 19
-                L.tss_scan_bwd.argtypes = [i_] * 8 + [vp] * 15
+                L.tss_scan_fwd.argtypes = [i_] * 7 + [f_, i_, i_] + [vp] * 20   # (... lens, stream)
+                L.tss_scan_bwd.argtypes = [i_] * 8 + [vp] * 16
                 L.tss_scan_fits.argtypes = [i_] * 3; L.tss_scan_fits.restype = i_
                 _SCAN = L
             except Exception as e:
@@ -386,9 +387,10 @@ class TSS:
         qin = self.q["w_in"].rows(r0, r0 + TN)
         s_lin = qin.dot8(c8, xs)
         bias = P["bias"][r0:r0 + TN]; ea = self.ea[r0:r0 + TN]
-        node_t = torch.empty(B, L, T, D1, dtype=torch.long, device=dev)
-        s_t = torch.empty(B, L, T, D1, device=dev); dec_t = torch.empty_like(s_t); R_t = torch.empty(B, L, T, D1, pv, device=dev)
-        rs = torch.empty(B, L, T, pv, device=dev)
+        # zeros: the fused kernel stops at each sequence's length (lens), leaving the padded steps a valid row and finite values
+        node_t = torch.zeros(B, L, T, D1, dtype=torch.long, device=dev)
+        s_t = torch.zeros(B, L, T, D1, device=dev); dec_t = torch.zeros_like(s_t); R_t = torch.zeros(B, L, T, D1, pv, device=dev)
+        rs = torch.zeros(B, L, T, pv, device=dev)
         hprev = torch.empty(B, L, T, D1, n, pv, device=dev, dtype=torch.bfloat16 if self.bf16_tape else torch.float32) if train else None
         AL = D * (D + 1) // 2
         if train:
@@ -405,11 +407,11 @@ class TSS:
             hc = h if h.is_contiguous() else h.contiguous()
             # the contiguous copies held here until the launch: a temporary freed as soon as its pointer is taken lets
             # the next one reuse its memory, and two inputs would then read the same buffer
-            keep = [a.contiguous().float() for a in (dt, Bt, Ct, V, Z, s_lin, bias, ea)]
+            keep = [a.contiguous().float() for a in (dt, Bt, Ct, V, Z, s_lin, bias, ea)]; lc = lens.to(torch.long).contiguous()
             err = lib.tss_scan_fwd(B, L, T, D, N, n, pv, float(cap), int(train), int(train and hprev.dtype == torch.bfloat16),
                                    _p(hc), *[_p(a) for a in keep],
                                    _p(node_t), _p(s_t), _p(dec_t), _p(R_t), _p(rs), _p(hprev if train else None),
-                                   _p(anode if train else None), _p(as_t if train else None), _p(aR_t if train else None),
+                                   _p(anode if train else None), _p(as_t if train else None), _p(aR_t if train else None), _p(lc),
                                    ctypes.c_void_p(torch.cuda.current_stream(dev).cuda_stream))
             if err: raise RuntimeError(err.decode())
             if hc is not h: h.copy_(hc)
@@ -474,7 +476,7 @@ class TSS:
         tp = {"ext": ext}
         if train:
             tp.update(kind="ssm", xin=x, u=u, rn=rn, x8=x8, p=p, inv=inv, zdt=zdt, dt=dt, Bt=Bt, Ct=Ct, V=V, Z=Z, grp=grp,
-                      node=node_t, s=s_t, dec=dec_t, R=R_t, rs=rs, hprev=hprev, gl=gl, dgl=dgl, anode=anode, as_=as_t, aR=aR_t, bw=bw_t)
+                      node=node_t, s=s_t, dec=dec_t, R=R_t, rs=rs, hprev=hprev, gl=gl, dgl=dgl, anode=anode, as_=as_t, aR=aR_t, bw=bw_t, lens=lens)
         return x + y, tp
 
     def _fff_fwd(self, l, x, train, draws, valid, lens):
@@ -601,10 +603,11 @@ class TSS:
         lib = scan_lib() if g.is_cuda and self.fused else None
         if lib is not None and not lib.tss_scan_fits(D, n, pv): lib = None
         if lib is not None:   # the reverse-time loop below as one kernel (tss_scan.cu)
-            dVp = torch.empty(B, L, T, pv, device=dev)
+            dVp = torch.zeros(B, L, T, pv, device=dev)   # (zeros: the kernel stops at each sequence's length)
+            lc = (tp["lens"] if tp.get("lens") is not None else valid.sum(1)).to(torch.long).contiguous()
             keep = [a.contiguous() for a in (node, hprev, dec_t, dR.float(), Bt, Ct, V, dt, eaN)]   # (held until the launch, as above)
             err = lib.tss_scan_bwd(B, L, T, D, N, n, pv, int(hprev.dtype == torch.bfloat16), *[_p(a) for a in keep],
-                                   _p(dBt), _p(dCt), _p(dVp), _p(ddt), _p(GA), ctypes.c_void_p(torch.cuda.current_stream(dev).cuda_stream))
+                                   _p(dBt), _p(dCt), _p(dVp), _p(ddt), _p(GA), _p(lc), ctypes.c_void_p(torch.cuda.current_stream(dev).cuda_stream))
             if err: raise RuntimeError(err.decode())
             dV = dVp.sum(2)
         for t in (reversed(range(L)) if lib is None else ()):

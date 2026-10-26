@@ -10,7 +10,10 @@
  * the backward exchanges nothing until one batched reduction per step. The arithmetic is the PyTorch loop's (the
  * decay exp(-(a dt)) in double rounded to float, the same products); sums run in another order, so results agree to
  * float rounding (a routing decision can flip where a score sits on zero, as between the C and PyTorch builds).
- * Rollouts (one step, no tape) read and write the visited rows in place instead of staging the tree. The model, its
+ * Rollouts (one step, no tape) read and write the visited rows in place instead of staging the tree. With lens (one per
+ * sequence: the update's minibatches are episodes cut at their ends, padded to the longest) each block stops at its
+ * sequence's end, forward and backward: the padded steps' outputs are masked and their adjoints zero, so the valid ones are
+ * as before; the caller zero-fills the outputs the padded steps leave (a valid row, finite values). The model, its
  * .tss files and the CPU / browser forward pass are unchanged: this is training only.
  *
  * Plain C launchers on raw device pointers (as tssenv_kernels.cu), called through ctypes:
@@ -46,7 +49,7 @@ __global__ void k_ssm_fwd(int B, int L, int T, int N, int n, int p, float cap, i
         float *h, const float *dt, const float *Bt, const float *Ct, const float *V, const float *Z, const float *s_lin,
         const float *bias, const float *ea,
         int64_t *node_t, float *s_t, float *dec_t, float *R_t, float *rs,
-        void *hprev, int64_t *anode, float *as_t, float *aR_t) {
+        void *hprev, int64_t *anode, float *as_t, float *aR_t, const int64_t *lens) {
     constexpr int D1 = D + 1, AL = D * (D + 1) / 2, NR = D1 + AL;
     extern __shared__ float sh[];
     const int bt = blockIdx.x, b = bt / T, tr = bt % T, np = n * p, e = threadIdx.x, i = e / p, q = e % p;
@@ -60,7 +63,8 @@ __global__ void k_ssm_fwd(int B, int L, int T, int N, int n, int p, float cap, i
     int *aloc = (int *)(colp + NR * nw * p);      /* [AL] the alternate walks' nodes */
     if (!DIRECT) for (int k = e; k < N * np; k += np) S[k] = hb[k];
     int red = 0;
-    for (int t = 0; t < L; t++) {
+    const int Lb = lens ? (int)min((int64_t)L, lens[b]) : L;   /* this sequence's own length */
+    for (int t = 0; t < Lb; t++) {
         const size_t bl = (size_t)b * L + t, blt = bl * T + tr;
         const float dtt = dt[blt], Bi = Bt[blt * n + i], Ci = Ct[blt * n + i], Vq = V[bl * p + q], Zq = Z[bl * p + q], gB = dtt * Bi;
         float *dN = decN + (t & 1) * N, *sNt = sN + (t & 1) * N;
@@ -140,7 +144,7 @@ template <int D>
 __global__ void k_ssm_bwd(int B, int L, int T, int N, int n, int p, int bf16,
         const int64_t *node_t, const void *hprev, const float *dec_t, const float *dR, const float *Bt, const float *Ct,
         const float *V, const float *dt, const float *eaN,
-        float *dBt, float *dCt, float *dVp, float *ddt, float *GA) {
+        float *dBt, float *dCt, float *dVp, float *ddt, float *GA, const int64_t *lens) {
     constexpr int D1 = D + 1;
     extern __shared__ float sh[];
     const int bt = blockIdx.x, b = bt / T, tr = bt % T, np = n * p, e = threadIdx.x, i = e / p, q = e % p;
@@ -149,7 +153,8 @@ __global__ void k_ssm_bwd(int B, int L, int T, int N, int n, int p, int bf16,
     float *cpart = lam + N * np;                  /* [2][nw][p] per-warp parts of dV (by step parity) */
     float *fpart = cpart + 2 * nw * p;            /* [2][D1 + 1][nw] per-warp parts of ddec per level, and dgain */
     for (int k = e; k < N * np; k += np) lam[k] = 0;
-    for (int t = L - 1; t >= 0; t--) {
+    const int Lb = lens ? (int)min((int64_t)L, lens[b]) : L;   /* from its own end: the padded steps' adjoints are zero */
+    for (int t = Lb - 1; t >= 0; t--) {
         const size_t bl = (size_t)b * L + t, blt = bl * T + tr;
         const float gv = dt[blt], Bi = Bt[blt * n + i], Ci = Ct[blt * n + i], Vq = V[bl * p + q];
         float aB = 0, aV = 0, aC = 0, ag = 0, dd[D1], dk[D1], ek[D1];
@@ -193,23 +198,23 @@ template <int D, bool DIRECT> static size_t fwd_shm(int N, int n, int p) {
 template <int D, bool DIRECT> static const char *fwd(int B, int L, int T, int N, int n, int p, float cap, int train, int bf16,
         void *h, const void *dt, const void *Bt, const void *Ct, const void *V, const void *Z, const void *s_lin,
         const void *bias, const void *ea, void *node_t, void *s_t, void *dec_t, void *R_t, void *rs,
-        void *hprev, void *anode, void *as_t, void *aR_t, cudaStream_t stream) {
+        void *hprev, void *anode, void *as_t, void *aR_t, const void *lens, cudaStream_t stream) {
     const size_t shm = fwd_shm<D, DIRECT>(N, n, p);
     if (shm > 48 * 1024) cudaFuncSetAttribute(k_ssm_fwd<D, DIRECT>, cudaFuncAttributeMaxDynamicSharedMemorySize, (int)shm);
     k_ssm_fwd<D, DIRECT><<<B * T, n * p, shm, stream>>>(B, L, T, N, n, p, cap, train, bf16, (float *)h, (const float *)dt, (const float *)Bt,
         (const float *)Ct, (const float *)V, (const float *)Z, (const float *)s_lin, (const float *)bias, (const float *)ea,
-        (int64_t *)node_t, (float *)s_t, (float *)dec_t, (float *)R_t, (float *)rs, hprev, (int64_t *)anode, (float *)as_t, (float *)aR_t);
+        (int64_t *)node_t, (float *)s_t, (float *)dec_t, (float *)R_t, (float *)rs, hprev, (int64_t *)anode, (float *)as_t, (float *)aR_t, (const int64_t *)lens);
     cudaError_t r = cudaGetLastError(); return r == cudaSuccess ? 0 : cudaGetErrorString(r);
 }
 template <int D> static const char *bwd(int B, int L, int T, int N, int n, int p, int bf16,
         const void *node_t, const void *hprev, const void *dec_t, const void *dR, const void *Bt, const void *Ct, const void *V,
-        const void *dt, const void *eaN, void *dBt, void *dCt, void *dVp, void *ddt, void *GA, cudaStream_t stream) {
+        const void *dt, const void *eaN, void *dBt, void *dCt, void *dVp, void *ddt, void *GA, const void *lens, cudaStream_t stream) {
     const int np = n * p, nw = np / 32;
     const size_t shm = sizeof(float) * ((size_t)N * np + 2 * nw * p + 2 * (D + 2) * nw);
     if (shm > 48 * 1024) cudaFuncSetAttribute(k_ssm_bwd<D>, cudaFuncAttributeMaxDynamicSharedMemorySize, (int)shm);
     k_ssm_bwd<D><<<B * T, np, shm, stream>>>(B, L, T, N, n, p, bf16, (const int64_t *)node_t, hprev, (const float *)dec_t,
         (const float *)dR, (const float *)Bt, (const float *)Ct, (const float *)V, (const float *)dt, (const float *)eaN,
-        (float *)dBt, (float *)dCt, (float *)dVp, (float *)ddt, (float *)GA);
+        (float *)dBt, (float *)dCt, (float *)dVp, (float *)ddt, (float *)GA, (const int64_t *)lens);
     cudaError_t r = cudaGetLastError(); return r == cudaSuccess ? 0 : cudaGetErrorString(r);
 }
 
@@ -218,20 +223,20 @@ int tss_scan_fits(int D, int n, int p) { return fits(D, n, p); }
 const char *tss_scan_fwd(int B, int L, int T, int D, int N, int n, int p, float cap, int train, int bf16,
         void *h, const void *dt, const void *Bt, const void *Ct, const void *V, const void *Z, const void *s_lin,
         const void *bias, const void *ea, void *node_t, void *s_t, void *dec_t, void *R_t, void *rs,
-        void *hprev, void *anode, void *as_t, void *aR_t, void *stream) {
+        void *hprev, void *anode, void *as_t, void *aR_t, const void *lens, void *stream) {
     if (!fits(D, n, p)) return "tss_scan: tree or state shape not supported";
     const bool direct = L == 1 && !train;
-#define F(DD) case DD: return direct ? fwd<DD, true>(B, L, T, N, n, p, cap, train, bf16, h, dt, Bt, Ct, V, Z, s_lin, bias, ea, node_t, s_t, dec_t, R_t, rs, hprev, anode, as_t, aR_t, (cudaStream_t)stream) \
-                                     : fwd<DD, false>(B, L, T, N, n, p, cap, train, bf16, h, dt, Bt, Ct, V, Z, s_lin, bias, ea, node_t, s_t, dec_t, R_t, rs, hprev, anode, as_t, aR_t, (cudaStream_t)stream);
+#define F(DD) case DD: return direct ? fwd<DD, true>(B, L, T, N, n, p, cap, train, bf16, h, dt, Bt, Ct, V, Z, s_lin, bias, ea, node_t, s_t, dec_t, R_t, rs, hprev, anode, as_t, aR_t, lens, (cudaStream_t)stream) \
+                                     : fwd<DD, false>(B, L, T, N, n, p, cap, train, bf16, h, dt, Bt, Ct, V, Z, s_lin, bias, ea, node_t, s_t, dec_t, R_t, rs, hprev, anode, as_t, aR_t, lens, (cudaStream_t)stream);
     switch (D) { F(1) F(2) F(3) F(4) F(5) F(6) F(7) }
 #undef F
     return "tss_scan: depth not supported";
 }
 const char *tss_scan_bwd(int B, int L, int T, int D, int N, int n, int p, int bf16,
         const void *node_t, const void *hprev, const void *dec_t, const void *dR, const void *Bt, const void *Ct, const void *V,
-        const void *dt, const void *eaN, void *dBt, void *dCt, void *dVp, void *ddt, void *GA, void *stream) {
+        const void *dt, const void *eaN, void *dBt, void *dCt, void *dVp, void *ddt, void *GA, const void *lens, void *stream) {
     if (!fits(D, n, p)) return "tss_scan: tree or state shape not supported";
-#define G(DD) case DD: return bwd<DD>(B, L, T, N, n, p, bf16, node_t, hprev, dec_t, dR, Bt, Ct, V, dt, eaN, dBt, dCt, dVp, ddt, GA, (cudaStream_t)stream);
+#define G(DD) case DD: return bwd<DD>(B, L, T, N, n, p, bf16, node_t, hprev, dec_t, dR, Bt, Ct, V, dt, eaN, dBt, dCt, dVp, ddt, GA, lens, (cudaStream_t)stream);
     switch (D) { G(1) G(2) G(3) G(4) G(5) G(6) G(7) }
 #undef G
     return "tss_scan: depth not supported";
