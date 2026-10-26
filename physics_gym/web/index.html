@@ -632,7 +632,8 @@ function jumpStep() {   // after each control step in jump mode: the clip on, th
 // back to the start of the move (or of the walk) she was on. The flag at the end.
 const LEVEL = { plan: [['walk', 1.6], ['climb', 'c13_35_30'], ['walk', 1.2], ['jump', 'fjump2'], ['walk', 1.0], ['climb', 'c40_06_930'], ['walk', 1.2],
   ['jump', 'fjump1'], ['walk', 1.0], ['climb', 'c81_14r'], ['walk', 1.6]], width: 1.3, start: [-6.5, 0, 0], yaw: Math.PI / 2,
-  jumpPolicy: 'jump_tss.json', climbPolicy: 'climb_tss.json', climbClips: 'climb_clips.json', climbBank: 'climb_bank.json', actMul: 2.5, walkAssist: 0.05 };
+  jumpPolicy: 'jump_tss.json', climbPolicy: 'climb_tss.json', climbClips: 'climb_clips.json', climbBank: 'climb_bank.json', actMul: 2.5, walkAssist: 0.05,
+  moveAssist: 0 };   // moveAssist: a hand-up during the moves (what their trackers last trained with; 0 once they need none)
 let level = null, levelRes = null;   // levelRes: policies, clips and banks; level: { segs, at, phase, t0, falls, start, checkpoint }
 async function levelLoad() {
   if (levelRes) return levelRes;
@@ -696,7 +697,9 @@ async function levelStart() {
 }
 function levelCheckpoint(at) {   // back to the start of segment `at` (the walk before a move: the move's own start)
   if (world && level.phase !== 'done' && level.placed) level.spent += world.t;   // (each start again is a new world: the clock carries on)
-  level.at = at; const s = level.segs[at]; level.phase = 'walk'; levelPlace(s.start); level.placed = true;
+  level.at = at; const s = level.segs[at]; level.phase = 'walk'; level.placed = true;
+  const j = level.falls ? 1 : 0, rnd = () => (Math.random() * 2 - 1) * j;   // a try again a little different (physics replays a start exactly)
+  levelPlace({ ...s.start, x: s.start.x + 0.03 * rnd(), z: s.start.z + 0.03 * rnd(), yaw: s.start.yaw + 0.08 * rnd() });
   policies.level?.reset(); levelRes.jumpPolicy.reset(); levelRes.climbPolicy?.reset(); prev = snapshot(); hist = [{ t: world.t, s: prev }];
   setStatus(`Level: ${s.kind === 'walk' ? 'walking on' : s.kind + ' ' + s.clip.name}.`);
 }
@@ -727,6 +730,7 @@ function levelControl() {
     }
   } else if (L.phase === 'move') {   // the tracker on its clip
     const pol = s.kind === 'jump' ? levelRes.jumpPolicy : levelRes.climbPolicy;
+    if (LEVEL.moveAssist > 0) setHandUp(world, LEVEL.moveAssist);
     if (pol) applyAction(world, ref, pol.act(observeGoto(world, 0, null, true, null, true)), LEVEL.actMul);
     prev = snapshot(); world.step();
     const t = world.t - L.t0; ref = clipAt(s.clip, t).rel;
@@ -735,7 +739,9 @@ function levelControl() {
   hist.push({ t: world.t, s: snapshot() }); if (hist.length > 12) hist.shift();
   // down, or dropped below the surface she set out from: back to the checkpoint
   const base = Math.min(s.start.y, s.end?.y ?? s.start.y), foot = Math.min(world.lowest(B.L_FOOT), world.lowest(B.R_FOOT));
-  if (L.phase !== 'done' && (fallen(world) || foot < base - 0.25)) { L.falls++; emit('fall', { at: L.at }); levelCheckpoint(s.kind === 'walk' || L.phase === 'walk' ? L.at : L.at); }
+  if (L.phase !== 'done' && (fallen(world) || foot < base - 0.25)) {
+    L.falls++; emit('fall', { at: L.at, kind: s.kind, phase: L.phase, why: fallen(world) ? 'fell' : 'dropped', t: world.t - (L.phase === 'move' ? L.t0 : 0) }); levelCheckpoint(L.at);
+  }
   emit('step', { t: world.t });
 }
 function control() {
@@ -1311,6 +1317,7 @@ window.umiBody = {
   release: () => grabEnd(),
   play: useSkill, push: (...a) => world && push(...a), reset: () => world && reset(), standUp: () => world && getUp('Getting up.'),
   level: () => level && { at: level.at, of: level.segs.length, kind: level.segs[level.at]?.kind, phase: level.phase, falls: level.falls, t: level.spent + world.t },   // the Level's progress
+  levelSet(o = {}) { Object.assign(LEVEL, o); if (o.jumpPolicy || o.climbPolicy) levelRes = null; return { ...LEVEL }; },   // the Level's settings (LEVEL)
   levelPlan(plan, height) { if (plan) LEVEL.plan = plan; if (height != null) LEVEL.start = [LEVEL.start[0], +height, LEVEL.start[2]]; return LEVEL.plan.map(m => m.slice()); },   // the Level's moves ([['walk', m] | ['jump', clip] | ['climb', clip], ...]); takes effect when it starts again
   on(ev, fn) { (listeners[ev] ||= []).push(fn); return () => { listeners[ev] = listeners[ev].filter(f => f !== fn); }; },
   state: () => world && { t: world.t, upright: world.t - upSince, fallen: fallenAt >= 0, getup: mode !== 'getup' ? null : settle ? 'settling' : track ? `tracking ${track.clip.name}` : 'hand-up',
