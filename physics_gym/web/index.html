@@ -75,7 +75,7 @@ button:disabled { opacity: .45; cursor: default; }
   <header>
     <h1>physics-gym</h1>
     <span class="hint hint-short">Tap the stage to push her · pinch to zoom · drag to turn.</span>
-    <span class="hint hint-long">She moves under real physics: 14 rigid bodies, 45 kg, a muscle at every joint, driven 30 times a second by a small learned SSM-tree controller. Click the stage to push her from that side; W A S D walk her (the way they point as you see it); scroll to turn the view, Shift + scroll to raise it; zoom with + and &minus;, Ctrl + scroll or a pinch (close up, the view centres on her face).</span>
+    <span class="hint hint-long">She moves under real physics: 14 rigid bodies, 45 kg, a muscle at every joint, driven 30 times a second by a small learned SSM-tree controller. Click the stage to push her from that side; W A S D walk her (the way they point as you see it), Space jumps; scroll to turn the view, Shift + scroll to raise it; zoom with + and &minus;, Ctrl + scroll or a pinch (close up, the view centres on her face).</span>
   </header>
   <div id="stage" tabindex="0" aria-label="Live physics view; click to push her">
     <canvas id="view"></canvas>
@@ -758,7 +758,7 @@ function gotoMoveCheck() {   // walking: plan, or begin the move once she stands
   }
   if (gmove?.phase === 'settle') {
     if (world.t > gmove.until) {   // on the goal's own surface and near it: there (a hoist ends facing back over its edge, and turning round on a narrow top is where the walk falls)
-      gmove = null; gplan = true; setStatus('Going to the goal.');
+      gmove = null; gplan = true; setStatus(reachedAt >= 0 ? '' : 'Going to the goal.');   // (a Space jump with no goal: standing)
       const fx = (world.b[B.L_FOOT].x[0] + world.b[B.R_FOOT].x[0]) / 2, fz = (world.b[B.L_FOOT].x[2] + world.b[B.R_FOOT].x[2]) / 2;   // (by her feet: after a hoist she sits back over the edge)
       if (goal && reachedAt < 0 && Math.hypot(goal[0] - fx, goal[2] - fz) < 0.8 && Math.abs(supportY(fx, fz, goal[1] + 0.3) - goal[1]) < 0.1) { reachedAt = world.t; setStatus(`Reached the goal in ${world.t.toFixed(1)} s.`); emit('reached', { goal: goal.slice(), t: world.t }); }
     }
@@ -769,6 +769,10 @@ function gotoMoveCheck() {   // walking: plan, or begin the move once she stands
   if (!gmove.near && d < 0.35) gmove.near = true;
   if (!gmove.near) return;
   const dx = p[0] - gmove.start[0], dz = p[2] - gmove.start[2], along = dx * gmove.u[0] + dz * gmove.u[1], across = -dx * gmove.u[1] + dz * gmove.u[0], v = world.com().v;
+  if (gmove.free) {   // a Space jump from a walk: once she has slowed on the spot, with JUMP_KEY.walkAssist
+    if (d < 0.3 && Math.hypot(v[0], v[2]) < 0.35) { gmove.assist = JUMP_KEY.walkAssist; gotoMoveBegin(); setStatus('Jumping.'); }
+    return;
+  }
   if (along > -0.15 && along < 0.12 && Math.abs(across) < 0.25 && Math.hypot(v[0], v[2]) < (gmove.M.kind === 'jump' ? 0.35 : 0.8)) gotoMoveBegin();
 }
 function gotoMoveBegin() {   // the clip from where she stands (her pelvis) the way her feet point, as the Level's moves, within 0.35 rad of the edge's square
@@ -786,7 +790,7 @@ function gotoMoveRoot(g, t) {   // the clip's root at t on the real edge (raised
 }
 function gotoMoveStep() {   // one control step of the move, its tracker on its clip
   const g = gmove, S = moveShape(g.M), pol = g.M.kind === 'jump' ? levelRes.jumpPolicy : levelRes.climbPolicy, t = world.t - g.at - LEVEL.ready;   // (its first frame held LEVEL.ready s while she steadies into it, as the Level)
-  world.assist = 0; const ma = LEVEL.moveAssist[g.M.kind] || 0;
+  world.assist = 0; const ma = g.assist ?? (LEVEL.moveAssist[g.M.kind] || 0);
   if (ma > 0) { const A = gotoMoveRoot(g, t), Bn = gotoMoveRoot(g, t + 1 / CTRL_HZ); world.assist = ma; world.assistX = Bn.x; world.assistQ = Bn.q; world.assistV = math.vscale(math.vsub(Bn.x, A.x), CTRL_HZ); }
   applyAction(world, ref, pol.act(observeGoto(world, 0, null, true, null, true)), LEVEL.actMul); prev = snapshot(); world.step();
   hist.push({ t: world.t, s: snapshot() }); if (hist.length > 12) hist.shift();
@@ -796,7 +800,8 @@ function gotoMoveStep() {   // one control step of the move, its tracker on its 
   const over = t2 > S.c.T + 0.3 && (Math.hypot(...world.com().v) < 0.25 || t2 > S.c.T + 2.5);
   if (down || over) {   // back to walking (a fall: the get-up takes it from here), and a new plan
     emit('move', { kind: g.M.type, clip: g.M.clip, phase: down ? 'down' : 'done', t: t2 }); gplan = true;
-    gmove = down ? null : { M: g.M, phase: 'settle', at: [P[0], sp, P[2]], until: world.t + 1.2 };   // landed: standing a moment before walking on (a move ends crouched, or turned round)
+    gmove = down ? null : { M: g.M, phase: 'settle', at: [P[0], sp, P[2]], until: world.t + 1.2 };
+    if (!down && g.free && reachedAt >= 0) goal = [P[0], sp, P[2]];   // a Space jump with no goal: stand where she landed   // landed: standing a moment before walking on (a move ends crouched, or turned round)
     policy?.reset(); clip = SKILLS[skill].clip ? clips[SKILLS[skill].clip] : null; ref = clip ? clip.at(world.t).rel : standPose();
     if (!down) setStatus('Landed; steadying.');
   }
@@ -1525,17 +1530,46 @@ function wasdStep() {
     return;
   }
   if (gmove && gmove.phase !== 'in') return;
-  const y = view.yaw * Math.PI / 180, n = Math.hypot(f, r);
-  const dx = (-Math.sin(y) * f + Math.cos(y) * r) / n, dz = (-Math.cos(y) * f - Math.sin(y) * r) / n;
+  const [dx, dz] = wasdDir();
   if (gmove && dx * gmove.u[0] + dz * gmove.u[1] < 0.5) { gmove = null; gplan = true; }   // turned away from the move she was walking to
   const x = p[0] + dx * WASD.ahead, z = p[2] + dz * WASD.ahead;
   goal = [x, supportY(x, z, p[1] + 0.5), z]; reachedAt = -1; goalMark.visible = false;
   if (!wasdOn) { wasdOn = true; gplan = true; setStatus('Walking (W A S D).'); }
 }
+// Space: a standing jump (fjump2, as the Level and Go to take it) from where she stands, the way W A S D point (else the
+// way she faces), by Go to's moves: she steadies (LEVEL.ready), jumps, lands and steadies, then walks on (W A S D held)
+// or stands where she landed. Its tracker trained jumping across gaps (it sees the ground ahead), and on flat ground with
+// no help it fell every time. A light hand-up along the clip: from standing JUMP_KEY.assist (5%: 5 of 5 landed, her feet
+// clearing 0.33 to 0.44 m); walking, she first stops on a spot JUMP_KEY.stop m on and jumps once slow there, with
+// JUMP_KEY.walkAssist (20%: 4 of 4 landed and walked on; at 10%, 2 of 4).
+const JUMP_KEY = { assist: 0.05, walkAssist: 0.2, stop: 0.5 };
+const wasdDir = () => {   // the unit [x, z] the held keys point, as the camera sees it; null with none held
+  const f = wasdKeys.has('w') - wasdKeys.has('s'), r = wasdKeys.has('d') - wasdKeys.has('a');
+  if (!f && !r) return null;
+  const y = view.yaw * Math.PI / 180, n = Math.hypot(f, r);
+  return [(-Math.sin(y) * f + Math.cos(y) * r) / n, (-Math.cos(y) * f - Math.sin(y) * r) / n];
+};
+async function spaceJump() {
+  if (!world || mode !== 'skill' || fallenAt >= 0) return;
+  if (skill !== 'goto') { if (roam) setRoam(false); await useSkill('goto'); }
+  if (gmove && gmove.phase !== 'in') return;   // a move, or the steadying after one, under way
+  const M = MOVES.find(m => m.clip === 'fjump2'), S = moveShape(M), p = world.b[0].x, held = wasdDir();
+  const fy = feetYaw(world.b.map(b => b.q)), u = held || [Math.sin(fy), Math.cos(fy)];
+  // walking: a standing jump from a spot a step ahead, once she has stopped on it (Go to's own check), as from a run-in
+  const v = world.com().v, moving = Math.hypot(v[0], v[2]) > 0.35, s0 = moving ? JUMP_KEY.stop : 0;
+  const x0 = p[0] + u[0] * s0, z0 = p[2] + u[1] * s0, y0 = supportY(x0, z0, p[1]), land = [x0 + u[0] * S.L, 0, z0 + u[1] * S.L]; land[1] = supportY(land[0], land[2], y0 + 0.5);
+  gmove = { M, u, start: [x0, y0, z0], pre: [x0, y0, z0], land, dH: 0, near: true, phase: 'in', assist: JUMP_KEY.assist, free: true };
+  if (!held) { goal = land.slice(); reachedAt = world.t; goalMark.visible = false; }   // after it, stand where she lands
+  if (moving) setStatus('Stopping to jump.'); else { gotoMoveBegin(); setStatus('Jumping.'); }
+}
 addEventListener('keyup', e => wasdKeys.delete(e.key.toLowerCase()));
 addEventListener('blur', () => wasdKeys.clear());
 addEventListener('keydown', e => {
   const w = e.key.toLowerCase();
+  if (e.code === 'Space' && !e.target.closest?.('input, textarea') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    e.preventDefault(); if (document.activeElement?.tagName === 'BUTTON') document.activeElement.blur();   // (not the focused button's click)
+    if (!e.repeat) spaceJump();
+  }
   if ('wasd'.includes(w) && w.length === 1 && !e.target.closest?.('input, textarea') && !e.ctrlKey && !e.metaKey && !e.altKey) {
     wasdKeys.add(w);
     if (roam) setRoam(false);
@@ -1610,6 +1644,7 @@ window.umiBody = {
   level: () => level && { at: level.at, of: level.segs.length, kind: level.segs[level.at]?.kind, phase: level.phase, falls: level.falls, t: level.spent + world.t, start: { ...level.segs[level.at]?.start } },   // the Level's progress (start: where the segment she is on starts)
   parc: (k, set = {}) => { Object.assign(PARC, set); if (k !== undefined && parcBank && SKILLS[skill]?.parc) parcNext(k); return parc && { clip: parc.room.clip, set: parc.room.set, source: parc.room.source, t: world.t - parc.start, T: parc.clip.T, done: parc.done, tries: parc.tries }; },   // the PARC skill: start room k of PARC.sets (null: a random one), settings (PARC); what she is on
   gotoMove: () => gmove && { kind: gmove.M.type, clip: gmove.M.clip, phase: gmove.phase, start: gmove.start?.slice(), land: gmove.land?.slice(), u: gmove.u?.slice() },   // Go to's planned or running move
+  jumpKey(o = {}) { Object.assign(JUMP_KEY, o); return { ...JUMP_KEY }; },   // the Space jump's settings (JUMP_KEY)
   levelSet(o = {}) { Object.assign(LEVEL, o); if (o.jumpPolicy || o.climbPolicy) levelRes = null; return { ...LEVEL }; },   // the Level's settings (LEVEL)
   levelPlan(plan, height) { if (plan) LEVEL.plan = plan; if (height != null) LEVEL.start = [LEVEL.start[0], +height, LEVEL.start[2]]; return LEVEL.plan.map(m => m.slice()); },   // the Level's moves ([['walk', m] | ['jump', clip] | ['climb', clip], ...]); takes effect when it starts again
   on(ev, fn) { (listeners[ev] ||= []).push(fn); return () => { listeners[ev] = listeners[ev].filter(f => f !== fn); }; },
