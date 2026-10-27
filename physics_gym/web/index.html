@@ -75,7 +75,7 @@ button:disabled { opacity: .45; cursor: default; }
   <header>
     <h1>physics-gym</h1>
     <span class="hint hint-short">Tap the stage to push her · pinch to zoom · drag to turn.</span>
-    <span class="hint hint-long">She moves under real physics: 14 rigid bodies, 45 kg, a muscle at every joint, driven 30 times a second by a small learned SSM-tree controller. Click the stage to push her from that side; scroll to turn the view, Shift + scroll to raise it; zoom with + and &minus;, Ctrl + scroll or a pinch (close up, the view centres on her face).</span>
+    <span class="hint hint-long">She moves under real physics: 14 rigid bodies, 45 kg, a muscle at every joint, driven 30 times a second by a small learned SSM-tree controller. Click the stage to push her from that side; W A S D walk her (the way they point as you see it); scroll to turn the view, Shift + scroll to raise it; zoom with + and &minus;, Ctrl + scroll or a pinch (close up, the view centres on her face).</span>
   </header>
   <div id="stage" tabindex="0" aria-label="Live physics view; click to push her">
     <canvas id="view"></canvas>
@@ -948,6 +948,7 @@ function levelControl() {
   emit('step', { t: world.t });
 }
 function control() {
+  wasdStep();
   if (mode === 'skill' && SKILLS[skill].level) return levelControl();
   if (mode === 'skill' && SKILLS[skill].parc) {   // the PARC tracker: the clip's pose plus its actions
     if (!parc) return world.step();
@@ -1511,7 +1512,35 @@ function drawGrab() {   // the pull, from the held point to the cursor
   grabLine.geometry.setFromPoints([new THREE.Vector3(...p), new THREE.Vector3(...g.goal)]); grabDot.position.set(...g.goal);
   grabLine.visible = grabDot.visible = true;
 }
+// W A S D: she walks the way the keys point as the camera sees it (W away from it, S toward it, A and D to its left and
+// right), on the Go to skill: its goal kept WASD.ahead m out that way while a key is held, so its path helper and its moves
+// (a hoist, a jump) still apply; a move under way runs to its end first. Let go: the goal where she stands, and she stops.
+const WASD = { ahead: 2.0 }, wasdKeys = new Set();
+let wasdOn = false, wasdSwitching = false;
+function wasdStep() {
+  if (!world || mode !== 'skill' || skill !== 'goto') return;
+  const f = wasdKeys.has('w') - wasdKeys.has('s'), r = wasdKeys.has('d') - wasdKeys.has('a'), p = world.b[0].x;
+  if (!f && !r) {
+    if (wasdOn && !gmove) { wasdOn = false; goal = [p[0], supportY(p[0], p[2], p[1]), p[2]]; reachedAt = world.t; setStatus(''); }
+    return;
+  }
+  if (gmove && gmove.phase !== 'in') return;
+  const y = view.yaw * Math.PI / 180, n = Math.hypot(f, r);
+  const dx = (-Math.sin(y) * f + Math.cos(y) * r) / n, dz = (-Math.cos(y) * f - Math.sin(y) * r) / n;
+  if (gmove && dx * gmove.u[0] + dz * gmove.u[1] < 0.5) { gmove = null; gplan = true; }   // turned away from the move she was walking to
+  const x = p[0] + dx * WASD.ahead, z = p[2] + dz * WASD.ahead;
+  goal = [x, supportY(x, z, p[1] + 0.5), z]; reachedAt = -1; goalMark.visible = false;
+  if (!wasdOn) { wasdOn = true; gplan = true; setStatus('Walking (W A S D).'); }
+}
+addEventListener('keyup', e => wasdKeys.delete(e.key.toLowerCase()));
+addEventListener('blur', () => wasdKeys.clear());
 addEventListener('keydown', e => {
+  const w = e.key.toLowerCase();
+  if ('wasd'.includes(w) && w.length === 1 && !e.target.closest?.('input, textarea') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    wasdKeys.add(w);
+    if (roam) setRoam(false);
+    if (skill !== 'goto' && !wasdSwitching) { wasdSwitching = true; useSkill('goto').finally(() => { wasdSwitching = false; }); }   // (once: Go to carries on after a fall)
+  }
   const k = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'back', ArrowDown: 'front' }[e.key];
   if (k && world && fallenAt < 0) { e.preventDefault(); push(k); }
   if (e.key === 'r') reset();
@@ -1599,6 +1628,6 @@ try {
   await loadModel(); applyParts();
   setStatus('loading the learned shader…');
   if (lookChosen && look === 'art') await useArt(); else setLook(look);   // physics-gym opens on the physics view (look above); the learned shader draws only her
-  if (art) setStatus('');
+  if (art || look !== 'art') setStatus('');
 } catch (e) { console.error(e); setStatus(`Could not start: ${e.message}`, true); }
 </script>
