@@ -251,6 +251,25 @@ class GpuPool(_Pool):
 
     def rooms(self): return self._field(_offsets(self.L)[1])
 
+    def focus_rooms(self, per_room=1 << 16):
+        """Rooms by weight (a course: a room is a clip's): each finished environment's next room is drawn from self.room_w
+        (uniform until set), its seed one of that room's. env.c env_reset takes the room from a hash of the seed, so this
+        draws seeds whose hash gives the room (per_room of them each, from a range of their own), and the physics, and its
+        parity with the CPU build, are as before. From then on each room's episodes ended and fallen are tallied
+        (room_ends, room_fell: with --tail an episode not fallen is a clip finished)."""
+        nb = self.nrooms; assert nb > 1, "focus_rooms: no room bank"
+        K, base = np.uint64(0xD1B54A32D192ED03), (self.erng ^ 0x5DEECE66D) & U64
+        tab, need, start = [[] for _ in range(nb)], per_room, 0
+        while min(len(t) for t in tab) < need:   # (each room gets about 1/nb of the seeds)
+            cand = (np.uint64(base) + np.arange(start, start + nb * need, dtype=np.uint64)); start += nb * need
+            r = ((cand * K) >> np.uint64(33)) % np.uint64(nb)
+            for k in range(nb):
+                if len(tab[k]) < need: tab[k].extend(cand[r == k][: need - len(tab[k])].tolist())
+        self.seed_tab = torch.tensor(np.array(tab, np.uint64).view(np.int64), device=self.dev)
+        self.room_w = torch.full((nb,), 1.0 / nb, device=self.dev)
+        self.room_ends = torch.zeros(nb, dtype=torch.float64, device=self.dev); self.room_fell = torch.zeros_like(self.room_ends)
+        self._room_off = _offsets(self.L)[1]
+
     def _check(self):
         torch.cuda.synchronize(self.dev); e = self.L.tss_error()
         if e: raise RuntimeError(e.decode())
@@ -272,8 +291,13 @@ class GpuPool(_Pool):
         self.ret += self.rew.double()
         ep_ret = torch.where(d, self.ret, torch.zeros_like(self.ret)).float(); ep_len = torch.where(d, self.len, torch.zeros_like(self.len))
         self.ret = torch.where(d, torch.zeros_like(self.ret), self.ret)
-        ids = self.ep + torch.cumsum(d.long(), 0)                    # the episode number each finished env starts
-        seeds = self.erng + ids * 7777 + self.ar                       # int64 arithmetic wraps like uint64
+        if getattr(self, "room_w", None) is not None:   # rooms by weight (focus_rooms): tally the finished, draw the next
+            size = self.L.tss_env_size(); r = self.envs.view(self.n, size)[:, self._room_off:self._room_off + 4].contiguous().view(torch.int32).flatten().long()
+            self.room_ends.index_add_(0, r, d.double()); self.room_fell.index_add_(0, r, (d & self.fell.bool()).double())
+            seeds = self.seed_tab[torch.multinomial(self.room_w, self.n, replacement=True), torch.randint(0, self.seed_tab.shape[1], (self.n,), device=self.dev)]
+        else:
+            ids = self.ep + torch.cumsum(d.long(), 0)                    # the episode number each finished env starts
+            seeds = self.erng + ids * 7777 + self.ar                       # int64 arithmetic wraps like uint64
         self.L.tss_reset(_ptr(self.envs), _ptr(self.cfg), self.n, _ptr(seeds), _ptr(d.to(torch.uint8)), self._st())
         self.ep = self.ep + d.long().sum()
         return dict(rew=self.rew.clone(), done=self.done.clone(), fell=self.fell.clone(), tobs=self.tobs.clone(), ep_ret=ep_ret, ep_len=ep_len)
