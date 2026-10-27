@@ -118,7 +118,7 @@ export function rayDist(o, d, maxd) {
   }
   return best;
 }
-const columnHit = (x, z, y0, y1) => ROOM.some(o => { const s = columnSpan(o, x, z); return s && s[1] > y0 && s[0] < y1; });   // body.c column_hit
+export const columnHit = (x, z, y0, y1) => ROOM.some(o => { const s = columnSpan(o, x, z); return s && s[1] > y0 && s[0] < y1; });   // body.c column_hit
 // ---------- the path helper (body.c nav grid, env.c nav_field / nav_waypoint) ----------
 export const NAV_N = 64, NAV_CELL = 0.25, NAV_HALF = 8.0, NAV_STEP = 0.3, NAV_BLOCK = 1000;
 let NAV = new Float32Array(NAV_N * NAV_N), navCache = null;

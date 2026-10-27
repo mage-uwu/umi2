@@ -148,6 +148,7 @@ import { World, setRoom, supportY, setHandUp, observeGoto, navField, navGrid, na
 import { createShaderView } from './shader-view.js';
 import { createStyleView } from './style-view.js';
 import { makeCourse } from './course.js';
+import { plan as parkourPlan, PROFILES as PLAN_PROFILES } from './planner.js';
 
 const status = document.getElementById('status');
 const setStatus = (t, alert = false) => { status.textContent = t; status.classList.toggle('alert', alert); };
@@ -689,19 +690,17 @@ function parcStep() {   // after each control step: the clip on, or the next one
   }
 }
 // ---------- Go to: moves over what she cannot walk ----------
-// The path helper walks steps of 0.3 m at most. When Go to's goal is cut off on foot, or a move makes the way much shorter,
-// she takes one on the way: up a ledge (c81_14r, a 0.62 m hoist), across a gap (fjump2, fjump1: standing jumps over 0.9 m)
-// or over a low box (c40_06_930). Each clip's own obstacle is measured once along its travel in the room it trained in:
-// where the surface first changes (a) and how much (h), and where it changes back (b). The room's edges within her walk are
-// matched against those (MOVE_TOL); the clip is set on the real edge (its start that far back from it, along the way it
-// goes) and she walks in to that start along it; then its tracker plays it as in the Level (the jump chain tracker; the
-// climb tracker with LEVEL.moveAssist's hand-up toward the clip's root, raised or lowered by the real ledge's difference),
-// and Go to carries on. A fall: the get-up, then a new plan from wherever she is.
+// The path helper walks steps of 0.3 m at most; the parkour planner (planner.js, planNext below) plans the whole way with
+// moves. Each of her trackers' moves is a clip: up a ledge (c81_14r, a 0.62 m hoist; steps up too), across a gap (fjump2,
+// fjump1: standing jumps over 0.9 m) or over a low box (c40_06_930). Each clip's own obstacle is measured once along its
+// travel in the room it trained in: where the surface first changes (a) and how much (h), and where it changes back (b).
+// The clip is set on the real edge (its start that far back from it, along the way it goes) and she walks in to that
+// start along it; then its tracker plays it as in the Level (the jump chain tracker; the climb tracker with
+// LEVEL.moveAssist's hand-up toward the clip's root, raised or lowered by the real ledge's difference), and Go to carries
+// on. A fall: the get-up, then a new plan from wherever she is.
 const MOVES = [{ kind: 'climb', clip: 'c81_14r', type: 'up' }, { kind: 'jump', clip: 'fjump2', type: 'gap' }, { kind: 'jump', clip: 'fjump1', type: 'gap' },
   { kind: 'climb', clip: 'c40_06_930', type: 'over' }];
-const MOVE_TOL = { at: 0.35, rise: 0.15, gap: [-0.15, 0.25], over: 0.12 };   // the real edge found within `at` of the clip's (the start then moved to match); a ledge within `rise` of the clip's; a gap this much narrower or wider; a box within `over` in height
-const MOVE_DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]].map(([x, z]) => [x / Math.hypot(x, z), z / Math.hypot(x, z)]);
-let gmove = null, gplan = false, gplanAt = -1;   // gmove: { M, start, u, land, dH, near, phase: 'in' | 'move', T, t0, at }; gplan: plan when next it can
+let gmove = null, gplan = false, gplanAt = -1;   // gmove: { M, start, u, land, dH, near, phase: 'in' | 'move' | 'settle' | 'blocked', T, t0, at, plan }; gplan: plan when next it can
 function boxTop(boxes, x, z) {   // the highest box top over (x, z) of a list of boxes (0: the floor)
   let t = 0; for (const b of boxes) { const l = math.qrot(math.qconj(b.q || [1, 0, 0, 0]), [x - b.c[0], 0, z - b.c[2]]); if (Math.abs(l[0]) < b.h[0] && Math.abs(l[2]) < b.h[2]) t = Math.max(t, b.c[1] + b.h[1]); }
   return t;
@@ -715,58 +714,37 @@ function moveShape(M) {   // the clip's obstacle along its travel: { c, yaw (its
   for (let s = 0; s < L + 1; s += 0.01) { const v = boxTop(room.boxes, ux * s, uz * s) - h0; if (a < 0) { if (Math.abs(v) > 0.15) { a = s; h = v; } } else if (Math.abs(v - h) > 0.15) { b = s; break; } }
   return (M.shape = { c, yaw: Math.atan2(ux, uz), L, a, b: b < 0 ? L + 1 : b, h, y0: clipAt(c, 0).root[1] });
 }
-function matchMove(M, x, z, u, h0) {   // M from a start near (x, z) going along u over the real room: { start, land, dH } or null
-  const S = moveShape(M), v = s => supportY(x + u[0] * s, z + u[1] * s, h0 + 1.2) - h0;
-  const first = (ox, oz) => { for (let s = 0; s < S.a + MOVE_TOL.at + 0.05; s += 0.02) if (Math.abs(supportY(ox + u[0] * s, oz + u[1] * s, h0 + 1.2) - h0) > 0.15) return s; return -1; };
-  const a = first(x, z); if (a < 0 || Math.abs(a - S.a) > MOVE_TOL.at) return null;
-  for (const o of [-0.25, 0.25]) if (Math.abs(first(x - u[1] * o, z + u[0] * o) - a) > 0.05) return null;   // an edge square to the way, 0.5 m of it (not a corner)
-  for (let s = -0.8; s < 0; s += 0.1) if (Math.abs(v(a - S.a + s)) > 0.08) return null;   // a clear run-in, level with the start
-  const H = v(a + 0.08); let b = -1;
-  if (M.type === 'up') {
-    if (Math.abs(H - S.h) > MOVE_TOL.rise) return null;
-    for (let s = a + 0.08; s < a + 0.7; s += 0.05) if (Math.abs(v(s) - H) > 0.06) return null;   // a top to stand on
-  } else {
-    if (M.type === 'gap' ? H > -0.25 : Math.abs(H - S.h) > MOVE_TOL.over) return null;
-    for (let s = a + 0.02; s < a + 1.6; s += 0.02) if (M.type === 'gap' ? v(s) > -0.1 : Math.abs(v(s)) < 0.06) { b = s; break; }
-    if (b < 0) return null; const w = b - a, wc = S.b - S.a;
-    if (M.type === 'gap' ? w < wc + MOVE_TOL.gap[0] || w > wc + MOVE_TOL.gap[1] : w > wc + 0.15) return null;
-    for (let s = b + 0.04; s < b + 0.6; s += 0.05) if (Math.abs(v(s)) > 0.06) return null;   // level ground beyond
+const gotoTarget = () => gmove ? (gmove.phase === 'settle' ? gmove.at : gmove.phase === 'blocked' ? gmove.stop : gmove.near ? gmove.start : gmove.pre) : goalOr();   // (settle: standing where she landed; blocked: before a move she can't do)
+// Go to's way there: the parkour planner (planner.js), the whole way to the goal with its moves, for PLAN.profile (what she
+// can be asked to do). Its first move, if a tracker of hers does it (PLAN_DO: the planner's move -> the clip), is set up
+// as Go to's moves are: the clip's start that far back from the real edge as the clip's own is, along the move's way, a
+// hoist's hand-up raised or lowered by the real ledge's difference; she walks to it and Go to's moves take it from there,
+// then plan again from where she lands. A move no tracker of hers does yet (a running leap, a high vault, the leap of
+// faith): she walks to its take-off and stops there, saying so.
+const PLAN = { profile: 'now' };
+const PLAN_DO = { jump: 'fjump2', step: 'c81_14r', hoist: 'c81_14r', vault: 'c40_06_930' };
+const PLAN_SAY = { step: 'step up', hoist: 'hoist up', vault: 'vault', jump: 'jump across', leap: 'running leap across', drop: 'drop down', faith: 'leap of faith' };
+let gplanned = null;   // the last plan (drawn by drawPath)
+function planNext(p, goalP) {
+  if (!levelRes) return null;
+  const pl = gplanned = parkourPlan([p[0], supportY(p[0], p[2], p[1]), p[2]], goalP, PLAN.profile); pathAt = -1;
+  if (!pl) { setStatus('Going to the goal: no way there found (the planner).'); return null; }
+  const m = pl.moves[0], say = pl.moves.map(m => `${PLAN_SAY[m.kind]} ${m.size} m`).join(', then ');
+  if (!m) { setStatus('Going to the goal.'); return null; }
+  const M = MOVES.find(x => x.clip === PLAN_DO[m.kind]);
+  if (!M || m.size > (PLAN_PROFILES.now[m.kind] || 0)) {
+    setStatus(`On the way: ${PLAN_SAY[m.kind]} ${m.size} m, which no tracker of hers does yet; she waits at its take-off.`);
+    return { phase: 'blocked', stop: m.from, plan: m, M: { type: m.kind, clip: null } };
   }
-  const sh = a - S.a, start = [x + u[0] * sh, h0, z + u[1] * sh], far = M.type === 'up' ? a + 0.5 : b + 0.4;
-  return { start, land: [x + u[0] * far, h0 + (M.type === 'up' ? H : 0), z + u[1] * far], dH: M.type === 'up' ? H - S.h : 0 };
+  setStatus(`Going to the goal: ${say}.`);
+  const S = moveShape(M), u = m.u, e = m.edge, start = [e[0] - u[0] * S.a, m.from[1], e[2] - u[1] * S.a];
+  return { M, u, start, pre: [start[0] - u[0] * 0.6, start[1], start[2] - u[1] * 0.6], land: m.to, dH: M.type === 'up' ? m.size - S.h : 0, near: false, phase: 'in', plan: m };
 }
-const navCellAt = (x, z) => { const ix = Math.floor((x + NAV_HALF) / NAV_CELL), iz = Math.floor((z + NAV_HALF) / NAV_CELL); return ix < 0 || iz < 0 || ix >= NAV_N || iz >= NAV_N ? -1 : iz * NAV_N + ix; };
-function planMove(p, goalP) {   // the best move on the way to goalP, or null when walking there is about as short
-  if (!levelRes || !roomOn || !roomDoc) return null;
-  const dA = navField([p[0], 0, p[2]]), dG = navField(goalP), G = navGrid(), N = NAV_N;
-  const near = c => { let m = 255; const cx = c % N, cz = Math.floor(c / N); for (let dz = -1; dz <= 1; dz++) for (let dx = -1; dx <= 1; dx++) { const nx = cx + dx, nz = cz + dz; if (nx >= 0 && nz >= 0 && nx < N && nz < N) m = Math.min(m, dG[nz * N + nx]); } return m; };
-  const hc = navCellAt(p[0], p[2]), walk = hc < 0 ? 255 : near(hc); let best = null;
-  const fy = feetYaw(world.b.map(b => b.q)), turn = u => { const d = Math.atan2(u[0], u[1]) - fy; return Math.abs(Math.atan2(Math.sin(d), Math.cos(d))); };   // (a sharp turn from standing trips the walk)
-  if (walk < 12) return null;
-  for (let c = 0; c < N * N; c++) {
-    if (dA[c] === 255 || G[c] >= 1000 || (best && dA[c] + 6 >= best.cost)) continue;
-    const x = -NAV_HALF + (c % N + 0.5) * NAV_CELL, z = -NAV_HALF + (Math.floor(c / N) + 0.5) * NAV_CELL, h0 = G[c];
-    for (const u of MOVE_DIRS) {
-      let edge = false; for (const s of [0.3, 0.7, 1.1, 1.5]) if (Math.abs(supportY(x + u[0] * s, z + u[1] * s, h0 + 1.2) - h0) > 0.15) { edge = true; break; }
-      if (!edge) continue;
-      for (const M of MOVES) {
-        const m = matchMove(M, x, z, u, h0); if (!m) continue;
-        const lc = navCellAt(m.land[0], m.land[2]); if (lc < 0 || near(lc) === 255) continue;
-        const cost = dA[c] + near(lc) + 6 + 8 * turn(u) / Math.PI; if (!best || cost < best.cost) best = { ...m, M, u, cost };
-      }
-    }
-  }
-  if (!best || (walk < 255 && walk <= 1.5 * best.cost)) return null;
-  const dx = p[0] - best.start[0], dz = p[2] - best.start[2], along = dx * best.u[0] + dz * best.u[1], across = -dx * best.u[1] + dz * best.u[0];
-  const lined = along > -1.2 && along < 0.05 && Math.abs(across) < 0.3 && turn(best.u) < 0.6;   // already behind the start along the way: straight there
-  return { ...best, pre: [best.start[0] - best.u[0] * 0.6, best.start[1], best.start[2] - best.u[1] * 0.6], near: lined, phase: 'in' };
-}
-const gotoTarget = () => gmove ? (gmove.phase === 'settle' ? gmove.at : gmove.near ? gmove.start : gmove.pre) : goalOr();   // (settle: standing where she landed)
 function gotoMoveCheck() {   // walking: plan, or begin the move once she stands at its start
   const p = world.b[0].x;
   if (!gmove && goal && reachedAt < 0 && fallenAt < 0 && (gplan || world.t - gplanAt > 3)) {
-    gplan = false; gplanAt = world.t; gmove = planMove(p, goal);
-    if (gmove) { setStatus(`Going to the goal, by a ${{ up: 'hoist up a ledge', gap: 'jump across a gap', over: 'jump over a box' }[gmove.M.type]}.`); emit('plan', { kind: gmove.M.type, clip: gmove.M.clip, start: gmove.start.slice() }); }
+    gplan = false; gplanAt = world.t; gmove = planNext(p, goal);
+    if (gmove?.phase === 'in') emit('plan', { kind: gmove.M.type, move: gmove.plan.kind, size: gmove.plan.size, clip: gmove.M.clip, start: gmove.start.slice() });
   }
   if (gmove?.phase === 'settle') {
     if (world.t > gmove.until) {   // on the goal's own surface and near it: there (a hoist ends facing back over its edge, and turning round on a narrow top is where the walk falls)
@@ -1436,7 +1414,10 @@ let showPath = true, pathAt = -1;
 function drawPath() {
   const on = !!(showPath && world && goal && mode === 'skill' && SKILLS[skill].goTo && reachedAt < 0);
   pathLine.visible = aimDot.visible = on; if (!on || Math.abs(world.t - pathAt) < 0.2) return; pathAt = world.t;
-  const p = world.b[0].x, tg = gmove ? gotoTarget() : goal, pts = [[p[0], supportY(p[0], p[2], p[1]), p[2]], ...navRoute(p, tg), tg, ...(gmove?.start ? [gmove.start, gmove.land] : [])], v = [], idx = [];
+  // the planner's way (its walks and, over each move, its take-off and landing), from where she is; else the path helper's
+  const p = world.b[0].x, tg = gmove ? gotoTarget() : goal, here = [p[0], supportY(p[0], p[2], p[1]), p[2]];
+  const route = gplanned ? gplanned.steps.flatMap(s => s.kind === 'walk' ? s.pts : [s.from, [(s.from[0] + s.to[0]) / 2, Math.max(s.from[1], s.to[1]) + 0.35, (s.from[2] + s.to[2]) / 2], s.to]) : null;
+  const pts = route ? [here, ...route.slice(Math.max(0, route.findIndex(q => Math.hypot(q[0] - p[0], q[2] - p[2]) < 0.4)))] : [here, ...navRoute(p, tg), tg, ...(gmove?.start ? [gmove.start, gmove.land] : [])], v = [], idx = [];
   pts.forEach((q, i) => {
     const a = pts[Math.max(0, i - 1)], c = pts[Math.min(pts.length - 1, i + 1)], dx = c[0] - a[0], dz = c[2] - a[2], l = Math.hypot(dx, dz) || 1, w = 0.03;
     v.push(q[0] - dz / l * w, q[1] + 0.03, q[2] + dx / l * w, q[0] + dz / l * w, q[1] + 0.03, q[2] - dx / l * w);
@@ -1600,6 +1581,7 @@ function wasdStep() {
     if (wasdOn && !gmove) { wasdOn = false; goal = [p[0], supportY(p[0], p[2], p[1]), p[2]]; reachedAt = world.t; setStatus(''); }
     return;
   }
+  if (gmove?.phase === 'blocked') gmove = null;   // (a move she can't do ahead: steer elsewhere)
   if (gmove && gmove.phase !== 'in') return;
   const [dx, dz] = wasdDir();
   if (gmove && dx * gmove.u[0] + dz * gmove.u[1] < 0.5) { gmove = null; gplan = true; }   // turned away from the move she was walking to
@@ -1715,6 +1697,10 @@ window.umiBody = {
   level: () => level && { at: level.at, of: level.segs.length, kind: level.segs[level.at]?.kind, phase: level.phase, falls: level.falls, t: level.spent + world.t, start: { ...level.segs[level.at]?.start } },   // the Level's progress (start: where the segment she is on starts)
   parc: (k, set = {}) => { Object.assign(PARC, set); if (k !== undefined && parcBank && SKILLS[skill]?.parc) parcNext(k); return parc && { clip: parc.room.clip, set: parc.room.set, source: parc.room.source, t: world.t - parc.start, T: parc.clip.T, done: parc.done, tries: parc.tries }; },   // the PARC skill: start room k of PARC.sets (null: a random one), settings (PARC); what she is on
   gotoMove: () => gmove && { kind: gmove.M.type, clip: gmove.M.clip, phase: gmove.phase, start: gmove.start?.slice(), land: gmove.land?.slice(), u: gmove.u?.slice() },   // Go to's planned or running move
+  planner(o = {}) {   // the parkour planner: Go to's profile ('now', 'athlete'); with { from, to } a plan between them
+    if (o.profile) { PLAN.profile = o.profile; gplan = true; gmove = gmove?.phase === 'blocked' ? null : gmove; }
+    return o.to ? parkourPlan(o.from || world.b[0].x, o.to, o.profile || PLAN.profile) : { profile: PLAN.profile, plan: gplanned };
+  },
   course(seed) {   // Rooftops: a layout by seed (returns its route tree and her run on it)
     if (seed !== undefined) courseLayout(seed);
     const C = ROOMS.find(R => R.course)?.doc;
