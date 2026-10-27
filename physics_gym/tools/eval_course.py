@@ -19,6 +19,10 @@ def take(k):
     global o; v = np.frombuffer(raw, np.float32, k, o).copy(); o += 4 * k; return torch.tensor(v)
 Win = torch.zeros(d, OBS); Win[:, :hobs] = take(d * hobs).view(d, hobs); b = take(d); Wo = torch.zeros(ACT, d); Wo[:hact] = take(hact * d).view(hact, d)
 bo = torch.zeros(ACT); bo[:hact] = take(hact); take(hact); mean, sd = torch.zeros(OBS), torch.ones(OBS); mean[:hobs], sd[:hobs] = take(hobs), take(hobs)
+actor = None
+if os.path.exists(pre + ".mlp.pt"):   # ppo_gpu.py --mlp: a float MLP actor (the head file still holds the normaliser)
+    from ppo_gpu import mlp_actor
+    ck = torch.load(pre + ".mlp.pt", map_location="cpu"); actor = mlp_actor(ck["obs"], ck["width"], ck["act"]); actor.load_state_dict(ck["actor"]); actor.eval()
 room = pool.rooms(); clip_of = [names[r % len(names)] for r in room]
 goal = {k: clips[k]["root"][-1] - np.array([clips[k]["root"][0][0], 0, clips[k]["root"][0][2]]) for k in names}   # the clip's end, in its room (course: root at frame 0 over the origin,
 lift = np.zeros(n)                                                                                                      # raised by what it starts on: measured from where she is put)
@@ -28,7 +32,8 @@ state = m.zero_state(n)
 with torch.no_grad():
     for t in range(steps):
         ob = pool.obs(); on = ((ob - mean) / sd).clamp(-5, 5)
-        x = m.forward((on @ Win.T + b)[:, None], state=state, stream=True)[:, 0]; u, _ = nt.rmsnorm(x, m.P["norm_f"]); act = torch.tanh(bo + u @ Wo.T).clamp(-1, 1)
+        if actor is not None: act = torch.tanh(actor(on)).clamp(-1, 1)
+        else: x = m.forward((on @ Win.T + b)[:, None], state=state, stream=True)[:, 0]; u, _ = nt.rmsnorm(x, m.P["norm_f"]); act = torch.tanh(bo + u @ Wo.T).clamp(-1, 1)
         if t == 0:
             for e in range(n): L.pool_pelvis(pool.p, int(e), buf.ctypes.data_as(ctypes.c_void_p)); lift[e] = buf[1] - clips[clip_of[e]]["root"][0][1]
         for e in np.nonzero(alive & (check == t))[0]:

@@ -56,6 +56,13 @@ class Core(torch.autograd.Function):
         return ctx.model.backward(ctx.tape, g.contiguous()), None, None, None, None
 
 
+def mlp_actor(obs, h, act):
+    """--mlp: a plain float32 actor, obs -> h -> h -> h -> act (ELU; tanh outside), the last layer small so she starts near zero action."""
+    net = torch.nn.Sequential(torch.nn.Linear(obs, h), torch.nn.ELU(), torch.nn.Linear(h, h), torch.nn.ELU(), torch.nn.Linear(h, h), torch.nn.ELU(), torch.nn.Linear(h, act))
+    with torch.no_grad(): net[-1].weight.mul_(0.01); net[-1].bias.zero_()
+    return net
+
+
 def save_head(path, EN, mean, sd, d, OBS, ACT, CR):
     with open(path, "wb") as f:
         f.write(b"TSPH"); f.write(struct.pack("<3i", d, OBS, ACT))
@@ -98,6 +105,8 @@ def main():
     A("--amp", default="", help="file.bin[:clip,...]: motion capture (30 Hz) for a learned style reward (see the top of this file); with goto_free also its start states")
     A("--amp-w", type=float, default=0.7, help="the style reward's weight (it is 0..1 a step)")
     A("--amp-lr", type=float, default=1e-4); A("--amp-gp", type=float, default=5.0, help="gradient penalty on the motion capture")
+    A("--mlp", type=int, default=0, help="the actor a plain float32 MLP of this width (3 hidden layers, ELU, feed-forward; Adam at --lr) instead of the nanotss stack: "
+      "a capacity check against the small ternary one; saved as <out>.mlp.pt beside <out>.head (the normaliser, log_std), read by tools/eval_course.py")
     A("--amp-steps", type=int, default=16, help="discriminator updates per iteration"); A("--amp-batch", type=int, default=4096)
     a = ap.parse_args()
     if a.threads: os.environ["OMP_NUM_THREADS"] = str(a.threads)
@@ -159,6 +168,11 @@ def main():
     Em = {k: torch.zeros_like(v) for k, v in EN.items()}; Ev = {k: torch.zeros_like(v) for k, v in EN.items()}
     Cm = {k: torch.zeros_like(v) for k, v in CR.items()}; Cv = {k: torch.zeros_like(v) for k, v in CR.items()}
     mean = torch.tensor(mean, device=dev); sd = torch.tensor(sd, device=dev)
+    actor = None
+    if a.mlp:
+        torch.manual_seed(a.seed + 3); actor = mlp_actor(OBS, a.mlp, ACT).to(dev)
+        if a.load and os.path.exists(a.load + ".mlp.pt"): actor.load_state_dict(torch.load(a.load + ".mlp.pt", map_location=dev)["actor"])
+        aopt = torch.optim.Adam(actor.parameters(), lr=a.lr)
     osum = torch.tensor(osum, device=dev); osq = torch.tensor(osq, device=dev)
 
     def critic(o):
@@ -193,11 +207,13 @@ def main():
 
     def save_ckpt():
         m.save(a.out + ".tss"); save_head(a.out + ".head", EN, mean, sd, d, OBS, ACT, CR)
+        if actor is not None: torch.save({"actor": actor.state_dict(), "width": a.mlp, "obs": OBS, "act": ACT}, a.out + ".mlp.pt")
         if amp is not None: torch.save({"D": D.state_dict(), "opt": dopt.state_dict(), "mu": amp["mu"], "sd": amp["sd"]}, a.out + ".amp.pt")
 
     nenv, hor = a.envs, a.horizon
     n_params = sum(v.numel() for f, v in m.P.items() if f != "embed")
-    print(json.dumps({"event": "config", "task": a.task, "model": "nanotss byte stack (ssm-tree + fff, ternary STE) on " + str(dev),
+    if actor is not None: n_params = sum(p.numel() for p in actor.parameters())
+    print(json.dumps({"event": "config", "task": a.task, "model": (f"float32 MLP actor {a.mlp}x3 (ELU)" if actor is not None else "nanotss byte stack (ssm-tree + fff, ternary STE)") + " on " + str(dev),
                       "physics": "cuda (body.c / env.c as device code)" if Pool is ge.GpuPool else "cpu (libtssenv)",
                       "optimizer": "tss_train_step rule: blockwise muon + adam", "core_params": int(n_params), "io_params": int(sum(v.size for v in ends.values())),
                       "width": d, "trees": c.T, "depth": c.D, "envs": nenv, "horizon": hor}), flush=True)
@@ -229,9 +245,11 @@ def main():
                 if amp is not None: AFS[:, t] = oraw[:, :14 * 15]
                 VAL[:, t] = critic(ot)
                 if t == hor: break
-                x0 = ot @ EN["Win"].T + EN["bin"]
-                x = m.forward(x0[:, None], state=state, stream=True)[:, 0]
-                mu = head(x, m.P["norm_f"])
+                if actor is not None: mu = torch.tanh(actor(ot))
+                else:
+                    x0 = ot @ EN["Win"].T + EN["bin"]
+                    x = m.forward(x0[:, None], state=state, stream=True)[:, 0]
+                    mu = head(x, m.P["norm_f"])
                 z = torch.randn(mu.shape, device=dev, generator=gen)
                 Araw[:, t] = mu + torch.exp(EN["log_std"]) * z
                 LP[:, t] = (-0.5 * z.double() ** 2 - EN["log_std"].double() - 0.9189385332046727).sum(-1)
@@ -302,10 +320,12 @@ def main():
                 first = (ttT == 0)
                 st = {k: [torch.where(first.view(-1, *[1] * (v.dim() - 1)), v[eeT], torch.zeros((), device=dev)) for v in vs] for k, vs in H0.items()}
                 hstep += 1
-                x0 = ob @ EN["Win"].T + EN["bin"]
-                xo = Core.apply(x0, m, st, llT, [hstep * 1000003 + b for b in range(ns)])
-                nf = m.P["norm_f"].detach().clone().requires_grad_(True)
-                mu = head(xo, nf)
+                if actor is not None: mu = torch.tanh(actor(ob))
+                else:
+                    x0 = ob @ EN["Win"].T + EN["bin"]
+                    xo = Core.apply(x0, m, st, llT, [hstep * 1000003 + b for b in range(ns)])
+                    nf = m.P["norm_f"].detach().clone().requires_grad_(True)
+                    mu = head(xo, nf)
                 zz = (acts - mu) / torch.exp(EN["log_std"])
                 lp = (-0.5 * zz.double() ** 2 - EN["log_std"].double() - 0.9189385332046727).sum(-1)
                 if ep == 0 and bb == 0: lpdiff = lpdiff + (lp - lpo).abs()[vmask].sum().detach(); lpn += int(ll.sum())
@@ -317,8 +337,12 @@ def main():
                 nsamp = int(ll.sum())
                 loss = (sur * vmask).sum() - a.ent * EN["log_std"].sum() * nsamp
                 loss.backward()
-                m.G["norm_f"] += nf.grad
-                opt.step(nsamp)
+                if actor is not None:   # the summed loss as a mean, clipped, Adam
+                    for p_ in actor.parameters(): p_.grad /= nsamp
+                    torch.nn.utils.clip_grad_norm_(actor.parameters(), 1.0); aopt.step(); aopt.zero_grad(set_to_none=True)
+                else:
+                    m.G["norm_f"] += nf.grad
+                    opt.step(nsamp)
                 adam_dict(EN, Em, Ev, a.head_lr, 1.0 / nsamp, hstep)
                 with torch.no_grad(): EN["log_std"].clamp_(-3, 0)
                 # critic
@@ -344,7 +368,7 @@ def main():
             el = time.time() - t0; cnt = int(ep_cnt)
             rw = float(ep_ret_sum) / cnt if cnt else 0; ln = float(ep_len_sum) / cnt / HZ if cnt else 0
             print(json.dumps({"event": "iter", "iter": it, "seconds": round(el), "steps": steps_total, "episode_return": round(rw, 1), "episode_s": round(ln, 2),
-                              "episodes": cnt, "goals_reached": goals_it, "clip_frac": round(int(clipped) / (a.epochs * nenv * hor), 3), "value_loss": round(float(vloss) / (a.epochs * nenv * hor), 3),
+                              "episodes": cnt, "fell_share": round(int(ep_fell) / cnt, 3) if cnt else 0, "goals_reached": goals_it, "clip_frac": round(int(clipped) / (a.epochs * nenv * hor), 3), "value_loss": round(float(vloss) / (a.epochs * nenv * hor), 3),
                               "std": round(float(torch.exp(EN["log_std"]).mean()), 3), "lp_gap": float(f"{float(lpdiff) / max(lpn, 1):.2e}"),
                               "rollout_share": round(t_roll / el, 2), "train_share": round(t_train / el, 2), "steps_per_s": round(steps_total / el), **amp_log}), flush=True)
             if a.assist_decay > 0:   # the checkpoint: the lowest assist reached, the best return there
