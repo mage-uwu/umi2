@@ -58,6 +58,14 @@ for l, (ta, tf) in enumerate(zip(A[1]["layers"], Fz[1]["layers"])):
 for f in nt.FIELDS:
     dmax, scale = diff(A[3][f], Fz[3][f])
     if scale > 0: print(f"  grad {f:8s} max diff {dmax:.2e} of {scale:.2e} ({dmax / scale:.1e} relative)")
+# the verdict (pod jobs gate on the exit status): a bug in the fused scan (an index, a length, a missing zero) shows as
+# differences the size of the values; float order and the odd routing flip stay orders of magnitude below these
+rel = lambda dm: dm[0] / max(dm[1], 1e-12)
+worst = {"output": rel(vdiff(A[0], Fz[0])), "input gradient": rel(vdiff(A[2], Fz[2])),
+         "parameter gradients": max(rel(diff(A[3][f], Fz[3][f])) for f in nt.FIELDS if diff(A[3][f], Fz[3][f])[1] > 0)}
+limit = {"output": 1e-3, "input gradient": 2e-2, "parameter gradients": 0.1}
+parity_ok = all(worst[k] <= limit[k] for k in worst)
+print("parity " + ("OK" if parity_ok else "FAIL") + ": " + ", ".join(f"{k} {worst[k]:.1e} (limit {limit[k]:.0e})" for k in worst))
 full = lens == L   # (the carried state: the sequences that run the whole window; shorter ones stop at their length fused)
 print(f"carried state (full-length sequences): max diff {max(diff(a[full], b[full])[0] for a, b in zip(A[4]['h'], Fz[4]['h'])):.2e}; visited rows equal: {bool((A[6] == Fz[6]).all())}")
 ts = [run(True)[5] for _ in range(3)]; tl = [run(False)[5] for _ in range(2)]
@@ -75,3 +83,4 @@ if os.environ.get("SCAN_PROF"):
     run(True)
     with torch.profiler.profile(activities=[torch.profiler.ProfilerActivity.CPU, torch.profiler.ProfilerActivity.CUDA]) as prof: run(True)
     print(prof.key_averages().table(sort_by="self_cuda_time_total", row_limit=25))
+sys.exit(0 if parity_ok else 1)

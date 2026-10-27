@@ -78,7 +78,8 @@ def main():
     A("--gamma", type=float, default=0.95); A("--lam", type=float, default=0.95); A("--ent", type=float, default=0)
     A("--device", default="cuda" if torch.cuda.is_available() else "cpu"); A("--cpu-physics", action="store_true")
     A("--assist-decay", type=float, default=0, help="the assist from --assist down to 0 in a straight line over this many seconds, then none (getting up, where no episode ends early and --assist-auto has nothing to go by); the checkpoint as --assist-auto's")
-    A("--assist-auto", action="store_true", help="adapt the assist: down by 15%% (at least 0.005) while episodes last over 60%% of their length, up 0.02 (to --assist at most) under 30%%")
+    A("--assist-auto", action="store_true", help="adapt the assist: down by 15%% (at least 0.005) while episodes get through (--assist-target: 60%% of their length, or of the clips with --tail), up 0.02 (to --assist at most) under that less 0.3")
+    A("--assist-target", type=float, default=0.6, help="with --assist-auto: the share of episodes she must get through (finish a clip, or last) for the assist to come down; under it less 0.3, it goes up")
     A("--fresh-inputs", default="", help="on --load: inputs the loaded policy never saw vary (always zero in its task), as groups: goal, grip, probe, path, touch, "
       "muscle; their weights are zeroed and their normaliser starts afresh, so the policy starts out acting exactly as it did "
       "(e.g. 'goal,grip' when a walk imitation prior starts go-to)")
@@ -354,7 +355,7 @@ def main():
                 if cnt >= 8 and (cur_assist < best_assist - 1e-9 or (abs(cur_assist - best_assist) < 1e-9 and rw > best)):
                     best_assist, best = cur_assist, rw; save_ckpt()
                 frac = (1 - int(ep_fell) / cnt if a.tail > 0 else ln * HZ / pool.steps) if cnt else 0   # with --tail: the clips finished
-                down = cur_assist - max(0.005, 0.15 * cur_assist); new = (down if down > 0.004 else 0.0) if frac > 0.6 else min(a.assist, cur_assist + 0.02) if frac < 0.3 else cur_assist
+                down = cur_assist - max(0.005, 0.15 * cur_assist); new = (down if down > 0.004 else 0.0) if frac > a.assist_target else min(a.assist, cur_assist + 0.02) if frac < a.assist_target - 0.3 else cur_assist
                 if new != cur_assist: cur_assist = new; pool.set_assist(cur_assist)
                 print(json.dumps({"event": "assist", "iter": it, "survival": round(frac, 2), "assist": round(cur_assist, 3), "checkpoint_assist": round(best_assist, 3)}), flush=True)
             elif cnt >= 8 and rw > best:
