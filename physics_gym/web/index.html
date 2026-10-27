@@ -107,6 +107,7 @@ button:disabled { opacity: .45; cursor: default; }
       <button id="v-in" title="Zoom in (+, Ctrl + scroll, pinch)">+</button><button id="v-out" title="Zoom out (-)">&minus;</button>
       <button id="v-reset">Reset view</button>
       <button id="v-room" aria-pressed="true" title="The room's boxes, drawn and simulated; off: the open floor">Room</button>
+      <button id="v-layout" hidden title="Another layout of the Rooftops course: its gaps, heights, walls, stairs and inclines drawn again, turned and mirrored">Layout 0</button>
     </div>
     <div class="group secondary" role="group" aria-label="Face">
       <span class="label">Face</span>
@@ -146,6 +147,7 @@ import { VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm';
 import { World, setRoom, supportY, setHandUp, observeGoto, navField, navGrid, navRoute, navAim, NAV_N, NAV_CELL, NAV_HALF, nearestFrame, BODY_DEFS, B, standPose, swayPose, crawlPose, applyAction, observe, fallen, loadPolicy, loadTssPolicy, loadClips, poseFromClip, setAssist, math, CTRL_HZ } from './body.js';
 import { createShaderView } from './shader-view.js';
 import { createStyleView } from './style-view.js';
+import { makeCourse } from './course.js';
 
 const status = document.getElementById('status');
 const setStatus = (t, alert = false) => { status.textContent = t; status.classList.toggle('alert', alert); };
@@ -193,9 +195,12 @@ const roomGroup = new THREE.Group(); scene.add(roomGroup);
 // Two rooms: the gym (stage 1: climbing wall, parkour, stairs, slopes, tunnels) and the slope gym (stage 2: ramps,
 // stair pyramids, a ridge, a hill, uneven tiles, a jump terrace, walls in the way); the Room button goes through them
 // and the open floor.
-const ROOMS = [{ name: 'Slope gym', file: 'room_slope.json' }, { name: 'Gym', file: 'room.json' }];
-for (const R of ROOMS) { try { const r = await fetch(R.file); if (r.ok) R.doc = await r.json(); } catch (e) { R.doc = null; } }
-let roomIdx = ROOMS.findIndex(R => R.doc), roomDoc = roomIdx >= 0 ? ROOMS[roomIdx].doc : null;
+// Rooftops (course.js): the parkour course, a new layout of it for each seed (#course=N opens on layout N)
+const ROOMS = [{ name: 'Slope gym', file: 'room_slope.json' }, { name: 'Gym', file: 'room.json' }, { name: 'Rooftops', course: true }];
+for (const R of ROOMS) { if (!R.file) continue; try { const r = await fetch(R.file); if (r.ok) R.doc = await r.json(); } catch (e) { R.doc = null; } }
+let courseSeed = +(location.hash.match(/course=(\d+)/)?.[1] || 0);
+for (const R of ROOMS) if (R.course) R.doc = makeCourse(courseSeed);
+let roomIdx = /course=/.test(location.hash) ? ROOMS.findIndex(R => R.course) : ROOMS.findIndex(R => R.doc), roomDoc = roomIdx >= 0 ? ROOMS[roomIdx].doc : null;
 const edgeMat = new THREE.LineBasicMaterial({ color: 0x2a2e4a, transparent: true, opacity: .35 });
 function buildRoom() {
   for (const m of [...roomGroup.children]) { m.geometry.dispose(); m.material.dispose(); m.children.forEach(e => e.geometry.dispose()); roomGroup.remove(m); }
@@ -209,6 +214,7 @@ function buildRoom() {
     m.castShadow = see === 1; m.receiveShadow = true; m.userData = { feature: b.feature, kind: b.kind };
     m.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo), edgeMat)); roomGroup.add(m);
   }
+  if (roomDoc.course) courseMarks(roomDoc.course);
   const [x0, x1, z0, z1] = roomDoc.bounds;
   for (const m of [floor, shadowCatcher]) { m.geometry.dispose(); m.geometry = new THREE.PlaneGeometry(x1 - x0, z1 - z0); m.position.set((x0 + x1) / 2, m.position.y, (z0 + z1) / 2); }
   floor.material.alphaMap = null; floor.material.needsUpdate = true;
@@ -524,11 +530,17 @@ function reset() {
     for (const b of world.b) { b.x = [b.x[0], b.x[1] - lo, b.x[2]]; b.xprev = b.x; }
     world.target = ref.slice();
   }
+  const S = roomOn && roomDoc?.spawn;   // a room's spawn (Rooftops: the plaza): her pose, as posed at the origin, moved and turned there
+  if (S && !SKILLS[skill].jump && !SKILLS[skill].parc && !SKILLS[skill].level) {
+    const q = math.qexp([0, S.yaw, 0]), mv = v => math.qrot(q, v);
+    for (const b of world.b) { b.x = math.vadd(mv(b.x), [S.x, 0, S.z]); b.q = math.qmul(q, b.q); b.v = mv(b.v); b.w = mv(b.w); b.xprev = b.x; }
+    focus.set(S.x, 0.85, S.z);
+  }
   if (SKILLS[skill].jump && jumpClips) jumpStart();
   if (SKILLS[skill].parc && parcClips) { parc = null; parcNext(); }
   if (SKILLS[skill].level && levelRes) { levelStart(); return; }
   policy?.reset();
-  upSince = world.t; fallenAt = -1; prev = snapshot(); hist = [{ t: world.t, s: prev }]; springT = world.t; emit('reset', { skill });
+  upSince = world.t; fallenAt = -1; prev = snapshot(); hist = [{ t: world.t, s: prev }]; springT = world.t; courseReset(); emit('reset', { skill });
 }
 const PUSH_N = 100;   // the strongest push the current balance controller has trained on
 function push(dir, newtons = PUSH_N, bodyName = 'chest') {
@@ -1029,7 +1041,7 @@ function step(now) {
   const dt = Math.min((now - last) / 1000, 0.2);
   acc = Math.min(acc + dt, 0.2); last = now;
   if (world) {
-    while (acc >= 1 / CTRL_HZ) { control(); acc -= 1 / CTRL_HZ; }
+    while (acc >= 1 / CTRL_HZ) { control(); courseStep(); acc -= 1 / CTRL_HZ; }
     drawPath();
     const renderT = world.t - 1 / CTRL_HZ + acc;   // drawn one control step behind, interpolated
     const tS = performance.now();
@@ -1109,6 +1121,7 @@ let roomOn = !!roomDoc;
 function setRoomOn(on) {
   roomOn = !!on && !!roomDoc; setRoom(roomOn ? roomDoc.boxes : []); roomGroup.visible = roomOn;
   const b = document.getElementById('v-room'); b.setAttribute('aria-pressed', String(roomOn)); b.textContent = roomOn ? ROOMS[roomIdx].name : 'No room';
+  const L = document.getElementById('v-layout'); L.hidden = !(roomOn && roomDoc?.course); L.textContent = `Layout ${roomDoc?.seed ?? 0}`;
   return roomOn;
 }
 // the Room button: each room in turn, then the open floor, then the first room again (she starts over in the new one)
@@ -1341,6 +1354,64 @@ for (const [id, m] of [['c-push', 'push'], ['c-grab', 'grab'], ['c-goal', 'goal'
 // The goal (the Go to skill): a marker set on any surface she can stand on (a click on the floor or on the top of a
 // room box; a wall's side is no place to stand). It stays where it is across resets and skills.
 let goal = null;
+// ---------- Rooftops (course.js): the course's places and route tree drawn, and where she has been ----------
+// The sync points: gold rings; the bell tower: a red banner; the route tree: dashed lines between the places, green where
+// a skill of hers does the move, amber where her motions have it but no tracker does it alone yet, red beyond them.
+function courseMarks(C) {   // (also at start-up, #course=N: so nothing here may be a const declared below)
+  const COURSE_RATING = { known: 0x4fae62, stretch: 0xe0a030, beyond: 0xd04848 };
+  const at = id => C.nodes.find(n => n.id === id).at, none = () => {};
+  const add = o => { o.raycast = none; o.userData.kind = 'mark'; roomGroup.add(o); };
+  for (const n of C.nodes) {
+    if (n.kind === 'sync' || n.kind === 'tower') {
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.35, 0.03, 10, 48), new THREE.MeshBasicMaterial({ color: n.kind === 'tower' ? 0xc0392b : 0xd4a52a }));
+      ring.rotation.x = -Math.PI / 2; ring.position.set(n.at[0], n.top + 0.03, n.at[2]); add(ring);
+      const tall = n.kind === 'tower' ? 1.6 : 0.9, pole = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, tall, 8), new THREE.MeshBasicMaterial({ color: 0x5a4632 }));
+      pole.position.set(n.at[0], n.top + tall / 2, n.at[2]); add(pole);
+      const flag = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.22), new THREE.MeshBasicMaterial({ color: n.kind === 'tower' ? 0xc0392b : 0xd4a52a, side: THREE.DoubleSide }));
+      flag.position.set(n.at[0] + 0.17, n.top + tall - 0.12, n.at[2]); add(flag);
+    }
+  }
+  for (const e of C.edges) {
+    const a = at(e.from), b = at(e.to);
+    const g = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(a[0], a[1] + 0.12, a[2]), new THREE.Vector3((a[0] + b[0]) / 2, Math.max(a[1], b[1]) + 0.35, (a[2] + b[2]) / 2), new THREE.Vector3(b[0], b[1] + 0.12, b[2])]);
+    const l = new THREE.Line(g, new THREE.LineDashedMaterial({ color: COURSE_RATING[e.rating], dashSize: 0.18, gapSize: 0.1, transparent: true, opacity: 0.8 }));
+    l.computeLineDistances(); add(l);
+  }
+}
+// The run: the places she has stood on (in order), when she reached the bell tower's top and the hay after it, her falls.
+let courseRun = null;
+function courseReset() {
+  courseRun = roomOn && roomDoc?.course ? { seen: [], tower: -1, done: -1, falls: 0, down: false, t0: world.t } : null;
+  if (courseRun) setStatus('Rooftops: reach the top of the bell tower by any route, then take the leap of faith into the hay.');
+}
+function courseStep() {
+  const C = courseRun && roomOn && roomDoc?.course; if (!C || courseRun.done >= 0) return;
+  const P = world.b[0].x, foot = Math.min(world.lowest(B.L_FOOT), world.lowest(B.R_FOOT)), t = world.t - courseRun.t0;
+  if (fallenAt >= 0 && !courseRun.down) courseRun.falls++;
+  courseRun.down = fallenAt >= 0;
+  const syncs = C.nodes.filter(n => n.kind === 'sync');
+  for (const n of C.nodes) {
+    const [x0, x1, z0, z1] = n.rect; if (!(P[0] > x0 && P[0] < x1 && P[2] > z0 && P[2] < z1)) continue;
+    // on it: standing on its top (her feet there, she up), or for the hay landed in it however she lands (the leap ends lying)
+    const on = n.kind === 'hay' ? P[1] < n.top + 0.9 : fallenAt < 0 && Math.abs(foot - n.top) < 0.15;
+    if (!on || courseRun.seen.includes(n.id)) continue;
+    courseRun.seen.push(n.id); emit('course', { node: n.id, t });
+    if (n.kind === 'sync') setStatus(`Sync point ${syncs.filter(m => courseRun.seen.includes(m.id)).length} of ${syncs.length}: ${n.name.replace(', sync point', '')}.`);
+    if (n.id === 'tower' && courseRun.tower < 0) { courseRun.tower = t; setStatus(`Top of the bell tower in ${t.toFixed(1)} s. Now the leap of faith into the hay.`); }
+    if (n.id === 'hay' && courseRun.tower >= 0) {
+      courseRun.done = t;
+      const routes = [...new Set(C.edges.filter(e => courseRun.seen.includes(e.to) && (e.from === 'start' || courseRun.seen.includes(e.from))).map(e => e.route))].filter(r => r !== 'finish');
+      setStatus(`Course complete in ${t.toFixed(1)} s, by the ${routes.join(', ') || 'direct'} route${routes.length === 1 ? '' : 's'}; sync points ${syncs.filter(m => courseRun.seen.includes(m.id)).length} of ${syncs.length}, falls ${courseRun.falls}.`);
+      emit('course', { node: 'done', t, routes, falls: courseRun.falls });
+    }
+  }
+}
+function courseLayout(seed) {   // another layout of the course (and her back in its plaza, if it is the room now)
+  courseSeed = seed; const R = ROOMS.find(R => R.course); R.doc = makeCourse(seed);
+  if (roomDoc?.course) { roomDoc = R.doc; buildRoom(); goal = null; goalMark.visible = false; setRoomOn(true); if (world) reset(); }
+  return R.doc;
+}
+document.getElementById('v-layout').onclick = () => courseLayout(courseSeed + 1);
 const goalMark = (() => {
   const g = new THREE.Group(), gold = new THREE.MeshStandardMaterial({ color: 0xd4a52a, roughness: .4, emissive: 0x3a2a00 });
   const ring = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.025, 10, 48), gold); ring.rotation.x = -Math.PI / 2; ring.position.y = 0.02;
@@ -1644,6 +1715,11 @@ window.umiBody = {
   level: () => level && { at: level.at, of: level.segs.length, kind: level.segs[level.at]?.kind, phase: level.phase, falls: level.falls, t: level.spent + world.t, start: { ...level.segs[level.at]?.start } },   // the Level's progress (start: where the segment she is on starts)
   parc: (k, set = {}) => { Object.assign(PARC, set); if (k !== undefined && parcBank && SKILLS[skill]?.parc) parcNext(k); return parc && { clip: parc.room.clip, set: parc.room.set, source: parc.room.source, t: world.t - parc.start, T: parc.clip.T, done: parc.done, tries: parc.tries }; },   // the PARC skill: start room k of PARC.sets (null: a random one), settings (PARC); what she is on
   gotoMove: () => gmove && { kind: gmove.M.type, clip: gmove.M.clip, phase: gmove.phase, start: gmove.start?.slice(), land: gmove.land?.slice(), u: gmove.u?.slice() },   // Go to's planned or running move
+  course(seed) {   // Rooftops: a layout by seed (returns its route tree and her run on it)
+    if (seed !== undefined) courseLayout(seed);
+    const C = ROOMS.find(R => R.course)?.doc;
+    return C && { seed: C.seed, on: !!roomDoc?.course && roomOn, edges: C.course.edges, nodes: C.course.nodes, run: courseRun && { seen: courseRun.seen.slice(), tower: courseRun.tower, done: courseRun.done, falls: courseRun.falls } };
+  },
   jumpKey(o = {}) { Object.assign(JUMP_KEY, o); return { ...JUMP_KEY }; },   // the Space jump's settings (JUMP_KEY)
   levelSet(o = {}) { Object.assign(LEVEL, o); if (o.jumpPolicy || o.climbPolicy) levelRes = null; return { ...LEVEL }; },   // the Level's settings (LEVEL)
   levelPlan(plan, height) { if (plan) LEVEL.plan = plan; if (height != null) LEVEL.start = [LEVEL.start[0], +height, LEVEL.start[2]]; return LEVEL.plan.map(m => m.slice()); },   // the Level's moves ([['walk', m] | ['jump', clip] | ['climb', clip], ...]); takes effect when it starts again
@@ -1663,6 +1739,6 @@ try {
   await loadModel(); applyParts();
   setStatus('loading the learned shader…');
   if (lookChosen && look === 'art') await useArt(); else setLook(look);   // physics-gym opens on the physics view (look above); the learned shader draws only her
-  if (art || look !== 'art') setStatus('');
+  if (art || look !== 'art') setStatus(courseRun ? 'Rooftops: reach the top of the bell tower by any route, then take the leap of faith into the hay.' : '');
 } catch (e) { console.error(e); setStatus(`Could not start: ${e.message}`, true); }
 </script>
