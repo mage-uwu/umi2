@@ -9,7 +9,9 @@ replay (web/index.html #replay=RECORD.json): what it shows is exactly what was j
 more than 1 m off the clip's path) is played on past that in a second run with no path limit (the same start, the same
 actions up to there: checked), until she is down or the clip is over; judged_end marks where the judged one ended.
 EVAL_NOISE=r (environment): each joint's start rotation off the clip's by up to r rad (TaskCfg.init_noise), so the episodes
-differ; imitation's default is none, every episode from a clip's start then the same."""
+differ; imitation's default is none, every episode from a clip's start then the same.
+EVAL_T0=s (environment): each episode starts that far into its clip (TaskCfg.fixed_start - 1 control steps): a shorter
+run-up where the world has no room for the clip's."""
 import sys, os, json, ctypes, struct, numpy as np, torch
 B = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'); sys.path.insert(0, os.path.join(B, 'gpu')); import nanotss_torch as nt, gpu_env as ge
 pre, rooms_file, clip_file = sys.argv[1], sys.argv[2], sys.argv[3]; n = int(sys.argv[4]) if len(sys.argv) > 4 else 192; hand = float(sys.argv[5]) if len(sys.argv) > 5 else 0.0
@@ -17,9 +19,10 @@ strength = float(sys.argv[6]) if len(sys.argv) > 6 else 0.0   # her muscles time
 pos_only = int(sys.argv[7]) if len(sys.argv) > 7 else 0   # 1: the hand-up along the path only (TaskCfg.assist_pos_only)
 record = sys.argv[8] if len(sys.argv) > 8 else ""
 noise = float(os.environ["EVAL_NOISE"]) if os.environ.get("EVAL_NOISE") else None
+k0 = int(round(float(os.environ.get("EVAL_T0") or 0) * 30))   # EVAL_T0=s: each episode from that far into its clip (a shorter run-up), judged as from the start
 doc = json.load(open(rooms_file)); names = doc["clips"]; clips = ge.load_mref(clip_file)
 T = {k: (clips[k]["frames"] - 1) / clips[k]["fps"] for k in names}; steps = int(max(T.values()) * 30) + 40
-pool = ge.CpuPool(n, task="getup_imitate", style=clip_file + ":" + ",".join(names), room=rooms_file, seed=23, device="cpu", assist=hand, steps=steps, fixed_start=1, strength=strength, assist_pos_only=pos_only, init_noise=noise)
+pool = ge.CpuPool(n, task="getup_imitate", style=clip_file + ":" + ",".join(names), room=rooms_file, seed=23, device="cpu", assist=hand, steps=steps, fixed_start=1 + k0, strength=strength, assist_pos_only=pos_only, init_noise=noise)
 L = pool.L; L.pool_pelvis.argtypes = [ctypes.c_void_p, ctypes.c_int, ctypes.c_void_p]; L.pool_bodies.argtypes = [ctypes.c_void_p, ctypes.c_int, ctypes.c_void_p]
 frames, fb, ended = [], np.zeros(14 * 7), None
 raw = open(pre + ".head", "rb").read(); hd, hobs, hact = struct.unpack("<3i", raw[4:16]); o = 16
@@ -39,7 +42,7 @@ end_v = {k: np.linalg.norm((clips[k]['root'][-1] - clips[k]['root'][-4])[[0, 2]]
 tall = [doc["rooms"][r]["boxes"][doc["rooms"][r]["target"]] if "target" in doc["rooms"][r] else   # the box to get up on: the room's "target", else its tallest
         max((bx for bx in doc["rooms"][r]["boxes"] if bx["kind"] != "outer"), key=lambda bx: bx["c"][1] + bx["h"][1], default=None) for r in room]
 ontop = np.zeros(n, bool)   # her pelvis 0.6 m over its top, above it, at some point (got up onto it)
-check = np.array([int(T[k] * 30) + (30 if end_v[k] < 0.5 else 0) for k in clip_of]); done = np.zeros(n, bool); down = np.zeros(n, bool); alive = np.ones(n, bool); buf = np.zeros(3)
+check = np.array([max(1, int(T[k] * 30) - k0) + (30 if end_v[k] < 0.5 else 0) for k in clip_of]); done = np.zeros(n, bool); down = np.zeros(n, bool); alive = np.ones(n, bool); buf = np.zeros(3)
 def act_of(on, state):
     if actor is not None: return torch.tanh(actor(on)).clamp(-1, 1)
     x = m.forward((on @ Win.T + b)[:, None], state=state, stream=True)[:, 0]; u, _ = nt.rmsnorm(x, m.P["norm_f"]); return torch.tanh(bo + u @ Wo.T).clamp(-1, 1)
@@ -48,7 +51,7 @@ with torch.no_grad():
     for t in range(steps):
         ob = pool.obs(); on = ((ob - mean) / sd).clamp(-5, 5); act = act_of(on, state)
         if t == 0:
-            for e in range(n): L.pool_pelvis(pool.p, int(e), buf.ctypes.data_as(ctypes.c_void_p)); lift[e] = buf[1] - clips[clip_of[e]]["root"][0][1]
+            for e in range(n): L.pool_pelvis(pool.p, int(e), buf.ctypes.data_as(ctypes.c_void_p)); c_ = clips[clip_of[e]]; lift[e] = buf[1] - c_["root"][min(int(round(k0 / 30 * c_["fps"])), c_["frames"] - 1)][1]
         for e in np.nonzero(alive & (check == t))[0]:
             L.pool_pelvis(pool.p, int(e), buf.ctypes.data_as(ctypes.c_void_p)); g = goal[clip_of[e]]
             done[e] = np.hypot(buf[0] - g[0], buf[2] - g[2]) < 0.5 and abs(buf[1] - lift[e] - g[1]) < 0.2
@@ -66,12 +69,12 @@ for k in names:
     if s.any(): print(f"  {k}: {int(done[s].sum())} of {int(s.sum())} done, {int(down[s].sum())} down, {int(ontop[s].sum())} up on its box")
 if record:
     R = doc["rooms"][room[0]]; c = clips[clip_of[0]]; r0 = np.array(c["root"][0])
-    ref = [(np.array(c["root"][min(int(round(k / 30 * c["fps"])), c["frames"] - 1)]) - [r0[0], 0, r0[2]] + [0, lift[0], 0]).round(4).tolist() for k in range(int(T[clip_of[0]] * 30) + 1)]   # the clip's pelvis, where she is judged against
+    ref = [(np.array(c["root"][min(int(round(k / 30 * c["fps"])), c["frames"] - 1)]) - [r0[0], 0, r0[2]] + [0, lift[0], 0]).round(4).tolist() for k in range(k0, int(T[clip_of[0]] * 30) + 1)]   # the clip's pelvis, where she is judged against
     judged, why = len(frames), ""
     if ended is not None and ended < len(frames) + 1 and not done[0]:   # ended early: on past it with no path limit, to see what she does
         F = np.array(frames[-1][:3]); off = float(np.linalg.norm(F - ref[min(len(frames) - 1, len(ref) - 1)]))
         why = f"more than 1 m off the clip's path, {off:.1f} m from its pelvis" if off > 0.95 else "down"
-        p2 = ge.CpuPool(n, task="getup_imitate", style=clip_file + ":" + ",".join(names), room=rooms_file, seed=23, device="cpu", assist=hand, steps=steps, fixed_start=1, strength=strength, assist_pos_only=pos_only, drift=100, init_noise=noise)
+        p2 = ge.CpuPool(n, task="getup_imitate", style=clip_file + ":" + ",".join(names), room=rooms_file, seed=23, device="cpu", assist=hand, steps=steps, fixed_start=1 + k0, strength=strength, assist_pos_only=pos_only, drift=100, init_noise=noise)
         st2, again = m.zero_state(n) if m else None, []   # (all n as before: the start draws and the stack's batch the same)
         with torch.no_grad():
             for t in range(steps):
@@ -80,6 +83,6 @@ if record:
         same = all(np.allclose(a, b_, atol=1e-4) for a, b_ in zip(again[:judged], frames))
         print(f"  the second run (no path limit) the same to step {judged}: {same}; on to step {len(again)}")
         if same: frames = again
-    json.dump({"clip": clip_of[0], "source": R.get("source", ""), "prefix": os.path.basename(pre), "hand_up": hand, "strength": strength, "start_noise": noise or 0, "fps": 30, "done": bool(done[0]), "down": bool(down[0]),
+    json.dump({"clip": clip_of[0], "source": R.get("source", ""), "prefix": os.path.basename(pre), "hand_up": hand, "strength": strength, "start_noise": noise or 0, "t0": k0 / 30, "fps": 30, "done": bool(done[0]), "down": bool(down[0]),
                "judged_end": judged, "why": why, "ref": ref, "boxes": R["boxes"], "frames": frames}, open(record, "w"), separators=(",", ":"))
     print(f"{record}: {len(frames)} frames of {clip_of[0]} ({'done' if done[0] else 'ended at step ' + str(judged) + ': ' + why})")

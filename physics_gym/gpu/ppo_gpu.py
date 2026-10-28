@@ -105,6 +105,8 @@ def main():
     A("--amp", default="", help="file.bin[:clip,...]: motion capture (30 Hz) for a learned style reward (see the top of this file); with goto_free also its start states")
     A("--amp-w", type=float, default=0.7, help="the style reward's weight (it is 0..1 a step)")
     A("--amp-lr", type=float, default=1e-4); A("--amp-gp", type=float, default=5.0, help="gradient penalty on the motion capture")
+    A("--init-noise", type=float, default=None, help="each joint's start rotation off the clip's by up to this (rad, TaskCfg.init_noise; imitation's default 0: "
+      "every episode from a clip's start the same): a policy that only knows one start falls from any other")
     A("--mlp", type=int, default=0, help="the actor a plain float32 MLP of this width (3 hidden layers, ELU, feed-forward; Adam at --lr) instead of the nanotss stack: "
       "a capacity check against the small ternary one; saved as <out>.mlp.pt beside <out>.head (the normaliser, log_std), read by tools/eval_course.py")
     A("--amp-steps", type=int, default=16, help="discriminator updates per iteration"); A("--amp-batch", type=int, default=4096)
@@ -117,7 +119,7 @@ def main():
         f, _, names = a.amp.partition(":")
         amp_feats, amp_starts = ge.amp_reference(f, names.split(",") if names else None, seed=a.seed)
     pool = Pool(a.envs, task=a.task, mref=a.mref, style=a.style, assist=a.assist, push=a.push, act_mul=a.act_mul, steps=a.steps,
-                style_start=a.style_start, sway=a.sway, arm_tone=a.arm_tone, goal_cone=a.goal_cone, goal_tops=a.goal_tops, free_heading=a.free_heading, chain=a.chain, chain_yaw=a.chain_yaw, seed=a.seed, device=dev, room=a.room, strength=a.strength, start0=a.start0, drift=a.drift, tail=a.tail, assist_pos_only=a.assist_pos_only,
+                style_start=a.style_start, sway=a.sway, arm_tone=a.arm_tone, goal_cone=a.goal_cone, goal_tops=a.goal_tops, free_heading=a.free_heading, chain=a.chain, chain_yaw=a.chain_yaw, seed=a.seed, device=dev, room=a.room, strength=a.strength, start0=a.start0, drift=a.drift, tail=a.tail, assist_pos_only=a.assist_pos_only, init_noise=a.init_noise,
                 starts=amp_starts if a.task == "goto_free" else None)
     if a.clip_focus > 0: pool.focus_rooms(); room_rate = torch.full((pool.nrooms,), 0.5, device=pool.dev, dtype=torch.float64)   # each clip's failed share (an average over the reports)
     OBS, ACT, HZ = pool.OBS, pool.ACT, pool.HZ

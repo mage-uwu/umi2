@@ -165,7 +165,7 @@ BHD void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
         if (cfg->nstyle > 0) E->rc = cfg->style[(int)(env_rand(&E->rng) * cfg->nstyle) % cfg->nstyle];   /* a clip of the set */
         if (course(E)) E->rc = cfg->style[E->W.room % cfg->nstyle];   /* the clip its room was built round */
         const Clip *c = E->rc; const double T = (c->frames - 1) / c->fps;
-        E->t0 = cfg->fixed_start ? 0 : env_rand(&E->rng) * T * (cfg->nstyle > 0 ? 0.85 : 1);
+        E->t0 = cfg->fixed_start ? fmin(T, (cfg->fixed_start - 1) / (double)CTRL_HZ) : env_rand(&E->rng) * T * (cfg->nstyle > 0 ? 0.85 : 1);   /* fixed: from control step fixed_start - 1 (1: the clip's start) */
         if (course(E) && !cfg->fixed_start) E->t0 *= 0.7 / 0.85;   /* a course: mostly from the run-up, so the takeoff gets practised (not only the landing) */
         if (course(E) && !cfg->fixed_start && cfg->start0 > 0 && env_rand(&E->rng) < cfg->start0) E->t0 = 0;   /* the whole clip from its start, as it is judged */
         E->clip_shift = v3(0, 0, 0);

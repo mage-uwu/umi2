@@ -1,0 +1,17 @@
+{
+  "note": "Rooftops move experts (tools/expert_bank.py builds each one's banks; gpu/pod_experts.sh trains them; tools/expert_eval.py judges them). One clip each, a float MLP from scratch, trained on 48 variants of the clip's own room (heights, gaps, distances, wall depths, unrelated boxes off her path) with start noise; judged on 16 held-out variants and in Rooftops itself (data/ac_course_bank.json room 0) on the obstacles its move is for. lift: all boxes raised together (m; the env raises the clip with what is under its start); dtop: each obstacle's top, independently (m); shift: each obstacle along her way and across it (m); depth: an obstacle's extent along her way (m, its near face kept; walls of Rooftops' alley are 0.26 m); boxes: unrelated boxes kept 0.9 m off her path. rooftops: [world box, her heading (deg: 0 = +z, 90 = +x)].",
+  "defaults": {"clips": "data/parkour_fit.bin", "bank": "data/parkour_fit_bank.json", "variants": 48, "heldout": 16, "lift": [0, 0], "dtop": 0.12, "shift": [0.15, 0.15], "depth": null, "boxes": [0, 3],
+               "init_noise": 0.03, "seconds": 2400, "mlp": 512},
+  "experts": [
+    {"name": "step_up", "move": "step 0.4-0.5", "clip": "p38", "rooftops": [["garden crate, 0.50 m", 90], ["courtyard step", 0]]},
+    {"name": "hoist", "move": "hoist 0.5-0.7", "clip": "p44", "dtop": 0.15, "rooftops": [["market crate", 270], ["bell tower", 0]]},
+    {"name": "vault_low", "move": "vault 0.5", "clip": "p10", "dtop": 0.1, "depth": [0.25, 0.9], "rooftops": [["alley wall, 0.50 m", 90]]},
+    {"name": "vault_mid", "move": "vault 0.8", "clip": "p13", "dtop": [-0.05, 0.15], "depth": [0.25, 0.9], "rooftops": [["alley wall, 0.80 m", 90]]},
+    {"name": "vault_high", "move": "vault 1.0", "clip": "p15", "dtop": [-0.05, 0.12], "depth": [0.25, 0.9], "rooftops": [["alley wall, 1.00 m", 270]]},
+    {"name": "gap_jump", "move": "jump 0.9", "clip": "fjump2", "clips": "data/cmu_jump.bin", "bank": "data/jump_bank.json", "lift": [0, 0.9], "dtop": 0.05, "shift": [0.15, 0.1],
+     "rooftops": [["west roof across the gap", 0]]},
+    {"name": "leap", "move": "leap 1.4", "clip": "run_leap1", "clips": "data/cmu_jump.bin", "bank": "data/jump_bank.json", "lift": [0, 0.9], "dtop": [-0.25, 0.05], "shift": [0.15, 0.1],
+     "rooftops": [["leap roof", 90]]},
+    {"name": "climb_block", "move": "climb a 1.27 m wall from a 0.54 m step", "clip": "p4", "dtop": 0.12, "shift": [0.2, 0.2], "rooftops": []}
+  ]
+}

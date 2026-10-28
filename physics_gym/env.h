@@ -82,7 +82,7 @@ typedef struct {
     double push_every;   /* mean seconds between pushes */
     int steps;           /* episode length in control steps */
     double init_noise;   /* random joint rotation at reset (rad) */
-    int fixed_start;     /* TASK_IMITATE: start at phase 0 instead of a random phase */
+    int fixed_start;     /* TASK_IMITATE: start at control step fixed_start - 1 of the clip (1: its start) instead of a random phase */
     double strength;     /* her muscles' strength and speed times this (0 = 1; World.strength): an athlete for parkour */
     double start0;       /* TASK_IMITATE course: this share of episodes from the clip's start (the rest as before) */
     double drift;        /* TASK_IMITATE: how far (m) her pelvis may drift from the reference before the episode ends

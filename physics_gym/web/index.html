@@ -675,7 +675,7 @@ async function startReplay(url) {
   const tb = R.target && R.boxes.find(b => b.feature === R.target), top = tb && tb.c[1] + tb.h[1];   // the box she is to climb (tools/clip_in_world.py): when she is up on it
   const upAt = tb ? R.frames.findIndex(f => f[1] > top + 0.6 && Math.abs(f[0] - tb.c[0]) < tb.h[0] + 0.1 && Math.abs(f[2] - tb.c[2]) < tb.h[2] + 0.1) : -1;
   const up = tb ? (upAt >= 0 ? `up on the ${R.target} (${top.toFixed(2)} m) at ${(upAt / 30).toFixed(1)} s, then ` : `never up on the ${R.target} (${top.toFixed(2)} m): `) : '';
-  replay.msg = `Replay: ${R.prefix} on clip ${R.clip} (${R.source.replace(/_aug.*$/, '').replace(/_/g, ' ')}), ${R.hand_up ? `hand-up ${R.hand_up}` : 'no hand-up'}, x${R.strength || 1} strength${R.start_noise ? `, start noise ${R.start_noise} rad` : ''}: ${up}${R.done ? 'done' : R.why ? `failed at ${(R.judged_end / 30).toFixed(1)} s (${R.why})` : R.down ? 'down' : 'not done'}. . Recorded from the C physics as it was judged; the teal line and dot are the clip's pelvis. Looping.`;
+  replay.msg = `Replay: ${R.prefix} on clip ${R.clip} (${R.source.replace(/_aug.*$/, '').replace(/_/g, ' ')}), ${R.hand_up ? `hand-up ${R.hand_up}` : 'no hand-up'}, x${R.strength || 1} strength${R.start_noise ? `, start noise ${R.start_noise} rad` : ''}: ${up}${R.done ? 'done' : R.why ? `failed at ${(R.judged_end / 30).toFixed(1)} s (${R.why})` : R.down ? 'down' : 'not done'}. Recorded from the C physics as it was judged; the teal line and dot are the clip's pelvis. Looping.`;
   replayView(R, tb); replayAt(0); upSince = world.t; fallenAt = -1; prev = snapshot(); hist = [{ t: world.t, s: prev }]; springT = world.t; focus.set(...world.b[0].x);
   document.getElementById('r-policy').textContent = 'a recorded episode, replayed (no controller runs here)';
 }
@@ -1718,6 +1718,13 @@ for (const r of REPLAYS) {
   b.onclick = () => startReplay(r.file).catch(e => setStatus(`Could not load the replay: ${e.message}`, true));
   queueMicrotask(() => skillBox.append(b));   // after the skills
 }
+fetch('replays/index.json').then(r => r.ok ? r.json() : []).then(list => {   // more recordings (tools/expert_eval.py --replays: the Rooftops move experts)
+  for (const r of list) {
+    if (REPLAYS.some(x => x.file === r.file)) continue;
+    const b = document.createElement('button'); b.textContent = r.label; b.dataset.skill = 'replay'; b.dataset.replay = r.file; b.setAttribute('aria-pressed', 'false');
+    b.onclick = () => startReplay(r.file).catch(e => setStatus(`Could not load the replay: ${e.message}`, true)); skillBox.append(b);
+  }
+}).catch(() => {});
 for (const [k, s] of Object.entries(SKILLS)) {
   const b = document.createElement('button'); b.textContent = s.label; b.dataset.skill = k; b.setAttribute('aria-pressed', String(k === skill));
   b.onclick = () => useSkill(k).catch(e => setStatus(`Could not load ${s.label}: ${e.message}`, true)); skillBox.append(b);
