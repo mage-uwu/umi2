@@ -174,6 +174,11 @@ BHD void env_reset(Env *E, const TaskCfg *cfg, uint64_t seed) {
         E->clip_shift = v3(-root.x, 0, -root.z);   /* the reference starts above the origin */
         if (course(E)) E->clip_shift = v3(-c->root[0].x, support_y(E->W.room, 0, 0, 5), -c->root[0].z);   /* the clip's frame 0 over the origin, on the platform */
         root = vadd(root, E->clip_shift); root2 = vadd(root2, E->clip_shift);
+        if (cfg->init_noise > 0) for (int i = 1; i < NB; i++) {   /* start noise (an evaluation's: imitation trains with none), the same on both poses so the start velocities are the clip's */
+            const double nz = env_randn(&E->rng), ny = env_randn(&E->rng), nx = env_randn(&E->rng); Vec n = v3(nx, ny, nz);
+            if (BODY_DEFS[i].hinge) n = vscale(hinge_axis(BODY_DEFS[i].hinge), n.x);
+            const Quat d = qexp(vscale(n, cfg->init_noise)); rel[i] = qmul(rel[i], d); rel2[i] = qmul(rel2[i], d);
+        }
         /* body velocities by finite difference of the reference pose */
         World W2; world_init(&W2, 45, 20, dt);
         world_pose(&W2, root2, rel2[0], rel2, v3(0, 0, 0));

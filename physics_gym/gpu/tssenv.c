@@ -164,6 +164,9 @@ void pool_drop(Pool *P, int e, int j) {
 }
 int pool_room(const Pool *P, int e) { return P->E[e].W.room; }
 void tss_env_offsets(int *jumps, int *room) { *jumps = (int)offsetof(Env, jumps); *room = (int)(offsetof(Env, W) + offsetof(World, room)); }   /* fields read from a batch of Envs */   /* the room of the bank environment e is in */
+void pool_set_init_noise(Pool *P, double a) {   /* start noise (TaskCfg.init_noise, rad) in every environment, each started again as pool_new did */
+    P->tc.init_noise = a; for (int e = 0; e < P->n; e++) { P->E[e].cfg.init_noise = a; env_reset(&P->E[e], &P->tc, P->erng + e * 1000003ULL); }
+}
 void pool_set_assist(Pool *P, double a) { P->tc.assist = a; for (int e = 0; e < P->n; e++) P->E[e].cfg.assist = a; }   /* the hand-up assist, from the next step on, in every environment */
 void pool_pelvis(const Pool *P, int e, double *out) { const Vec x = P->E[e].W.b[PELVIS].x; out[0] = x.x; out[1] = x.y; out[2] = x.z; }   /* where her pelvis is (world) */
 void pool_bodies(const Pool *P, int e, double *out) {   /* each body's centre and rotation (world): x y z, qw qx qy qz, NB of them (a recording to replay) */
