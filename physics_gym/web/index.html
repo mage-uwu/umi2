@@ -662,12 +662,24 @@ async function startReplay(url) {
   const R = await (await fetch(url)).json();
   const xs = R.boxes.flatMap(b => [b.c[0] - 3, b.c[0] + 3]), zs = R.boxes.flatMap(b => [b.c[2] - 3, b.c[2] + 3]);
   roomDoc = { name: 'replay', boxes: R.boxes, bounds: [Math.min(...xs, -8), Math.max(...xs, 8), Math.min(...zs, -8), Math.max(...zs, 8)] }; buildRoom(); roomOn = true; roomGroup.visible = true;
-  replay = { ...R, i: 0, hold: 0 }; replayAt(0); setPressed('[data-skill]', document.querySelector(`[data-replay="${url}"]`));
-  document.getElementById('r-policy').textContent = 'a recorded episode, replayed (no controller runs here)'; upSince = world.t; fallenAt = -1;
-  prev = snapshot(); hist = [{ t: world.t, s: prev }]; springT = world.t; focus.set(...world.b[0].x);
-  setStatus(replay.msg = `Replay: ${R.prefix} on clip ${R.clip} (${R.source.replace(/_aug.*$/, '').replace(/_/g, ' ')}), ${R.hand_up ? `hand-up ${R.hand_up}` : 'no hand-up'}, x${R.strength || 1} strength: ${R.done ? 'done' : R.down ? 'fell' : 'not done'}. Recorded from the C physics as it was judged; looping.`);
+  replayMarks.clear();
+  if (R.ref) {
+    replayMarks.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(R.ref.map(p => new THREE.Vector3(...p))), new THREE.LineBasicMaterial({ color: 0x1fa3a3, transparent: true, opacity: 0.7, depthTest: false })));
+    replayMarks.add(replayDot);
+  }
+  replay = { ...R, i: 0, hold: 0 }; setPressed('[data-skill]', document.querySelector(`[data-replay="${url}"]`));
+  replay.msg = `Replay: ${R.prefix} on clip ${R.clip} (${R.source.replace(/_aug.*$/, '').replace(/_/g, ' ')}), ${R.hand_up ? `hand-up ${R.hand_up}` : 'no hand-up'}, x${R.strength || 1} strength: ${R.done ? 'done' : R.why ? `failed at ${(R.judged_end / 30).toFixed(1)} s (${R.why})` : R.down ? 'down' : 'not done'}. Recorded from the C physics as it was judged; the teal line and dot are the clip's pelvis. Looping.`;
+  replayAt(0); upSince = world.t; fallenAt = -1; prev = snapshot(); hist = [{ t: world.t, s: prev }]; springT = world.t; focus.set(...world.b[0].x);
+  document.getElementById('r-policy').textContent = 'a recorded episode, replayed (no controller runs here)';
 }
-function replayAt(i) { const f = replay.frames[i]; world.b.forEach((b, k) => { b.x = f.slice(7 * k, 7 * k + 3); b.q = f.slice(7 * k + 3, 7 * k + 7); }); }
+const replayMarks = new THREE.Group(); scene.add(replayMarks);   // the clip's pelvis path, and where its pelvis is now (what she is judged against)
+const replayDot = new THREE.Mesh(new THREE.SphereGeometry(0.07, 16, 12), new THREE.MeshBasicMaterial({ color: 0x1fa3a3, transparent: true, opacity: 0.6, depthTest: false }));
+function replayAt(i) {
+  const f = replay.frames[i]; world.b.forEach((b, k) => { b.x = f.slice(7 * k, 7 * k + 3); b.q = f.slice(7 * k + 3, 7 * k + 7); });
+  if (replay.ref) replayDot.position.set(...replay.ref[Math.min(i, replay.ref.length - 1)]);
+  if (i === 0) setStatus(replay.msg);
+  else if (i === replay.judged_end && replay.why) setStatus(`At ${(i / 30).toFixed(1)} s the judged episode ended: ${replay.why}. Played on with no path limit, to show what she does.`);
+}
 function replayControl() {   // the next recorded step; at the end held, then from the start again
   world.t += 1 / CTRL_HZ;
   if (replay.i < replay.frames.length - 1) replayAt(++replay.i);
@@ -1662,7 +1674,7 @@ addEventListener('keydown', e => {
 
 async function useSkill(name) {
   const s = SKILLS[name]; if (!s) throw new Error(`no skill named ${name}`);
-  if (replay) { replay = null; roomDoc = ROOMS[roomIdx]?.doc || null; buildRoom(); setRoomOn(!!roomDoc); setStatus(''); }   // leaving a replay: the room as it was
+  if (replay) { replay = null; replayMarks.clear(); roomDoc = ROOMS[roomIdx]?.doc || null; buildRoom(); setRoomOn(!!roomDoc); setStatus(''); }   // leaving a replay: the room as it was
   policies[name] ||= s.file.includes('tss') ? await loadTssPolicy(s.file) : await loadPolicy(s.file);
   if (s.clip || s.phaseClip) clips ||= { ...await loadClips('motions_ref.json'),   // Bandai Namco clips (development), and the CMU gait cycles as cmu_walk, cmu_run
     ...Object.fromEntries(Object.entries(await loadClips('cmu_gait.json')).map(([k, c]) => ['cmu_' + k, c])) };
