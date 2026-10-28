@@ -650,6 +650,31 @@ function jumpStep() {   // after each control step in jump mode: the clip on, th
   if (t > c.T + 0.3 && (Math.hypot(...world.com().v) < 0.25 || t > c.T + 2.5)) jumpNext(jump.n + 1, false);   // landed and steady: the next jump
 }
 // ---------- Level: a run-and-jump course (Mario or Assassin's Creed style), every skill in turn ----------
+// ---------- replays ----------
+// #replay=FILE (tools/eval_course.py ... RECORD.json): an episode recorded from the C physics as it was judged, her bodies
+// set from it each control step (no physics or policy runs here), in its room; it loops, a second and a half between.
+let replay = null;
+const REPLAYS = [   // the buttons (SKILL row): recordings in replays/
+  { label: 'Climb p4 (one-clip MLP)', file: 'replays/climb_p4_mlp.json' },     // ppo_gpu.py --mlp 512, p4 alone, 30 min: 128 of 128 done unaided
+  { label: 'Climb p4 (run 5)', file: 'replays/climb_p4_parkour5.json' },       // parkour5, all 57 clips in one ternary stack: down
+];
+async function startReplay(url) {
+  const R = await (await fetch(url)).json();
+  const xs = R.boxes.flatMap(b => [b.c[0] - 3, b.c[0] + 3]), zs = R.boxes.flatMap(b => [b.c[2] - 3, b.c[2] + 3]);
+  roomDoc = { name: 'replay', boxes: R.boxes, bounds: [Math.min(...xs, -8), Math.max(...xs, 8), Math.min(...zs, -8), Math.max(...zs, 8)] }; buildRoom(); roomOn = true; roomGroup.visible = true;
+  replay = { ...R, i: 0, hold: 0 }; replayAt(0); setPressed('[data-skill]', document.querySelector(`[data-replay="${url}"]`));
+  document.getElementById('r-policy').textContent = 'a recorded episode, replayed (no controller runs here)'; upSince = world.t; fallenAt = -1;
+  prev = snapshot(); hist = [{ t: world.t, s: prev }]; springT = world.t; focus.set(...world.b[0].x);
+  setStatus(replay.msg = `Replay: ${R.prefix} on clip ${R.clip} (${R.source.replace(/_aug.*$/, '').replace(/_/g, ' ')}), ${R.hand_up ? `hand-up ${R.hand_up}` : 'no hand-up'}, x${R.strength || 1} strength: ${R.done ? 'done' : R.down ? 'fell' : 'not done'}. Recorded from the C physics as it was judged; looping.`);
+}
+function replayAt(i) { const f = replay.frames[i]; world.b.forEach((b, k) => { b.x = f.slice(7 * k, 7 * k + 3); b.q = f.slice(7 * k + 3, 7 * k + 7); }); }
+function replayControl() {   // the next recorded step; at the end held, then from the start again
+  world.t += 1 / CTRL_HZ;
+  if (replay.i < replay.frames.length - 1) replayAt(++replay.i);
+  else if (++replay.hold > 45) { replay.i = 0; replay.hold = 0; replayAt(0); upSince = world.t; prev = snapshot(); hist = [{ t: world.t, s: prev }]; springT = world.t; return; }
+  hist.push({ t: world.t, s: snapshot() }); if (hist.length > 12) hist.shift();
+}
+
 // ---------- PARC parkour ----------
 // PARC (gpu/pod_parc.sh): she tracks parkour clips from PARC (Xu, Shi, Yin, Peng, SIGGRAPH 2025: wall climbs, vaults,
 // platforms, runs over broken ground; data/parc_*, tools/parc_to_ref.py), each on the terrain it was made for, as she trained
@@ -943,6 +968,7 @@ function levelControl() {
   emit('step', { t: world.t });
 }
 function control() {
+  if (replay) return replayControl();
   wasdStep();
   if (mode === 'skill' && SKILLS[skill].level) return levelControl();
   if (mode === 'skill' && SKILLS[skill].parc) {   // the PARC tracker: the clip's pose plus its actions
@@ -1636,6 +1662,7 @@ addEventListener('keydown', e => {
 
 async function useSkill(name) {
   const s = SKILLS[name]; if (!s) throw new Error(`no skill named ${name}`);
+  if (replay) { replay = null; roomDoc = ROOMS[roomIdx]?.doc || null; buildRoom(); setRoomOn(!!roomDoc); setStatus(''); }   // leaving a replay: the room as it was
   policies[name] ||= s.file.includes('tss') ? await loadTssPolicy(s.file) : await loadPolicy(s.file);
   if (s.clip || s.phaseClip) clips ||= { ...await loadClips('motions_ref.json'),   // Bandai Namco clips (development), and the CMU gait cycles as cmu_walk, cmu_run
     ...Object.fromEntries(Object.entries(await loadClips('cmu_gait.json')).map(([k, c]) => ['cmu_' + k, c])) };
@@ -1653,6 +1680,11 @@ async function useSkill(name) {
   reset(); emit('skill', { skill: name });
 }
 const skillBox = document.getElementById('skills');
+for (const r of REPLAYS) {
+  const b = document.createElement('button'); b.textContent = r.label; b.dataset.skill = 'replay'; b.dataset.replay = r.file; b.setAttribute('aria-pressed', 'false');
+  b.onclick = () => startReplay(r.file).catch(e => setStatus(`Could not load the replay: ${e.message}`, true));
+  queueMicrotask(() => skillBox.append(b));   // after the skills
+}
 for (const [k, s] of Object.entries(SKILLS)) {
   const b = document.createElement('button'); b.textContent = s.label; b.dataset.skill = k; b.setAttribute('aria-pressed', String(k === skill));
   b.onclick = () => useSkill(k).catch(e => setStatus(`Could not load ${s.label}: ${e.message}`, true)); skillBox.append(b);
@@ -1721,10 +1753,12 @@ window.umiBody = {
 requestAnimationFrame(frame);
 try {
   await useSkill('balance'); setLook(look);   // the default view from the start (the model may be slow, or fail, to load)
+  const rp = location.hash.match(/replay=([\w./]+)/)?.[1]; if (rp) await startReplay(rp);   // a recorded episode (replays above)
   setStatus('loading the model…');
   await loadModel(); applyParts();
   setStatus('loading the learned shader…');
   if (lookChosen && look === 'art') await useArt(); else setLook(look);   // physics-gym opens on the physics view (look above); the learned shader draws only her
   if (art || look !== 'art') setStatus(courseRun ? 'Rooftops: reach the top of the bell tower by any route, then take the leap of faith into the hay.' : '');
+  if (replay) setStatus(replay.msg);
 } catch (e) { console.error(e); setStatus(`Could not start: ${e.message}`, true); }
 </script>

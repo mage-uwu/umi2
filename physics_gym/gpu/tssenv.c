@@ -166,5 +166,8 @@ int pool_room(const Pool *P, int e) { return P->E[e].W.room; }
 void tss_env_offsets(int *jumps, int *room) { *jumps = (int)offsetof(Env, jumps); *room = (int)(offsetof(Env, W) + offsetof(World, room)); }   /* fields read from a batch of Envs */   /* the room of the bank environment e is in */
 void pool_set_assist(Pool *P, double a) { P->tc.assist = a; for (int e = 0; e < P->n; e++) P->E[e].cfg.assist = a; }   /* the hand-up assist, from the next step on, in every environment */
 void pool_pelvis(const Pool *P, int e, double *out) { const Vec x = P->E[e].W.b[PELVIS].x; out[0] = x.x; out[1] = x.y; out[2] = x.z; }   /* where her pelvis is (world) */
+void pool_bodies(const Pool *P, int e, double *out) {   /* each body's centre and rotation (world): x y z, qw qx qy qz, NB of them (a recording to replay) */
+    for (int i = 0; i < NB; i++) { const Body *b = P->E[e].W.b + i; const double v[7] = {b->x.x, b->x.y, b->x.z, b->q.w, b->q.x, b->q.y, b->q.z}; memcpy(out + 7 * i, v, sizeof v); }
+}
 void pool_mtau(const Pool *P, int e, double *out) { memcpy(out, P->E[e].W.mtau, sizeof(double) * NB); }   /* each joint's muscle torque, last substep (N m) */
 void pool_free(Pool *P) { free(P->E); free(P->ret); free(P); }
